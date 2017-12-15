@@ -117,14 +117,13 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // these are the rulesets, that have been applied...
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/ecmascript-basic.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/bestpractices.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/ecmascript-braces.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/codestyle.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile =
-            new File( getBasedir(), "target/test/unit/default-configuration/target/ecmascript-unnecessary.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/errorprone.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
@@ -418,7 +417,19 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // these are the rulesets, that have been applied...
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/jsp-basic.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/bestpractices.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/codestyle.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/design.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/errorprone.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/security.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
