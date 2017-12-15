@@ -29,12 +29,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import net.sourceforge.pmd.RuleViolation;
+import java.util.Set;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
+
+import net.sourceforge.pmd.Report.ProcessingError;
+import net.sourceforge.pmd.RuleViolation;
 
 /**
  * Render the PMD violations into Doxia events.
@@ -52,7 +54,9 @@ public class PmdReportGenerator
 
     private ResourceBundle bundle;
 
-    private HashSet<RuleViolation> violations = new HashSet<>();
+    private Set<RuleViolation> violations = new HashSet<>();
+
+    private List<ProcessingError> processingErrors = new ArrayList<>();
 
     private boolean aggregate;
 
@@ -86,6 +90,16 @@ public class PmdReportGenerator
         return new ArrayList<>( violations );
     }
 
+    public void setProcessingErrors( Collection<ProcessingError> errors )
+    {
+        this.processingErrors = new ArrayList<>( errors );
+    }
+
+    public List<ProcessingError> getProcessingErrors()
+    {
+        return processingErrors;
+    }
+
     // public List<Metric> getMetrics()
     // {
     // return metrics;
@@ -96,26 +110,46 @@ public class PmdReportGenerator
     // this.metrics = metrics;
     // }
 
+    private String shortenFilename( String filename, PmdFileInfo fileInfo )
+    {
+        String result = filename;
+        if ( fileInfo != null && fileInfo.getSourceDirectory() != null )
+        {
+            result =
+                StringUtils.substring( result, fileInfo.getSourceDirectory().getAbsolutePath().length() + 1 );
+        }
+        result = StringUtils.replace( result, "\\", "/" );
+
+        if ( aggregate && fileInfo != null && fileInfo.getProject() != null )
+        {
+            result = fileInfo.getProject().getName() + " - " + result;
+        }
+
+        return result;
+    }
+
+    private PmdFileInfo determineFileInfo( String filename ) throws IOException
+    {
+        File canonicalFilename = new File( filename ).getCanonicalFile();
+        PmdFileInfo fileInfo = files.get( canonicalFilename );
+        if ( fileInfo == null )
+        {
+            log.warn( "Couldn't determine PmdFileInfo for file " + filename + " (canonical: " + canonicalFilename
+                + "). XRef links won't be available." );
+        }
+
+        return fileInfo;
+    }
+
     private void startFileSection( String currentFilename, PmdFileInfo fileInfo )
     {
         sink.section2();
         sink.sectionTitle2();
 
         // prepare the filename
-        this.currentFilename = currentFilename;
-        if ( fileInfo != null && fileInfo.getSourceDirectory() != null )
-        {
-            this.currentFilename =
-                StringUtils.substring( currentFilename, fileInfo.getSourceDirectory().getAbsolutePath().length() + 1 );
-        }
-        this.currentFilename = StringUtils.replace( this.currentFilename, "\\", "/" );
+        this.currentFilename = shortenFilename( currentFilename, fileInfo );
 
-        String title = this.currentFilename;
-        if ( aggregate && fileInfo != null && fileInfo.getProject() != null )
-        {
-            title = fileInfo.getProject().getName() + " - " + this.currentFilename;
-        }
-        sink.text( title );
+        sink.text( this.currentFilename );
         sink.sectionTitle2_();
 
         sink.table();
@@ -162,8 +196,15 @@ public class PmdReportGenerator
     private void processViolations()
         throws IOException
     {
+        sink.section1();
+        sink.sectionTitle1();
+        sink.text( bundle.getString( "report.pmd.files" ) );
+        sink.sectionTitle1_();
+
+        // TODO files summary
+
         fileCount = files.size();
-        ArrayList<RuleViolation> violations2 = new ArrayList<>( violations );
+        List<RuleViolation> violations2 = new ArrayList<>( violations );
         Collections.sort( violations2, new Comparator<RuleViolation>()
         {
             /** {@inheritDoc} */
@@ -186,13 +227,7 @@ public class PmdReportGenerator
         for ( RuleViolation ruleViolation : violations2 )
         {
             String currentFn = ruleViolation.getFilename();
-            File canonicalFilename = new File( currentFn ).getCanonicalFile();
-            PmdFileInfo fileInfo = files.get( canonicalFilename );
-            if ( fileInfo == null )
-            {
-                log.warn( "Couldn't determine PmdFileInfo for file " + currentFn + " (canonical: " + canonicalFilename
-                    + "). XRef links won't be available." );
-            }
+            PmdFileInfo fileInfo = determineFileInfo( currentFn );
 
             if ( !currentFn.equalsIgnoreCase( previousFilename ) && fileSectionStarted )
             {
@@ -214,6 +249,15 @@ public class PmdReportGenerator
         {
             endFileSection();
         }
+
+        if ( fileCount == 0 )
+        {
+            sink.paragraph();
+            sink.text( bundle.getString( "report.pmd.noProblems" ) );
+            sink.paragraph_();
+        }
+
+        sink.section1_();
     }
 
     private void outputLineLink( int line, PmdFileInfo fileInfo )
@@ -233,6 +277,63 @@ public class PmdReportGenerator
         {
             sink.link_();
         }
+    }
+
+    private void processProcessingErrors() throws IOException
+    {
+        // sort the problem by filename first, since PMD is executed multi-threaded
+        // and might reports the results unsorted
+        Collections.sort( processingErrors, new Comparator<ProcessingError>()
+        {
+            @Override
+            public int compare( ProcessingError e1, ProcessingError e2 )
+            {
+                return e1.getFile().compareTo( e2.getFile() );
+            }
+        } );
+
+        sink.section1();
+        sink.sectionTitle1();
+        sink.text( bundle.getString( "report.pmd.processingErrors.title" ) );
+        sink.sectionTitle1_();
+
+        sink.table();
+        sink.tableRow();
+        sink.tableHeaderCell();
+        sink.text( bundle.getString( "report.pmd.processingErrors.column.filename" ) );
+        sink.tableHeaderCell_();
+        sink.tableHeaderCell();
+        sink.text( bundle.getString( "report.pmd.processingErrors.column.problem" ) );
+        sink.tableHeaderCell_();
+        sink.tableRow_();
+
+        for ( ProcessingError error : processingErrors )
+        {
+            processSingleProcessingError( error );
+        }
+
+        sink.table_();
+
+        sink.section1_();
+    }
+
+    private void processSingleProcessingError( ProcessingError error ) throws IOException
+    {
+        String filename = error.getFile();
+        PmdFileInfo fileInfo = determineFileInfo( filename );
+        filename = shortenFilename( filename, fileInfo );
+
+        sink.tableRow();
+        sink.tableCell();
+        sink.text( filename );
+        sink.tableCell_();
+        sink.tableCell();
+        sink.text( error.getMsg() );
+        sink.verbatim( null );
+        sink.rawText( error.getDetail() );
+        sink.verbatim_();
+        sink.tableCell_();
+        sink.tableRow_();
     }
 
     public void beginDocument()
@@ -261,13 +362,6 @@ public class PmdReportGenerator
         sink.section1_();
 
         // TODO overall summary
-
-        sink.section1();
-        sink.sectionTitle1();
-        sink.text( bundle.getString( "report.pmd.files" ) );
-        sink.sectionTitle1_();
-
-        // TODO files summary
     }
 
     /*
@@ -288,20 +382,16 @@ public class PmdReportGenerator
         throws IOException
     {
         processViolations();
+
+        if ( !processingErrors.isEmpty() )
+        {
+            processProcessingErrors();
+        }
     }
 
     public void endDocument()
         throws IOException
     {
-        if ( fileCount == 0 )
-        {
-            sink.paragraph();
-            sink.text( bundle.getString( "report.pmd.noProblems" ) );
-            sink.paragraph_();
-        }
-
-        sink.section1_();
-
         // The Metrics report useless with the current PMD metrics impl.
         // For instance, run the coupling ruleset and you will get a boatload
         // of excessive imports metrics, none of which is really any use.

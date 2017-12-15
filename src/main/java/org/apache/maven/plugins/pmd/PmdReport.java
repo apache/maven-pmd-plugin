@@ -507,6 +507,7 @@ public class PmdReport
         PmdReportGenerator doxiaRenderer = new PmdReportGenerator( getLog(), sink, getBundle( locale ), aggregate );
         doxiaRenderer.setFiles( filesToProcess );
         doxiaRenderer.setViolations( renderer.getViolations() );
+        doxiaRenderer.setProcessingErrors( renderer.getErrors() );
 
         try
         {

@@ -81,7 +81,7 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // check if there's a link to the JXR files
-        String str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
+        String str = readFile( generatedFile );
 
         assertTrue( str.contains( "/xref/def/configuration/App.html#L31" ) );
 
@@ -202,7 +202,7 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // check if there's a link to the JXR files
-        String str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" ) );
+        String str = readFile( generatedFile );
 
         assertTrue( str.contains( "/xref/def/configuration/App.html#L31" ) );
 
@@ -244,11 +244,10 @@ public class PmdReportTest
 
         generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/site/pmd.html" );
         renderer( mojo, generatedFile );
-        renderer( mojo, generatedFile );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // check if custom ruleset was applied
-        String str = readFile( new File( getBasedir(), "target/test/unit/custom-configuration/target/site/pmd.html" ) );
+        String str = readFile( generatedFile );
         assertTrue( lowerCaseContains( str, "Avoid using if statements without curly braces" ) );
 
         // Must be false as IfElseStmtsMustUseBraces is excluded!
@@ -309,7 +308,7 @@ public class PmdReportTest
         // verify the generated files do exist, even if there are no violations
         File generatedFile = new File( getBasedir(), "target/test/unit/empty-report/target/site/pmd.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-        String str = readFile( new File( getBasedir(), "target/test/unit/empty-report/target/site/pmd.html" ) );
+        String str = readFile( generatedFile );
         assertFalse( lowerCaseContains( str, "Hello.java" ) );
     }
 
@@ -368,6 +367,7 @@ public class PmdReportTest
             {
                 str.append( ' ' );
                 str.append( line );
+                str.append( '\n' );
             }
             return str.toString();
         }
@@ -411,7 +411,7 @@ public class PmdReportTest
         File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        String str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" ) );
+        String str = readFile( generatedFile );
 
         // check that there is no violation reported for "unusedVar2" - as it is suppressed
         assertFalse( str.contains( "Avoid unused private fields such as 'unusedVar2'." ) );
@@ -487,9 +487,16 @@ public class PmdReportTest
 
             File generatedFile = new File( getBasedir(), "target/test/unit/parse-error/target/pmd.xml" );
             assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-            String str = readFile( new File( getBasedir(), "target/test/unit/parse-error/target/pmd.xml" ) );
-
+            String str = readFile( generatedFile );
             assertTrue( str.contains( "Error while parsing" ) );
+            // The parse exception must be in the XML report
+            assertTrue( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
+
+            generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+            renderer( mojo, generatedFile );
+            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+            str = readFile( generatedFile );
+            // The parse exception must also be in the HTML report
             assertTrue( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
 
         } finally {
