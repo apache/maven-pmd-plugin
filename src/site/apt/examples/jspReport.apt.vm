@@ -3,7 +3,7 @@
  ------
  Thomas Williamson
  ------
- 2015-01-19
+ 2017-11-11
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -31,10 +31,14 @@ Analyzing JSP Code
   The PMD plugin analyzes Java by default. You can configure it to analyze Java Server Pages files instead as shown below.
 
   The example assumes that the JSP source code is stored in various subdirectories under the source directory
-  <<<src/main/webapp>>> and enables the built-in JSP ruleset (<basic>).
+  <<<src/main/webapp>>> and enables all rules from the categories "Best Practices", "Codestyle",
+  "Design", "Error Prone" and "Security".
 
  Note that you have to make sure that you configure <<<compileSourceRoots>>> and <<<includes>>>, so that
  PMD finds the JSP files.
+ 
+ See {{{https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_jsp.html}JSP Rule Index}} for a complete list
+ of available rules.
 
 +-----+
 <project>
@@ -48,7 +52,11 @@ Analyzing JSP Code
         <configuration>
           <language>jsp</language>
           <rulesets>
-            <ruleset>jsp-basic</ruleset>
+            <ruleset>/category/jsp/bestpractices.xml</ruleset>
+            <ruleset>/category/jsp/codestyle.xml</ruleset>
+            <ruleset>/category/jsp/design.xml</ruleset>
+            <ruleset>/category/jsp/errorprone.xml</ruleset>
+            <ruleset>/category/jsp/security.xml</ruleset>
           </rulesets>
           <includes>
             <include>**/*.jsp</include>

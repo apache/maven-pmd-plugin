@@ -70,13 +70,7 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // check if the rulesets, that have been applied, have been copied
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/java-basic.xml" );
-        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/java-imports.xml" );
-        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/java-unusedcode.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/maven-pmd-plugin-default.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
