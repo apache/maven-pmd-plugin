@@ -19,20 +19,24 @@ under the License.
 -->
 
 <ruleset name="customRuleset"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
-  <description>Just the braces rules I like</description>
-  <rule ref="rulesets/java/braces.xml">
-    <exclude name="WhileLoopsMustUseBraces"/>
-    <exclude name="IfElseStmtsMustUseBraces"/>
-  </rule>   
-  
-  <description>Lowest priority for unnecessary constructor</description>
-  <rule ref="rulesets/java/controversial.xml/UnnecessaryConstructor" >
-	<priority>5</priority>
-  </rule>
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <description>Just the braces rules I like</description>
 
-    <rule ref="rulesets/java/naming.xml/LongVariable">
+    <rule ref="category/java/codestyle.xml">
+        <exclude name="WhileLoopsMustUseBraces"/>
+        <exclude name="IfElseStmtsMustUseBraces"/>
+
+        <!-- needed to be excluded, otherwise the variable 'noSoLongVariableName' will be reported -->
+        <exclude name="LocalVariableCouldBeFinal"/>
+    </rule>
+
+    <!-- Lowest priority for unnecessary constructor -->
+    <rule ref="category/java/codestyle.xml/UnnecessaryConstructor" >
+        <priority>5</priority>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml/LongVariable">
         <properties>
             <property name="minimum" value="25"/>
         </properties>

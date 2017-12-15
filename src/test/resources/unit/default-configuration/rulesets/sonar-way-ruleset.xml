@@ -19,11 +19,14 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<ruleset>
-  <rule ref="rulesets/java/strings.xml/UselessStringValueOf">
+<ruleset name="SonarWay"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <description>Sonar Way Rule Set</description>
+  <rule ref="category/java/performance.xml/UselessStringValueOf">
     <priority>4</priority>
   </rule>
-  <rule ref="rulesets/java/strings.xml/AvoidDuplicateLiterals">
+  <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
     <priority>3</priority>
   </rule>
 </ruleset>
