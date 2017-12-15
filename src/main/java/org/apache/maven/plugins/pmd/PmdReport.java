@@ -66,6 +66,7 @@ import net.sourceforge.pmd.renderers.HTMLRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
+import net.sourceforge.pmd.util.ResourceLoader;
 import net.sourceforge.pmd.util.datasource.DataSource;
 import net.sourceforge.pmd.util.datasource.FileDataSource;
 
@@ -388,11 +389,14 @@ public class PmdReport
         }
 
         String encoding = getSourceEncoding();
-        if ( StringUtils.isEmpty( encoding ) && !filesToProcess.isEmpty() )
+        if ( StringUtils.isEmpty( encoding ) )
         {
-            getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
-                               + ", i.e. build is platform dependent!" );
             encoding = ReaderFactory.FILE_ENCODING;
+            if ( !filesToProcess.isEmpty() )
+            {
+                getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
+                               + ", i.e. build is platform dependent!" );
+            }
         }
         pmdConfiguration.setSourceEncoding( encoding );
 
@@ -468,7 +472,7 @@ public class PmdReport
     private void processFilesWithPMD( PMDConfiguration pmdConfiguration, List<DataSource> dataSources )
             throws MavenReportException
     {
-        RuleSetFactory ruleSetFactory = new RuleSetFactory( RuleSetFactory.class.getClassLoader(),
+        RuleSetFactory ruleSetFactory = new RuleSetFactory( new ResourceLoader(),
                 RulePriority.valueOf( this.minimumPriority ), false, true );
         RuleContext ruleContext = new RuleContext();
 

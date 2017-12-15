@@ -91,9 +91,10 @@ under the License.
     <javaVersion>1.7</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
-    <pmdVersion>5.6.1</pmdVersion>
+    <pmdVersion>6.0.0</pmdVersion>
     <sitePluginVersion>3.4</sitePluginVersion>
     <projectInfoReportsPluginVersion>2.8</projectInfoReportsPluginVersion>
+    <mavenPluginToolsVersion>3.5</mavenPluginToolsVersion>
   </properties>
 
   <dependencies>
@@ -249,6 +250,10 @@ under the License.
               <rules>
                 <enforceBytecodeVersion>
                   <maxJdkVersion>${javaVersion}</maxJdkVersion>
+                  <ignoreClasses>
+                    <!-- asm dependency from PMD contains a java9 module-info.class -->
+                    <ignoreClass>module-info</ignoreClass>
+                  </ignoreClasses>
                 </enforceBytecodeVersion>
               </rules>
               <fail>true</fail>
@@ -281,7 +286,7 @@ under the License.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.12</version>
+        <version>1.16</version>
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>
