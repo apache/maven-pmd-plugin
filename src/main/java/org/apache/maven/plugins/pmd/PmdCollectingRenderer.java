@@ -104,14 +104,19 @@ public class PmdCollectingRenderer extends AbstractRenderer
 
     /**
      * Gets the errors as a single string. Each error is in its own line.
+     * @param withDetails if <code>true</code> then add the error details additionally (contains e.g. the stacktrace)
      * @return the errors as string
      */
-    public String getErrorsAsString()
+    public String getErrorsAsString( boolean withDetails )
     {
         List<String> errorsAsString = new ArrayList<>( errors.size() );
         for ( ProcessingError error : errors )
         {
             errorsAsString.add( error.getFile() + ": " + error.getMsg() );
+            if ( withDetails )
+            {
+                errorsAsString.add( error.getDetail() );
+            }
         }
         return StringUtils.join( errorsAsString.toArray(), System.getProperty( "line.separator" ) );
     }
@@ -126,6 +131,10 @@ public class PmdCollectingRenderer extends AbstractRenderer
         for ( RuleViolation v : violations )
         {
             report.addRuleViolation( v );
+        }
+        for ( ProcessingError e : errors )
+        {
+            report.addError( e );
         }
         return report;
     }

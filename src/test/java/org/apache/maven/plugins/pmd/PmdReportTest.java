@@ -20,9 +20,11 @@ package org.apache.maven.plugins.pmd;
  */
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -464,6 +466,35 @@ public class PmdReportTest
             fail("Expected exception");
         } catch (RuntimeException e) {
             assertTrue( e.getMessage().endsWith( "Found 1 PMD processing errors" ) );
+        }
+    }
+
+    public void testPMDProcessingErrorWithDetailsSkipped()
+            throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                "src/test/resources/unit/processing-error/pmd-processing-error-skip-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+
+        PrintStream originalOut = System.out;
+        ByteArrayOutputStream logging = new ByteArrayOutputStream();
+        System.setOut( new PrintStream( logging ) );
+
+        try {
+            mojo.execute();
+            String output = logging.toString();
+            assertTrue ( output.contains( "There are 1 PMD processing errors:" ) );
+
+            File generatedFile = new File( getBasedir(), "target/test/unit/parse-error/target/pmd.xml" );
+            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+            String str = readFile( new File( getBasedir(), "target/test/unit/parse-error/target/pmd.xml" ) );
+
+            assertTrue( str.contains( "Error while parsing" ) );
+            assertTrue( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
+
+        } finally {
+            System.setOut( originalOut );
+            System.out.println( logging.toString() );
         }
     }
 

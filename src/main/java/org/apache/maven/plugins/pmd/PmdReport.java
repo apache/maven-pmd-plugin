@@ -422,11 +422,11 @@ public class PmdReport
             if ( !skipPmdError )
             {
                 getLog().error( "PMD processing errors:" );
-                getLog().error( renderer.getErrorsAsString() );
+                getLog().error( renderer.getErrorsAsString( getLog().isDebugEnabled() ) );
                 throw new MavenReportException( "Found " + renderer.getErrors().size() + " PMD processing errors" );
             }
             getLog().warn( "There are " + renderer.getErrors().size() + " PMD processing errors:" );
-            getLog().warn( renderer.getErrorsAsString() );
+            getLog().warn( renderer.getErrorsAsString( getLog().isDebugEnabled() ) );
         }
 
         removeExcludedViolations( renderer.getViolations() );
