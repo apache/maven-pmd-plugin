@@ -505,6 +505,42 @@ public class PmdReportTest
         }
     }
 
+    public void testPMDProcessingErrorWithDetailsNoReport()
+            throws Exception
+    {
+        File testPom = new File( getBasedir(),
+                "src/test/resources/unit/processing-error/pmd-processing-error-no-report-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+
+        PrintStream originalOut = System.out;
+        ByteArrayOutputStream logging = new ByteArrayOutputStream();
+        System.setOut( new PrintStream( logging ) );
+
+        try {
+            mojo.execute();
+            String output = logging.toString();
+            assertTrue ( output.contains( "There are 1 PMD processing errors:" ) );
+
+            File generatedFile = new File( getBasedir(), "target/test/unit/parse-error/target/pmd.xml" );
+            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+            String str = readFile( generatedFile );
+            assertTrue( str.contains( "Error while parsing" ) );
+            // The parse exception must be in the XML report
+            assertTrue( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
+
+            generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+            renderer( mojo, generatedFile );
+            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+            str = readFile( generatedFile );
+            // The parse exception must NOT be in the HTML report, since reportProcessingErrors is false
+            assertFalse( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
+
+        } finally {
+            System.setOut( originalOut );
+            System.out.println( logging.toString() );
+        }
+    }
+
     public void testPMDExcludeRootsShouldExcludeSubdirectories() throws Exception {
         File testPom = new File(getBasedir(), "src/test/resources/unit/exclude-roots/pmd-exclude-roots-plugin-config.xml");
         PmdReport mojo = (PmdReport) lookupMojo ("pmd", testPom);

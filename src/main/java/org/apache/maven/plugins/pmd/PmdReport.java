@@ -206,6 +206,18 @@ public class PmdReport
     private String analysisCacheLocation;
 
     /**
+     * Also render processing errors into the HTML report.
+     * Processing errors are problems, that PMD encountered while executing the rules.
+     * It can be parsing errors or exceptions during rule execution.
+     * Processing errors indicate a bug in PMD and the information provided help in
+     * reporting and fixing bugs in PMD.
+     *
+     * @since 3.9.0
+     */
+    @Parameter( property = "pmd.renderProcessingErrors", defaultValue = "true" )
+    private boolean renderProcessingErrors = true;
+
+    /**
      * {@inheritDoc}
      */
     public String getName( Locale locale )
@@ -507,7 +519,10 @@ public class PmdReport
         PmdReportGenerator doxiaRenderer = new PmdReportGenerator( getLog(), sink, getBundle( locale ), aggregate );
         doxiaRenderer.setFiles( filesToProcess );
         doxiaRenderer.setViolations( renderer.getViolations() );
-        doxiaRenderer.setProcessingErrors( renderer.getErrors() );
+        if ( renderProcessingErrors )
+        {
+            doxiaRenderer.setProcessingErrors( renderer.getErrors() );
+        }
 
         try
         {
