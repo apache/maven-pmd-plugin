@@ -3,7 +3,7 @@
  ------
  Andreas Dangel
  ------
- 2012-05-23
+ 2017-11-11
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -31,10 +31,13 @@ Analyzing JavaScript Code
  The PMD plugin analyzes Java by default. You can configure it to analyze JavaScript files instead as shown below.
 
  The example assumes that the JavaScript source code is stored in the subdirectory <<<src/main/javascript>>> and
- enables three built-in rulesets (<basic>, <braces>, <unnecessary>).
+ enables all rules from the "Best Practices", "Codestyle", and "Error Prone" categories.
 
  Note that you have to make sure that you configure <<<compileSourceRoots>>> and <<<includes>>>, so that
  PMD finds the JavaScript files.
+ 
+ See {{{https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_ecmascript.html}JavaScript Rule Index}} for the list
+ of available rules.
 
 +-----+
 <project>
@@ -48,9 +51,9 @@ Analyzing JavaScript Code
         <configuration>
           <language>javascript</language>
           <rulesets>
-            <ruleset>ecmascript-basic</ruleset>
-            <ruleset>ecmascript-braces</ruleset>
-            <ruleset>ecmascript-unnecessary</ruleset>
+            <ruleset>/category/ecmascript/bestpractices.xml</ruleset>
+            <ruleset>/category/ecmascript/codestyle.xml</ruleset>
+            <ruleset>/category/ecmascript/errorprone.xml</ruleset>
           </rulesets>
           <includes>
             <include>**/*.js</include>

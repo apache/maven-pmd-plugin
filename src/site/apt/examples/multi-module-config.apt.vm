@@ -2,7 +2,7 @@
  Multimodule Configuration
  ------
  ------
- 2016-09-25
+ 2017-11-11
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -87,7 +87,7 @@ whizbang
 </project>
 +-----+
 
-  A sample <<<pmd-ruleset.xml>>> could look lke this:
+  A sample <<<pmd-ruleset.xml>>> could look like this:
 
 +-----+
 <?xml version="1.0"?>
@@ -100,14 +100,30 @@ whizbang
         This ruleset defines the PMD rules for project "whizbang".
     </description>
 
-    <rule ref="rulesets/java/basic.xml"/>
-    <rule ref="rulesets/java/imports.xml"/>
-    <rule ref="rulesets/java/unnecessary.xml"/>
+    <rule ref="category/java/bestpractices.xml/AvoidUsingHardCodedIP" />
+    <rule ref="category/java/bestpractices.xml/CheckResultSet" />
+    <rule ref="category/java/bestpractices.xml/UnusedImports" />
+    <rule ref="category/java/bestpractices.xml/UnusedFormalParameter" />
+    <rule ref="category/java/bestpractices.xml/UnusedLocalVariable" />
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateField" />
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod" />
+
+    <rule ref="category/java/codestyle.xml/DontImportJavaLang" />
+    <rule ref="category/java/codestyle.xml/DuplicateImports" />
+
+    <rule ref="category/java/errorprone.xml/AvoidBranchingStatementAsLastInLoop" />
+    <rule ref="category/java/errorprone.xml/AvoidDecimalLiteralsInBigDecimalConstructor" />
+    <rule ref="category/java/errorprone.xml/AvoidMultipleUnaryOperators" />
+    <rule ref="category/java/errorprone.xml/AvoidUsingOctalValues" />
+    <rule ref="category/java/errorprone.xml/BrokenNullCheck" />
+
+    <!-- many more rules are available at https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_java.html -->
 </ruleset>
 +-----+
 
-  The ruleset references the default rulesets. For more information about rulesets, see
-  {{{http://pmd.github.io/pmd-5.5.1/customizing/howtomakearuleset.html}How to make a new ruleset}}.
+  The ruleset references some built-in rules. For more information about rulesets, see
+  {{{https://pmd.github.io/pmd-${pmdVersion}/pmd_userdocs_understanding_rulesets.html}Understanding Rulesets}}
+  and {{{./usingRuleSets.html}Using Rule Sets}}.
 
 * Configure the other projects to use it
 

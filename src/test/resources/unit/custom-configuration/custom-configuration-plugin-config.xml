@@ -41,10 +41,8 @@ under the License.
           <xrefLocation>${basedir}/target/test/unit/custom-configuration/target/site/xref</xrefLocation>
           <sourceEncoding>ISO-8859-1</sourceEncoding>
           <rulesets>
+            <ruleset>rulesets/java/maven-pmd-plugin-default.xml</ruleset>
             <ruleset>${basedir}/src/test/resources/unit/custom-configuration/resources/rulesets/custom.xml</ruleset>
-            <ruleset>java-basic</ruleset>
-            <ruleset>rulesets/java/unusedcode.xml</ruleset>
-            <ruleset>java-imports</ruleset>
           </rulesets>
           <targetJdk>1.4</targetJdk>
           <minimumPriority>4</minimumPriority>          

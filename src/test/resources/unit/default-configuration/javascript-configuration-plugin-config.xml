@@ -40,9 +40,9 @@ under the License.
           <sourceEncoding>UTF-8</sourceEncoding>
           <language>javascript</language>
           <rulesets>
-            <ruleset>ecmascript-basic</ruleset>
-            <ruleset>ecmascript-braces</ruleset>
-            <ruleset>ecmascript-unnecessary</ruleset>
+            <ruleset>/category/ecmascript/bestpractices.xml</ruleset>
+            <ruleset>/category/ecmascript/codestyle.xml</ruleset>
+            <ruleset>/category/ecmascript/errorprone.xml</ruleset>
           </rulesets>
           <includes>
             <include>**/*.js</include>

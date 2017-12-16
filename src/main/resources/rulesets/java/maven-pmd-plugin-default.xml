@@ -17,29 +17,28 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-<ruleset name="Maven Ruleset"
+<ruleset name="Default Maven PMD Plugin Ruleset"
     xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
 
-    <!--
-        Customized PMD ruleset for Maven, see [0] for more information.
-        This ruleset is references by org.apache.maven:maven-parent.
+    <description>
+        The default ruleset used by the Maven PMD Plugin, when no other ruleset is specified.
+        It contains the rules of the old (pre PMD 6.0.0) rulesets java-basic, java-empty, java-imports,
+        java-unnecessary, java-unusedcode.
+
+        This ruleset might be used as a starting point for an own customized ruleset [0].
 
         [0] https://pmd.github.io/latest/pmd_userdocs_understanding_rulesets.html
-    -->
-
-    <description>
-        This ruleset checks the code for discouraged programming constructs.
     </description>
 
     <rule ref="category/java/bestpractices.xml/AvoidUsingHardCodedIP" />
     <rule ref="category/java/bestpractices.xml/CheckResultSet" />
+    <rule ref="category/java/bestpractices.xml/UnusedImports" />
     <rule ref="category/java/bestpractices.xml/UnusedFormalParameter" />
     <rule ref="category/java/bestpractices.xml/UnusedLocalVariable" />
     <rule ref="category/java/bestpractices.xml/UnusedPrivateField" />
     <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod" />
-    <rule ref="category/java/bestpractices.xml/UnusedImports" />
 
     <rule ref="category/java/codestyle.xml/DontImportJavaLang" />
     <rule ref="category/java/codestyle.xml/DuplicateImports" />
@@ -64,17 +63,12 @@ under the License.
     <rule ref="category/java/errorprone.xml/CheckSkipResult" />
     <rule ref="category/java/errorprone.xml/ClassCastExceptionWithToArray" />
     <rule ref="category/java/errorprone.xml/DontUseFloatTypeForLoopIndices" />
-    <rule ref="category/java/errorprone.xml/EmptyCatchBlock">
-        <properties>
-          <property name="allowCommentedBlocks" value="true"/>
-        </properties>
-    </rule>
+    <rule ref="category/java/errorprone.xml/EmptyCatchBlock" />
     <rule ref="category/java/errorprone.xml/EmptyFinallyBlock" />
     <rule ref="category/java/errorprone.xml/EmptyIfStmt" />
     <rule ref="category/java/errorprone.xml/EmptyInitializer" />
     <rule ref="category/java/errorprone.xml/EmptyStatementBlock" />
     <rule ref="category/java/errorprone.xml/EmptyStatementNotInLoop" />
-    <rule ref="category/java/errorprone.xml/EmptyStaticInitializer" />
     <rule ref="category/java/errorprone.xml/EmptySwitchStatements" />
     <rule ref="category/java/errorprone.xml/EmptySynchronizedBlock" />
     <rule ref="category/java/errorprone.xml/EmptyTryBlock" />

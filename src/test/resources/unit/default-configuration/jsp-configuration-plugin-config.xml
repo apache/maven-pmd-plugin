@@ -40,7 +40,11 @@ under the License.
           <sourceEncoding>UTF-8</sourceEncoding>
           <language>jsp</language>
           <rulesets>
-            <ruleset>jsp-basic</ruleset>
+            <ruleset>/category/jsp/bestpractices.xml</ruleset>
+            <ruleset>/category/jsp/codestyle.xml</ruleset>
+            <ruleset>/category/jsp/design.xml</ruleset>
+            <ruleset>/category/jsp/errorprone.xml</ruleset>
+            <ruleset>/category/jsp/security.xml</ruleset>
           </rulesets>
           <includes>
             <include>**/*.jsp</include>

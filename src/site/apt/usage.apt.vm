@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 2006-06-23
+ 2017-11-11
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -81,7 +81,7 @@ Configuration
   You can configure the minimum code size which trips the CPD.  The default of <<<100>>> tokens corresponds
   to approximately 5-10 lines of code.
 
-  Since PMD parses the Java source, it needs to know which Java version to use. CPD's default is <<<1.8>>>.
+  Since PMD parses the Java source, it needs to know which Java version to use. CPD's default is <<<1.9>>>.
   The following is a possible configuration:
 
 +-----+

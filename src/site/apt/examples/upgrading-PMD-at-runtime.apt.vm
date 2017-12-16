@@ -29,7 +29,7 @@
 Upgrading PMD at Runtime
 
    The Maven PMD plugin comes with a default PMD version: for <<<maven-pmd-plugin ${project.version}>>>,
-   PMD  ${pmdVersion} is used by default.
+   <<PMD  ${pmdVersion}>> is used by default.
 
    Given that the {{{https://pmd.github.io}newer PMD version}} is compatible,
    you can override the PMD version, that the Maven plugin will use and benefit

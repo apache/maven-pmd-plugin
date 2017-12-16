@@ -3,7 +3,7 @@
  ------
  Dennis Lundberg
  ------
- 2014-07-28
+ 2017-11-11
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -44,11 +44,11 @@ ${project.name}
   * {{{./cpd-mojo.html}pmd:cpd}} generates a report for PMD's Copy/Paste Detector (CPD) tool.  It can also
     generate a cpd results file in any of these formats: xml, csv or txt.
 
-  * {{{./check-mojo.html}pmd:check}} verifies that the PMD report is empty and fails the build if it is not. This goal is executed by
-    default when <<<pmd:pmd>>> is executed.
+  * {{{./check-mojo.html}pmd:check}} verifies that the PMD report is empty and fails the build if it is not.
+    This goal is executed by default when <<<pmd:pmd>>> is executed.
 
-  * {{{./cpd-check-mojo.html}pmd:cpd-check}} verifies that the CPD report is empty and fails the build if it is not. This goal is
-    executed by default when <<<pmd:cpd>>> is executed.
+  * {{{./cpd-check-mojo.html}pmd:cpd-check}} verifies that the CPD report is empty and fails the build if it is not.
+    This goal is executed by default when <<<pmd:cpd>>> is executed.
 
 * Usage
 
@@ -67,6 +67,14 @@ ${project.name}
   Of course, patches are welcome, too. Contributors can check out the project from our
   {{{./source-repository.html}source repository}} and will find supplementary information in the
   {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
+
+* Upgrading Notes
+
+  <<Note:>> Starting with PMD 6.0.0 and Maven PMD Plugin 3.9.0, the rules have been reorganized
+  into categories, e.g. <<</category/java/bestpractices.xml>>>. So when upgrading to
+  Maven PMD Plugin 3.9.0 you should review your plugin configuration and/or custom ruleset.
+  See {{{./examples/usingRuleSets.html}Using Rule Sets}} for more information.
+
 
 * Examples
 
