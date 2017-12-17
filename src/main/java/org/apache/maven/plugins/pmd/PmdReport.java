@@ -82,14 +82,14 @@ public class PmdReport
     extends AbstractPmdReport
 {
     /**
-     * The target JDK to analyze based on. Should match the target used in the compiler plugin. Valid values are
-     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>, <code>1.7</code> and
-     * <code>1.8</code>.
+     * The target JDK to analyze based on. Should match the source used in the compiler plugin. Valid values are
+     * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>, <code>1.7</code>,
+     * <code>1.8</code> and <code>9</code>.
      * <p>
      *   <b>Note:</b> this parameter is only used if the language parameter is set to <code>java</code>.
      * </p>
      */
-    @Parameter( property = "targetJdk", defaultValue = "${maven.compiler.target}" )
+    @Parameter( property = "targetJdk", defaultValue = "${maven.compiler.source}" )
     private String targetJdk;
 
     /**
