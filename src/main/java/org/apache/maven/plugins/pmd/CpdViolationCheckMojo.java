@@ -114,9 +114,12 @@ public class CpdViolationCheckMojo
     protected List<Duplication> getErrorDetails( File cpdFile )
         throws XmlPullParserException, IOException
     {
-        CpdXpp3Reader reader = new CpdXpp3Reader();
-        CpdErrorDetail details = reader.read( new FileReader( cpdFile ), false );
-        return details.getDuplications();
+        try ( FileReader fileReader = new FileReader( cpdFile ) )
+        {
+            CpdXpp3Reader reader = new CpdXpp3Reader();
+            CpdErrorDetail details = reader.read( fileReader, false );
+            return details.getDuplications();
+        }
     }
 
     @Override
