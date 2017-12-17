@@ -147,7 +147,7 @@ public class PmdReportTest
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
 
         // Additional test case for MPMD-174 (https://issues.apache.org/jira/browse/MPMD-174).
-        WireMockServer mockServer = new WireMockServer( 3456 );
+        WireMockServer mockServer = new WireMockServer();
         mockServer.start();
 
         String sonarRuleset =
