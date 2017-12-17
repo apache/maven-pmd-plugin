@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -147,7 +148,8 @@ public class PmdReportTest
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
 
         // Additional test case for MPMD-174 (https://issues.apache.org/jira/browse/MPMD-174).
-        WireMockServer mockServer = new WireMockServer();
+        int port = determineFreePort();
+        WireMockServer mockServer = new WireMockServer( port );
         mockServer.start();
 
         String sonarRuleset =
@@ -205,6 +207,15 @@ public class PmdReportTest
         assertTrue( str.contains( "/xref/def/configuration/AppSample.html#L45" ) );
 
         mockServer.stop();
+    }
+
+    private int determineFreePort()
+    {
+        try (ServerSocket socket = new ServerSocket(0)) {
+            return socket.getLocalPort();
+        } catch (IOException e) {
+            throw new RuntimeException( "Couldn't find a free port.", e );
+        }
     }
 
     /**
