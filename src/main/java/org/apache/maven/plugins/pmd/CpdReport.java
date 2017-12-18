@@ -230,6 +230,8 @@ public class CpdReport
             return;
         }
 
+        setupPmdLogging();
+
         Properties p = new Properties();
         if ( ignoreLiterals )
         {

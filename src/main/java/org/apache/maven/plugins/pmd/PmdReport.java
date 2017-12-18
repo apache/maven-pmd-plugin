@@ -320,6 +320,8 @@ public class PmdReport
     private void executePmd()
         throws MavenReportException
     {
+        setupPmdLogging();
+
         if ( renderer != null )
         {
             // PMD has already been run

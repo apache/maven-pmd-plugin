@@ -29,6 +29,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import net.sourceforge.pmd.PMD;
 
@@ -42,6 +45,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
  * Base class for the PMD reports.
@@ -215,6 +219,17 @@ public abstract class AbstractPmdReport
     @Parameter( property = "pmd.excludeFromFailureFile", defaultValue = "" )
     protected String excludeFromFailureFile;
 
+    /**
+     * Redirect PMD log into maven log out.
+     * When enabled, the PMD log output is redirected to maven, so that
+     * it is visible in the console together with all the other log output.
+     * Also, if maven is started with the debug flag (<code>-X</code> or <code>--debug</code>),
+     * the PMD logger is also configured for debug.
+     *
+     * @since 3.9.0
+     */
+    @Parameter( defaultValue = "true", property = "pmd.showPmdLog" )
+    protected boolean showPmdLog = true;
 
     /** The files that are being analyzed. */
     protected Map<File, PmdFileInfo> filesToProcess;
@@ -533,6 +548,25 @@ public abstract class AbstractPmdReport
     protected String getOutputEncoding()
     {
         return ( outputEncoding != null ) ? outputEncoding : ReaderFactory.UTF_8;
+    }
+
+    protected void setupPmdLogging()
+    {
+        if ( !showPmdLog )
+        {
+            return;
+        }
+
+        Logger logger = Logger.getLogger( "net.sourceforge.pmd" );
+
+        SLF4JBridgeHandler handler = new SLF4JBridgeHandler();
+        SimpleFormatter formatter = new SimpleFormatter();
+        handler.setFormatter( formatter );
+        logger.setUseParentHandlers( false );
+        logger.addHandler( handler );
+        handler.setLevel( Level.ALL );
+        logger.setLevel( Level.ALL );
+        getLog().debug( "Configured jul-to-slf4j bridge for " + logger.getName() );
     }
 
     static String getPmdVersion()
