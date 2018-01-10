@@ -119,7 +119,7 @@ public class PmdReport
 
     /**
      * The PMD rulesets to use. See the
-     * <a href="http://pmd.github.io/latest/pmd_rules_java.html">Stock Java Rulesets</a> for a
+     * <a href="https://pmd.github.io/latest/pmd_rules_java.html">Stock Java Rulesets</a> for a
      * list of available rules.
      * Defaults to a custom ruleset provided by this maven plugin
      * (<code>/rulesets/java/maven-pmd-plugin-default.xml</code>).
