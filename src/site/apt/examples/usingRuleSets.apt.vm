@@ -3,7 +3,7 @@
  ------
  Maria Odea Ching
  ------
- 2017-11-11
+ 2018-01-10
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -68,9 +68,8 @@ Using Rule Sets
         <version>${project.version}</version>
         <configuration>
           <rulesets>
-            <!-- Two rule sets that come bundled with PMD -->
-            <ruleset>/rulesets/java/braces.xml</ruleset>
-            <ruleset>/rulesets/java/naming.xml</ruleset>
+            <!-- A rule set, that comes bundled with PMD -->
+            <ruleset>/category/java/bestpractices.xml</ruleset>
             <!-- Custom local file system rule set -->
             <ruleset>d:\rulesets\strings.xml</ruleset>
             <!-- Custom remote rule set accessed via a URL -->
@@ -92,7 +91,7 @@ The default ruleset
   If you use a different language, you'll need to specify your own custom ruleset.
 
   The current version of the ruleset can be found in version control:
-  {{http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-pmd-plugin/src/main/resources/rulesets/java/maven-pmd-plugin-default.xml}}
+  {{https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=blob_plain;f=src/main/resources/rulesets/java/maven-pmd-plugin-default.xml;hb=HEAD}}
 
 +-----+
     <rule ref="category/java/bestpractices.xml/AvoidUsingHardCodedIP" />
@@ -132,7 +131,6 @@ The default ruleset
     <rule ref="category/java/errorprone.xml/EmptyInitializer" />
     <rule ref="category/java/errorprone.xml/EmptyStatementBlock" />
     <rule ref="category/java/errorprone.xml/EmptyStatementNotInLoop" />
-    <rule ref="category/java/errorprone.xml/EmptyStaticInitializer" />
     <rule ref="category/java/errorprone.xml/EmptySwitchStatements" />
     <rule ref="category/java/errorprone.xml/EmptySynchronizedBlock" />
     <rule ref="category/java/errorprone.xml/EmptyTryBlock" />

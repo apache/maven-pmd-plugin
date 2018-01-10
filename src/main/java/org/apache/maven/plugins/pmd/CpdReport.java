@@ -55,8 +55,9 @@ import net.sourceforge.pmd.cpd.Renderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
 
 /**
- * Creates a report for PMD's CPD tool. See <a
- * href="http://pmd.sourceforge.net/cpd.html">http://pmd.sourceforge.net/cpd.html</a> for more detail.
+ * Creates a report for PMD's CPD tool. See
+ * <a href="https://pmd.github.io/latest/pmd_userdocs_cpd.html">Finding duplicated code</a>
+ * for more details.
  *
  * @author Mike Perham
  * @version $Id$
