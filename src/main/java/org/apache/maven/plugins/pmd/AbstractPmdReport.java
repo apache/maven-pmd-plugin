@@ -274,7 +274,6 @@ public abstract class AbstractPmdReport
             else
             {
                 // Not yet generated - check if the report is on its way
-                @SuppressWarnings( "unchecked" )
                 List<ReportPlugin> reportPlugins = project.getReportPlugins();
                 for ( ReportPlugin plugin : reportPlugins )
                 {
@@ -347,18 +346,15 @@ public abstract class AbstractPmdReport
         {
             testSourceRoots = project.getTestCompileSourceRoots();
         }
-        if ( includeTests )
+        if ( includeTests && testSourceRoots != null )
         {
-            if ( testSourceRoots != null )
+            for ( String root : testSourceRoots )
             {
-                for ( String root : testSourceRoots )
+                File sroot = new File( root );
+                if ( sroot.exists() )
                 {
-                    File sroot = new File( root );
-                    if ( sroot.exists() )
-                    {
-                        String testXref = constructXRefLocation( true );
-                        directories.add( new PmdFileInfo( project, sroot, testXref ) );
-                    }
+                    String testXref = constructXRefLocation( true );
+                    directories.add( new PmdFileInfo( project, sroot, testXref ) );
                 }
             }
         }
@@ -366,7 +362,6 @@ public abstract class AbstractPmdReport
         {
             for ( MavenProject localProject : reactorProjects )
             {
-                @SuppressWarnings( "unchecked" )
                 List<String> localCompileSourceRoots = localProject.getCompileSourceRoots();
                 for ( String root : localCompileSourceRoots )
                 {
@@ -379,7 +374,6 @@ public abstract class AbstractPmdReport
                 }
                 if ( includeTests )
                 {
-                    @SuppressWarnings( "unchecked" )
                     List<String> localTestCompileSourceRoots = localProject.getTestCompileSourceRoots();
                     for ( String root : localTestCompileSourceRoots )
                     {
