@@ -233,9 +233,16 @@ public class PmdReport
         return getBundle( locale ).getString( "report.pmd.description" );
     }
 
-    public void setRulesets( String[] rules )
+    /**
+     * Configures the PMD rulesets to be used directly.
+     * Note: Usually the rulesets are configured via the property.
+     *
+     * @param rulesets the PMD rulesets to be used.
+     * @see #rulesets
+     */
+    public void setRulesets( String[] rulesets )
     {
-        rulesets = rules;
+        this.rulesets = Arrays.copyOf( rulesets, rulesets.length );
     }
 
     /**
@@ -596,7 +603,7 @@ public class PmdReport
             r.start();
             r.renderFileReport( report );
             r.end();
-            writer.flush();
+            r.flush();
 
             if ( includeXmlInSite )
             {
@@ -650,7 +657,6 @@ public class PmdReport
         {
             try
             {
-                @SuppressWarnings( "unchecked" )
                 List<String> classpath =
                     includeTests ? project.getTestClasspathElements() : project.getCompileClasspathElements();
                 getLog().debug( "Using aux classpath: " + classpath );

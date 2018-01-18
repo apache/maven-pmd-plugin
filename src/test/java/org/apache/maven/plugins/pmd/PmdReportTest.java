@@ -370,7 +370,7 @@ public class PmdReportTest
         assertTrue( pmdXmlTarget.contains( "</pmd>" ) );
 
         // check that pmd.xml file has the closing element
-        String pmdXml = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.xml" ) );
+        String pmdXml = readFile( generatedXmlFile );
         assertTrue( pmdXml.contains( "</pmd>" ) );
     }
 
