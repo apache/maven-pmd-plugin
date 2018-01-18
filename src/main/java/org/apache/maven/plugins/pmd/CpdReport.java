@@ -378,6 +378,7 @@ public class CpdReport
         try ( Writer writer = new OutputStreamWriter( new FileOutputStream( targetFile ), getOutputEncoding() ) )
         {
             writer.write( buffer );
+            writer.flush();
 
             if ( includeXmlInSite )
             {

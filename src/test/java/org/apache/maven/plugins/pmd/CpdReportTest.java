@@ -186,18 +186,10 @@ public class CpdReportTest
         return str.toString();
     }
 
-    public void testWriteNonHtml()
-        throws Exception
+    private CPD prepareMockCpd( String duplicatedCodeFragment )
     {
-        File testPom =
-            new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
-        CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
-        assertNotNull( mojo );
-
         TokenEntry tFirstEntry = new TokenEntry( "public java", "MyClass.java", 2 );
         TokenEntry tSecondEntry = new TokenEntry( "public java", "MyClass3.java", 2 );
-        String duplicatedCodeFragment = "// ----- duplicated code example -----";
         SourceCode sourceCodeFirst = new SourceCode(new SourceCode.StringCodeLoader(
                 PMD.EOL + duplicatedCodeFragment + PMD.EOL, "MyClass.java"));
         SourceCode sourceCodeSecond = new SourceCode(new SourceCode.StringCodeLoader(
@@ -220,20 +212,67 @@ public class CpdReportTest
         CPD tCpd = new MockCpd( cpdConfiguration, tList.iterator() );
 
         tCpd.go();
+        return tCpd;
+    }
+
+    public void testWriteNonHtml()
+        throws Exception
+    {
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
+        CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
+        assertNotNull( mojo );
+
+        String duplicatedCodeFragment = "// ----- duplicated code example -----";
+        CPD tCpd = prepareMockCpd( duplicatedCodeFragment );
         mojo.writeNonHtml( tCpd );
 
-        File tReport = new File( "target/test/unit/default-configuration/target/cpd.xml" );
-        // parseDocument( new BufferedInputStream( new FileInputStream( report ) ) );
+        File tReport = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
 
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document pmdCpdDocument = builder.parse( tReport );
         assertNotNull( pmdCpdDocument );
 
-        String str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" ) );
+        String str = readFile( tReport );
         assertTrue( lowerCaseContains( str, "MyClass.java" ) );
         assertTrue( lowerCaseContains( str, "MyClass3.java" ) );
         assertTrue( lowerCaseContains( str, duplicatedCodeFragment ) );
     }
+
+    /**
+     * verify the cpd.xml file is included in the site when requested.
+     * @throws Exception
+     */
+    public void testIncludeXmlInSite()
+            throws Exception
+    {
+        File testPom =
+                new File( getBasedir(),
+                          "src/test/resources/unit/default-configuration/cpd-report-include-xml-in-site-plugin-config.xml" );
+        CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
+        assertNotNull( mojo );
+
+        String duplicatedCodeFragment = "// ----- duplicated code example -----";
+        CPD tCpd = prepareMockCpd( duplicatedCodeFragment );
+        mojo.writeNonHtml( tCpd );
+
+        File tReport = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
+        assertTrue( FileUtils.fileExists( tReport.getAbsolutePath() ) );
+
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document pmdCpdDocument = builder.parse( tReport );
+        assertNotNull( pmdCpdDocument );
+
+        String str = readFile( tReport );
+        assertTrue( str.contains( "</pmd-cpd>" ) );
+
+        File siteReport = new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.xml" );
+        assertTrue( FileUtils.fileExists( siteReport.getAbsolutePath() ) );
+        String siteReportContent = readFile( siteReport );
+        assertTrue( siteReportContent.contains( "</pmd-cpd>" ) );
+    }
+
 
     public void testSkipEmptyReportConfiguration()
         throws Exception
