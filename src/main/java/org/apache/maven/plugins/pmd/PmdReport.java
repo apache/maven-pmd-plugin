@@ -596,6 +596,7 @@ public class PmdReport
             r.start();
             r.renderFileReport( report );
             r.end();
+            writer.flush();
 
             if ( includeXmlInSite )
             {
