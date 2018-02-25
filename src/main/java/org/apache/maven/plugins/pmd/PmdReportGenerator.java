@@ -115,20 +115,22 @@ public class PmdReportGenerator
         String result = filename;
         if ( fileInfo != null && fileInfo.getSourceDirectory() != null )
         {
-            result =
-                StringUtils.substring( result, fileInfo.getSourceDirectory().getAbsolutePath().length() + 1 );
+            result = StringUtils.substring( result, fileInfo.getSourceDirectory().getAbsolutePath().length() + 1 );
         }
-        result = StringUtils.replace( result, "\\", "/" );
-
-        if ( aggregate && fileInfo != null && fileInfo.getProject() != null )
-        {
-            result = fileInfo.getProject().getName() + " - " + result;
-        }
-
-        return result;
+        return StringUtils.replace( result, "\\", "/" );
     }
 
-    private PmdFileInfo determineFileInfo( String filename ) throws IOException
+    private String makeFileSectionName( String filename, PmdFileInfo fileInfo )
+    {
+        if ( aggregate && fileInfo != null && fileInfo.getProject() != null )
+        {
+            return fileInfo.getProject().getName() + " - " + filename;
+        }
+        return filename;
+    }
+
+    private PmdFileInfo determineFileInfo( String filename )
+        throws IOException
     {
         File canonicalFilename = new File( filename ).getCanonicalFile();
         PmdFileInfo fileInfo = files.get( canonicalFilename );
@@ -149,7 +151,7 @@ public class PmdReportGenerator
         // prepare the filename
         this.currentFilename = shortenFilename( currentFilename, fileInfo );
 
-        sink.text( this.currentFilename );
+        sink.text( makeFileSectionName( this.currentFilename, fileInfo ) );
         sink.sectionTitle2_();
 
         sink.table();
@@ -321,7 +323,7 @@ public class PmdReportGenerator
     {
         String filename = error.getFile();
         PmdFileInfo fileInfo = determineFileInfo( filename );
-        filename = shortenFilename( filename, fileInfo );
+        filename = makeFileSectionName( shortenFilename( filename, fileInfo ), fileInfo );
 
         sink.tableRow();
         sink.tableCell();
