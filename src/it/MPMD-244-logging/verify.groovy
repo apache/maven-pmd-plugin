@@ -21,8 +21,11 @@ File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 assert buildLog.text.contains( "PMD processing errors" )
 assert buildLog.text.contains( "Error while parsing" )
-String currentDir = basedir.getCanonicalPath()
+
+String disabledPath = new File( basedir, 'logging-disabled/src/main/java/BrokenFile.java' ).getCanonicalPath()
+String enabledPath = new File( basedir, 'logging-enabled/src/main/java/BrokenFile.java' ).getCanonicalPath()
+
 // logging disabled: the pmd exception is only output through the processing error reporting (since MPMD-246)
-assert 1 == buildLog.text.count( "net.sourceforge.pmd.PMDException: Error while parsing ${currentDir}/logging-disabled/src/main/java/BrokenFile.java" )
+assert 1 == buildLog.text.count( "net.sourceforge.pmd.PMDException: Error while parsing ${disabledPath}" )
 // logging enabled: the pmd exception is output twice: through the processing error reporting (since MPMD-246) and through PMD's own logging
-assert 2 == buildLog.text.count( "net.sourceforge.pmd.PMDException: Error while parsing ${currentDir}/logging-enabled/src/main/java/BrokenFile.java" )
+assert 2 == buildLog.text.count( "net.sourceforge.pmd.PMDException: Error while parsing ${enabledPath}" )
