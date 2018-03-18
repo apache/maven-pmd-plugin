@@ -87,6 +87,14 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     @Parameter( property = "pmd.excludeFromFailureFile", defaultValue = "" )
     private String excludeFromFailureFile;
 
+    /**
+     * The maximum number of violations allowed before execution fails.
+     *
+     * @since 3.10
+     */
+    @Parameter( property = "pmd.maxAllowedViolations", defaultValue = "0" )
+    private int maxAllowedViolations;
+
     /** Helper to exclude violations from the result. */
     private final ExcludeFromFile<D> excludeFromFile;
 
@@ -143,7 +151,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
 
                 getLog().debug( "PMD failureCount: " + failureCount + ", warningCount: " + warningCount );
 
-                if ( failureCount > 0 && isFailOnViolation() )
+                if ( failureCount > getMaxAllowedViolations() && isFailOnViolation() )
                 {
                     throw new MojoFailureException( message );
                 }
@@ -294,5 +302,10 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     public boolean isFailOnViolation()
     {
         return failOnViolation;
+    }
+
+    public Integer getMaxAllowedViolations()
+    {
+        return maxAllowedViolations;
     }
 }
