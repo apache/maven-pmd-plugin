@@ -117,7 +117,6 @@ public class PmdViolationCheckMojoTest
             }
         }
 
-        assertTrue( true );
     }
 
     public void testFailurePriority()
