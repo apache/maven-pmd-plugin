@@ -90,7 +90,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     /**
      * The maximum number of violations allowed before execution fails.
      *
-     * @since 3.10
+     * @since 3.10.0
      */
     @Parameter( property = "pmd.maxAllowedViolations", defaultValue = "0" )
     private int maxAllowedViolations;
