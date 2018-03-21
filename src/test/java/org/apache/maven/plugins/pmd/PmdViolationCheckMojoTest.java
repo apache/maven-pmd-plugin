@@ -78,6 +78,47 @@ public class PmdViolationCheckMojoTest
         assertTrue( true );
     }
 
+    public void testMaxAllowedViolations()
+        throws Exception
+    {
+        File testPom =
+            new File( getBasedir(),
+                "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+        final PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
+
+        testPom =
+            new File( getBasedir(),
+                "src/test/resources/unit/default-configuration/pmd-check-notfailmaxviolation-plugin-config.xml" );
+        final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
+        pmdViolationMojo.execute();
+
+        testPom =
+            new File( getBasedir(),
+                "src/test/resources/unit/default-configuration/pmd-check-failmaxviolation-plugin-config.xml" );
+        final PmdViolationCheckMojo pmdViolationMojoFail = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
+
+        try
+        {
+            pmdViolationMojoFail.execute();
+            fail( "Exception Expected" );
+        }
+        catch ( final MojoFailureException e )
+        {
+            String message = e.getMessage();
+            if ( message.contains( "You have 5 PMD violations and 3 warnings." ) )
+            {
+                System.out.println( "Caught expected message: " + e.getMessage() );// expected
+            }
+            else
+            {
+                throw new AssertionError( "Expected: '" + message
+                    + "' to contain 'You have 5 PMD violations and 3 warnings.'" );
+            }
+        }
+
+    }
+
     public void testFailurePriority()
         throws Exception
     {
