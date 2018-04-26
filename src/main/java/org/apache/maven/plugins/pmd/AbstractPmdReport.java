@@ -29,6 +29,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -552,6 +553,21 @@ public abstract class AbstractPmdReport
         }
 
         Logger logger = Logger.getLogger( "net.sourceforge.pmd" );
+
+        boolean slf4jBridgeAlreadyAdded = false;
+        for ( Handler handler : logger.getHandlers() )
+        {
+            if ( handler instanceof SLF4JBridgeHandler )
+            {
+                slf4jBridgeAlreadyAdded = true;
+                break;
+            }
+        }
+
+        if ( slf4jBridgeAlreadyAdded )
+        {
+            return;
+        }
 
         SLF4JBridgeHandler handler = new SLF4JBridgeHandler();
         SimpleFormatter formatter = new SimpleFormatter();
