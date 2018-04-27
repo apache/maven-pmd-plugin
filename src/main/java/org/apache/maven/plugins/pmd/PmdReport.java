@@ -680,6 +680,10 @@ public class PmdReport
             configuration.setAnalysisCacheLocation( analysisCacheLocation );
             getLog().debug( "Using analysis cache location: " + analysisCacheLocation );
         }
+        else
+        {
+            configuration.setIgnoreIncrementalAnalysis( true );
+        }
 
         return configuration;
     }

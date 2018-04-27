@@ -25,3 +25,8 @@ assert defaultAnalysisCacheLocation.exists()
 
 File customCacheLocation = new File( basedir, 'custom-analysis-cache/target/custom-analysis-pmd.cache' )
 assert customCacheLocation.exists()
+
+File buildLog = new File( basedir, 'build.log' )
+assert buildLog.exists()
+
+assert !buildLog.text.contains( 'This analysis could be faster, please consider using Incremental Analysis' )
