@@ -248,9 +248,11 @@ public class PmdReportTest
 
         // check if custom ruleset was applied
         String str = readFile( generatedFile );
-        assertTrue( lowerCaseContains( str, "Avoid using if statements without curly braces" ) );
 
-        // Must be false as IfElseStmtsMustUseBraces is excluded!
+        // codestyle.xml/ControlStatementBraces:
+        assertTrue( lowerCaseContains( str, "This statement should have braces" ) );
+
+        // Must be false as codestyle.xml/ControlStatementBraces with checkIfElseStmt=false is used
         assertFalse( lowerCaseContains( str, "Avoid using if...else statements without curly braces" ) );
 
         assertFalse( "unnecessary constructor should not be triggered because of low priority",

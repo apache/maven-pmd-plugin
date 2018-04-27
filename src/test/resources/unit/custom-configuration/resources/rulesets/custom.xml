@@ -23,12 +23,12 @@ under the License.
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
     <description>Just the braces rules I like</description>
 
-    <rule ref="category/java/codestyle.xml">
-        <exclude name="WhileLoopsMustUseBraces"/>
-        <exclude name="IfElseStmtsMustUseBraces"/>
-
-        <!-- needed to be excluded, otherwise the variable 'noSoLongVariableName' will be reported -->
-        <exclude name="LocalVariableCouldBeFinal"/>
+    <rule ref="category/java/codestyle.xml/ShortClassName"/>
+    <rule ref="category/java/codestyle.xml/MethodArgumentCouldBeFinal"/>
+    <rule ref="category/java/codestyle.xml/ControlStatementBraces">
+        <properties>
+            <property name="checkIfElseStmt" value="false"/>
+        </properties>
     </rule>
 
     <!-- Lowest priority for unnecessary constructor -->

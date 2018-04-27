@@ -49,11 +49,15 @@ public class App
      */
     protected void sampleMethod( String str )
     {
+        // if/else statement without braces
         if ( str.equals( "RED" ) )
             System.out.println( "The color is red." );
         else if ( str.equals( "BLLUE" ) )
             System.out.println( "The color is blue." );
 
+        // for loop without braces
+        for ( int i = 0; i < 10; i++ )
+            i = i + 1;
     }
 
     /**
