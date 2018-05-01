@@ -85,6 +85,7 @@ under the License.
   </distributionManagement>
 
   <properties>
+    <surefire.version>2.21.0</surefire.version>
     <mavenVersion>3.0</mavenVersion>
     <doxiaVersion>1.7</doxiaVersion>
     <!-- Because PMD 5.4+ requires Java 7 -->
