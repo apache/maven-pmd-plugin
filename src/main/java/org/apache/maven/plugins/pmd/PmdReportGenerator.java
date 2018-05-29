@@ -60,6 +60,8 @@ public class PmdReportGenerator
 
     private boolean aggregate;
 
+    private boolean renderRuleViolationPriority;
+
     // The number of erroneous files
     private int fileCount = 0;
 
@@ -159,6 +161,12 @@ public class PmdReportGenerator
         sink.tableHeaderCell();
         sink.text( bundle.getString( "report.pmd.column.violation" ) );
         sink.tableHeaderCell_();
+        if ( this.renderRuleViolationPriority )
+        {
+            sink.tableHeaderCell();
+            sink.text( bundle.getString( "report.pmd.column.priority" ) );
+            sink.tableHeaderCell_();
+        }
         sink.tableHeaderCell();
         sink.text( bundle.getString( "report.pmd.column.line" ) );
         sink.tableHeaderCell_();
@@ -177,6 +185,14 @@ public class PmdReportGenerator
         sink.tableCell();
         sink.text( ruleViolation.getDescription() );
         sink.tableCell_();
+
+        if ( this.renderRuleViolationPriority )
+        {
+            sink.tableCell();
+            sink.text( String.valueOf( ruleViolation.getRule().getPriority().getPriority() ) );
+            sink.tableCell_();
+        }
+
         sink.tableCell();
 
         int beginLine = ruleViolation.getBeginLine();
@@ -411,5 +427,10 @@ public class PmdReportGenerator
     public void setFiles( Map<File, PmdFileInfo> files )
     {
         this.files = files;
+    }
+
+    public void setRenderRuleViolationPriority( boolean renderRuleViolationPriority )
+    {
+        this.renderRuleViolationPriority = renderRuleViolationPriority;
     }
 }

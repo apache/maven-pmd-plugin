@@ -218,6 +218,14 @@ public class PmdReport
     private boolean renderProcessingErrors = true;
 
     /**
+     * Also render the rule priority into the HTML report.
+     *
+     * @since 3.10.0
+     */
+    @Parameter( property = "pmd.renderRuleViolationPriority", defaultValue = "true" )
+    private boolean renderRuleViolationPriority = true;
+
+    /**
      * {@inheritDoc}
      */
     public String getName( Locale locale )
@@ -524,6 +532,7 @@ public class PmdReport
     {
         Sink sink = getSink();
         PmdReportGenerator doxiaRenderer = new PmdReportGenerator( getLog(), sink, getBundle( locale ), aggregate );
+        doxiaRenderer.setRenderRuleViolationPriority( renderRuleViolationPriority );
         doxiaRenderer.setFiles( filesToProcess );
         doxiaRenderer.setViolations( renderer.getViolations() );
         if ( renderProcessingErrors )

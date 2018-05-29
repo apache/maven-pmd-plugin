@@ -52,6 +52,7 @@ public class PmdReportTest
         throws Exception
     {
         super.setUp();
+        Locale.setDefault( Locale.ENGLISH );
         FileUtils.deleteDirectory( new File( getBasedir(), "target/test/unit" ) );
     }
 
@@ -86,6 +87,32 @@ public class PmdReportTest
         assertTrue( str.contains( "/xref/def/configuration/App.html#L31" ) );
 
         assertTrue( str.contains( "/xref/def/configuration/AppSample.html#L45" ) );
+
+        // check if there's a priority column
+        assertTrue( str.contains( "Priority" ) );
+    }
+
+    public void testDefaultConfigurationNotRenderRuleViolationPriority()
+            throws Exception
+    {
+        FileUtils.copyDirectoryStructure( new File( getBasedir(),
+                                                    "src/test/resources/unit/default-configuration/jxr-files" ),
+                                          new File( getBasedir(), "target/test/unit/default-configuration/target/site" ) );
+
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/pmd-report-not-render-rule-priority-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
+
+        File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+        renderer( mojo, generatedFile );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        String str = readFile( generatedFile );
+
+        // check that there's no priority column
+        assertFalse( str.contains( "Priority" ) );
     }
 
     public void testDefaultConfigurationWithAnalysisCache()
