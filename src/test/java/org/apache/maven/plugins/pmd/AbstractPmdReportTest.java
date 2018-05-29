@@ -68,7 +68,7 @@ public abstract class AbstractPmdReportTest
      * the given <code>text</code> ignoring case.
      *
      * @param text the string in which the search is executed
-     * @param contained the string, the should be searched
+     * @param contains the string, the should be searched
      * @return <code>true</code> if the string is contained, otherwise <code>false</code>.
      */
     public static boolean lowerCaseContains( String text, String contains )
