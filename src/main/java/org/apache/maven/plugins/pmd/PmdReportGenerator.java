@@ -371,7 +371,7 @@ public class PmdReportGenerator
 
         sink.paragraph();
         sink.text( bundle.getString( "report.pmd.pmdlink" ) + " " );
-        sink.link( "http://pmd.sourceforge.net/" );
+        sink.link( "https://pmd.github.io" );
         sink.text( "PMD" );
         sink.link_();
         sink.text( " " + AbstractPmdReport.getPmdVersion() + "." );

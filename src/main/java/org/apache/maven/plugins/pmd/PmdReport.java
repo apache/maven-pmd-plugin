@@ -84,7 +84,7 @@ public class PmdReport
     /**
      * The target JDK to analyze based on. Should match the source used in the compiler plugin. Valid values are
      * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>, <code>1.7</code>,
-     * <code>1.8</code> and <code>9</code>.
+     * <code>1.8</code>, <code>9</code>, and <code>10</code>.
      * <p>
      *   <b>Note:</b> this parameter is only used if the language parameter is set to <code>java</code>.
      * </p>
@@ -156,7 +156,7 @@ public class PmdReport
     /**
      * Source level marker used to indicate whether a RuleViolation should be suppressed. If it is not set, PMD's
      * default will be used, which is <code>NOPMD</code>. See also <a
-     * href="https://pmd.github.io/latest/usage/suppressing.html">PMD &#x2013; Suppressing warnings</a>.
+     * href="https://pmd.github.io/latest/pmd_userdocs_suppressing_warnings.html">PMD &#x2013; Suppressing warnings</a>.
      *
      * @since 3.4
      */

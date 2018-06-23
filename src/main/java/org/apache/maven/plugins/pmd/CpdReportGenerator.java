@@ -86,7 +86,7 @@ public class CpdReportGenerator
 
         sink.paragraph();
         sink.text( bundle.getString( "report.cpd.cpdlink" ) + " " );
-        sink.link( "http://pmd.sourceforge.net/cpd.html" );
+        sink.link( "https://pmd.github.io/latest/pmd_userdocs_cpd.html" );
         sink.text( "CPD" );
         sink.link_();
         sink.text( " " + AbstractPmdReport.getPmdVersion() + "." );
