@@ -40,6 +40,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
@@ -676,17 +677,7 @@ public class PmdReport
 
         if ( typeResolution )
         {
-            try
-            {
-                List<String> classpath =
-                    includeTests ? project.getTestClasspathElements() : project.getCompileClasspathElements();
-                getLog().debug( "Using aux classpath: " + classpath );
-                configuration.prependClasspath( StringUtils.join( classpath.iterator(), File.pathSeparator ) );
-            }
-            catch ( Exception e )
-            {
-                throw new MavenReportException( e.getMessage(), e );
-            }
+            configureTypeResolution( configuration );
         }
 
         if ( null != suppressMarker )
@@ -707,6 +698,35 @@ public class PmdReport
         }
 
         return configuration;
+    }
+
+    private void configureTypeResolution( PMDConfiguration configuration ) throws MavenReportException
+    {
+        try
+        {
+            List<String> classpath = new ArrayList<>();
+            if ( aggregate )
+            {
+                for ( MavenProject localProject : reactorProjects )
+                {
+                    classpath.addAll( includeTests ? localProject.getTestClasspathElements()
+                            : localProject.getCompileClasspathElements() );
+                }
+                getLog().debug( "Using aggregated aux classpath: " + classpath );
+            }
+            else
+            {
+                classpath.addAll( includeTests ? project.getTestClasspathElements()
+                        : project.getCompileClasspathElements() );
+                getLog().debug( "Using aux classpath: " + classpath );
+            }
+            String path = StringUtils.join( classpath.iterator(), File.pathSeparator );
+            configuration.prependClasspath( path );
+        }
+        catch ( Exception e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
+        }
     }
 
     /**
