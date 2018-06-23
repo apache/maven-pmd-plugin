@@ -55,6 +55,7 @@ import net.sourceforge.pmd.Report;
 import net.sourceforge.pmd.RuleContext;
 import net.sourceforge.pmd.RulePriority;
 import net.sourceforge.pmd.RuleSetFactory;
+import net.sourceforge.pmd.RuleSetNotFoundException;
 import net.sourceforge.pmd.RuleSetReferenceId;
 import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.benchmark.Benchmarker;
@@ -228,6 +229,7 @@ public class PmdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName( Locale locale )
     {
         return getBundle( locale ).getString( "report.pmd.name" );
@@ -236,6 +238,7 @@ public class PmdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getDescription( Locale locale )
     {
         return getBundle( locale ).getString( "report.pmd.description" );
@@ -502,12 +505,21 @@ public class PmdReport
             throws MavenReportException
     {
         RuleSetFactory ruleSetFactory = new RuleSetFactory( new ResourceLoader(),
-                RulePriority.valueOf( this.minimumPriority ), false, true );
-        RuleContext ruleContext = new RuleContext();
+                RulePriority.valueOf( this.minimumPriority ), true, true );
+        try
+        {
+            // load the ruleset once to log out any deprecated rules as warnings
+            ruleSetFactory.createRuleSets( pmdConfiguration.getRuleSets() );
+        }
+        catch ( RuleSetNotFoundException e1 )
+        {
+            throw new MavenReportException( "The ruleset could not be loaded", e1 );
+        }
 
         try
         {
             getLog().debug( "Executing PMD..." );
+            RuleContext ruleContext = new RuleContext();
             PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext,
                               Arrays.<Renderer>asList( renderer ) );
 
@@ -700,6 +712,7 @@ public class PmdReport
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getOutputName()
     {
         return "pmd";
