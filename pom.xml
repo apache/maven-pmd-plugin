@@ -348,6 +348,7 @@ under the License.
             <!-- Override the Java version inherited from maven-parent -->
             <configuration>
               <targetJdk>${javaVersion}</targetJdk>
+              <skipEmptyReport>false</skipEmptyReport>
             </configuration>
           </plugin>
           <plugin>
