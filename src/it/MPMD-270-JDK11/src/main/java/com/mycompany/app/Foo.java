@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -17,4 +17,12 @@
  * under the License.
  */
 
-asfMavenTlpPlgnBuild(jdk:['7','8','9','10','11'])
+import java.util.ArrayList;
+
+public class Foo
+{
+    public Foo( final ArrayList<String> foo )
+    {
+    }
+
+}
