@@ -21,6 +21,8 @@ package module.b;
 
 import module.a.IModuleA;
 import module.a.ModuleA;
+import org.apache.commons.math.complex.Complex;
+import org.apache.commons.math.FieldElement;
 
 public class ModuleB
 {
@@ -37,5 +39,16 @@ public class ModuleB
     private static void doSomething( IModuleA module )
     {
         System.out.println( module );
+    }
+
+    public static void aPublicMethod()
+    {
+        Complex u = new Complex(1, 1);
+        aPrivateMethod( u );
+    }
+
+    private static void aPrivateMethod( FieldElement<Complex> u )
+    {
+        System.out.println( "aPrivateMethod: " + u );
     }
 }

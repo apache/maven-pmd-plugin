@@ -36,5 +36,11 @@ under the License.
       <artifactId>MPMD-266-typeresolution-aggregated-module-a</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math</artifactId>
+      <version>2.2</version>
+    </dependency>
   </dependencies>
 </project>

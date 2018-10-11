@@ -20,7 +20,9 @@
 File pmdXml = new File( basedir, "target/pmd.xml" )
 assert pmdXml.exists()
 assert !pmdXml.text.contains( "Avoid unused private methods such as 'doSomething(IModuleA)'." )
+assert !pmdXml.text.contains( "Avoid unused private methods such as 'aPrivateMethod(FieldElement)'." )
 
 File pmdHtml = new File( basedir, "target/site/pmd.html" )
 assert pmdHtml.exists()
 assert !pmdHtml.text.contains( "Avoid unused private methods such as 'doSomething(IModuleA)'." )
+assert !pmdHtml.text.contains( "Avoid unused private methods such as 'aPrivateMethod(FieldElement)'." )
