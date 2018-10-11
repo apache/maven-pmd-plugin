@@ -35,13 +35,19 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
+import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResult;
+import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolver;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
@@ -226,6 +232,12 @@ public class PmdReport
      */
     @Parameter( property = "pmd.renderRuleViolationPriority", defaultValue = "true" )
     private boolean renderRuleViolationPriority = true;
+
+    @Component
+    private DependencyResolver dependencyResolver;
+
+    @Parameter( defaultValue = "${session}", required = true, readonly = true )
+    private MavenSession session;
 
     /**
      * {@inheritDoc}
@@ -707,11 +719,31 @@ public class PmdReport
             List<String> classpath = new ArrayList<>();
             if ( aggregate )
             {
+                List<String> dependencies = new ArrayList<>();
+
                 for ( MavenProject localProject : reactorProjects )
                 {
+                    // Add the project's target folder first
                     classpath.addAll( includeTests ? localProject.getTestClasspathElements()
                             : localProject.getCompileClasspathElements() );
+
+                    ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(
+                            session.getProjectBuildingRequest() );
+
+                    Iterable<ArtifactResult> resolvedDependencies = dependencyResolver.resolveDependencies(
+                            buildingRequest, localProject.getModel(),
+                            includeTests ? ScopeFilter.including( "test" ) : ScopeFilter.including( "compile" ) );
+
+                    for ( ArtifactResult resolvedArtifact : resolvedDependencies )
+                    {
+                        dependencies.add( resolvedArtifact.getArtifact().getFile().toString() );
+                    }
+
                 }
+
+                // Add the dependencies as last entries
+                classpath.addAll( dependencies );
+
                 getLog().debug( "Using aggregated aux classpath: " + classpath );
             }
             else
