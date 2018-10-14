@@ -108,6 +108,14 @@ public class CpdReport
     @Parameter( property = "cpd.ignoreIdentifiers", defaultValue = "false" )
     private boolean ignoreIdentifiers;
 
+    /**
+     * If true, CPD ignores annotations.
+     *
+     * @since 3.11.0
+     */
+    @Parameter( property = "cpd.ignoreAnnotations", defaultValue = "false" )
+    private boolean ignoreAnnotations;
+
     /** The CPD instance used to analyze the files. Will itself collect the duplicated code matches. */
     private CPD cpd;
 
@@ -242,7 +250,10 @@ public class CpdReport
         {
             p.setProperty( JavaTokenizer.IGNORE_IDENTIFIERS, "true" );
         }
-
+        if ( ignoreAnnotations )
+        {
+            p.setProperty( JavaTokenizer.IGNORE_ANNOTATIONS, "true" );
+        }
         try
         {
             if ( filesToProcess == null )
