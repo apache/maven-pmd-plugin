@@ -326,6 +326,7 @@ under the License.
       <build>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <configuration>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
@@ -336,6 +337,27 @@ under the License.
             </configuration>
           </plugin>
         </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>jdk7</id>
+      <activation>
+        <jdk>7</jdk>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-invoker-plugin</artifactId>
+              <configuration>
+                <properties>
+                  <https.protocols>TLSv1.2</https.protocols>
+                </properties>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
       </build>
     </profile>
     <profile>
