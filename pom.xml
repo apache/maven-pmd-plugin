@@ -351,9 +351,7 @@ under the License.
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-invoker-plugin</artifactId>
               <configuration>
-                <properties>
-                  <https.protocols>TLSv1.2</https.protocols>
-                </properties>
+                <mavenOpts>-Dhttps.protocols=TLSv1.2</mavenOpts>
               </configuration>
             </plugin>
           </plugins>
