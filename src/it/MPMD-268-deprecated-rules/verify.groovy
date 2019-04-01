@@ -19,4 +19,6 @@
 
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
-assert buildLog.text.contains( "[WARNING] Use Rule name category/java/codestyle.xml/ControlStatementBraces instead of the deprecated" )
+// Some versions output `WARNING:` and others `[WARNING]`
+assert buildLog.text.contains( "WARNING" )
+assert buildLog.text.contains( "Use Rule name category/java/codestyle.xml/ControlStatementBraces instead of the deprecated" )
