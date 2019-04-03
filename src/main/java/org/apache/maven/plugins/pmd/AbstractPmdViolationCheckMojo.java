@@ -50,6 +50,9 @@ public abstract class AbstractPmdViolationCheckMojo<D>
 
     /**
      * Whether to fail the build if the validation check fails.
+     * PMD violations with a priority less than the {@code failurePriority} are considered as failures.
+     * The build will be failed if the count of violations is equal to or exceeding
+     * the {@code maxAllowedViolations} parameter.
      */
     @Parameter( property = "pmd.failOnViolation", defaultValue = "true", required = true )
     protected boolean failOnViolation;
@@ -89,6 +92,12 @@ public abstract class AbstractPmdViolationCheckMojo<D>
 
     /**
      * The maximum number of violations allowed before execution fails.
+     * Used in conjunction with {@code failOnViolation=true} and utilizes {@code failurePriority}.
+     * This value has no meaning if {@code failOnViolation=false}.
+     * If the number of PMD violations (violations with a priority less than or
+     * equal to the failurePriority) is greater than this number, the build will be failed.
+     * If the number of PMD violations is less than or equal to this value,
+     * then the build will not be failed.
      *
      * @since 3.10.0
      */
@@ -157,6 +166,12 @@ public abstract class AbstractPmdViolationCheckMojo<D>
                 }
 
                 this.getLog().info( message );
+
+                if ( failureCount > 0 && isFailOnViolation() && failureCount <= getMaxAllowedViolations() )
+                {
+                    this.getLog().info( "The build is not failed, since " + getMaxAllowedViolations()
+                        + " violations are allowed (maxAllowedViolations)." );
+                }
             }
             catch ( final IOException e )
             {
