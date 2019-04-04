@@ -61,12 +61,13 @@ public class PmdViolationCheckMojo
      * What priority level to fail the build on.
      * PMD violations are assigned a priority from 1 (most severe) to 5 (least severe) according the
      * the rule's priority.
-     * Violations at or less than this priority level will fail the build (see {@code failOnViolation}), while
-     * the other violations will be regarded as warnings and will be displayed in the build output
+     * Violations at or less than this priority level are considered failures and will fail
+     * the build if {@code failOnViolation=true} and the count exceeds {@code maxAllowedViolations}.
+     * The other violations will be regarded as warnings and will be displayed in the build output
      * if {@code verbose=true}.
-     * Setting a value of 5 will fail the build for all PMD violations regardless of the priority.
-     * Setting a value of 0 will treat all PMD violations as warnings.
-     * Only values from 0 to 5 are valid.
+     * Setting a value of 5 will treat all violations as failures, which may cause the build to fail.
+     * Setting a value of 1 will treat all violations as warnings.
+     * Only values from 1 to 5 are valid.
      */
     @Parameter( property = "pmd.failurePriority", defaultValue = "5", required = true )
     private int failurePriority;
