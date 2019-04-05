@@ -52,7 +52,8 @@ under the License.
         <rulesets>
           <ruleset>src/main/config/pmd/rules.xml</ruleset>
         </rulesets>
-		<aggregate>true</aggregate>
+        <aggregate>true</aggregate>
+        <renderViolationsByPriority>false</renderViolationsByPriority>
       </configuration>
     </plugin>
     <plugin>

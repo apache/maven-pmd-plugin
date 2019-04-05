@@ -233,6 +233,15 @@ public class PmdReport
     @Parameter( property = "pmd.renderRuleViolationPriority", defaultValue = "true" )
     private boolean renderRuleViolationPriority = true;
 
+    /**
+     * Add a section in the HTML report, that groups the found violations by rule priority
+     * in addition to grouping by file.
+     *
+     * @since 3.12.0
+     */
+    @Parameter( property = "pmd.renderViolationsByPriority", defaultValue = "true" )
+    private boolean renderViolationsByPriority = true;
+
     @Component
     private DependencyResolver dependencyResolver;
 
@@ -558,6 +567,7 @@ public class PmdReport
         Sink sink = getSink();
         PmdReportGenerator doxiaRenderer = new PmdReportGenerator( getLog(), sink, getBundle( locale ), aggregate );
         doxiaRenderer.setRenderRuleViolationPriority( renderRuleViolationPriority );
+        doxiaRenderer.setRenderViolationsByPriority( renderViolationsByPriority );
         doxiaRenderer.setFiles( filesToProcess );
         doxiaRenderer.setViolations( renderer.getViolations() );
         if ( renderProcessingErrors )

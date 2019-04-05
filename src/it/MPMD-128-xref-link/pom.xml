@@ -51,6 +51,7 @@ under the License.
         <rulesets>
           <ruleset>src/main/config/pmd/rules.xml</ruleset>
         </rulesets>
+        <renderViolationsByPriority>false</renderViolationsByPriority>
       </configuration>
     </plugin>
     <plugin>

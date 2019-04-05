@@ -95,6 +95,13 @@ public class PmdReportTest
         assertTrue( str.contains( "<th>Rule</th>" ) );
         // along with a link to the rule
         assertTrue( str.contains( "pmd_rules_java_bestpractices.html#unusedprivatefield\">UnusedPrivateField</a>" ) );
+
+        // there should be the section Violations By Priority
+        assertTrue( str.contains( "Violations By Priority</h2>" ) );
+        assertTrue( str.contains( "Priority 3</h3>" ) );
+        assertTrue( str.contains( "Priority 4</h3>" ) );
+        // the file App.java is mentioned 3 times: in prio 3, in prio 4 and in the files section
+        assertEquals( 3, StringUtils.countMatches( str, "def/configuration/App.java" ) );
     }
 
     public void testDefaultConfigurationNotRenderRuleViolationPriority()
@@ -117,8 +124,36 @@ public class PmdReportTest
         String str = readFile( generatedFile );
 
         // check that there's no priority column
-        assertFalse( str.contains( "Priority" ) );
+        assertFalse( str.contains( "<th>Priority</th>" ) );
     }
+
+    public void testDefaultConfigurationNoRenderViolationsByPriority()
+            throws Exception
+        {
+            FileUtils.copyDirectoryStructure( new File( getBasedir(),
+                                                        "src/test/resources/unit/default-configuration/jxr-files" ),
+                                              new File( getBasedir(), "target/test/unit/default-configuration/target/site" ) );
+
+            File testPom =
+                new File( getBasedir(),
+                          "src/test/resources/unit/default-configuration/pmd-report-no-render-violations-by-priority.xml" );
+            PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+            mojo.execute();
+
+            File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+            renderer( mojo, generatedFile );
+            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+            String str = readFile( generatedFile );
+
+            // there should be no section Violations By Priority
+            assertFalse( str.contains( "Violations By Priority</h2>" ) );
+            assertFalse( str.contains( "Priority 3</h3>" ) );
+            assertFalse( str.contains( "Priority 4</h3>" ) );
+            // the file App.java is mentioned once: in the files section
+            assertEquals( 1, StringUtils.countMatches( str, "def/configuration/App.java" ) );
+        }
+
 
     public void testDefaultConfigurationWithAnalysisCache()
             throws Exception
@@ -344,7 +379,10 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
         String str = readFile( generatedFile );
         assertFalse( lowerCaseContains( str, "Hello.java" ) );
-        assertTrue( str.contains( "PMD found no problems in your source code." ) );
+        assertEquals( 1, StringUtils.countMatches( str, "PMD found no problems in your source code." ) );
+        // no sections files or violations by priority
+        assertFalse( str.contains( "Files</h2>" ) );
+        assertFalse( str.contains( "Violations By Priority</h2>" ) );
     }
 
     public void testInvalidFormat()

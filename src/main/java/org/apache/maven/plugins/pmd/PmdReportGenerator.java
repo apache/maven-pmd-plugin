@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
 import net.sourceforge.pmd.Report.ProcessingError;
+import net.sourceforge.pmd.RulePriority;
 import net.sourceforge.pmd.RuleViolation;
 
 /**
@@ -61,6 +63,8 @@ public class PmdReportGenerator
     private boolean aggregate;
 
     private boolean renderRuleViolationPriority;
+
+    private boolean renderViolationsByPriority;
 
     private Map<File, PmdFileInfo> files;
 
@@ -142,16 +146,16 @@ public class PmdReportGenerator
         return fileInfo;
     }
 
-    private void startFileSection( String currentFilename, PmdFileInfo fileInfo )
+    private void startFileSection( int level, String currentFilename, PmdFileInfo fileInfo )
     {
-        sink.section2();
-        sink.sectionTitle2();
+        sink.section( level, null );
+        sink.sectionTitle( level, null );
 
         // prepare the filename
         this.currentFilename = shortenFilename( currentFilename, fileInfo );
 
         sink.text( makeFileSectionName( this.currentFilename, fileInfo ) );
-        sink.sectionTitle2_();
+        sink.sectionTitle_( level );
 
         sink.table();
         sink.tableRow();
@@ -173,10 +177,10 @@ public class PmdReportGenerator
         sink.tableRow_();
     }
 
-    private void endFileSection()
+    private void endFileSection( int level )
     {
         sink.table_();
-        sink.section2_();
+        sink.section_( level );
     }
 
     private void processSingleRuleViolation( RuleViolation ruleViolation, PmdFileInfo fileInfo )
@@ -216,7 +220,7 @@ public class PmdReportGenerator
     // PMD might run the analysis multi-threaded, so the violations might be reported
     // out of order. We sort them here by filename and line number before writing them to
     // the report.
-    private void processViolations()
+    private void renderViolations()
         throws IOException
     {
         sink.section1();
@@ -227,7 +231,73 @@ public class PmdReportGenerator
         // TODO files summary
 
         List<RuleViolation> violations2 = new ArrayList<>( violations );
-        Collections.sort( violations2, new Comparator<RuleViolation>()
+        renderViolationsTable( 2, violations2 );
+
+        sink.section1_();
+    }
+
+    private void renderViolationsByPriority() throws IOException
+    {
+        if ( !renderViolationsByPriority )
+        {
+            return;
+        }
+
+        boolean oldPriorityColumn = this.renderRuleViolationPriority;
+        this.renderRuleViolationPriority = false;
+
+        sink.section1();
+        sink.sectionTitle1();
+        sink.text( bundle.getString( "report.pmd.violationsByPriority" ) );
+        sink.sectionTitle1_();
+
+        Map<RulePriority, List<RuleViolation>> violationsByPriority = new HashMap<>();
+        for ( RuleViolation violation : violations )
+        {
+            RulePriority priority = violation.getRule().getPriority();
+            List<RuleViolation> violationSegment = violationsByPriority.get( priority );
+            if ( violationSegment == null )
+            {
+                violationSegment = new ArrayList<>();
+                violationsByPriority.put( priority, violationSegment );
+            }
+            violationsByPriority.get( violation.getRule().getPriority() ).add( violation );
+        }
+
+        for ( RulePriority priority : RulePriority.values() )
+        {
+            List<RuleViolation> violationsWithPriority = violationsByPriority.get( priority );
+            if ( violationsWithPriority == null || violationsWithPriority.isEmpty() )
+            {
+                continue;
+            }
+
+            sink.section2();
+            sink.sectionTitle2();
+            sink.text( bundle.getString( "report.pmd.priority" ) + " " + priority.getPriority() );
+            sink.sectionTitle2_();
+
+            renderViolationsTable( 3, violationsWithPriority );
+
+            sink.section2_();
+        }
+
+        if ( violations.isEmpty() )
+        {
+            sink.paragraph();
+            sink.text( bundle.getString( "report.pmd.noProblems" ) );
+            sink.paragraph_();
+        }
+
+        sink.section1_();
+
+        this.renderRuleViolationPriority = oldPriorityColumn;
+    }
+
+    private void renderViolationsTable( int level, List<RuleViolation> violationSegment )
+    throws IOException
+    {
+        Collections.sort( violationSegment, new Comparator<RuleViolation>()
         {
             /** {@inheritDoc} */
             public int compare( RuleViolation o1, RuleViolation o2 )
@@ -246,19 +316,19 @@ public class PmdReportGenerator
 
         boolean fileSectionStarted = false;
         String previousFilename = null;
-        for ( RuleViolation ruleViolation : violations2 )
+        for ( RuleViolation ruleViolation : violationSegment )
         {
             String currentFn = ruleViolation.getFilename();
             PmdFileInfo fileInfo = determineFileInfo( currentFn );
 
             if ( !currentFn.equalsIgnoreCase( previousFilename ) && fileSectionStarted )
             {
-                endFileSection();
+                endFileSection( level );
                 fileSectionStarted = false;
             }
             if ( !fileSectionStarted )
             {
-                startFileSection( currentFn, fileInfo );
+                startFileSection( level, currentFn, fileInfo );
                 fileSectionStarted = true;
             }
 
@@ -269,17 +339,8 @@ public class PmdReportGenerator
 
         if ( fileSectionStarted )
         {
-            endFileSection();
+            endFileSection( level );
         }
-
-        if ( violations.isEmpty() )
-        {
-            sink.paragraph();
-            sink.text( bundle.getString( "report.pmd.noProblems" ) );
-            sink.paragraph_();
-        }
-
-        sink.section1_();
     }
 
     private void outputLineLink( int line, PmdFileInfo fileInfo )
@@ -403,7 +464,18 @@ public class PmdReportGenerator
     public void render()
         throws IOException
     {
-        processViolations();
+        if ( !violations.isEmpty() )
+        {
+            renderViolationsByPriority();
+
+            renderViolations();
+        }
+        else
+        {
+            sink.paragraph();
+            sink.text( bundle.getString( "report.pmd.noProblems" ) );
+            sink.paragraph_();
+        }
 
         if ( !processingErrors.isEmpty() )
         {
@@ -436,5 +508,10 @@ public class PmdReportGenerator
     public void setRenderRuleViolationPriority( boolean renderRuleViolationPriority )
     {
         this.renderRuleViolationPriority = renderRuleViolationPriority;
+    }
+
+    public void setRenderViolationsByPriority( boolean renderViolationsByPriority )
+    {
+        this.renderViolationsByPriority = renderViolationsByPriority;
     }
 }
