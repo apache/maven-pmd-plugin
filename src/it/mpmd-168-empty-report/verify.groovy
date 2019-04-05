@@ -26,12 +26,14 @@ assert projectReports.getText( "UTF-8" ).contains( "cpd.html" )
 
 File pmdReportInSite = new File( siteDir, "pmd.html" )
 assert pmdReportInSite.exists()
+assert pmdReportInSite.getText( "UTF-8" ).contains( "PMD found no problems in your source code." )
 
 File pmdXmlInTarget = new File( targetDir, "pmd.xml" )
 assert pmdXmlInTarget.exists()
 
 File cpdReportInSite = new File( siteDir, "cpd.html" )
 assert cpdReportInSite.exists()
+assert cpdReportInSite.getText( "UTF-8" ).contains( "CPD found no problems in your source code." )
 
 File cpdXmlInTarget = new File( targetDir, "cpd.xml" )
 assert cpdXmlInTarget.exists()

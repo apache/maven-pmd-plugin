@@ -89,7 +89,12 @@ public class PmdReportTest
         assertTrue( str.contains( "/xref/def/configuration/AppSample.html#L45" ) );
 
         // check if there's a priority column
-        assertTrue( str.contains( "Priority" ) );
+        assertTrue( str.contains( "<th>Priority</th>" ) );
+
+        // there should be a rule column
+        assertTrue( str.contains( "<th>Rule</th>" ) );
+        // along with a link to the rule
+        assertTrue( str.contains( "pmd_rules_java_bestpractices.html#unusedprivatefield\">UnusedPrivateField</a>" ) );
     }
 
     public void testDefaultConfigurationNotRenderRuleViolationPriority()
@@ -339,6 +344,7 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
         String str = readFile( generatedFile );
         assertFalse( lowerCaseContains( str, "Hello.java" ) );
+        assertTrue( str.contains( "PMD found no problems in your source code." ) );
     }
 
     public void testInvalidFormat()

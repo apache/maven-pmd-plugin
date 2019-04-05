@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -58,6 +59,7 @@ public class CpdReportTest
         throws Exception
     {
         super.setUp();
+        Locale.setDefault( Locale.ENGLISH );
         FileUtils.deleteDirectory( new File( getBasedir(), "target/test/unit" ) );
     }
 
@@ -300,6 +302,7 @@ public class CpdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
         String str = readFile( new File( getBasedir(), "target/test/unit/empty-report/target/site/cpd.html" ) );
         assertFalse( lowerCaseContains( str, "Hello.java" ) );
+        assertTrue( str.contains( "CPD found no problems in your source code." ) );
     }
 
     public void testCpdEncodingConfiguration()

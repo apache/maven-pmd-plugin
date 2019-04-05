@@ -62,9 +62,6 @@ public class PmdReportGenerator
 
     private boolean renderRuleViolationPriority;
 
-    // The number of erroneous files
-    private int fileCount = 0;
-
     private Map<File, PmdFileInfo> files;
 
     // private List<Metric> metrics = new ArrayList<Metric>();
@@ -159,6 +156,9 @@ public class PmdReportGenerator
         sink.table();
         sink.tableRow();
         sink.tableHeaderCell();
+        sink.text( bundle.getString( "report.pmd.column.rule" ) );
+        sink.tableHeaderCell_();
+        sink.tableHeaderCell();
         sink.text( bundle.getString( "report.pmd.column.violation" ) );
         sink.tableHeaderCell_();
         if ( this.renderRuleViolationPriority )
@@ -183,6 +183,11 @@ public class PmdReportGenerator
     {
         sink.tableRow();
         sink.tableCell();
+        sink.link( ruleViolation.getRule().getExternalInfoUrl() );
+        sink.text( ruleViolation.getRule().getName() );
+        sink.link_();
+        sink.tableCell_();
+        sink.tableCell();
         sink.text( ruleViolation.getDescription() );
         sink.tableCell_();
 
@@ -200,7 +205,7 @@ public class PmdReportGenerator
         int endLine = ruleViolation.getEndLine();
         if ( endLine != beginLine )
         {
-            sink.text( "&#x2013;" );
+            sink.text( "&#x2013;" ); // \u2013 is a medium long dash character
             outputLineLink( endLine, fileInfo );
         }
 
@@ -221,7 +226,6 @@ public class PmdReportGenerator
 
         // TODO files summary
 
-        fileCount = files.size();
         List<RuleViolation> violations2 = new ArrayList<>( violations );
         Collections.sort( violations2, new Comparator<RuleViolation>()
         {
@@ -268,7 +272,7 @@ public class PmdReportGenerator
             endFileSection();
         }
 
-        if ( fileCount == 0 )
+        if ( violations.isEmpty() )
         {
             sink.paragraph();
             sink.text( bundle.getString( "report.pmd.noProblems" ) );
