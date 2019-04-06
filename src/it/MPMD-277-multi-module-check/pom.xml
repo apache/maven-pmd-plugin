@@ -23,7 +23,7 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins.pmd.it</groupId>
-  <artifactId>MPMD-266-typeresolution-aggregated-parent</artifactId>
+  <artifactId>MPMD-277-multi-module-check-parent</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -42,9 +42,20 @@ under the License.
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>@sitePluginVersion@</version>
+          <groupId>@project.groupId@</groupId>
+          <artifactId>@project.artifactId@</artifactId>
+          <version>@project.version@</version>
+          <configuration>
+            <typeResolution>true</typeResolution>
+            <aggregate>true</aggregate>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -52,41 +63,7 @@ under the License.
       <plugin>
         <groupId>@project.groupId@</groupId>
         <artifactId>@project.artifactId@</artifactId>
-        <version>@project.version@</version>
-        <configuration>
-          <typeResolution>true</typeResolution>
-          <aggregate>false</aggregate>
-          <failurePriority>1</failurePriority>
-          <rulesets>
-            <ruleset>ruleset.xml</ruleset>
-          </rulesets>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>@project.groupId@</groupId>
-        <artifactId>@project.artifactId@</artifactId>
-        <version>@project.version@</version>
-        <configuration>
-          <typeResolution>true</typeResolution>
-          <aggregate>true</aggregate>
-          <rulesets>
-            <ruleset>ruleset.xml</ruleset>
-          </rulesets>
-          <skipEmptyReport>false</skipEmptyReport>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>

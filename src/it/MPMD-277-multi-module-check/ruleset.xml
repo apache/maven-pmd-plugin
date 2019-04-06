@@ -19,28 +19,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project>
-  <modelVersion>4.0.0</modelVersion>
+<ruleset name="Custom ruleset"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <description>Custom Ruleset for test case MPMD-277</description>
 
-  <parent>
-    <groupId>org.apache.maven.plugins.pmd.it</groupId>
-    <artifactId>MPMD-266-typeresolution-aggregated-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod" />
 
-  <artifactId>MPMD-266-typeresolution-aggregated-module-a</artifactId>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>@project.groupId@</groupId>
-        <artifactId>@project.artifactId@</artifactId>
-        <configuration>
-          <rulesets>
-            <ruleset>../ruleset.xml</ruleset>
-          </rulesets>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-</project>
+</ruleset>

@@ -30,6 +30,20 @@ under the License.
 
   <artifactId>MPMD-266-typeresolution-aggregated-module-b</artifactId>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@</artifactId>
+        <configuration>
+          <rulesets>
+            <ruleset>../ruleset.xml</ruleset>
+          </rulesets>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

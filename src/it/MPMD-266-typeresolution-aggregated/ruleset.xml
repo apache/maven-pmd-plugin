@@ -25,6 +25,8 @@ under the License.
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
     <description>Custom Ruleset for test case MPMD-266</description>
 
-    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod" />
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod">
+        <priority>5</priority>
+    </rule>
 
 </ruleset>

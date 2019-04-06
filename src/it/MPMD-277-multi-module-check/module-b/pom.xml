@@ -24,23 +24,23 @@ under the License.
 
   <parent>
     <groupId>org.apache.maven.plugins.pmd.it</groupId>
-    <artifactId>MPMD-266-typeresolution-aggregated-parent</artifactId>
+    <artifactId>MPMD-277-multi-module-check-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>MPMD-266-typeresolution-aggregated-module-a</artifactId>
+  <artifactId>MPMD-277-multi-module-check-module-b</artifactId>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>@project.groupId@</groupId>
-        <artifactId>@project.artifactId@</artifactId>
-        <configuration>
-          <rulesets>
-            <ruleset>../ruleset.xml</ruleset>
-          </rulesets>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>MPMD-277-multi-module-check-module-a</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math</artifactId>
+      <version>2.2</version>
+    </dependency>
+  </dependencies>
 </project>

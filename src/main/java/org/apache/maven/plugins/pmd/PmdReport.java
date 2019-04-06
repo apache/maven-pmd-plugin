@@ -45,7 +45,10 @@ import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.shared.artifact.filter.resolve.AndFilter;
+import org.apache.maven.shared.artifact.filter.resolve.ExclusionsFilter;
 import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
+import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResult;
 import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolver;
 import org.codehaus.plexus.resource.ResourceManager;
@@ -721,22 +724,47 @@ public class PmdReport
             {
                 List<String> dependencies = new ArrayList<>();
 
+                // collect exclusions for projects within the reactor
+                // if module a depends on module b and both are in the reactor
+                // then we don't want to resolve the dependency as an artifact.
+                List<String> exclusionPatterns = new ArrayList<>();
                 for ( MavenProject localProject : reactorProjects )
                 {
-                    // Add the project's target folder first
-                    classpath.addAll( includeTests ? localProject.getTestClasspathElements()
-                            : localProject.getCompileClasspathElements() );
+                    exclusionPatterns.add( localProject.getGroupId() + ":" + localProject.getArtifactId() );
+                }
+                TransformableFilter filter = new AndFilter( Arrays.asList(
+                        new ExclusionsFilter( exclusionPatterns ),
+                        includeTests ? ScopeFilter.including( "test" ) : ScopeFilter.including( "compile" )
+                ) );
 
+                for ( MavenProject localProject : reactorProjects )
+                {
                     ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(
                             session.getProjectBuildingRequest() );
 
                     Iterable<ArtifactResult> resolvedDependencies = dependencyResolver.resolveDependencies(
-                            buildingRequest, localProject.getModel(),
-                            includeTests ? ScopeFilter.including( "test" ) : ScopeFilter.including( "compile" ) );
+                            buildingRequest, localProject.getModel(), filter );
 
                     for ( ArtifactResult resolvedArtifact : resolvedDependencies )
                     {
                         dependencies.add( resolvedArtifact.getArtifact().getFile().toString() );
+                    }
+
+                    List<String> projectCompileClasspath = includeTests ? localProject.getTestClasspathElements()
+                            : localProject.getCompileClasspathElements();
+                    // Add the project's target folder first
+                    classpath.addAll( projectCompileClasspath );
+                    if ( !localProject.isExecutionRoot() )
+                    {
+                        for ( String path : projectCompileClasspath )
+                        {
+                            File pathFile = new File( path );
+                            if ( !pathFile.exists() || pathFile.list().length == 0 )
+                            {
+                                getLog().warn( "The project " + localProject.getArtifactId()
+                                    + " does not seem to be compiled. PMD results might be inaccurate." );
+                            }
+                        }
                     }
 
                 }
