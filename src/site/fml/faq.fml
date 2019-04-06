@@ -68,5 +68,36 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="violations failures warnings">
+        <question>
+          What's the difference between violations, failures and warnings and when is a build failing?
+        </question>
+        <answer>
+          <p>
+            PMD reports violations. These violations originate from rules - the rules, that are enabled in the
+            configured ruleset (see property <a href="pmd-mojo.html#rulesets">rulesets</a>). Each rule has a assigned
+            priority (1 - high, 2 - medium-high, 3 - medium, 4 - medium-low, 5 - low). This priority is also used
+            for the violation.
+          </p>
+          <p>
+            Violations with a high enough priority can fail the build when using the <a href="check-mojo.html">check</a> goal.
+            These violations are called "failures". The exact priority, when to fail the build, is configured via the property
+            <a href="check-mojo.html#failurePriority">failurePriority</a>.
+          </p>
+          <p>
+            Violations, that have a priority too low to fail the build, are called "warnings". These warnings appear
+            in the report and are displayed in the build output, if the property <a href="check-mojo.html#verbose">verbose</a>
+            is enabled.
+          </p>
+          <p>
+            With the property <a href="check-mojo.html#failOnViolation">failOnViolation</a> the build failure
+            can be entirely disabled. This is most useful at command line with <code>-Dpmd.failOnViolation=false</code>.
+          </p>
+          <p>
+            With the property <a href="check-mojo.html#maxAllowedViolations">maxAllowedViolations</a> one can configure
+            how many failures are allowed, before the build is failed.
+          </p>
+        </answer>
+    </faq>
   </part>
 </faqs>
