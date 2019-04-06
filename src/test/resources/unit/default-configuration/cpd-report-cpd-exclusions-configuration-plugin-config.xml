@@ -45,7 +45,7 @@ under the License.
             <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/</compileSourceRoot>
           </compileSourceRoots>
           <sourceEncoding>UTF-8</sourceEncoding>
-          <excludeFromFailureFile>${basedir}/src/test/resources/unit/excludes/cpd_exclude.txt</excludeFromFailureFile>
+          <excludeFromFailureFile>${basedir}/src/test/resources/unit/excludes/my-exclude-cpd.properties</excludeFromFailureFile>
         </configuration>
       </plugin>
     </plugins>

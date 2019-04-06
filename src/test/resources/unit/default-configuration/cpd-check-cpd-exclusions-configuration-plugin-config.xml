@@ -36,9 +36,9 @@ under the License.
           <project implementation="org.apache.maven.plugins.pmd.stubs.DefaultConfigurationMavenProjectStub"/>
           <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
           <failOnViolation>true</failOnViolation>
-          <verbose>false</verbose>  
+          <verbose>false</verbose>
           <printFailingErrors>true</printFailingErrors>
-          <excludeFromFailureFile>${basedir}/src/test/resources/unit/excludes/cpd_exclude.txt</excludeFromFailureFile>
+          <excludeFromFailureFile>${basedir}/src/test/resources/unit/excludes/my-exclude-cpd.properties</excludeFromFailureFile>
         </configuration>
       </plugin>
     </plugins>
