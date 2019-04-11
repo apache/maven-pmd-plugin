@@ -25,8 +25,8 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>31</version>
-    <relativePath>../../pom/maven/maven-plugins/pom.xml</relativePath>
+    <version>33</version>
+    <relativePath />
   </parent>
 
   <artifactId>maven-pmd-plugin</artifactId>
@@ -85,7 +85,6 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <surefire.version>2.21.0</surefire.version>
     <mavenVersion>3.0</mavenVersion>
     <doxiaVersion>1.7</doxiaVersion>
     <!-- Because PMD 5.4+ requires Java 7 -->
@@ -337,25 +336,6 @@ under the License.
             </configuration>
           </plugin>
         </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>jdk7</id>
-      <activation>
-        <jdk>1.7</jdk>
-      </activation>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-invoker-plugin</artifactId>
-              <configuration>
-                <mavenOpts>-Dhttps.protocols=TLSv1.2</mavenOpts>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
       </build>
     </profile>
     <profile>
