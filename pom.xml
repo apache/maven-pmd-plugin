@@ -87,14 +87,10 @@ under the License.
   <properties>
     <mavenVersion>3.0</mavenVersion>
     <doxiaVersion>1.7</doxiaVersion>
-    <!-- Because PMD 5.4+ requires Java 7 -->
-    <javaVersion>1.7</javaVersion>
-    <maven.compiler.source>${javaVersion}</maven.compiler.source>
-    <maven.compiler.target>${javaVersion}</maven.compiler.target>
+    <javaVersion>7</javaVersion><!-- Because PMD 5.4+ requires Java 7 -->
     <pmdVersion>6.13.0</pmdVersion>
     <sitePluginVersion>3.7.1</sitePluginVersion>
     <projectInfoReportsPluginVersion>3.0.0</projectInfoReportsPluginVersion>
-    <mavenPluginToolsVersion>3.5</mavenPluginToolsVersion>
   </properties>
 
   <dependencies>
