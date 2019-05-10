@@ -769,7 +769,9 @@ public class PmdReport
                         for ( String path : projectCompileClasspath )
                         {
                             File pathFile = new File( path );
-                            if ( !pathFile.exists() || pathFile.list().length == 0 )
+                            String[] children = pathFile.list();
+
+                            if ( !pathFile.exists() || ( children != null && children.length == 0 ) )
                             {
                                 getLog().warn( "The project " + localProject.getArtifactId()
                                     + " does not seem to be compiled. PMD results might be inaccurate." );
