@@ -124,6 +124,8 @@ public abstract class AbstractPmdViolationCheckMojo<D>
                                  final int failurePriority )
         throws MojoFailureException, MojoExecutionException
     {
+        getLog().info( "PMD version: " + AbstractPmdReport.getPmdVersion() );
+
         if ( aggregate && !project.isExecutionRoot() )
         {
             return;
