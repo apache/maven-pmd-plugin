@@ -232,6 +232,13 @@ public abstract class AbstractPmdReport
     @Parameter( defaultValue = "true", property = "pmd.showPmdLog" )
     protected boolean showPmdLog = true;
 
+    /**
+     * This holds a strong reference in case we configured the logger to
+     * redirect to slf4j. See {@link #showPmdLog}. Without a strong reference,
+     * the logger might be garbage collected and the redirect to slf4j is gone.
+     */
+    private Logger julLogger;
+
     /** The files that are being analyzed. */
     protected Map<File, PmdFileInfo> filesToProcess;
 
@@ -576,7 +583,8 @@ public abstract class AbstractPmdReport
         logger.addHandler( handler );
         handler.setLevel( Level.ALL );
         logger.setLevel( Level.ALL );
-        getLog().debug( "Configured jul-to-slf4j bridge for " + logger.getName() );
+        julLogger = logger;
+        julLogger.fine(  "Configured jul-to-slf4j bridge for " + logger.getName() );
     }
 
     static String getPmdVersion()
