@@ -45,7 +45,7 @@ Using Rule Sets
  with the PMD tool, you do not need to specificy the absolute path of the file. It will be resolved by
  the plugin. But if the rule set is a custom rule set, you need to specify its absolute path.
  
- See {{{https://pmd.github.io/pmd-${pmdVersion}/pmd_userdocs_understanding_rulesets.html}Understanding Rulesets}}
+ See {{{https://pmd.github.io/pmd-${pmdVersion}/pmd_userdocs_making_rulesets.html}Making Rulesets}}
  if you want to create your own custom ruleset.
 
  <<Note:>> Starting with PMD 5.0 and Maven PMD Plugin 3.0 the paths to the

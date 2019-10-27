@@ -26,7 +26,7 @@ under the License.
         Customized PMD ruleset for Maven, see [0] for more information.
         This ruleset is references by org.apache.maven:maven-parent.
 
-        [0] https://pmd.github.io/latest/pmd_userdocs_understanding_rulesets.html
+        [0] https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html
     -->
 
     <description>

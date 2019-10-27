@@ -122,7 +122,7 @@ whizbang
 +-----+
 
   The ruleset references some built-in rules. For more information about rulesets, see
-  {{{https://pmd.github.io/pmd-${pmdVersion}/pmd_userdocs_understanding_rulesets.html}Understanding Rulesets}}
+  {{{https://pmd.github.io/pmd-${pmdVersion}/pmd_userdocs_making_rulesets.html}Making Rulesets}}
   and {{{./usingRuleSets.html}Using Rule Sets}}.
 
 * Configure the other projects to use it
