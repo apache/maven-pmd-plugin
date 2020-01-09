@@ -93,9 +93,14 @@ public class PmdReport
     extends AbstractPmdReport
 {
     /**
-     * The target JDK to analyze based on. Should match the source used in the compiler plugin. Valid values are
+     * The target JDK to analyze based on. Should match the source used in the compiler plugin. Valid values
+     * with the default PMD version are
      * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>, <code>1.7</code>,
-     * <code>1.8</code>, <code>9</code>, <code>10</code>, <code>11</code>, and <code>12</code>.
+     * <code>1.8</code>, <code>9</code>, <code>10</code>, <code>11</code>, <code>12</code>, and <code>13</code>.
+     *
+     * <p> You can override the default PMD version by specifying PMD as a dependency,
+     * see <a href="examples/upgrading-PMD-at-runtime.html">Upgrading PMD at Runtime</a>.</p>
+     *
      * <p>
      *   <b>Note:</b> this parameter is only used if the language parameter is set to <code>java</code>.
      * </p>
