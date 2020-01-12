@@ -228,7 +228,7 @@ public class CpdReportTest
 
         String duplicatedCodeFragment = "// ----- duplicated code example -----";
         CPD tCpd = prepareMockCpd( duplicatedCodeFragment );
-        mojo.writeNonHtml( tCpd );
+        mojo.writeXmlReport( tCpd );
 
         File tReport = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
 
@@ -257,7 +257,7 @@ public class CpdReportTest
 
         String duplicatedCodeFragment = "// ----- duplicated code example -----";
         CPD tCpd = prepareMockCpd( duplicatedCodeFragment );
-        mojo.writeNonHtml( tCpd );
+        mojo.writeXmlReport( tCpd );
 
         File tReport = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
         assertTrue( FileUtils.fileExists( tReport.getAbsolutePath() ) );

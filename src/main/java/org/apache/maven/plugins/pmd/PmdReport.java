@@ -316,12 +316,7 @@ public class PmdReport
             {
                 Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
 
-                Report report = generateReport( locale );
-
-                if ( !isHtml() && !isXml() )
-                {
-                    writeNonHtml( report );
-                }
+                generateMavenSiteReport( locale );
             }
             finally
             {
@@ -491,11 +486,22 @@ public class PmdReport
 
         removeExcludedViolations( renderer.getViolations() );
 
-        // if format is XML, we need to output it even if the file list is empty or we have no violations
+        // always write XML report, as this might be needed by the check mojo
+        // we need to output it even if the file list is empty or we have no violations
         // so the "check" goals can check for violations
-        if ( isXml() && renderer != null )
+        if ( renderer != null )
         {
-            writeNonHtml( renderer.asReport() );
+            Report report = renderer.asReport();
+            writeXmlReport( report );
+
+            // write any other format except for xml and html. xml as been just produced.
+            // html format is produced by the maven site formatter. Excluding html here
+            // avoids usind PMD's own html formatter, which doesn't fit into the maven site
+            // considering the html/css styling
+            if ( !isHtml() && !isXml() )
+            {
+                writeFormattedReport( report );
+            }
         }
 
         if ( benchmark )
@@ -569,7 +575,7 @@ public class PmdReport
         }
     }
 
-    private Report generateReport( Locale locale )
+    private void generateMavenSiteReport( Locale locale )
         throws MavenReportException
     {
         Sink sink = getSink();
@@ -593,8 +599,6 @@ public class PmdReport
         {
             getLog().warn( "Failure creating the report: " + e.getLocalizedMessage(), e );
         }
-
-        return renderer.asReport();
     }
 
     /**
@@ -630,23 +634,14 @@ public class PmdReport
         return loc;
     }
 
-    /**
-     * Use the PMD renderers to render in any format aside from HTML.
-     *
-     * @param report
-     * @throws MavenReportException
-     */
-    private void writeNonHtml( Report report )
-        throws MavenReportException
+    private File writeReport( Report report, Renderer r, String extension ) throws MavenReportException
     {
-        Renderer r = createRenderer();
-
         if ( r == null )
         {
-            return;
+            return null;
         }
 
-        File targetFile = new File( targetDirectory, "pmd." + format );
+        File targetFile = new File( targetDirectory, "pmd." + extension );
         try ( Writer writer = new OutputStreamWriter( new FileOutputStream( targetFile ), getOutputEncoding() ) )
         {
             targetDirectory.mkdirs();
@@ -656,17 +651,49 @@ public class PmdReport
             r.renderFileReport( report );
             r.end();
             r.flush();
-
-            if ( includeXmlInSite )
-            {
-                File siteDir = getReportOutputDirectory();
-                siteDir.mkdirs();
-                FileUtils.copyFile( targetFile, new File( siteDir, "pmd." + format ) );
-            }
         }
         catch ( IOException ioe )
         {
             throw new MavenReportException( ioe.getMessage(), ioe );
+        }
+
+        return targetFile;
+    }
+
+    /**
+     * Use the PMD renderers to render in any format aside from HTML and XML.
+     *
+     * @param report
+     * @throws MavenReportException
+     */
+    private void writeFormattedReport( Report report )
+        throws MavenReportException
+    {
+        Renderer r = createRenderer();
+        writeReport( report, r, format );
+    }
+
+    /**
+     * Use the PMD XML renderer to create the XML report format used by the check mojo later on.
+     *
+     * @param report
+     * @throws MavenReportException
+     */
+    private void writeXmlReport( Report report ) throws MavenReportException
+    {
+        File targetFile = writeReport( report, new XMLRenderer( getOutputEncoding() ), "xml" );
+        if ( includeXmlInSite )
+        {
+            File siteDir = getReportOutputDirectory();
+            siteDir.mkdirs();
+            try
+            {
+                FileUtils.copyFile( targetFile, new File( siteDir, "pmd.xml" ) );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( e.getMessage(), e );
+            }
         }
     }
 

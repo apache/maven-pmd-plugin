@@ -51,8 +51,8 @@ import net.sourceforge.pmd.cpd.JavaTokenizer;
 import net.sourceforge.pmd.cpd.Language;
 import net.sourceforge.pmd.cpd.LanguageFactory;
 import net.sourceforge.pmd.cpd.Match;
-import net.sourceforge.pmd.cpd.Renderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
+import net.sourceforge.pmd.cpd.renderer.CPDRenderer;
 
 /**
  * Creates a report for PMD's CPD tool. See
@@ -168,12 +168,7 @@ public class CpdReport
             {
                 Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
 
-                generateReport( locale );
-
-                if ( !isHtml() && !isXml() )
-                {
-                    writeNonHtml( cpd );
-                }
+                generateMavenSiteReport( locale );
             }
             finally
             {
@@ -313,11 +308,14 @@ public class CpdReport
         cpd.go();
         getLog().debug( "CPD finished." );
 
-        // if format is XML, we need to output it even if the file list is empty or we have no duplications
+        // always create XML format. we need to output it even if the file list is empty or we have no duplications
         // so the "check" goals can check for violations
-        if ( isXml() )
+        writeXmlReport( cpd );
+
+        // html format is handled by maven site report, xml format as already bean rendered
+        if ( !isHtml() && !isXml() )
         {
-            writeNonHtml( cpd );
+            writeFormattedReport( cpd );
         }
     }
 
@@ -345,7 +343,7 @@ public class CpdReport
         return filteredMatches.iterator();
     }
 
-    private void generateReport( Locale locale )
+    private void generateMavenSiteReport( Locale locale )
     {
         CpdReportGenerator gen = new CpdReportGenerator( getSink(), filesToProcess, getBundle( locale ), aggregate );
         Iterator<Match> matches = cpd.getMatches();
@@ -373,35 +371,51 @@ public class CpdReport
         return encoding;
     }
 
-    void writeNonHtml( CPD cpd )
+    private void writeFormattedReport( CPD cpd )
         throws MavenReportException
     {
-        Renderer r = createRenderer();
+        CPDRenderer r = createRenderer();
+        writeReport( cpd, r, format );
 
+    }
+
+    void writeXmlReport( CPD cpd ) throws MavenReportException
+    {
+        File targetFile = writeReport( cpd, new XMLRenderer( getOutputEncoding() ), "xml" );
+        if ( includeXmlInSite )
+        {
+            File siteDir = getReportOutputDirectory();
+            siteDir.mkdirs();
+            try
+            {
+                FileUtils.copyFile( targetFile, new File( siteDir, "cpd.xml" ) );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( e.getMessage(), e );
+            }
+        }
+    }
+
+    private File writeReport( CPD cpd, CPDRenderer r, String extension ) throws MavenReportException
+    {
         if ( r == null )
         {
-            return;
+            return null;
         }
 
-        String buffer = r.render( filterMatches( cpd.getMatches() ) );
-        File targetFile = new File( targetDirectory, "cpd." + format );
+        File targetFile = new File( targetDirectory, "cpd." + extension );
         targetDirectory.mkdirs();
         try ( Writer writer = new OutputStreamWriter( new FileOutputStream( targetFile ), getOutputEncoding() ) )
         {
-            writer.write( buffer );
+            r.render( filterMatches( cpd.getMatches() ), writer );
             writer.flush();
-
-            if ( includeXmlInSite )
-            {
-                File siteDir = getReportOutputDirectory();
-                siteDir.mkdirs();
-                FileUtils.copyFile( targetFile, new File( siteDir, "cpd." + format ) );
-            }
         }
         catch ( IOException ioe )
         {
             throw new MavenReportException( ioe.getMessage(), ioe );
         }
+        return targetFile;
     }
 
     /**
@@ -423,10 +437,10 @@ public class CpdReport
      * @return the renderer based on the configured output
      * @throws org.apache.maven.reporting.MavenReportException if no renderer found for the output type
      */
-    public Renderer createRenderer()
+    public CPDRenderer createRenderer()
         throws MavenReportException
     {
-        Renderer renderer = null;
+        CPDRenderer renderer = null;
         if ( "xml".equals( format ) )
         {
             renderer = new XMLRenderer( getOutputEncoding() );
@@ -439,7 +453,7 @@ public class CpdReport
         {
             try
             {
-                renderer = (Renderer) Class.forName( format ).newInstance();
+                renderer = (CPDRenderer) Class.forName( format ).getConstructor().newInstance();
             }
             catch ( Exception e )
             {
