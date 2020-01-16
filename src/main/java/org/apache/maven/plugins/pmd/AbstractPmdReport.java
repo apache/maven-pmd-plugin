@@ -202,11 +202,13 @@ public abstract class AbstractPmdReport
 
     /**
      * Skip the PMD/CPD report generation if there are no violations or duplications found. Defaults to
-     * <code>true</code>.
+     * <code>false</code>.
+     *
+     * <p>Note: the default value was changed from <code>true</code> to <code>false</code> with version 3.13.0.
      *
      * @since 3.1
      */
-    @Parameter( defaultValue = "true" )
+    @Parameter( defaultValue = "false" )
     protected boolean skipEmptyReport;
 
     /**

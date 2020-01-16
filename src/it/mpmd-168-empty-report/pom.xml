@@ -54,6 +54,7 @@ under the License.
           <sourceEncoding>UTF-8</sourceEncoding>
           <failOnViolation>false</failOnViolation> <!-- force execution of both goals, will be checked with verify-script -->
           <skipPmdError>false</skipPmdError>
+<!--          <skipEmptyReport>false</skipEmptyReport> skipEmptyReport is false by default since 3.13.0 -->
         </configuration>
       </plugin>
     </plugins>
@@ -66,7 +67,7 @@ under the License.
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <skipEmptyReport>false</skipEmptyReport>
+<!--           <skipEmptyReport>false</skipEmptyReport> skipEmptyReport is false by default since 3.13.0 -->
           <skipPmdError>false</skipPmdError>
         </configuration>
       </plugin>
