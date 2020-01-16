@@ -69,7 +69,7 @@ public class CpdViolationCheckMojoTest
 
         testPom =
             new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml" );
+                      "src/test/resources/unit/default-configuration/cpd-check-notfailonviolation-plugin-config.xml" );
         final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
         cpdViolationMojo.execute();
 

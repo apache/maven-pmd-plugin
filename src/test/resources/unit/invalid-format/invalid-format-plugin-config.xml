@@ -36,6 +36,7 @@ under the License.
           <project implementation="org.apache.maven.plugins.pmd.stubs.InvalidFormatMavenProjectStub"/>
           <outputDirectory>${basedir}/target/test/unit/invalid-format/target/site</outputDirectory>
           <targetDirectory>${basedir}/target/test/unit/invalid-format/target</targetDirectory>
+          <rulesetsTargetDirectory>${basedir}/target/test/unit/invalid-format/target/pmd/rulesets</rulesetsTargetDirectory>
           <format>xhtml</format>
           <linkXRef>false</linkXRef>
           <xrefLocation>${basedir}/target/test/unit/invalid-format/target/site/xref</xrefLocation>

@@ -19,42 +19,25 @@ under the License.
 
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>def.configuration</groupId>
-  <artifactId>default-configuration</artifactId>
+  <groupId>custom.configuration</groupId>
+  <artifactId>custom-configuration</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2006</inceptionYear>
-  <name>Maven PMD Plugin Default Configuration Test</name>
+  <name>Maven PMD CPD Violation Check Custom Configuration Test</name>
   <url>http://maven.apache.org</url>
   <build>
-    <finalName>default-configuration</finalName>
+    <finalName>custom-configuration</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <configuration>
           <project implementation="org.apache.maven.plugins.pmd.stubs.DefaultConfigurationMavenProjectStub"/>
-          <outputDirectory>${basedir}/target/test/unit/default-configuration/target/site</outputDirectory>
           <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
-          <rulesetsTargetDirectory>${basedir}/target/test/unit/default-configuration/target/pmd/rulesets</rulesetsTargetDirectory>
-          <format>xml</format>
-          <linkXRef>true</linkXRef>
-          <xrefLocation>${basedir}/target/test/unit/default-configuration/target/site/xref</xrefLocation>
-          <sourceEncoding>UTF-8</sourceEncoding>
-          
-          <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/</compileSourceRoot>
-          </compileSourceRoots>
-
-          <renderRuleViolationPriority>false</renderRuleViolationPriority>
+          <failOnViolation>false</failOnViolation>
+          <verbose>false</verbose>
         </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>pmd</groupId>
-            <artifactId>pmd</artifactId>
-            <version>3.6</version>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
   </build>

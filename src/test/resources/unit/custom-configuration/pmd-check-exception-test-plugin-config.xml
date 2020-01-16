@@ -35,6 +35,7 @@ under the License.
         <configuration>          
           <sourceDirectory>${basedir}/src/test/resources/unit/custom-configuration</sourceDirectory>
           <targetDirectory>${basedir}/target/test/unit/custom-configuration/target</targetDirectory>
+          <rulesetsTargetDirectory>${basedir}/target/test/unit/custom-configuration/target/pmd/rulesets</rulesetsTargetDirectory>
           <failOnViolation>false</failOnViolation>
           <language>java</language>
         </configuration>

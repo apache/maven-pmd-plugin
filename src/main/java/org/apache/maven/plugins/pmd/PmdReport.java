@@ -250,6 +250,15 @@ public class PmdReport
     @Parameter( property = "pmd.renderViolationsByPriority", defaultValue = "true" )
     private boolean renderViolationsByPriority = true;
 
+    /**
+     * Before PMD is executed, the configured rulesets are resolved and copied into this directory.
+     * <p>Note: Before 3.13.0, this was by default ${project.build.directory}.
+     *
+     * @since 3.13.0
+     */
+    @Parameter( property = "pmd.rulesetsTargetDirectory", defaultValue = "${project.build.directory}/pmd/rulesets" )
+    private File rulesetsTargetDirectory;
+
     @Component
     private DependencyResolver dependencyResolver;
 
@@ -396,7 +405,7 @@ public class PmdReport
         // configure ResourceManager
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         locator.addSearchPath( "url", "" );
-        locator.setOutputDirectory( targetDirectory );
+        locator.setOutputDirectory( rulesetsTargetDirectory );
 
         renderer = new PmdCollectingRenderer();
         PMDConfiguration pmdConfiguration = getPMDConfiguration();

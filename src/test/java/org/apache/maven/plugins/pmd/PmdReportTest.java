@@ -74,7 +74,7 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // check if the rulesets, that have been applied, have been copied
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/maven-pmd-plugin-default.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/maven-pmd-plugin-default.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
@@ -187,13 +187,13 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // these are the rulesets, that have been applied...
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/bestpractices.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/bestpractices.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/codestyle.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/codestyle.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/errorprone.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/errorprone.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
@@ -250,18 +250,19 @@ public class PmdReportTest
         File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/basic.xml" );
+        // the resolved and extracted rulesets
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/basic.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/imports.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/imports.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/unusedcode.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/unusedcode.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile =
             new File( getBasedir(),
-                      "target/test/unit/default-configuration/target/export_format_pmd_language_java_name_Sonar_2520way.xml" );
+                      "target/test/unit/default-configuration/target/pmd/rulesets/export_format_pmd_language_java_name_Sonar_2520way.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
@@ -306,7 +307,7 @@ public class PmdReportTest
         File generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/pmd.csv" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/custom.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/pmd/rulesets/custom.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/site/pmd.html" );
@@ -528,19 +529,19 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         // these are the rulesets, that have been applied...
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/bestpractices.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/bestpractices.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/codestyle.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/codestyle.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/design.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/design.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/errorprone.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/errorprone.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/security.xml" );
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/security.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
