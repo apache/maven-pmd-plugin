@@ -77,3 +77,32 @@ Upgrading PMD at Runtime
 ...
 </project>
 +-----+
+
+* Version relationship between maven-pmd-plugin and PMD
+
+   Every maven-pmd-plugin version ships with a default PMD version. The default PMD version
+   is upgraded irregularly, e.g. when support for a newer Java version is required.
+
+   Here's a historical overview about the default PMD version used:
+
+*--------------------------------------------------------------------------------*--------------------------------------------------*
+| <<maven-pmd-plugin>>                                                           | <<PMD>>                                          |
+*--------------------------------------------------------------------------------*--------------------------------------------------*
+| {{{https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.13.0/}3.13.0}} | {{{https://pmd.github.io/pmd-6.19.0/}6.19.0}}    |
+*--------------------------------------------------------------------------------*--------------------------------------------------*
+| {{{https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.12.0/}3.12.0}} | {{{https://pmd.github.io/pmd-6.13.0/}6.13.0}}    |
+*--------------------------------------------------------------------------------*--------------------------------------------------*
+| {{{https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.11.0/}3.11.0}} | {{{https://pmd.sourceforge.io/pmd-6.8.0/}6.8.0}} |
+*--------------------------------------------------------------------------------*--------------------------------------------------*
+| {{{https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.10.0/}3.10.0}} | {{{https://pmd.sourceforge.io/pmd-6.4.0/}6.4.0}} |
+*--------------------------------------------------------------------------------*--------------------------------------------------*
+| {{{https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.9.0/}3.9.0}}   | {{{https://pmd.sourceforge.io/pmd-6.0.1/}6.0.1}} |
+*--------------------------------------------------------------------------------*--------------------------------------------------*
+| {{{https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.8/}3.8}}       | {{{https://pmd.sourceforge.io/pmd-5.6.1/}5.6.1}} |
+*--------------------------------------------------------------------------------*--------------------------------------------------*
+| {{{https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.7/}3.7}}       | {{{https://pmd.sourceforge.io/pmd-5.5.1/}5.5.1}} |
+*--------------------------------------------------------------------------------*--------------------------------------------------*
+| {{{https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.6/}3.6}}       | {{{https://pmd.sourceforge.io/pmd-5.3.5/}5.3.5}} |
+*--------------------------------------------------------------------------------*--------------------------------------------------*
+| {{{https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.5/}3.5}}       | {{{https://pmd.sourceforge.io/pmd-5.3.2/}5.3.2}} |
+*--------------------------------------------------------------------------------*--------------------------------------------------*

@@ -30,6 +30,7 @@ ${project.name}
   Copy/Paste Detector tool (or CPD) distributed with PMD.
 
   This version of Maven PMD Plugin uses PMD ${pmdVersion} and requires Java ${javaVersion}.
+  See {{{./examples/upgrading-PMD-at-runtime.html}Upgrading PMD at Runtime}} for more information.
 
   The plugin accepts configuration parameters that can be used to customize the execution of the PMD tool.
 
