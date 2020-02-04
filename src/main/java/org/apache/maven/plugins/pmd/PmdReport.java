@@ -77,6 +77,8 @@ import net.sourceforge.pmd.renderers.HTMLRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
+import net.sourceforge.pmd.util.ClasspathClassLoader;
+import net.sourceforge.pmd.util.IOUtil;
 import net.sourceforge.pmd.util.ResourceLoader;
 import net.sourceforge.pmd.util.datasource.DataSource;
 import net.sourceforge.pmd.util.datasource.FileDataSource;
@@ -581,6 +583,14 @@ public class PmdReport
                 throw new MavenReportException( message, e );
             }
             getLog().warn( message, e );
+        }
+        finally
+        {
+            ClassLoader classLoader = pmdConfiguration.getClassLoader();
+            if ( classLoader instanceof ClasspathClassLoader )
+            {
+                IOUtil.tryCloseClassLoader( classLoader );
+            }
         }
     }
 
