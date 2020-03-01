@@ -86,7 +86,8 @@ under the License.
 
   <properties>
     <mavenVersion>3.0</mavenVersion>
-    <doxiaVersion>1.7</doxiaVersion>
+    <doxiaVersion>1.9.1</doxiaVersion>
+    <doxiaSitetoolsVersion>1.9.2</doxiaSitetoolsVersion>
     <javaVersion>7</javaVersion><!-- Because PMD 5.4+ requires Java 7 -->
     <pmdVersion>6.21.0</pmdVersion>
     <sitePluginVersion>3.7.1</sitePluginVersion>
@@ -159,12 +160,12 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-decoration-model</artifactId>
-      <version>${doxiaVersion}</version>
+      <version>${doxiaSitetoolsVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
-      <version>${doxiaVersion}</version>
+      <version>${doxiaSitetoolsVersion}</version>
       <!--
         Note: doxia-site-renderer needs to be defined AFTER pmd:
         doxia-site-renderer requires transitively dom4j 1.1 which provides a very old version of jaxen (same jar).
