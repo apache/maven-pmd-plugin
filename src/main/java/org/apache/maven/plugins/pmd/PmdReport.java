@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.sink.Sink;
@@ -896,8 +895,7 @@ public class PmdReport
         {
             try
             {
-                result = (Renderer) Class.forName( format ).getConstructor( Properties.class ).
-                                newInstance( new Properties() );
+                result = (Renderer) Class.forName( format ).getConstructor().newInstance();
             }
             catch ( Exception e )
             {

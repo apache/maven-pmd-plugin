@@ -32,7 +32,10 @@ import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
+
+import net.sourceforge.pmd.renderers.Renderer;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -669,4 +672,20 @@ public class PmdReportTest
 
             assertEquals(0, StringUtils.countMatches(str, "<violation"));
         }
+
+    public void testCustomRenderer() throws MavenReportException
+    {
+        PmdReport pmdReport = new PmdReport();
+        pmdReport.format = "net.sourceforge.pmd.renderers.TextRenderer";
+        final Renderer renderer = pmdReport.createRenderer();
+        assertNotNull(renderer);
+    }
+
+    public void testCodeClimateRenderer() throws MavenReportException
+    {
+        PmdReport pmdReport = new PmdReport();
+        pmdReport.format = "net.sourceforge.pmd.renderers.CodeClimateRenderer";
+        final Renderer renderer = pmdReport.createRenderer();
+        assertNotNull(renderer);
+    }
 }
