@@ -549,6 +549,7 @@ public abstract class AbstractPmdReport
      * @return The effective reporting output file encoding, never <code>null</code>.
      * @since 2.5
      */
+    @Override
     protected String getOutputEncoding()
     {
         return ( outputEncoding != null ) ? outputEncoding : ReaderFactory.UTF_8;
