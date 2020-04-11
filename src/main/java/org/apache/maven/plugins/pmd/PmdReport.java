@@ -427,11 +427,7 @@ public class PmdReport
                 sets[idx] = ruleset.getAbsolutePath();
             }
         }
-        catch ( ResourceNotFoundException e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
-        }
-        catch ( FileResourceCreationException e )
+        catch ( ResourceNotFoundException | FileResourceCreationException e )
         {
             throw new MavenReportException( e.getMessage(), e );
         }

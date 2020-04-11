@@ -173,13 +173,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
                         + " violations are allowed (maxAllowedViolations)." );
                 }
             }
-            catch ( final IOException e )
-            {
-                throw new MojoExecutionException(
-                                                  "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
-                                                  e );
-            }
-            catch ( final XmlPullParserException e )
+            catch ( final IOException | XmlPullParserException e )
             {
                 throw new MojoExecutionException(
                                                   "Unable to read PMD results xml: " + outputFile.getAbsolutePath(),
