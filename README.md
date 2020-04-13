@@ -35,9 +35,9 @@ Getting Started
 
 + Make sure you have a [JIRA account](https://issues.apache.org/jira/).
 + Make sure you have a [GitHub account](https://github.com/signup/free).
-+ If you're planning to implement a new feature, it makes sense to discuss your changes
-  on the [dev list][ml-list] first.
-  This way you can make sure you're not wasting your time on something that isn't
++ If you're planning to implement a new feature, it makes sense to discuss your changes 
+  on the [dev list][ml-list] first. 
+  This way you can make sure you're not wasting your time on something that isn't 
   considered to be in Apache Maven's scope.
 + Submit a ticket for your issue, assuming one does not already exist.
   + Clearly describe the issue, including steps to reproduce when it is a bug.
@@ -48,7 +48,7 @@ Making and Submitting Changes
 --------------
 
 We accept Pull Requests via GitHub. The [developer mailing list][ml-list] is the
-main channel of communication for contributors.
+main channel of communication for contributors.  
 There are some guidelines which will make applying PRs easier for us:
 + Create a topic branch from where you want to base your work (this is usually the master branch).
   Push your changes to a topic branch in your fork of the repository.
