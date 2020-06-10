@@ -495,19 +495,16 @@ public class PmdReport
         // always write XML report, as this might be needed by the check mojo
         // we need to output it even if the file list is empty or we have no violations
         // so the "check" goals can check for violations
-        if ( renderer != null )
-        {
-            Report report = renderer.asReport();
-            writeXmlReport( report );
+        Report report = renderer.asReport();
+        writeXmlReport( report );
 
-            // write any other format except for xml and html. xml as been just produced.
-            // html format is produced by the maven site formatter. Excluding html here
-            // avoids usind PMD's own html formatter, which doesn't fit into the maven site
-            // considering the html/css styling
-            if ( !isHtml() && !isXml() )
-            {
-                writeFormattedReport( report );
-            }
+        // write any other format except for xml and html. xml as been just produced.
+        // html format is produced by the maven site formatter. Excluding html here
+        // avoids usind PMD's own html formatter, which doesn't fit into the maven site
+        // considering the html/css styling
+        if ( !isHtml() && !isXml() )
+        {
+            writeFormattedReport( report );
         }
 
         if ( benchmark )
