@@ -99,6 +99,11 @@ under the License.
     <!-- maven -->
     <dependency>
       <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${mavenVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
@@ -122,6 +127,11 @@ under the License.
       <artifactId>maven-artifact-transfer</artifactId>
       <version>0.11.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-common-artifact-filters</artifactId>
+      <version>3.0.1</version>
+    </dependency>
 
     <!-- pmd -->
     <dependency>
@@ -129,6 +139,11 @@ under the License.
         <artifactId>commons-text</artifactId>
         <!-- overwrite version from pmd-core. 1.3 is still compatible with java7, 1.6 not. -->
         <version>1.3</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.7</version>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.pmd</groupId>
