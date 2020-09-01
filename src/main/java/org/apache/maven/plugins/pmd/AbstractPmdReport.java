@@ -86,7 +86,8 @@ public abstract class AbstractPmdReport
     /**
      * Set the output format type, in addition to the HTML report. Must be one of: "none", "csv", "xml", "txt" or the
      * full class name of the PMD renderer to use. See the net.sourceforge.pmd.renderers package javadoc for available
-     * renderers. XML is required if the pmd:check goal is being used.
+     * renderers. XML is produced in any case, since this format is needed
+     * for the check goals (pmd:check, pmd:cpd-check).
      */
     @Parameter( property = "format", defaultValue = "xml" )
     protected String format = "xml";

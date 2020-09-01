@@ -100,6 +100,34 @@ public class CpdReportTest
     }
 
     /**
+     * Test CPDReport with the text renderer given as "format=txt"
+     *
+     * @throws Exception
+     */
+    public void testTxtFormat()
+        throws Exception
+    {
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/custom-configuration/cpd-txt-format-configuration-plugin-config.xml" );
+        CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
+        mojo.execute();
+
+        // check if the CPD files were generated
+        File generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/cpd.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/cpd.txt" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        // check the contents of cpd.txt
+        String str = readFile( generatedFile );
+        // Contents that should NOT be in the report
+        assertFalse( lowerCaseContains( str, "public static void main( String[] args )" ) );
+        // Contents that should be in the report
+        assertTrue( lowerCaseContains( str, "public void duplicateMethod( int i )" ) );
+    }
+
+    /**
      * Test CPDReport using custom configuration
      *
      * @throws Exception

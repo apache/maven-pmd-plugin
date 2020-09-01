@@ -499,9 +499,9 @@ public class PmdReport
         Report report = renderer.asReport();
         writeXmlReport( report );
 
-        // write any other format except for xml and html. xml as been just produced.
+        // write any other format except for xml and html. xml has just been produced.
         // html format is produced by the maven site formatter. Excluding html here
-        // avoids usind PMD's own html formatter, which doesn't fit into the maven site
+        // avoids using PMD's own html formatter, which doesn't fit into the maven site
         // considering the html/css styling
         if ( !isHtml() && !isXml() )
         {
