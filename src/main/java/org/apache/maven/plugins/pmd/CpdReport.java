@@ -51,6 +51,7 @@ import net.sourceforge.pmd.cpd.JavaTokenizer;
 import net.sourceforge.pmd.cpd.Language;
 import net.sourceforge.pmd.cpd.LanguageFactory;
 import net.sourceforge.pmd.cpd.Match;
+import net.sourceforge.pmd.cpd.SimpleRenderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
 import net.sourceforge.pmd.cpd.renderer.CPDRenderer;
 
@@ -312,7 +313,7 @@ public class CpdReport
         // so the "check" goals can check for violations
         writeXmlReport( cpd );
 
-        // html format is handled by maven site report, xml format as already bean rendered
+        // html format is handled by maven site report, xml format has already bean rendered
         if ( !isHtml() && !isXml() )
         {
             writeFormattedReport( cpd );
@@ -448,6 +449,10 @@ public class CpdReport
         else if ( "csv".equals( format ) )
         {
             renderer = new CSVRenderer();
+        }
+        else if ( "txt".equals( format ) )
+        {
+            renderer = new SimpleRenderer();
         }
         else if ( !"".equals( format ) && !"none".equals( format ) )
         {
