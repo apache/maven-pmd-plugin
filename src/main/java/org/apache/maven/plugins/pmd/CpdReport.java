@@ -313,7 +313,7 @@ public class CpdReport
         // so the "check" goals can check for violations
         writeXmlReport( cpd );
 
-        // html format is handled by maven site report, xml format has already bean rendered
+        // html format is handled by maven site report, xml format has already been rendered
         if ( !isHtml() && !isXml() )
         {
             writeFormattedReport( cpd );
