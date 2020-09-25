@@ -34,11 +34,11 @@ import java.util.Set;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.pmd.model.ProcessingError;
+import org.apache.maven.plugins.pmd.model.Violation;
 import org.codehaus.plexus.util.StringUtils;
 
-import net.sourceforge.pmd.Report.ProcessingError;
 import net.sourceforge.pmd.RulePriority;
-import net.sourceforge.pmd.RuleViolation;
 
 /**
  * Render the PMD violations into Doxia events.
@@ -56,7 +56,7 @@ public class PmdReportGenerator
 
     private ResourceBundle bundle;
 
-    private Set<RuleViolation> violations = new HashSet<>();
+    private Set<Violation> violations = new HashSet<>();
 
     private List<ProcessingError> processingErrors = new ArrayList<>();
 
@@ -83,12 +83,12 @@ public class PmdReportGenerator
         return bundle.getString( "report.pmd.title" );
     }
 
-    public void setViolations( Collection<RuleViolation> violations )
+    public void setViolations( Collection<Violation> violations )
     {
         this.violations = new HashSet<>( violations );
     }
 
-    public List<RuleViolation> getViolations()
+    public List<Violation> getViolations()
     {
         return new ArrayList<>( violations );
     }
@@ -183,30 +183,30 @@ public class PmdReportGenerator
         sink.section_( level );
     }
 
-    private void processSingleRuleViolation( RuleViolation ruleViolation, PmdFileInfo fileInfo )
+    private void processSingleRuleViolation( Violation ruleViolation, PmdFileInfo fileInfo )
     {
         sink.tableRow();
         sink.tableCell();
-        sink.link( ruleViolation.getRule().getExternalInfoUrl() );
-        sink.text( ruleViolation.getRule().getName() );
+        sink.link( ruleViolation.getExternalInfoUrl() );
+        sink.text( ruleViolation.getRule() );
         sink.link_();
         sink.tableCell_();
         sink.tableCell();
-        sink.text( ruleViolation.getDescription() );
+        sink.text( ruleViolation.getText() );
         sink.tableCell_();
 
         if ( this.renderRuleViolationPriority )
         {
             sink.tableCell();
-            sink.text( String.valueOf( ruleViolation.getRule().getPriority().getPriority() ) );
+            sink.text( RulePriority.valueOf( ruleViolation.getPriority() ).name() );
             sink.tableCell_();
         }
 
         sink.tableCell();
 
-        int beginLine = ruleViolation.getBeginLine();
+        int beginLine = ruleViolation.getBeginline();
         outputLineLink( beginLine, fileInfo );
-        int endLine = ruleViolation.getEndLine();
+        int endLine = ruleViolation.getEndline();
         if ( endLine != beginLine )
         {
             sink.text( "&#x2013;" ); // \u2013 is a medium long dash character
@@ -230,7 +230,7 @@ public class PmdReportGenerator
 
         // TODO files summary
 
-        List<RuleViolation> violations2 = new ArrayList<>( violations );
+        List<Violation> violations2 = new ArrayList<>( violations );
         renderViolationsTable( 2, violations2 );
 
         sink.section1_();
@@ -251,22 +251,22 @@ public class PmdReportGenerator
         sink.text( bundle.getString( "report.pmd.violationsByPriority" ) );
         sink.sectionTitle1_();
 
-        Map<RulePriority, List<RuleViolation>> violationsByPriority = new HashMap<>();
-        for ( RuleViolation violation : violations )
+        Map<RulePriority, List<Violation>> violationsByPriority = new HashMap<>();
+        for ( Violation violation : violations )
         {
-            RulePriority priority = violation.getRule().getPriority();
-            List<RuleViolation> violationSegment = violationsByPriority.get( priority );
+            RulePriority priority = RulePriority.valueOf( violation.getPriority() );
+            List<Violation> violationSegment = violationsByPriority.get( priority );
             if ( violationSegment == null )
             {
                 violationSegment = new ArrayList<>();
                 violationsByPriority.put( priority, violationSegment );
             }
-            violationsByPriority.get( violation.getRule().getPriority() ).add( violation );
+            violationSegment.add( violation );
         }
 
         for ( RulePriority priority : RulePriority.values() )
         {
-            List<RuleViolation> violationsWithPriority = violationsByPriority.get( priority );
+            List<Violation> violationsWithPriority = violationsByPriority.get( priority );
             if ( violationsWithPriority == null || violationsWithPriority.isEmpty() )
             {
                 continue;
@@ -294,18 +294,18 @@ public class PmdReportGenerator
         this.renderRuleViolationPriority = oldPriorityColumn;
     }
 
-    private void renderViolationsTable( int level, List<RuleViolation> violationSegment )
+    private void renderViolationsTable( int level, List<Violation> violationSegment )
     throws IOException
     {
-        Collections.sort( violationSegment, new Comparator<RuleViolation>()
+        Collections.sort( violationSegment, new Comparator<Violation>()
         {
             /** {@inheritDoc} */
-            public int compare( RuleViolation o1, RuleViolation o2 )
+            public int compare( Violation o1, Violation o2 )
             {
-                int filenames = o1.getFilename().compareTo( o2.getFilename() );
+                int filenames = o1.getFileName().compareTo( o2.getFileName() );
                 if ( filenames == 0 )
                 {
-                    return o1.getBeginLine() - o2.getBeginLine();
+                    return o1.getBeginline() - o2.getBeginline();
                 }
                 else
                 {
@@ -316,9 +316,9 @@ public class PmdReportGenerator
 
         boolean fileSectionStarted = false;
         String previousFilename = null;
-        for ( RuleViolation ruleViolation : violationSegment )
+        for ( Violation ruleViolation : violationSegment )
         {
-            String currentFn = ruleViolation.getFilename();
+            String currentFn = ruleViolation.getFileName();
             PmdFileInfo fileInfo = determineFileInfo( currentFn );
 
             if ( !currentFn.equalsIgnoreCase( previousFilename ) && fileSectionStarted )
@@ -371,7 +371,7 @@ public class PmdReportGenerator
             @Override
             public int compare( ProcessingError e1, ProcessingError e2 )
             {
-                return e1.getFile().compareTo( e2.getFile() );
+                return e1.getFilename().compareTo( e2.getFilename() );
             }
         } );
 
@@ -402,7 +402,7 @@ public class PmdReportGenerator
 
     private void processSingleProcessingError( ProcessingError error ) throws IOException
     {
-        String filename = error.getFile();
+        String filename = error.getFilename();
         PmdFileInfo fileInfo = determineFileInfo( filename );
         filename = makeFileSectionName( shortenFilename( filename, fileInfo ), fileInfo );
 
