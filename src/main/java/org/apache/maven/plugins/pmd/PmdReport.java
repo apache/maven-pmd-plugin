@@ -28,7 +28,6 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -47,6 +46,7 @@ import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResult;
 import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolver;
 import org.apache.maven.shared.utils.logging.MessageUtils;
+import org.apache.maven.toolchain.Toolchain;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
@@ -225,9 +225,6 @@ public class PmdReport
     @Parameter( property = "pmd.rulesetsTargetDirectory", defaultValue = "${project.build.directory}/pmd/rulesets" )
     private File rulesetsTargetDirectory;
 
-    @Parameter( defaultValue = "${session}", required = true, readonly = true )
-    private MavenSession session;
-
     /**
      * Used to locate configured rulesets. The rulesets could be on the plugin
      * classpath or in the local project file system.
@@ -393,6 +390,14 @@ public class PmdReport
         request.setIncludeXmlInSite( includeXmlInSite );
         request.setReportOutputDirectory( getReportOutputDirectory().getAbsolutePath() );
         request.setLogLevel( determineCurrentRootLogLevel() );
+
+        Toolchain tc = getToolchain();
+        if ( tc != null )
+        {
+            getLog().info( "Toolchain in maven-pmd-plugin: " + tc );
+            String javaExecutable = tc.findTool( "java" ); //NOI18N
+            request.setJavaExecutable( javaExecutable );
+        }
 
         pmdResult = PmdExecutor.execute( request );
     }

@@ -37,6 +37,8 @@ public class PmdRequest implements Serializable
 {
     private static final long serialVersionUID = -6324416880563476455L;
 
+    private String javaExecutable;
+
     private String language;
     private String languageVersion;
     private int minimumPriority;
@@ -85,6 +87,11 @@ public class PmdRequest implements Serializable
         {
             this.language = language;
         }
+    }
+
+    public void setJavaExecutable( String javaExecutable )
+    {
+        this.javaExecutable = javaExecutable;
     }
 
     public void setMinimumPriority( int minimumPriority )
@@ -180,6 +187,11 @@ public class PmdRequest implements Serializable
 
 
 
+
+    public String getJavaExecutable()
+    {
+        return javaExecutable;
+    }
 
     public String getLanguage()
     {

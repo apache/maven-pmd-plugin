@@ -20,11 +20,20 @@ package org.apache.maven.plugins.pmd.exec;
  */
 
 import java.io.Closeable;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -33,11 +42,16 @@ import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.cli.logging.Slf4jConfiguration;
+import org.apache.maven.cli.logging.Slf4jConfigurationFactory;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeViolationsFromFile;
 import org.apache.maven.plugins.pmd.PmdCollectingRenderer;
+import org.apache.maven.plugins.pmd.PmdReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
+import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +88,12 @@ public class PmdExecutor extends Executor
 
     public static PmdResult execute( PmdRequest request ) throws MavenReportException
     {
+        if ( request.getJavaExecutable() != null )
+        {
+            return fork( request );
+        }
+
+        // make sure the class loaders are correct and call this in the same JVM
         ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
         try
         {
@@ -85,6 +105,106 @@ public class PmdExecutor extends Executor
         {
             Thread.currentThread().setContextClassLoader( origLoader );
         }
+    }
+
+    private static PmdResult fork( PmdRequest request )
+            throws MavenReportException
+    {
+        File basePmdDir = new File ( request.getTargetDirectory(), "pmd" );
+        basePmdDir.mkdirs();
+        File pmdRequestFile = new File( basePmdDir, "request.bin" );
+        try ( ObjectOutputStream out = new ObjectOutputStream( new FileOutputStream( pmdRequestFile ) ) )
+        {
+            out.writeObject( request );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
+        }
+
+        StringBuilder classpath = new StringBuilder();
+        ClassLoader coreClassloader = ConsoleLogger.class.getClassLoader();
+        buildClasspath( classpath, coreClassloader );
+        ClassLoader pluginClassloader = PmdReport.class.getClassLoader();
+        buildClasspath( classpath, pluginClassloader );
+
+        ProcessBuilder pb = new ProcessBuilder();
+        // note: using env variable instead of -cp cli arg to avoid length limitations under Windows
+        pb.environment().put( "CLASSPATH", classpath.toString() );
+        pb.command().add( request.getJavaExecutable() );
+        pb.command().add( PmdExecutor.class.getName() );
+        pb.command().add( pmdRequestFile.getAbsolutePath() );
+
+        LOG.debug( "Executing: CLASSPATH={}, command={}", classpath.toString(), pb.command() );
+        try
+        {
+            final Process p = pb.start();
+            // Note: can't use pb.inheritIO(), since System.out/System.err has been modified after process start
+            // and inheritIO would only inherit file handles, not the changed streams.
+            ProcessStreamHandler.start( p.getInputStream(), System.out );
+            ProcessStreamHandler.start( p.getErrorStream(), System.err );
+            int exit = p.waitFor();
+            LOG.debug( "PmdExecutor exit code: " + exit );
+            if ( exit != 0 )
+            {
+                throw new MavenReportException( "PmdExecutor exited with exit code " + exit );
+            }
+            return new PmdResult( new File( request.getTargetDirectory(), "pmd.xml" ), request.getOutputEncoding() );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
+        }
+        catch ( InterruptedException e )
+        {
+            Thread.currentThread().interrupt();
+            throw new MavenReportException( e.getMessage(), e );
+        }
+    }
+
+    private static void buildClasspath( StringBuilder classpath, ClassLoader cl )
+    {
+        if ( cl instanceof URLClassLoader )
+        {
+            for ( URL url : ( (URLClassLoader) cl ).getURLs() )
+            {
+                String urlString = url.toString();
+                if ( urlString.startsWith( "file:" ) )
+                {
+                    String f = urlString.substring( 5 ); //  strip "file:"
+                    classpath.append( f ).append( File.pathSeparatorChar );
+                }
+            }
+        }
+    }
+
+    /**
+     * Execute PMD analysis from CLI.
+     * 
+     * <p>
+     * Single arg with the filename to the serialized {@link PmdRequest}.
+     * 
+     * <p>
+     * Exit-code: 0 = success, 1 = failure in executing
+     * 
+     * @param args
+     */
+    public static void main( String[] args )
+    {
+        File requestFile = new File( args[0] );
+        try ( ObjectInputStream in = new ObjectInputStream( new FileInputStream( requestFile ) ) )
+        {
+            PmdRequest request = (PmdRequest) in.readObject();
+            PmdExecutor pmdExecutor = new PmdExecutor( request );
+            pmdExecutor.setupLogLevel( request.getLogLevel() );
+            pmdExecutor.run();
+            System.exit( 0 );
+        }
+        catch ( IOException | ClassNotFoundException | MavenReportException e )
+        {
+            LOG.error( e.getMessage(), e );
+        }
+        System.exit( 1 );
     }
 
     private final PmdRequest request;
@@ -324,6 +444,29 @@ public class PmdExecutor extends Executor
         return targetFile;
     }
 
+    private void setupLogLevel( String logLevel )
+    {
+        ILoggerFactory slf4jLoggerFactory = LoggerFactory.getILoggerFactory();
+        Slf4jConfiguration slf4jConfiguration = Slf4jConfigurationFactory
+                .getConfiguration( slf4jLoggerFactory );
+        if ( "debug".equals( logLevel ) )
+        {
+            slf4jConfiguration
+                    .setRootLoggerLevel( Slf4jConfiguration.Level.DEBUG );
+        }
+        else if ( "info".equals( logLevel ) )
+        {
+            slf4jConfiguration
+                    .setRootLoggerLevel( Slf4jConfiguration.Level.INFO );
+        }
+        else
+        {
+            slf4jConfiguration
+                    .setRootLoggerLevel( Slf4jConfiguration.Level.ERROR );
+        }
+        slf4jConfiguration.activate();
+    }
+
     /**
      * Use the PMD renderers to render in any format aside from HTML and XML.
      *
@@ -411,4 +554,44 @@ public class PmdExecutor extends Executor
         LOG.debug( "Excluded {} violations.", numberOfExcludedViolations );
     }
 
+    private static class ProcessStreamHandler implements Runnable
+    {
+        private static final int BUFFER_SIZE = 8192;
+
+        private final BufferedInputStream in;
+        private final BufferedOutputStream out;
+
+        public static void start( InputStream in, OutputStream out )
+        {
+            Thread t = new Thread( new ProcessStreamHandler( in, out ) );
+            t.start();
+        }
+
+        private ProcessStreamHandler( InputStream in, OutputStream out )
+        {
+            this.in = new BufferedInputStream( in );
+            this.out = new BufferedOutputStream( out );
+        }
+
+        @Override
+        public void run()
+        {
+            byte[] buffer = new byte[BUFFER_SIZE];
+            try
+            {
+                int count = in.read( buffer );
+                while ( count != -1 )
+                {
+                    out.write( buffer, 0, count );
+                    out.flush();
+                    count = in.read( buffer );
+                }
+                out.flush();
+            }
+            catch ( IOException e )
+            {
+                LOG.error( e.getMessage(), e );
+            }
+        }
+    }
 }
