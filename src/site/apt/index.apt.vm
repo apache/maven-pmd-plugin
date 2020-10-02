@@ -88,7 +88,7 @@ ${project.name}
 
   * {{{./examples/removeReport.html}Remove Report}}
 
-  * {{{./examples/targetJdk.html}Target JDK}}
+  * {{{./examples/targetJdk.html}Target JDK and Toolchains}}
 
   * {{{./examples/usingRuleSets.html}Using Rule Sets}}
 
