@@ -20,8 +20,11 @@ package org.apache.maven.plugins.pmd.exec;
  */
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -30,8 +33,10 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.pmd.CpdReport;
 import org.apache.maven.plugins.pmd.ExcludeDuplicationsFromFile;
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +63,11 @@ public class CpdExecutor extends Executor
 
     public static CpdResult execute( CpdRequest request ) throws MavenReportException
     {
+        if ( request.getJavaExecutable() != null )
+        {
+            return fork( request );
+        }
+
         ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
         try
         {
@@ -69,6 +79,90 @@ public class CpdExecutor extends Executor
         {
             Thread.currentThread().setContextClassLoader( origLoader );
         }
+    }
+
+    private static CpdResult fork( CpdRequest request )
+            throws MavenReportException
+    {
+        File basePmdDir = new File ( request.getTargetDirectory(), "pmd" );
+        basePmdDir.mkdirs();
+        File cpdRequestFile = new File( basePmdDir, "cpdrequest.bin" );
+        try ( ObjectOutputStream out = new ObjectOutputStream( new FileOutputStream( cpdRequestFile ) ) )
+        {
+            out.writeObject( request );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
+        }
+
+        StringBuilder classpath = new StringBuilder();
+        ClassLoader coreClassloader = ConsoleLogger.class.getClassLoader();
+        buildClasspath( classpath, coreClassloader );
+        ClassLoader pluginClassloader = CpdReport.class.getClassLoader();
+        buildClasspath( classpath, pluginClassloader );
+
+        ProcessBuilder pb = new ProcessBuilder();
+        // note: using env variable instead of -cp cli arg to avoid length limitations under Windows
+        pb.environment().put( "CLASSPATH", classpath.toString() );
+        pb.command().add( request.getJavaExecutable() );
+        pb.command().add( CpdExecutor.class.getName() );
+        pb.command().add( cpdRequestFile.getAbsolutePath() );
+
+        LOG.debug( "Executing: CLASSPATH={}, command={}", classpath.toString(), pb.command() );
+        try
+        {
+            final Process p = pb.start();
+            // Note: can't use pb.inheritIO(), since System.out/System.err has been modified after process start
+            // and inheritIO would only inherit file handles, not the changed streams.
+            ProcessStreamHandler.start( p.getInputStream(), System.out );
+            ProcessStreamHandler.start( p.getErrorStream(), System.err );
+            int exit = p.waitFor();
+            LOG.debug( "CpdExecutor exit code: {}", exit );
+            if ( exit != 0 )
+            {
+                throw new MavenReportException( "CpdExecutor exited with exit code " + exit );
+            }
+            return new CpdResult( new File( request.getTargetDirectory(), "cpd.xml" ), request.getOutputEncoding() );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
+        }
+        catch ( InterruptedException e )
+        {
+            Thread.currentThread().interrupt();
+            throw new MavenReportException( e.getMessage(), e );
+        }
+    }
+
+    /**
+     * Execute CPD analysis from CLI.
+     *
+     * <p>
+     * Single arg with the filename to the serialized {@link CpdRequest}.
+     *
+     * <p>
+     * Exit-code: 0 = success, 1 = failure in executing
+     *
+     * @param args
+     */
+    public static void main( String[] args )
+    {
+        File requestFile = new File( args[0] );
+        try ( ObjectInputStream in = new ObjectInputStream( new FileInputStream( requestFile ) ) )
+        {
+            CpdRequest request = (CpdRequest) in.readObject();
+            CpdExecutor cpdExecutor = new CpdExecutor( request );
+            cpdExecutor.setupLogLevel( request.getLogLevel() );
+            cpdExecutor.run();
+            System.exit( 0 );
+        }
+        catch ( IOException | ClassNotFoundException | MavenReportException e )
+        {
+            LOG.error( e.getMessage(), e );
+        }
+        System.exit( 1 );
     }
 
     private final CpdRequest request;

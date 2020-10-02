@@ -38,6 +38,8 @@ public class CpdRequest implements Serializable
 {
     private static final long serialVersionUID = -7585852992660240668L;
 
+    private String javaExecutable;
+
     private int minimumTokens;
     private String language;
     private Properties languageProperties;
@@ -54,6 +56,11 @@ public class CpdRequest implements Serializable
     private String format;
     private boolean includeXmlInSite;
     private String reportOutputDirectory;
+
+    public void setJavaExecutable( String javaExecutable )
+    {
+        this.javaExecutable = javaExecutable;
+    }
 
     public void setMinimumTokens( int minimumTokens )
     {
@@ -123,6 +130,11 @@ public class CpdRequest implements Serializable
     public void setLogLevel( String logLevel )
     {
         this.logLevel = logLevel;
+    }
+
+    public String getJavaExecutable()
+    {
+        return javaExecutable;
     }
 
     public int getMinimumTokens()

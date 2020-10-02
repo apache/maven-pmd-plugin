@@ -55,6 +55,7 @@ under the License.
           <printFailingErrors>true</printFailingErrors>
           <targetJdk>${java.version}</targetJdk>
           <sourceEncoding>UTF-8</sourceEncoding>
+          <minimumTokens>10</minimumTokens>
         </configuration>
         <executions>
           <execution>
@@ -62,6 +63,7 @@ under the License.
             <phase>verify</phase>
             <goals>
               <goal>check</goal>
+              <goal>cpd-check</goal>
             </goals>
           </execution>
         </executions>

@@ -20,20 +20,14 @@ package org.apache.maven.plugins.pmd.exec;
  */
 
 import java.io.Closeable;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -42,8 +36,6 @@ import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.cli.logging.Slf4jConfiguration;
-import org.apache.maven.cli.logging.Slf4jConfigurationFactory;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeViolationsFromFile;
 import org.apache.maven.plugins.pmd.PmdCollectingRenderer;
@@ -51,7 +43,6 @@ import org.apache.maven.plugins.pmd.PmdReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
-import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,7 +103,7 @@ public class PmdExecutor extends Executor
     {
         File basePmdDir = new File ( request.getTargetDirectory(), "pmd" );
         basePmdDir.mkdirs();
-        File pmdRequestFile = new File( basePmdDir, "request.bin" );
+        File pmdRequestFile = new File( basePmdDir, "pmdrequest.bin" );
         try ( ObjectOutputStream out = new ObjectOutputStream( new FileOutputStream( pmdRequestFile ) ) )
         {
             out.writeObject( request );
@@ -144,7 +135,7 @@ public class PmdExecutor extends Executor
             ProcessStreamHandler.start( p.getInputStream(), System.out );
             ProcessStreamHandler.start( p.getErrorStream(), System.err );
             int exit = p.waitFor();
-            LOG.debug( "PmdExecutor exit code: " + exit );
+            LOG.debug( "PmdExecutor exit code: {}", exit );
             if ( exit != 0 )
             {
                 throw new MavenReportException( "PmdExecutor exited with exit code " + exit );
@@ -159,22 +150,6 @@ public class PmdExecutor extends Executor
         {
             Thread.currentThread().interrupt();
             throw new MavenReportException( e.getMessage(), e );
-        }
-    }
-
-    private static void buildClasspath( StringBuilder classpath, ClassLoader cl )
-    {
-        if ( cl instanceof URLClassLoader )
-        {
-            for ( URL url : ( (URLClassLoader) cl ).getURLs() )
-            {
-                String urlString = url.toString();
-                if ( urlString.startsWith( "file:" ) )
-                {
-                    String f = urlString.substring( 5 ); //  strip "file:"
-                    classpath.append( f ).append( File.pathSeparatorChar );
-                }
-            }
         }
     }
 
@@ -444,29 +419,6 @@ public class PmdExecutor extends Executor
         return targetFile;
     }
 
-    private void setupLogLevel( String logLevel )
-    {
-        ILoggerFactory slf4jLoggerFactory = LoggerFactory.getILoggerFactory();
-        Slf4jConfiguration slf4jConfiguration = Slf4jConfigurationFactory
-                .getConfiguration( slf4jLoggerFactory );
-        if ( "debug".equals( logLevel ) )
-        {
-            slf4jConfiguration
-                    .setRootLoggerLevel( Slf4jConfiguration.Level.DEBUG );
-        }
-        else if ( "info".equals( logLevel ) )
-        {
-            slf4jConfiguration
-                    .setRootLoggerLevel( Slf4jConfiguration.Level.INFO );
-        }
-        else
-        {
-            slf4jConfiguration
-                    .setRootLoggerLevel( Slf4jConfiguration.Level.ERROR );
-        }
-        slf4jConfiguration.activate();
-    }
-
     /**
      * Use the PMD renderers to render in any format aside from HTML and XML.
      *
@@ -552,46 +504,5 @@ public class PmdExecutor extends Executor
 
         int numberOfExcludedViolations = violationsBefore - violations.size();
         LOG.debug( "Excluded {} violations.", numberOfExcludedViolations );
-    }
-
-    private static class ProcessStreamHandler implements Runnable
-    {
-        private static final int BUFFER_SIZE = 8192;
-
-        private final BufferedInputStream in;
-        private final BufferedOutputStream out;
-
-        public static void start( InputStream in, OutputStream out )
-        {
-            Thread t = new Thread( new ProcessStreamHandler( in, out ) );
-            t.start();
-        }
-
-        private ProcessStreamHandler( InputStream in, OutputStream out )
-        {
-            this.in = new BufferedInputStream( in );
-            this.out = new BufferedOutputStream( out );
-        }
-
-        @Override
-        public void run()
-        {
-            byte[] buffer = new byte[BUFFER_SIZE];
-            try
-            {
-                int count = in.read( buffer );
-                while ( count != -1 )
-                {
-                    out.write( buffer, 0, count );
-                    out.flush();
-                    count = in.read( buffer );
-                }
-                out.flush();
-            }
-            catch ( IOException e )
-            {
-                LOG.error( e.getMessage(), e );
-            }
-        }
     }
 }

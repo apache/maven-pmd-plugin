@@ -198,7 +198,7 @@ public class PmdReportGenerator
         if ( this.renderRuleViolationPriority )
         {
             sink.tableCell();
-            sink.text( RulePriority.valueOf( ruleViolation.getPriority() ).name() );
+            sink.text( String.valueOf( RulePriority.valueOf( ruleViolation.getPriority() ).getPriority() ) );
             sink.tableCell_();
         }
 

@@ -33,6 +33,7 @@ import org.apache.maven.plugins.pmd.exec.CpdRequest;
 import org.apache.maven.plugins.pmd.exec.CpdResult;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.shared.utils.logging.MessageUtils;
+import org.apache.maven.toolchain.Toolchain;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 
@@ -239,7 +240,15 @@ public class CpdReport
             request.setFormat( format );
             request.setIncludeXmlInSite( includeXmlInSite );
             request.setReportOutputDirectory( getReportOutputDirectory().getAbsolutePath() );
-            
+
+            Toolchain tc = getToolchain();
+            if ( tc != null )
+            {
+                getLog().info( "Toolchain in maven-pmd-plugin: " + tc );
+                String javaExecutable = tc.findTool( "java" ); //NOI18N
+                request.setJavaExecutable( javaExecutable );
+            }
+
             cpdResult = CpdExecutor.execute( request );
         }
         catch ( UnsupportedEncodingException e )
