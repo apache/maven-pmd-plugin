@@ -22,16 +22,15 @@ package org.apache.maven.plugins.pmd;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+
+import org.codehaus.plexus.util.StringUtils;
 
 import net.sourceforge.pmd.Report;
 import net.sourceforge.pmd.Report.ProcessingError;
 import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.renderers.AbstractRenderer;
 import net.sourceforge.pmd.util.datasource.DataSource;
-
-import org.codehaus.plexus.util.StringUtils;
 
 
 /**
@@ -56,14 +55,8 @@ public class PmdCollectingRenderer extends AbstractRenderer
     @Override
     public void renderFileReport( Report report ) throws IOException
     {
-        for ( RuleViolation v : report )
-        {
-            violations.add( v );
-        }
-        for ( Iterator<ProcessingError> it = report.errors(); it.hasNext(); )
-        {
-            errors.add( it.next() );
-        }
+        violations.addAll( report.getViolations() );
+        errors.addAll( report.getProcessingErrors() );
     }
 
     /**

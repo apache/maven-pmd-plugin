@@ -156,11 +156,6 @@ public class PmdReport
     private String suppressMarker;
 
     /**
-     */
-    @Component
-    private ResourceManager locator;
-
-    /**
      * per default pmd executions error are ignored to not break the whole
      *
      * @since 3.1
@@ -229,13 +224,24 @@ public class PmdReport
     @Parameter( property = "pmd.rulesetsTargetDirectory", defaultValue = "${project.build.directory}/pmd/rulesets" )
     private File rulesetsTargetDirectory;
 
-    @Component
-    private DependencyResolver dependencyResolver;
-
     @Parameter( defaultValue = "${session}", required = true, readonly = true )
     private MavenSession session;
 
-    private PmdRequest request;
+    /**
+     * Used to locate configured rulesets. The rulesets could be on the plugin
+     * classpath or in the local project file system.
+     */
+    @Component
+    private ResourceManager locator;
+
+    @Component
+    private DependencyResolver dependencyResolver;
+
+    /**
+     * Contains the result of the last PMD execution.
+     * It might be <code>null</code> which means, that PMD
+     * has not been executed yet.
+     */
     private PmdResult pmdResult;
 
     /**
@@ -349,11 +355,86 @@ public class PmdReport
             return;
         }
 
-        request = new PmdRequest();
-        updatePmdRequest();
+        try
+        {
+            filesToProcess = getFilesToProcess();
 
+            if ( filesToProcess.isEmpty() && !"java".equals( language ) )
+            {
+                getLog().warn( "No files found to process. Did you add your additional source folders like javascript?"
+                                   + " (see also build-helper-maven-plugin)" );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( "Can't get file list", e );
+        }
+
+
+        PmdRequest request = new PmdRequest();
+        request.setLanguageAndVersion( language, targetJdk );
+        request.setRulesets( resolveRulesets() );
+        request.setAuxClasspath( typeResolution ? determineAuxClasspath() : null );
+        request.setSourceEncoding( getSourceEncoding() );
+        request.addFiles( filesToProcess.keySet() );
+        request.setMinimumPriority( minimumPriority );
+        request.setSuppressMarker( suppressMarker );
+        request.setBenchmarkOutputLocation( benchmark ? benchmarkOutputFilename : null );
+        request.setAnalysisCacheLocation( analysisCache ? analysisCacheLocation : null );
         request.setExcludeFromFailureFile( excludeFromFailureFile );
 
+        request.setTargetDirectory( targetDirectory.getAbsolutePath() );
+        request.setOutputEncoding( getOutputEncoding() );
+        request.setFormat( format );
+        request.setShowPmdLog( showPmdLog );
+        request.setColorizedLog( MessageUtils.isColorEnabled() );
+        request.setSkipPmdError( skipPmdError );
+        request.setIncludeXmlInSite( includeXmlInSite );
+        request.setReportOutputDirectory( getReportOutputDirectory().getAbsolutePath() );
+        request.setLogLevel( determineCurrentRootLogLevel() );
+
+        pmdResult = PmdExecutor.execute( request );
+    }
+
+    protected String getSourceEncoding()
+    {
+        String encoding = super.getSourceEncoding();
+        if ( StringUtils.isEmpty( encoding ) )
+        {
+            encoding = ReaderFactory.FILE_ENCODING;
+            if ( !filesToProcess.isEmpty() )
+            {
+                getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
+                               + ", i.e. build is platform dependent!" );
+            }
+        }
+        return encoding;
+    }
+
+
+    private String determineCurrentRootLogLevel()
+    {
+        String logLevel = System.getProperty( "org.slf4j.simpleLogger.defaultLogLevel" );
+        if ( logLevel == null )
+        {
+            logLevel = System.getProperty( "maven.logging.root.level" );
+        }
+        if ( logLevel == null )
+        {
+            // TODO: logback level
+            logLevel = "info";
+        }
+        return logLevel;
+    }
+
+    /**
+     * Resolves the configured rulesets and copies them as files into the {@link #rulesetsTargetDirectory}.
+     *
+     * @return comma separated list of absolute file paths of ruleset files
+     * @throws MavenReportException if a ruleset could not be found
+     */
+    private String resolveRulesets() throws MavenReportException
+    {
         // configure ResourceManager
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
         locator.addSearchPath( "url", "" );
@@ -379,73 +460,7 @@ public class PmdReport
         {
             throw new MavenReportException( e.getMessage(), e );
         }
-        String resolvedRulesets = StringUtils.join( sets, "," );
-        request.setRulesets( resolvedRulesets );
-
-        try
-        {
-            if ( filesToProcess == null )
-            {
-                filesToProcess = getFilesToProcess();
-            }
-
-            if ( filesToProcess.isEmpty() && !"java".equals( language ) )
-            {
-                getLog().warn( "No files found to process. Did you add your additional source folders like javascript?"
-                                   + " (see also build-helper-maven-plugin)" );
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( "Can't get file list", e );
-        }
-
-        String encoding = getSourceEncoding();
-        if ( StringUtils.isEmpty( encoding ) )
-        {
-            encoding = ReaderFactory.FILE_ENCODING;
-            if ( !filesToProcess.isEmpty() )
-            {
-                getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
-                               + ", i.e. build is platform dependent!" );
-            }
-        }
-        request.setSourceEncoding( encoding );
-
-        for ( File f : filesToProcess.keySet() )
-        {
-            request.addFile( f );
-        }
-        
-        request.setMinimumPriority( this.minimumPriority );
-
-        processFilesWithPMD();
-    }
-
-    private void processFilesWithPMD() throws MavenReportException
-    {
-        request.setTargetDirectory( targetDirectory.getAbsolutePath() );
-        request.setOutputEncoding( getOutputEncoding() );
-        request.setFormat( format );
-        request.setShowPmdLog( showPmdLog );
-        request.setColorizedLog( MessageUtils.isColorEnabled() );
-        request.setSkipPmdError( skipPmdError );
-        request.setIncludeXmlInSite( includeXmlInSite );
-        request.setReportOutputDirectory( getReportOutputDirectory().getAbsolutePath() );
-        
-        String logLevel = System.getProperty( "org.slf4j.simpleLogger.defaultLogLevel" );
-        if ( logLevel == null )
-        {
-            logLevel = System.getProperty( "maven.logging.root.level" );
-        }
-        if ( logLevel == null )
-        {
-            // TODO: logback level
-            logLevel = "info";
-        }
-        request.setLogLevel( logLevel );
-
-        pmdResult = PmdExecutor.execute( request );
+        return StringUtils.join( sets, "," );
     }
 
     private void generateMavenSiteReport( Locale locale )
@@ -507,50 +522,7 @@ public class PmdReport
         return loc;
     }
 
-    /**
-     * Constructs the PMD configuration class, passing it an argument that configures the target JDK.
-     *
-     * @return the resulting PMD
-     * @throws MavenReportException when a problem during dependency resolution occurs
-     */
-    private void updatePmdRequest() throws MavenReportException
-    {
-        if ( ( "java".equals( language ) || null == language ) && null != targetJdk )
-        {
-            request.setLanguage( "java" );
-            request.setLanguageVersion( targetJdk );
-        }
-        else if ( "javascript".equals( language ) || "ecmascript".equals( language ) )
-        {
-            request.setLanguage( "ecmascript" );
-        }
-        else if ( "jsp".equals( language ) )
-        {
-            request.setLanguage( "jsp" );
-        }
-
-        if ( typeResolution )
-        {
-            configureTypeResolution();
-        }
-
-        if ( null != suppressMarker )
-        {
-            request.setSuppressMarker( suppressMarker );
-        }
-
-        if ( benchmark )
-        {
-            request.setBenchmarkOutputLocation( benchmarkOutputFilename );
-        }
-
-        if ( analysisCache )
-        {
-            request.setAnalysisCacheLocation( analysisCacheLocation );
-        }
-    }
-
-    private void configureTypeResolution() throws MavenReportException
+    private String determineAuxClasspath() throws MavenReportException
     {
         try
         {
@@ -618,7 +590,7 @@ public class PmdReport
                 getLog().debug( "Using aux classpath: " + classpath );
             }
             String path = StringUtils.join( classpath.iterator(), File.pathSeparator );
-            request.setAuxClasspath( path );
+            return path;
         }
         catch ( Exception e )
         {

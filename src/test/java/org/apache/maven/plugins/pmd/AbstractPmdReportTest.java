@@ -25,9 +25,9 @@ import java.io.Writer;
 import java.util.Locale;
 
 import org.apache.maven.doxia.site.decoration.DecorationModel;
+import org.apache.maven.doxia.siterenderer.DocumentContent;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
-import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.WriterFactory;
 
@@ -59,7 +59,7 @@ public abstract class AbstractPmdReportTest
 
         try ( Writer writer = WriterFactory.newXmlWriter( outputHtml ) )
         {
-            mojo.getSiteRenderer().generateDocument( writer, (SiteRendererSink) mojo.getSink(), context );
+            mojo.getSiteRenderer().mergeDocumentIntoSite( writer, (DocumentContent) mojo.getSink(), context );
         }
     }
 

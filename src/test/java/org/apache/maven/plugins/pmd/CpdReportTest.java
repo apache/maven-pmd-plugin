@@ -218,8 +218,8 @@ public class CpdReportTest
 
     private CPD prepareMockCpd( String duplicatedCodeFragment )
     {
-        TokenEntry tFirstEntry = new TokenEntry( "public java", "MyClass.java", 2 );
-        TokenEntry tSecondEntry = new TokenEntry( "public java", "MyClass3.java", 2 );
+        TokenEntry tFirstEntry = new TokenEntry( "public java", "MyClass.java", 2, 1, 12 );
+        TokenEntry tSecondEntry = new TokenEntry( "public java", "MyClass3.java", 2, 1, 12 );
         SourceCode sourceCodeFirst = new SourceCode(new SourceCode.StringCodeLoader(
                 PMD.EOL + duplicatedCodeFragment + PMD.EOL, "MyClass.java"));
         SourceCode sourceCodeSecond = new SourceCode(new SourceCode.StringCodeLoader(

@@ -34,10 +34,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import net.sourceforge.pmd.PMD;
-
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.model.Reporting;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -47,6 +46,8 @@ import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+
+import net.sourceforge.pmd.PMD;
 
 /**
  * Base class for the PMD reports.
@@ -285,7 +286,10 @@ public abstract class AbstractPmdReport
             else
             {
                 // Not yet generated - check if the report is on its way
-                List<ReportPlugin> reportPlugins = project.getReportPlugins();
+                Reporting reporting = project.getModel().getReporting();
+                List<ReportPlugin> reportPlugins = reporting != null
+                        ? reporting.getPlugins()
+                        : Collections.<ReportPlugin>emptyList();
                 for ( ReportPlugin plugin : reportPlugins )
                 {
                     String artifactId = plugin.getArtifactId();

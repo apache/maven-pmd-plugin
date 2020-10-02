@@ -22,11 +22,16 @@ package org.apache.maven.plugins.pmd.exec;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
- * Data object to store all information needed to execute PMD
+ * Data object to store all configuration options needed to execute PMD
  * as a separate process.
+ * 
+ * <p>This class is intended to be serialized and read back.
+ * 
+ * <p>Some properties might be optional and can be <code>null</code>.
  */
 public class PmdRequest implements Serializable
 {
@@ -41,27 +46,45 @@ public class PmdRequest implements Serializable
     private String rulesets;
     private String sourceEncoding;
     private List<File> files = new ArrayList<>();
-    private String benchmarkOutputLocation;
 
-    private String targetDirectory;
-    private String outputEncoding;
-    private String format;
     private boolean showPmdLog;
     private boolean colorizedLog;
     private String logLevel;
     private boolean skipPmdError;
+
+    private String excludeFromFailureFile;
+    private String targetDirectory;
+    private String outputEncoding;
+    private String format;
+    private String benchmarkOutputLocation;
     private boolean includeXmlInSite;
     private String reportOutputDirectory;
-    private String excludeFromFailureFile;
 
-    public void setLanguage( String language )
+    /**
+     * Configure language and language version.
+     *
+     * @param language the language
+     * @param targetJdk the language version, optional, can be <code>null</code>
+     */
+    public void setLanguageAndVersion( String language, String targetJdk )
     {
-        this.language = language;
-    }
-
-    public void setLanguageVersion( String languageVersion )
-    {
-        this.languageVersion = languageVersion;
+        if ( "java".equals( language ) || null == language )
+        {
+            this.language = "java";
+            this.languageVersion = targetJdk;
+        }
+        else if ( "javascript".equals( language ) || "ecmascript".equals( language ) )
+        {
+            this.language = "ecmascript";
+        }
+        else if ( "jsp".equals( language ) )
+        {
+            this.language = "jsp";
+        }
+        else
+        {
+            this.language = language;
+        }
     }
 
     public void setMinimumPriority( int minimumPriority )
@@ -94,9 +117,9 @@ public class PmdRequest implements Serializable
         this.sourceEncoding = sourceEncoding;
     }
 
-    public void addFile( File file )
+    public void addFiles( Collection<File> files )
     {
-        this.files.add( file );
+        this.files.addAll( files );
     }
 
     public void setBenchmarkOutputLocation( String benchmarkOutputLocation )

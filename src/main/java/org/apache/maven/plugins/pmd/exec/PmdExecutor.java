@@ -19,12 +19,11 @@ package org.apache.maven.plugins.pmd.exec;
  * under the License.
  */
 
+import java.io.Closeable;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +33,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.SimpleFormatter;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeViolationsFromFile;
@@ -53,8 +53,11 @@ import net.sourceforge.pmd.RulePriority;
 import net.sourceforge.pmd.RuleSetFactory;
 import net.sourceforge.pmd.RuleSetNotFoundException;
 import net.sourceforge.pmd.RuleViolation;
-import net.sourceforge.pmd.benchmark.Benchmarker;
-import net.sourceforge.pmd.benchmark.TextReport;
+import net.sourceforge.pmd.RulesetsFactoryUtils;
+import net.sourceforge.pmd.benchmark.TextTimingReportRenderer;
+import net.sourceforge.pmd.benchmark.TimeTracker;
+import net.sourceforge.pmd.benchmark.TimingReport;
+import net.sourceforge.pmd.benchmark.TimingReportRenderer;
 import net.sourceforge.pmd.lang.Language;
 import net.sourceforge.pmd.lang.LanguageRegistry;
 import net.sourceforge.pmd.lang.LanguageVersion;
@@ -63,19 +66,15 @@ import net.sourceforge.pmd.renderers.HTMLRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
-import net.sourceforge.pmd.util.ClasspathClassLoader;
-import net.sourceforge.pmd.util.IOUtil;
-import net.sourceforge.pmd.util.ResourceLoader;
 import net.sourceforge.pmd.util.datasource.DataSource;
 import net.sourceforge.pmd.util.datasource.FileDataSource;
 
 /**
- * Executes PMD
+ * Executes PMD with the configuration provided via {@link PmdRequest}.
  */
 public class PmdExecutor
 {
-    private static final Logger LOG = LoggerFactory
-            .getLogger( PmdExecutor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( PmdExecutor.class );
 
     /**
      * This holds a strong reference in case we configured the logger to
@@ -84,14 +83,12 @@ public class PmdExecutor
      */
     private java.util.logging.Logger julLogger;
 
-    public static PmdResult execute( PmdRequest request )
-            throws MavenReportException
+    public static PmdResult execute( PmdRequest request ) throws MavenReportException
     {
         ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
         try
         {
-            Thread.currentThread().setContextClassLoader(
-                    PmdExecutor.class.getClassLoader() );
+            Thread.currentThread().setContextClassLoader( PmdExecutor.class.getClassLoader() );
             PmdExecutor executor = new PmdExecutor();
             return executor.run( request );
         }
@@ -103,30 +100,22 @@ public class PmdExecutor
 
     private PmdResult run( PmdRequest request ) throws MavenReportException
     {
-        setupPmdLogging( request.isShowPmdLog(), request.isColorizedLog(),
-                request.getLogLevel() );
-
-        LOG.info( "Executing PMD now for files:" );
-        LOG.info( String.valueOf( request.getFiles() ) );
+        setupPmdLogging( request.isShowPmdLog(), request.isColorizedLog(), request.getLogLevel() );
 
         PMDConfiguration configuration = new PMDConfiguration();
         LanguageVersion languageVersion = null;
-        Language language = LanguageRegistry.findLanguageByTerseName(
-                request.getLanguage() != null ? request.getLanguage()
-                        : "java" );
+        Language language = LanguageRegistry
+                .findLanguageByTerseName( request.getLanguage() != null ? request.getLanguage() : "java" );
         if ( language == null )
         {
-            throw new MavenReportException(
-                    "Unsupported language: " + request.getLanguage() );
+            throw new MavenReportException( "Unsupported language: " + request.getLanguage() );
         }
         if ( request.getLanguageVersion() != null )
         {
-            languageVersion = language
-                    .getVersion( request.getLanguageVersion() );
+            languageVersion = language.getVersion( request.getLanguageVersion() );
             if ( languageVersion == null )
             {
-                throw new MavenReportException( "Unsupported targetJdk value '"
-                        + request.getLanguageVersion() + "'." );
+                throw new MavenReportException( "Unsupported targetJdk value '" + request.getLanguageVersion() + "'." );
             }
         }
         else
@@ -136,16 +125,13 @@ public class PmdExecutor
         LOG.debug( "Using language " + languageVersion );
         configuration.setDefaultLanguageVersion( languageVersion );
 
-        if ( request.getAuxClasspath() != null )
+        try
         {
-            try
-            {
-                configuration.prependClasspath( request.getAuxClasspath() );
-            }
-            catch ( IOException e )
-            {
-                throw new MavenReportException( e.getMessage(), e );
-            }
+            configuration.prependClasspath( request.getAuxClasspath() );
+        }
+        catch ( IOException e )
+        {
+            throw new MavenReportException( e.getMessage(), e );
         }
         if ( request.getSuppressMarker() != null )
         {
@@ -153,10 +139,8 @@ public class PmdExecutor
         }
         if ( request.getAnalysisCacheLocation() != null )
         {
-            configuration.setAnalysisCacheLocation(
-                    request.getAnalysisCacheLocation() );
-            LOG.debug( "Using analysis cache location: "
-                    + request.getAnalysisCacheLocation() );
+            configuration.setAnalysisCacheLocation( request.getAnalysisCacheLocation() );
+            LOG.debug( "Using analysis cache location: " + request.getAnalysisCacheLocation() );
         }
         else
         {
@@ -183,9 +167,33 @@ public class PmdExecutor
         }
         else
         {
-            processFilesWithPMD( configuration, dataSources,
-                    request.getMinimumPriority(), renderer,
-                    request.isSkipPmdError() );
+            if ( request.getBenchmarkOutputLocation() != null )
+            {
+                TimeTracker.startGlobalTracking();
+            }
+
+            try
+            {
+                processFilesWithPMD( configuration, dataSources, request.getMinimumPriority(), renderer,
+                        request.isSkipPmdError() );
+            }
+            finally
+            {
+                if ( request.getAuxClasspath() != null )
+                {
+                    ClassLoader classLoader = configuration.getClassLoader();
+                    if ( classLoader instanceof Closeable )
+                    {
+                        IOUtils.closeQuietly( (Closeable) classLoader );
+                    }
+                }
+                if ( request.getBenchmarkOutputLocation() != null )
+                {
+                    TimingReport timingReport = TimeTracker.stopGlobalTracking();
+                    writeBenchmarkReport( timingReport, request.getBenchmarkOutputLocation(),
+                            request.getOutputEncoding() );
+                }
+            }
         }
 
         if ( renderer.hasErrors() )
@@ -194,67 +202,51 @@ public class PmdExecutor
             {
                 LOG.error( "PMD processing errors:" );
                 LOG.error( renderer.getErrorsAsString( request.isDebugEnabled() ) );
-                throw new MavenReportException(
-                        "Found " + renderer.getErrors().size()
-                                + " PMD processing errors" );
+                throw new MavenReportException( "Found " + renderer.getErrors().size() + " PMD processing errors" );
             }
-            LOG.warn( "There are " + renderer.getErrors().size()
-                    + " PMD processing errors:" );
+            LOG.warn( "There are {} PMD processing errors:", renderer.getErrors().size() );
             LOG.warn( renderer.getErrorsAsString( request.isDebugEnabled() ) );
         }
 
-        removeExcludedViolations( renderer.getViolations(),
-                request.getExcludeFromFailureFile() );
+        removeExcludedViolations( renderer.getViolations(), request.getExcludeFromFailureFile() );
 
         Report report = renderer.asReport();
         // always write XML report, as this might be needed by the check mojo
-        // we need to output it even if the file list is empty or we have no
-        // violations
+        // we need to output it even if the file list is empty or we have no violations
         // so the "check" goals can check for violations
-        writeXmlReport( report, request.getTargetDirectory(),
-                request.getOutputEncoding(), request.isIncludeXmlInSite(),
+        writeXmlReport( report, request.getTargetDirectory(), request.getOutputEncoding(), request.isIncludeXmlInSite(),
                 request.getReportOutputDirectory() );
 
-        // write any other format except for xml and html. xml has just been
-        // produced.
-        // html format is produced by the maven site formatter. Excluding html
-        // here
-        // avoids using PMD's own html formatter, which doesn't fit into the
-        // maven site
+        // write any other format except for xml and html. xml has just been produced.
+        // html format is produced by the maven site formatter. Excluding html here
+        // avoids using PMD's own html formatter, which doesn't fit into the maven site
         // considering the html/css styling
         String format = request.getFormat();
         if ( !"html".equals( format ) && !"xml".equals( format ) )
         {
-            writeFormattedReport( report, format, request.getOutputEncoding(),
-                    request.getTargetDirectory() );
+            writeFormattedReport( report, format, request.getOutputEncoding(), request.getTargetDirectory() );
         }
 
-        if ( request.getBenchmarkOutputLocation() != null )
-        {
-            try ( PrintStream benchmarkFileStream = new PrintStream(
-                    request.getBenchmarkOutputLocation() ) )
-            {
-                ( new TextReport() ).generate( Benchmarker.values(), benchmarkFileStream );
-            }
-            catch ( FileNotFoundException fnfe )
-            {
-                LOG.error( "Unable to generate benchmark file: "
-                        + request.getBenchmarkOutputLocation(), fnfe );
-            }
-        }
-
-        return new PmdResult(
-                new File( request.getTargetDirectory(), "pmd.xml" ),
-                request.getOutputEncoding() );
+        return new PmdResult( new File( request.getTargetDirectory(), "pmd.xml" ), request.getOutputEncoding() );
     }
 
-    private void processFilesWithPMD( PMDConfiguration pmdConfiguration,
-            List<DataSource> dataSources, int minimumPriority,
-            PmdCollectingRenderer renderer, boolean skipPmdError )
-            throws MavenReportException
+    private void writeBenchmarkReport( TimingReport timingReport, String benchmarkOutputLocation, String encoding )
     {
-        RuleSetFactory ruleSetFactory = new RuleSetFactory(
-                new ResourceLoader(), RulePriority.valueOf( minimumPriority ),
+        try ( Writer writer = new OutputStreamWriter( new FileOutputStream( benchmarkOutputLocation ), encoding ) )
+        {
+            final TimingReportRenderer renderer = new TextTimingReportRenderer();
+            renderer.render( timingReport, writer );
+        }
+        catch ( IOException e )
+        {
+            LOG.error( "Unable to generate benchmark file: " + benchmarkOutputLocation, e );
+        }
+    }
+
+    private void processFilesWithPMD( PMDConfiguration pmdConfiguration, List<DataSource> dataSources,
+            int minimumPriority, PmdCollectingRenderer renderer, boolean skipPmdError ) throws MavenReportException
+    {
+        RuleSetFactory ruleSetFactory = RulesetsFactoryUtils.createFactory( RulePriority.valueOf( minimumPriority ),
                 true, true );
         try
         {
@@ -263,36 +255,26 @@ public class PmdExecutor
         }
         catch ( RuleSetNotFoundException e1 )
         {
-            throw new MavenReportException( "The ruleset could not be loaded",
-                    e1 );
+            throw new MavenReportException( "The ruleset could not be loaded", e1 );
         }
 
         try
         {
             LOG.debug( "Executing PMD..." );
             RuleContext ruleContext = new RuleContext();
-            PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources,
-                    ruleContext, Arrays.<Renderer>asList( renderer ) );
+            PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext,
+                    Arrays.<Renderer>asList( renderer ) );
 
             LOG.debug( "PMD finished. Found {} violations.", renderer.getViolations().size() );
         }
         catch ( Exception e )
         {
-            String message = "Failure executing PMD: "
-                    + e.getLocalizedMessage();
+            String message = "Failure executing PMD: " + e.getLocalizedMessage();
             if ( !skipPmdError )
             {
                 throw new MavenReportException( message, e );
             }
             LOG.warn( message, e );
-        }
-        finally
-        {
-            ClassLoader classLoader = pmdConfiguration.getClassLoader();
-            if ( classLoader instanceof ClasspathClassLoader )
-            {
-                IOUtil.tryCloseClassLoader( classLoader );
-            }
         }
     }
 
@@ -303,12 +285,10 @@ public class PmdExecutor
      * @param report
      * @throws MavenReportException
      */
-    private void writeXmlReport( Report report, String targetDirectory,
-            String outputEncoding, boolean includeXmlInSite,
+    private void writeXmlReport( Report report, String targetDirectory, String outputEncoding, boolean includeXmlInSite,
             String reportOutputDirectory ) throws MavenReportException
     {
-        File targetFile = writeReport( report,
-                new XMLRenderer( outputEncoding ), "xml", targetDirectory,
+        File targetFile = writeReport( report, new XMLRenderer( outputEncoding ), "xml", targetDirectory,
                 outputEncoding );
         if ( includeXmlInSite )
         {
@@ -316,8 +296,7 @@ public class PmdExecutor
             siteDir.mkdirs();
             try
             {
-                FileUtils.copyFile( targetFile,
-                        new File( siteDir, "pmd.xml" ) );
+                FileUtils.copyFile( targetFile, new File( siteDir, "pmd.xml" ) );
             }
             catch ( IOException e )
             {
@@ -326,9 +305,8 @@ public class PmdExecutor
         }
     }
 
-    private File writeReport( Report report, Renderer r, String extension,
-            String targetDirectory, String outputEncoding )
-            throws MavenReportException
+    private File writeReport( Report report, Renderer r, String extension, String targetDirectory,
+            String outputEncoding ) throws MavenReportException
     {
         if ( r == null )
         {
@@ -338,8 +316,7 @@ public class PmdExecutor
         new File( targetDirectory ).mkdirs();
 
         File targetFile = new File( targetDirectory, "pmd." + extension );
-        try ( Writer writer = new OutputStreamWriter(
-                new FileOutputStream( targetFile ), outputEncoding ) )
+        try ( Writer writer = new OutputStreamWriter( new FileOutputStream( targetFile ), outputEncoding ) )
         {
             r.setWriter( writer );
             r.start();
@@ -355,8 +332,7 @@ public class PmdExecutor
         return targetFile;
     }
 
-    private void setupPmdLogging( boolean showPmdLog, boolean colorizedLog,
-            String logLevel )
+    private void setupPmdLogging( boolean showPmdLog, boolean colorizedLog, String logLevel )
     {
         MessageUtils.setColorEnabled( colorizedLog );
 
@@ -365,8 +341,7 @@ public class PmdExecutor
             return;
         }
 
-        java.util.logging.Logger logger = java.util.logging.Logger
-                .getLogger( "net.sourceforge.pmd" );
+        java.util.logging.Logger logger = java.util.logging.Logger.getLogger( "net.sourceforge.pmd" );
 
         boolean slf4jBridgeAlreadyAdded = false;
         for ( Handler handler : logger.getHandlers() )
@@ -392,8 +367,7 @@ public class PmdExecutor
         handler.setLevel( Level.ALL );
         logger.setLevel( Level.ALL );
         julLogger = logger;
-        julLogger.fine(
-                "Configured jul-to-slf4j bridge for " + logger.getName() );
+        julLogger.fine( "Configured jul-to-slf4j bridge for " + logger.getName() );
     }
 
     /**
@@ -402,13 +376,11 @@ public class PmdExecutor
      * @param report
      * @throws MavenReportException
      */
-    private void writeFormattedReport( Report report, String format,
-            String outputEncoding, String targetDirectory )
+    private void writeFormattedReport( Report report, String format, String outputEncoding, String targetDirectory )
             throws MavenReportException
     {
         Renderer renderer = createRenderer( format, outputEncoding );
-        writeReport( report, renderer, format, targetDirectory,
-                outputEncoding );
+        writeReport( report, renderer, format, targetDirectory, outputEncoding );
     }
 
     /**
@@ -418,8 +390,7 @@ public class PmdExecutor
      * @throws org.apache.maven.reporting.MavenReportException
      *             if no renderer found for the output type
      */
-    public Renderer createRenderer( String format, String outputEncoding )
-            throws MavenReportException
+    public Renderer createRenderer( String format, String outputEncoding ) throws MavenReportException
     {
         Renderer result = null;
         if ( "xml".equals( format ) )
@@ -442,36 +413,33 @@ public class PmdExecutor
         {
             try
             {
-                result = (Renderer) Class.forName( format ).getConstructor()
-                        .newInstance();
+                result = (Renderer) Class.forName( format ).getConstructor().newInstance();
             }
             catch ( Exception e )
             {
-                throw new MavenReportException( "Can't find PMD custom format "
-                        + format + ": " + e.getClass().getName(), e );
+                throw new MavenReportException(
+                        "Can't find PMD custom format " + format + ": " + e.getClass().getName(), e );
             }
         }
 
         return result;
     }
 
-    private void removeExcludedViolations( List<RuleViolation> violations,
-            String excludeFromFailureFile ) throws MavenReportException
+    private void removeExcludedViolations( List<RuleViolation> violations, String excludeFromFailureFile )
+            throws MavenReportException
     {
         ExcludeViolationsFromFile excludeFromFile = new ExcludeViolationsFromFile();
 
         try
         {
-            excludeFromFile
-                    .loadExcludeFromFailuresData( excludeFromFailureFile );
+            excludeFromFile.loadExcludeFromFailuresData( excludeFromFailureFile );
         }
         catch ( MojoExecutionException e )
         {
             throw new MavenReportException( "Unable to load exclusions", e );
         }
 
-        LOG.debug( "Removing excluded violations. Using "
-                + excludeFromFile.countExclusions()
+        LOG.debug( "Removing excluded violations. Using " + excludeFromFile.countExclusions()
                 + " configured exclusions." );
         int violationsBefore = violations.size();
 
