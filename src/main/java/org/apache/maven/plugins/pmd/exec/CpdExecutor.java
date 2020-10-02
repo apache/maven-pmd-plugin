@@ -27,6 +27,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeDuplicationsFromFile;
@@ -61,8 +62,8 @@ public class CpdExecutor extends Executor
         try
         {
             Thread.currentThread().setContextClassLoader( CpdExecutor.class.getClassLoader() );
-            CpdExecutor cpdExecutor = new CpdExecutor();
-            return cpdExecutor.run( request );
+            CpdExecutor cpdExecutor = new CpdExecutor( request );
+            return cpdExecutor.run();
         }
         finally
         {
@@ -70,10 +71,17 @@ public class CpdExecutor extends Executor
         }
     }
 
+    private final CpdRequest request;
+
     /** Helper to exclude duplications from the result. */
     private final ExcludeDuplicationsFromFile excludeDuplicationsFromFile = new ExcludeDuplicationsFromFile();
 
-    private CpdResult run( CpdRequest request ) throws MavenReportException
+    public CpdExecutor( CpdRequest request )
+    {
+        this.request = Objects.requireNonNull( request );
+    }
+
+    private CpdResult run() throws MavenReportException
     {
         setupPmdLogging( request.isShowPmdLog(), request.isColorizedLog(), request.getLogLevel() );
 
@@ -126,25 +134,24 @@ public class CpdExecutor extends Executor
 
         // always create XML format. we need to output it even if the file list is empty or we have no duplications
         // so the "check" goals can check for violations
-        writeXmlReport( cpd, request.getTargetDirectory(), request.getOutputEncoding(), request.isIncludeXmlInSite(),
-                request.getReportOutputDirectory() );
+        writeXmlReport( cpd );
 
         // html format is handled by maven site report, xml format has already been rendered
-        if ( !"html".equals( request.getFormat() ) && !"xml".equals( request.getFormat() ) )
+        String format = request.getFormat();
+        if ( !"html".equals( format ) && !"xml".equals( format ) )
         {
-            writeFormattedReport( cpd, request.getFormat(), request.getTargetDirectory(), request.getOutputEncoding() );
+            writeFormattedReport( cpd );
         }
 
         return new CpdResult( new File( request.getTargetDirectory(), "cpd.xml" ), request.getOutputEncoding() );
     }
 
-    private void writeXmlReport( CPD cpd, String targetDirectory, String outputEncoding, boolean includeXmlInSite,
-            String reportOutputDirectory ) throws MavenReportException
+    private void writeXmlReport( CPD cpd ) throws MavenReportException
     {
-        File targetFile = writeReport( cpd, new XMLRenderer( outputEncoding ), "xml", targetDirectory, outputEncoding );
-        if ( includeXmlInSite )
+        File targetFile = writeReport( cpd, new XMLRenderer( request.getOutputEncoding() ), "xml" );
+        if ( request.isIncludeXmlInSite() )
         {
-            File siteDir = new File( reportOutputDirectory );
+            File siteDir = new File( request.getReportOutputDirectory() );
             siteDir.mkdirs();
             try
             {
@@ -157,18 +164,18 @@ public class CpdExecutor extends Executor
         }
     }
 
-    private File writeReport( CPD cpd, CPDRenderer r, String extension, String targetDirectory, String outputEncoding )
-            throws MavenReportException
+    private File writeReport( CPD cpd, CPDRenderer r, String extension ) throws MavenReportException
     {
         if ( r == null )
         {
             return null;
         }
 
-        File targetDir = new File( targetDirectory );
+        File targetDir = new File( request.getTargetDirectory() );
         targetDir.mkdirs();
         File targetFile = new File( targetDir, "cpd." + extension );
-        try ( Writer writer = new OutputStreamWriter( new FileOutputStream( targetFile ), outputEncoding ) )
+        try ( Writer writer = new OutputStreamWriter( new FileOutputStream( targetFile ),
+                request.getOutputEncoding() ) )
         {
             r.render( filterMatches( cpd.getMatches() ), writer );
             writer.flush();
@@ -180,11 +187,11 @@ public class CpdExecutor extends Executor
         return targetFile;
     }
 
-    private void writeFormattedReport( CPD cpd, String format, String targetDirectory, String outputEncoding )
+    private void writeFormattedReport( CPD cpd )
             throws MavenReportException
         {
-            CPDRenderer r = createRenderer( format, outputEncoding );
-            writeReport( cpd, r, format, targetDirectory, outputEncoding );
+            CPDRenderer r = createRenderer( request.getFormat(), request.getOutputEncoding() );
+            writeReport( cpd, r, request.getFormat() );
 
         }
 

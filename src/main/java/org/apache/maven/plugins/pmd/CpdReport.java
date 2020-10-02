@@ -297,7 +297,9 @@ public class CpdReport
      *
      * @return the renderer based on the configured output
      * @throws org.apache.maven.reporting.MavenReportException if no renderer found for the output type
+     * @deprecated Use {@link CpdExecutor#createRenderer(String, String)} instead.
      */
+    @Deprecated
     public CPDRenderer createRenderer() throws MavenReportException
     {
         return CpdExecutor.createRenderer( format, getOutputEncoding() );

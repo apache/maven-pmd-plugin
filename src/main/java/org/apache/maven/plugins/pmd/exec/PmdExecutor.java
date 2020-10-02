@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -77,8 +78,8 @@ public class PmdExecutor extends Executor
         try
         {
             Thread.currentThread().setContextClassLoader( PmdExecutor.class.getClassLoader() );
-            PmdExecutor executor = new PmdExecutor();
-            return executor.run( request );
+            PmdExecutor executor = new PmdExecutor( request );
+            return executor.run();
         }
         finally
         {
@@ -86,7 +87,14 @@ public class PmdExecutor extends Executor
         }
     }
 
-    private PmdResult run( PmdRequest request ) throws MavenReportException
+    private final PmdRequest request;
+
+    public PmdExecutor( PmdRequest request )
+    {
+        this.request = Objects.requireNonNull( request );
+    }
+
+    private PmdResult run() throws MavenReportException
     {
         setupPmdLogging( request.isShowPmdLog(), request.isColorizedLog(), request.getLogLevel() );
 
@@ -162,8 +170,7 @@ public class PmdExecutor extends Executor
 
             try
             {
-                processFilesWithPMD( configuration, dataSources, request.getMinimumPriority(), renderer,
-                        request.isSkipPmdError() );
+                processFilesWithPMD( configuration, dataSources, renderer );
             }
             finally
             {
@@ -196,14 +203,13 @@ public class PmdExecutor extends Executor
             LOG.warn( renderer.getErrorsAsString( request.isDebugEnabled() ) );
         }
 
-        removeExcludedViolations( renderer.getViolations(), request.getExcludeFromFailureFile() );
+        removeExcludedViolations( renderer.getViolations() );
 
         Report report = renderer.asReport();
         // always write XML report, as this might be needed by the check mojo
         // we need to output it even if the file list is empty or we have no violations
         // so the "check" goals can check for violations
-        writeXmlReport( report, request.getTargetDirectory(), request.getOutputEncoding(), request.isIncludeXmlInSite(),
-                request.getReportOutputDirectory() );
+        writeXmlReport( report );
 
         // write any other format except for xml and html. xml has just been produced.
         // html format is produced by the maven site formatter. Excluding html here
@@ -212,7 +218,7 @@ public class PmdExecutor extends Executor
         String format = request.getFormat();
         if ( !"html".equals( format ) && !"xml".equals( format ) )
         {
-            writeFormattedReport( report, format, request.getOutputEncoding(), request.getTargetDirectory() );
+            writeFormattedReport( report );
         }
 
         return new PmdResult( new File( request.getTargetDirectory(), "pmd.xml" ), request.getOutputEncoding() );
@@ -227,15 +233,15 @@ public class PmdExecutor extends Executor
         }
         catch ( IOException e )
         {
-            LOG.error( "Unable to generate benchmark file: " + benchmarkOutputLocation, e );
+            LOG.error( "Unable to generate benchmark file: {}", benchmarkOutputLocation, e );
         }
     }
 
     private void processFilesWithPMD( PMDConfiguration pmdConfiguration, List<DataSource> dataSources,
-            int minimumPriority, PmdCollectingRenderer renderer, boolean skipPmdError ) throws MavenReportException
+            PmdCollectingRenderer renderer ) throws MavenReportException
     {
-        RuleSetFactory ruleSetFactory = RulesetsFactoryUtils.createFactory( RulePriority.valueOf( minimumPriority ),
-                true, true );
+        RuleSetFactory ruleSetFactory = RulesetsFactoryUtils.createFactory(
+                RulePriority.valueOf( request.getMinimumPriority() ), true, true );
         try
         {
             // load the ruleset once to log out any deprecated rules as warnings
@@ -258,7 +264,7 @@ public class PmdExecutor extends Executor
         catch ( Exception e )
         {
             String message = "Failure executing PMD: " + e.getLocalizedMessage();
-            if ( !skipPmdError )
+            if ( !request.isSkipPmdError() )
             {
                 throw new MavenReportException( message, e );
             }
@@ -273,14 +279,12 @@ public class PmdExecutor extends Executor
      * @param report
      * @throws MavenReportException
      */
-    private void writeXmlReport( Report report, String targetDirectory, String outputEncoding, boolean includeXmlInSite,
-            String reportOutputDirectory ) throws MavenReportException
+    private void writeXmlReport( Report report ) throws MavenReportException
     {
-        File targetFile = writeReport( report, new XMLRenderer( outputEncoding ), "xml", targetDirectory,
-                outputEncoding );
-        if ( includeXmlInSite )
+        File targetFile = writeReport( report, new XMLRenderer( request.getOutputEncoding() ), "xml" );
+        if ( request.isIncludeXmlInSite() )
         {
-            File siteDir = new File( reportOutputDirectory );
+            File siteDir = new File( request.getReportOutputDirectory() );
             siteDir.mkdirs();
             try
             {
@@ -293,18 +297,18 @@ public class PmdExecutor extends Executor
         }
     }
 
-    private File writeReport( Report report, Renderer r, String extension, String targetDirectory,
-            String outputEncoding ) throws MavenReportException
+    private File writeReport( Report report, Renderer r, String extension ) throws MavenReportException
     {
         if ( r == null )
         {
             return null;
         }
 
-        new File( targetDirectory ).mkdirs();
-
-        File targetFile = new File( targetDirectory, "pmd." + extension );
-        try ( Writer writer = new OutputStreamWriter( new FileOutputStream( targetFile ), outputEncoding ) )
+        File targetDir = new File( request.getTargetDirectory() );
+        targetDir.mkdirs();
+        File targetFile = new File( targetDir, "pmd." + extension );
+        try ( Writer writer = new OutputStreamWriter( new FileOutputStream( targetFile ),
+                request.getOutputEncoding() ) )
         {
             r.setWriter( writer );
             r.start();
@@ -326,11 +330,11 @@ public class PmdExecutor extends Executor
      * @param report
      * @throws MavenReportException
      */
-    private void writeFormattedReport( Report report, String format, String outputEncoding, String targetDirectory )
+    private void writeFormattedReport( Report report )
             throws MavenReportException
     {
-        Renderer renderer = createRenderer( format, outputEncoding );
-        writeReport( report, renderer, format, targetDirectory, outputEncoding );
+        Renderer renderer = createRenderer( request.getFormat(), request.getOutputEncoding() );
+        writeReport( report, renderer, request.getFormat() );
     }
 
     /**
@@ -340,7 +344,7 @@ public class PmdExecutor extends Executor
      * @throws org.apache.maven.reporting.MavenReportException
      *             if no renderer found for the output type
      */
-    public Renderer createRenderer( String format, String outputEncoding ) throws MavenReportException
+    public static Renderer createRenderer( String format, String outputEncoding ) throws MavenReportException
     {
         Renderer result = null;
         if ( "xml".equals( format ) )
@@ -375,22 +379,22 @@ public class PmdExecutor extends Executor
         return result;
     }
 
-    private void removeExcludedViolations( List<RuleViolation> violations, String excludeFromFailureFile )
+    private void removeExcludedViolations( List<RuleViolation> violations )
             throws MavenReportException
     {
         ExcludeViolationsFromFile excludeFromFile = new ExcludeViolationsFromFile();
 
         try
         {
-            excludeFromFile.loadExcludeFromFailuresData( excludeFromFailureFile );
+            excludeFromFile.loadExcludeFromFailuresData( request.getExcludeFromFailureFile() );
         }
         catch ( MojoExecutionException e )
         {
             throw new MavenReportException( "Unable to load exclusions", e );
         }
 
-        LOG.debug( "Removing excluded violations. Using " + excludeFromFile.countExclusions()
-                + " configured exclusions." );
+        LOG.debug( "Removing excluded violations. Using {} configured exclusions.",
+                excludeFromFile.countExclusions() );
         int violationsBefore = violations.size();
 
         Iterator<RuleViolation> iterator = violations.iterator();
@@ -404,7 +408,7 @@ public class PmdExecutor extends Executor
         }
 
         int numberOfExcludedViolations = violationsBefore - violations.size();
-        LOG.debug( "Excluded " + numberOfExcludedViolations + " violations." );
+        LOG.debug( "Excluded {} violations.", numberOfExcludedViolations );
     }
 
 }

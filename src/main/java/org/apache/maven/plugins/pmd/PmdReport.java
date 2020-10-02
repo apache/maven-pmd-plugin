@@ -55,6 +55,7 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
 import net.sourceforge.pmd.RuleSetReferenceId;
+import net.sourceforge.pmd.renderers.Renderer;
 
 /**
  * Creates a PMD report.
@@ -595,5 +596,18 @@ public class PmdReport
     private static ResourceBundle getBundle( Locale locale )
     {
         return ResourceBundle.getBundle( "pmd-report", locale, PmdReport.class.getClassLoader() );
+    }
+
+    /**
+     * Create and return the correct renderer for the output type.
+     *
+     * @return the renderer based on the configured output
+     * @throws org.apache.maven.reporting.MavenReportException if no renderer found for the output type
+     * @deprecated Use {@link PmdExecutor#createRenderer(String, String)} instead.
+     */
+    @Deprecated
+    public final Renderer createRenderer() throws MavenReportException
+    {
+        return PmdExecutor.createRenderer( format, getOutputEncoding() );
     }
 }

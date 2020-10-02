@@ -655,15 +655,13 @@ public class PmdReportTest
 
     public void testCustomRenderer() throws MavenReportException
     {
-        PmdExecutor pmdExecutor = new PmdExecutor();
-        final Renderer renderer = pmdExecutor.createRenderer( "net.sourceforge.pmd.renderers.TextRenderer", "UTF-8" );
+        final Renderer renderer = PmdExecutor.createRenderer( "net.sourceforge.pmd.renderers.TextRenderer", "UTF-8" );
         assertNotNull(renderer);
     }
 
     public void testCodeClimateRenderer() throws MavenReportException
     {
-        PmdExecutor pmdExecutor = new PmdExecutor();
-        final Renderer renderer = pmdExecutor.createRenderer( "net.sourceforge.pmd.renderers.CodeClimateRenderer", "UTF-8" );
+        final Renderer renderer = PmdExecutor.createRenderer( "net.sourceforge.pmd.renderers.CodeClimateRenderer", "UTF-8" );
         assertNotNull(renderer);
     }
 }
