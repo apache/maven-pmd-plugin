@@ -20,15 +20,13 @@ package org.apache.maven.plugins.pmd;
  */
 
 import java.io.File;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.pmd.cpd.Mark;
-import net.sourceforge.pmd.cpd.Match;
-import net.sourceforge.pmd.cpd.TokenEntry;
-
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugins.pmd.model.CpdFile;
+import org.apache.maven.plugins.pmd.model.Duplication;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -107,17 +105,17 @@ public class CpdReportGenerator
     /**
      * Method that generates a line of CPD report according to a TokenEntry.
      */
-    private void generateFileLine( TokenEntry tokenEntry )
+    private void generateFileLine( CpdFile duplicationMark )
     {
         // Get information for report generation
-        String filename = tokenEntry.getTokenSrcID();
+        String filename = duplicationMark.getPath();
         File file = new File( filename );
         PmdFileInfo fileInfo = fileMap.get( file );
         File sourceDirectory = fileInfo.getSourceDirectory();
         filename = StringUtils.substring( filename, sourceDirectory.getAbsolutePath().length() + 1 );
         String xrefLocation = fileInfo.getXrefLocation();
         MavenProject projectFile = fileInfo.getProject();
-        int line = tokenEntry.getBeginLine();
+        int line = duplicationMark.getLine();
 
         sink.tableRow();
         sink.tableCell();
@@ -149,24 +147,22 @@ public class CpdReportGenerator
     /**
      * Method that generates the contents of the CPD report
      *
-     * @param matches the found duplications
+     * @param duplications the found duplications
      */
-    public void generate( Iterator<Match> matches )
+    public void generate( List<Duplication> duplications )
     {
         beginDocument();
 
-        if ( !matches.hasNext() )
+        if ( duplications.isEmpty() )
         {
             sink.paragraph();
             sink.text( bundle.getString( "report.cpd.noProblems" ) );
             sink.paragraph_();
         }
 
-        while ( matches.hasNext() )
+        for ( Duplication duplication : duplications )
         {
-            Match match = matches.next();
-
-            String code = match.getSourceCodeSlice();
+            String code = duplication.getCodefragment();
 
             sink.table();
             sink.tableRow();
@@ -185,10 +181,8 @@ public class CpdReportGenerator
             sink.tableRow_();
 
             // Iterating on every token entry
-            for ( Iterator<Mark> occurrences = match.iterator(); occurrences.hasNext(); )
+            for ( CpdFile mark : duplication.getFiles() )
             {
-
-                TokenEntry mark = occurrences.next().getToken();
                 generateFileLine( mark );
             }
 

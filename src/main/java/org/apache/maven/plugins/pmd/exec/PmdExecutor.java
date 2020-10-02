@@ -29,9 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.SimpleFormatter;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,11 +36,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeViolationsFromFile;
 import org.apache.maven.plugins.pmd.PmdCollectingRenderer;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.PMDConfiguration;
@@ -72,16 +67,9 @@ import net.sourceforge.pmd.util.datasource.FileDataSource;
 /**
  * Executes PMD with the configuration provided via {@link PmdRequest}.
  */
-public class PmdExecutor
+public class PmdExecutor extends Executor
 {
     private static final Logger LOG = LoggerFactory.getLogger( PmdExecutor.class );
-
-    /**
-     * This holds a strong reference in case we configured the logger to
-     * redirect to slf4j. See {@link #showPmdLog}. Without a strong reference,
-     * the logger might be garbage collected and the redirect to slf4j is gone.
-     */
-    private java.util.logging.Logger julLogger;
 
     public static PmdResult execute( PmdRequest request ) throws MavenReportException
     {
@@ -330,44 +318,6 @@ public class PmdExecutor
         }
 
         return targetFile;
-    }
-
-    private void setupPmdLogging( boolean showPmdLog, boolean colorizedLog, String logLevel )
-    {
-        MessageUtils.setColorEnabled( colorizedLog );
-
-        if ( !showPmdLog )
-        {
-            return;
-        }
-
-        java.util.logging.Logger logger = java.util.logging.Logger.getLogger( "net.sourceforge.pmd" );
-
-        boolean slf4jBridgeAlreadyAdded = false;
-        for ( Handler handler : logger.getHandlers() )
-        {
-            if ( handler instanceof SLF4JBridgeHandler )
-            {
-                slf4jBridgeAlreadyAdded = true;
-                break;
-            }
-        }
-
-        if ( slf4jBridgeAlreadyAdded )
-        {
-            LOG.info( "slf4jBridge is already added" );
-            return;
-        }
-
-        SLF4JBridgeHandler handler = new SLF4JBridgeHandler();
-        SimpleFormatter formatter = new SimpleFormatter();
-        handler.setFormatter( formatter );
-        logger.setUseParentHandlers( false );
-        logger.addHandler( handler );
-        handler.setLevel( Level.ALL );
-        logger.setLevel( Level.ALL );
-        julLogger = logger;
-        julLogger.fine( "Configured jul-to-slf4j bridge for " + logger.getName() );
     }
 
     /**

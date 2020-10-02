@@ -57,7 +57,6 @@ public class PmdReportTest
         super.setUp();
         Locale.setDefault( Locale.ENGLISH );
         FileUtils.deleteDirectory( new File( getBasedir(), "target/test/unit" ) );
-        CapturingPrintStream.init( true );
     }
 
     public void testDefaultConfiguration()

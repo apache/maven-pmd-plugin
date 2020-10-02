@@ -39,6 +39,14 @@ import org.codehaus.plexus.util.WriterFactory;
 public abstract class AbstractPmdReportTest
     extends AbstractMojoTestCase
 {
+    @Override
+    protected void setUp()
+        throws Exception
+    {
+        super.setUp();
+        CapturingPrintStream.init( true );
+    }
+
     /**
      * Renderer the sink from the report mojo.
      *

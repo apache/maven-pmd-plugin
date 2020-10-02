@@ -55,7 +55,7 @@ public class PmdResult
 
     public boolean hasViolations()
     {
-        return violations != null && !violations.isEmpty();
+        return !violations.isEmpty();
     }
 
     private void loadResult( File pmdFile, String encoding ) throws MavenReportException

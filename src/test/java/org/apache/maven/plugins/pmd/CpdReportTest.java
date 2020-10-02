@@ -23,22 +23,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import net.sourceforge.pmd.PMD;
-import net.sourceforge.pmd.cpd.CPD;
-import net.sourceforge.pmd.cpd.CPDConfiguration;
-import net.sourceforge.pmd.cpd.JavaLanguage;
-import net.sourceforge.pmd.cpd.Mark;
-import net.sourceforge.pmd.cpd.Match;
-import net.sourceforge.pmd.cpd.SourceCode;
-import net.sourceforge.pmd.cpd.TokenEntry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.FileUtils;
@@ -88,14 +76,8 @@ public class CpdReportTest
         // check the contents of cpd.html
         String str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
         assertTrue( lowerCaseContains( str, "AppSample.java" ) );
-
-        str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
         assertTrue( lowerCaseContains( str, "App.java" ) );
-
-        str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
         assertTrue( lowerCaseContains( str, "public String dup( String str )" ) );
-
-        str = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/cpd.html" ) );
         assertTrue( lowerCaseContains( str, "tmp = tmp + str.substring( i, i + 1);" ) );
     }
 
@@ -216,35 +198,6 @@ public class CpdReportTest
         return str.toString();
     }
 
-    private CPD prepareMockCpd( String duplicatedCodeFragment )
-    {
-        TokenEntry tFirstEntry = new TokenEntry( "public java", "MyClass.java", 2, 1, 12 );
-        TokenEntry tSecondEntry = new TokenEntry( "public java", "MyClass3.java", 2, 1, 12 );
-        SourceCode sourceCodeFirst = new SourceCode(new SourceCode.StringCodeLoader(
-                PMD.EOL + duplicatedCodeFragment + PMD.EOL, "MyClass.java"));
-        SourceCode sourceCodeSecond = new SourceCode(new SourceCode.StringCodeLoader(
-                PMD.EOL + duplicatedCodeFragment + PMD.EOL, "MyClass3.java"));
-
-        List<Match> tList = new ArrayList<>();
-        Mark tFirstMark = new Mark( tFirstEntry );
-        tFirstMark.setSourceCode(sourceCodeFirst);
-        tFirstMark.setLineCount(1);
-        Mark tSecondMark = new Mark( tSecondEntry );
-        tSecondMark.setSourceCode(sourceCodeSecond);
-        tSecondMark.setLineCount(1);
-        Match tMatch = new Match( 2, tFirstMark, tSecondMark );
-        tList.add( tMatch );
-
-        CPDConfiguration cpdConfiguration = new CPDConfiguration();
-        cpdConfiguration.setMinimumTileSize( 100 );
-        cpdConfiguration.setLanguage( new JavaLanguage() );
-        cpdConfiguration.setEncoding( "UTF-8" );
-        CPD tCpd = new MockCpd( cpdConfiguration, tList.iterator() );
-
-        tCpd.go();
-        return tCpd;
-    }
-
     public void testWriteNonHtml()
         throws Exception
     {
@@ -253,10 +206,7 @@ public class CpdReportTest
                       "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
         CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         assertNotNull( mojo );
-
-        String duplicatedCodeFragment = "// ----- duplicated code example -----";
-        CPD tCpd = prepareMockCpd( duplicatedCodeFragment );
-        mojo.writeXmlReport( tCpd );
+        mojo.execute();
 
         File tReport = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
 
@@ -265,9 +215,10 @@ public class CpdReportTest
         assertNotNull( pmdCpdDocument );
 
         String str = readFile( tReport );
-        assertTrue( lowerCaseContains( str, "MyClass.java" ) );
-        assertTrue( lowerCaseContains( str, "MyClass3.java" ) );
-        assertTrue( lowerCaseContains( str, duplicatedCodeFragment ) );
+        assertTrue( lowerCaseContains( str, "AppSample.java" ) );
+        assertTrue( lowerCaseContains( str, "App.java" ) );
+        assertTrue( lowerCaseContains( str, "public String dup( String str )" ) );
+        assertTrue( lowerCaseContains( str, "tmp = tmp + str.substring( i, i + 1);" ) );
     }
 
     /**
@@ -282,10 +233,7 @@ public class CpdReportTest
                           "src/test/resources/unit/default-configuration/cpd-report-include-xml-in-site-plugin-config.xml" );
         CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
         assertNotNull( mojo );
-
-        String duplicatedCodeFragment = "// ----- duplicated code example -----";
-        CPD tCpd = prepareMockCpd( duplicatedCodeFragment );
-        mojo.writeXmlReport( tCpd );
+        mojo.execute();
 
         File tReport = new File( getBasedir(), "target/test/unit/default-configuration/target/cpd.xml" );
         assertTrue( FileUtils.fileExists( tReport.getAbsolutePath() ) );
@@ -301,6 +249,7 @@ public class CpdReportTest
         assertTrue( FileUtils.fileExists( siteReport.getAbsolutePath() ) );
         String siteReportContent = readFile( siteReport );
         assertTrue( siteReportContent.contains( "</pmd-cpd>" ) );
+        assertEquals( str, siteReportContent );
     }
 
 
@@ -406,25 +355,4 @@ public class CpdReportTest
         String str = readFile( generatedFile );
         assertEquals( 0, StringUtils.countMatches( str, "<duplication" ) );
     }
-
-    public static class MockCpd
-        extends CPD
-    {
-
-        private Iterator<Match> matches;
-
-        public MockCpd( CPDConfiguration configuration, Iterator<Match> tMatch )
-        {
-            super( configuration );
-            matches = tMatch;
-        }
-
-        @Override
-        public Iterator<Match> getMatches()
-        {
-            return matches;
-        }
-
-    }
-
 }

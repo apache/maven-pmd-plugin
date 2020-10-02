@@ -412,21 +412,6 @@ public class PmdReport
     }
 
 
-    private String determineCurrentRootLogLevel()
-    {
-        String logLevel = System.getProperty( "org.slf4j.simpleLogger.defaultLogLevel" );
-        if ( logLevel == null )
-        {
-            logLevel = System.getProperty( "maven.logging.root.level" );
-        }
-        if ( logLevel == null )
-        {
-            // TODO: logback level
-            logLevel = "info";
-        }
-        return logLevel;
-    }
-
     /**
      * Resolves the configured rulesets and copies them as files into the {@link #rulesetsTargetDirectory}.
      *

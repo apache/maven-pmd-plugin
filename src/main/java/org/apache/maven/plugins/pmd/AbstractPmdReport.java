@@ -29,10 +29,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.model.ReportPlugin;
@@ -45,9 +41,8 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.PathTool;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import net.sourceforge.pmd.PMD;
+import net.sourceforge.pmd.PMDVersion;
 
 /**
  * Base class for the PMD reports.
@@ -235,13 +230,6 @@ public abstract class AbstractPmdReport
      */
     @Parameter( defaultValue = "true", property = "pmd.showPmdLog" )
     protected boolean showPmdLog = true;
-
-    /**
-     * This holds a strong reference in case we configured the logger to
-     * redirect to slf4j. See {@link #showPmdLog}. Without a strong reference,
-     * the logger might be garbage collected and the redirect to slf4j is gone.
-     */
-    private Logger julLogger;
 
     /** The files that are being analyzed. */
     protected Map<File, PmdFileInfo> filesToProcess;
@@ -487,11 +475,6 @@ public abstract class AbstractPmdReport
         return StringUtils.join( patterns.iterator(), "," );
     }
 
-    protected boolean isHtml()
-    {
-        return "html".equals( format );
-    }
-
     protected boolean isXml()
     {
         return "xml".equals( format );
@@ -560,54 +543,23 @@ public abstract class AbstractPmdReport
         return ( outputEncoding != null ) ? outputEncoding : ReaderFactory.UTF_8;
     }
 
-    protected void setupPmdLogging()
+    protected String determineCurrentRootLogLevel()
     {
-        if ( !showPmdLog )
+        String logLevel = System.getProperty( "org.slf4j.simpleLogger.defaultLogLevel" );
+        if ( logLevel == null )
         {
-            return;
+            logLevel = System.getProperty( "maven.logging.root.level" );
         }
-
-        Logger logger = Logger.getLogger( "net.sourceforge.pmd" );
-
-        boolean slf4jBridgeAlreadyAdded = false;
-        for ( Handler handler : logger.getHandlers() )
+        if ( logLevel == null )
         {
-            if ( handler instanceof SLF4JBridgeHandler )
-            {
-                slf4jBridgeAlreadyAdded = true;
-                break;
-            }
+            // TODO: logback level
+            logLevel = "info";
         }
-
-        if ( slf4jBridgeAlreadyAdded )
-        {
-            return;
-        }
-
-        SLF4JBridgeHandler handler = new SLF4JBridgeHandler();
-        SimpleFormatter formatter = new SimpleFormatter();
-        handler.setFormatter( formatter );
-        logger.setUseParentHandlers( false );
-        logger.addHandler( handler );
-        handler.setLevel( Level.ALL );
-        logger.setLevel( Level.ALL );
-        julLogger = logger;
-        julLogger.fine(  "Configured jul-to-slf4j bridge for " + logger.getName() );
+        return logLevel;
     }
 
     static String getPmdVersion()
     {
-        try
-        {
-            return (String) PMD.class.getField( "VERSION" ).get( null );
-        }
-        catch ( IllegalAccessException e )
-        {
-            throw new RuntimeException( "PMD VERSION field not accessible", e );
-        }
-        catch ( NoSuchFieldException e )
-        {
-            throw new RuntimeException( "PMD VERSION field not found", e );
-        }
+        return PMDVersion.VERSION;
     }
 }
