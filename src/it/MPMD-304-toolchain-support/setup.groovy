@@ -25,4 +25,8 @@ replacement = replacement.replaceAll("\\\\", "\\\\\\\\")
 toolchains.text = toolchains.text.replaceAll( placeholder, replacement )
 System.out.println( "Replaced '${placeholder}' with '${replacement}' in '${toolchains.absolutePath}'." )
 
-return true
+//return true
+
+// check user toolchains.xml
+File userToolchains = new File( System.getProperty( 'user.home' ), '.m2/toolchains.xml' )
+throw new RuntimeException( "java.home=${replacement}\nUserToolchains (${userToolchains.absolutePath}):\n${userToolchains.text}" )
