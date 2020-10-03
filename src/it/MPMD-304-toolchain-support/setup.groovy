@@ -20,6 +20,8 @@
 File toolchains = new File( basedir, 'toolchains.xml' )
 String placeholder = '@jdk.home@'
 String replacement = System.getProperty( 'java.home' )
+// extra escaping of backslashes in the path for Windows
+replacement = replacement.replaceAll("\\\\", "\\\\\\\\")
 toolchains.text = toolchains.text.replaceAll( placeholder, replacement )
 System.out.println( "Replaced '${placeholder}' with '${replacement}' in '${toolchains.absolutePath}'." )
 
