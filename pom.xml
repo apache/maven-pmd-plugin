@@ -354,6 +354,7 @@ under the License.
             <artifactId>maven-invoker-plugin</artifactId>
             <configuration>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+              <debug>false</debug>
               <goals>
                 <goal>clean</goal>
                 <goal>site</goal>
