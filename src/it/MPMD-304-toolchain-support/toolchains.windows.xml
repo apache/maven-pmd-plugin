@@ -29,7 +29,7 @@ under the License.
             <vendor>oracle</vendor>
         </provides>
         <configuration>
-            <!-- this placeholder will be replaced by setup.groovy -->
+            <!-- this placeholder will be replaced by selector.groovy -->
             <jdkHome>@jdk.home@</jdkHome>
         </configuration>
     </toolchain>
