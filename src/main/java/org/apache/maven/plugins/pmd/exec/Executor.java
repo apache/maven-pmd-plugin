@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.SimpleFormatter;
@@ -35,6 +34,7 @@ import java.util.logging.SimpleFormatter;
 import org.apache.maven.cli.logging.Slf4jConfiguration;
 import org.apache.maven.cli.logging.Slf4jConfigurationFactory;
 import org.apache.maven.shared.utils.logging.MessageUtils;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +111,21 @@ abstract class Executor
         slf4jConfiguration.activate();
     }
 
-    protected static void buildClasspath( StringBuilder classpath, ClassLoader cl )
+    protected static String buildClasspath()
+    {
+        StringBuilder classpath = new StringBuilder();
+
+        // plugin classpath needs to come first
+        ClassLoader pluginClassloader = Executor.class.getClassLoader();
+        buildClasspath( classpath, pluginClassloader );
+
+        ClassLoader coreClassloader = ConsoleLogger.class.getClassLoader();
+        buildClasspath( classpath, coreClassloader );
+
+        return classpath.toString();
+    }
+
+    private static void buildClasspath( StringBuilder classpath, ClassLoader cl )
     {
         if ( cl instanceof URLClassLoader )
         {

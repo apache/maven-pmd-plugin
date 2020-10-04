@@ -33,10 +33,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.pmd.CpdReport;
 import org.apache.maven.plugins.pmd.ExcludeDuplicationsFromFile;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,20 +94,15 @@ public class CpdExecutor extends Executor
             throw new MavenReportException( e.getMessage(), e );
         }
 
-        StringBuilder classpath = new StringBuilder();
-        ClassLoader coreClassloader = ConsoleLogger.class.getClassLoader();
-        buildClasspath( classpath, coreClassloader );
-        ClassLoader pluginClassloader = CpdReport.class.getClassLoader();
-        buildClasspath( classpath, pluginClassloader );
-
+        String classpath = buildClasspath();
         ProcessBuilder pb = new ProcessBuilder();
         // note: using env variable instead of -cp cli arg to avoid length limitations under Windows
-        pb.environment().put( "CLASSPATH", classpath.toString() );
+        pb.environment().put( "CLASSPATH", classpath );
         pb.command().add( request.getJavaExecutable() );
         pb.command().add( CpdExecutor.class.getName() );
         pb.command().add( cpdRequestFile.getAbsolutePath() );
 
-        LOG.debug( "Executing: CLASSPATH={}, command={}", classpath.toString(), pb.command() );
+        LOG.debug( "Executing: CLASSPATH={}, command={}", classpath, pb.command() );
         try
         {
             final Process p = pb.start();

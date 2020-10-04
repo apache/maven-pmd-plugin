@@ -39,9 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeViolationsFromFile;
 import org.apache.maven.plugins.pmd.PmdCollectingRenderer;
-import org.apache.maven.plugins.pmd.PmdReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,20 +111,15 @@ public class PmdExecutor extends Executor
             throw new MavenReportException( e.getMessage(), e );
         }
 
-        StringBuilder classpath = new StringBuilder();
-        ClassLoader coreClassloader = ConsoleLogger.class.getClassLoader();
-        buildClasspath( classpath, coreClassloader );
-        ClassLoader pluginClassloader = PmdReport.class.getClassLoader();
-        buildClasspath( classpath, pluginClassloader );
-
+        String classpath = buildClasspath();
         ProcessBuilder pb = new ProcessBuilder();
         // note: using env variable instead of -cp cli arg to avoid length limitations under Windows
-        pb.environment().put( "CLASSPATH", classpath.toString() );
+        pb.environment().put( "CLASSPATH", classpath );
         pb.command().add( request.getJavaExecutable() );
         pb.command().add( PmdExecutor.class.getName() );
         pb.command().add( pmdRequestFile.getAbsolutePath() );
 
-        LOG.debug( "Executing: CLASSPATH={}, command={}", classpath.toString(), pb.command() );
+        LOG.debug( "Executing: CLASSPATH={}, command={}", classpath, pb.command() );
         try
         {
             final Process p = pb.start();
