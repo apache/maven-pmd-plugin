@@ -1,9 +1,10 @@
  ------
- Target JDK
+ Target JDK and Toolchains
  ------
  Dennis Lundberg
+ Andreas Dangel
  ------
- 2008-01-02
+ 2020-10-02
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -52,6 +53,17 @@ Target JDK
 </project>
 +--------------------+
 
+Using Maven Toolchains
 
+ Since version 3.14.0 of the PMD plugin, toolchains are supported. This helps if the build system is
+ running a different JDK than being used for compiling. PMD reads the class files for
+ {{{../pmd-mojo.html#typeResolution}type resolution}} and this fails with ClassFormatErrors
+ if the JDK version is incorrect.
 
+ To set this up, refer to the {{{/guides/mini/guide-using-toolchains.html}Guide to Using Toolchains}}, which makes use
+ of the {{{/plugins/maven-toolchains-plugin/}Maven Toolchains Plugin}}.
 
+ With the maven-toolchains-plugin you configure 1 default JDK toolchain for all related maven-plugins.
+ Since maven-pmd-plugin 3.14.0 when using with Maven 3.3.1+ it is also possible to give the plugin its own
+ toolchain, which can be useful in case of different JDK calls per execution block (e.g. the test sources require a
+ different JDK compared to the main sources).

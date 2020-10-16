@@ -20,11 +20,9 @@ package org.apache.maven.plugins.pmd;
  */
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -32,6 +30,7 @@ import java.util.Locale;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.plugins.pmd.exec.PmdExecutor;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -47,6 +46,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 public class PmdReportTest
     extends AbstractPmdReportTest
 {
+
     /**
      * {@inheritDoc}
      */
@@ -578,33 +578,23 @@ public class PmdReportTest
                 "src/test/resources/unit/processing-error/pmd-processing-error-skip-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
 
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream logging = new ByteArrayOutputStream();
-        System.setOut( new PrintStream( logging ) );
+        mojo.execute();
+        String output = CapturingPrintStream.getOutput();
+        assertTrue ( output.contains( "There are 1 PMD processing errors:" ) );
 
-        try {
-            mojo.execute();
-            String output = logging.toString();
-            assertTrue ( output.contains( "There are 1 PMD processing errors:" ) );
+        File generatedFile = new File( getBasedir(), "target/test/unit/parse-error/target/pmd.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        String str = readFile( generatedFile );
+        assertTrue( str.contains( "Error while parsing" ) );
+        // The parse exception must be in the XML report
+        assertTrue( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
 
-            File generatedFile = new File( getBasedir(), "target/test/unit/parse-error/target/pmd.xml" );
-            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-            String str = readFile( generatedFile );
-            assertTrue( str.contains( "Error while parsing" ) );
-            // The parse exception must be in the XML report
-            assertTrue( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
-
-            generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
-            renderer( mojo, generatedFile );
-            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-            str = readFile( generatedFile );
-            // The parse exception must also be in the HTML report
-            assertTrue( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
-
-        } finally {
-            System.setOut( originalOut );
-            System.out.println( logging.toString() );
-        }
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+        renderer( mojo, generatedFile );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        str = readFile( generatedFile );
+        // The parse exception must also be in the HTML report
+        assertTrue( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
     }
 
     public void testPMDProcessingErrorWithDetailsNoReport()
@@ -614,33 +604,23 @@ public class PmdReportTest
                 "src/test/resources/unit/processing-error/pmd-processing-error-no-report-plugin-config.xml" );
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
 
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream logging = new ByteArrayOutputStream();
-        System.setOut( new PrintStream( logging ) );
+        mojo.execute();
+        String output = CapturingPrintStream.getOutput();
+        assertTrue ( output.contains( "There are 1 PMD processing errors:" ) );
 
-        try {
-            mojo.execute();
-            String output = logging.toString();
-            assertTrue ( output.contains( "There are 1 PMD processing errors:" ) );
+        File generatedFile = new File( getBasedir(), "target/test/unit/parse-error/target/pmd.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        String str = readFile( generatedFile );
+        assertTrue( str.contains( "Error while parsing" ) );
+        // The parse exception must be in the XML report
+        assertTrue( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
 
-            File generatedFile = new File( getBasedir(), "target/test/unit/parse-error/target/pmd.xml" );
-            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-            String str = readFile( generatedFile );
-            assertTrue( str.contains( "Error while parsing" ) );
-            // The parse exception must be in the XML report
-            assertTrue( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
-
-            generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
-            renderer( mojo, generatedFile );
-            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
-            str = readFile( generatedFile );
-            // The parse exception must NOT be in the HTML report, since reportProcessingErrors is false
-            assertFalse( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
-
-        } finally {
-            System.setOut( originalOut );
-            System.out.println( logging.toString() );
-        }
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+        renderer( mojo, generatedFile );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        str = readFile( generatedFile );
+        // The parse exception must NOT be in the HTML report, since reportProcessingErrors is false
+        assertFalse( str.contains( "ParseException: Encountered \"\" at line 23, column 5." ) );
     }
 
     public void testPMDExcludeRootsShouldExcludeSubdirectories() throws Exception {
@@ -675,17 +655,13 @@ public class PmdReportTest
 
     public void testCustomRenderer() throws MavenReportException
     {
-        PmdReport pmdReport = new PmdReport();
-        pmdReport.format = "net.sourceforge.pmd.renderers.TextRenderer";
-        final Renderer renderer = pmdReport.createRenderer();
+        final Renderer renderer = PmdExecutor.createRenderer( "net.sourceforge.pmd.renderers.TextRenderer", "UTF-8" );
         assertNotNull(renderer);
     }
 
     public void testCodeClimateRenderer() throws MavenReportException
     {
-        PmdReport pmdReport = new PmdReport();
-        pmdReport.format = "net.sourceforge.pmd.renderers.CodeClimateRenderer";
-        final Renderer renderer = pmdReport.createRenderer();
+        final Renderer renderer = PmdExecutor.createRenderer( "net.sourceforge.pmd.renderers.CodeClimateRenderer", "UTF-8" );
         assertNotNull(renderer);
     }
 }

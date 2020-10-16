@@ -45,15 +45,13 @@ under the License.
             <multiplicity>*</multiplicity>
           </association>
         </field>
-        <!-- 
         <field>
           <name>errors</name>
           <association xml.tagName="error" xml.itemsStyle="flat">
-            <type>PmdError</type>
+            <type>ProcessingError</type>
             <multiplicity>*</multiplicity>
           </association>
         </field>
-         -->
       </fields>
     </class>
     <class>
@@ -79,6 +77,10 @@ under the License.
           <name>beginline</name>
           <type>int</type>
         </field>
+        <field xml.attribute="true">
+            <name>endline</name>
+            <type>int</type>
+        </field>
         <field xml.tagName="class" xml.attribute="true">
           <name>violationClass</name>
           <type>String</type>
@@ -94,6 +96,10 @@ under the License.
         <field  xml.attribute="true">
           <name>priority</name>
           <type>int</type>
+        </field>
+        <field xml.attribute="true">
+            <name>externalInfoUrl</name>
+            <type>String</type>
         </field>
         <field xml.content="true">
           <name>text</name>
@@ -120,8 +126,22 @@ under the License.
         </codeSegment>
       </codeSegments>
     </class>
-  </classes>   
-    
- 
-    
+    <class>
+        <name>ProcessingError</name>
+        <fields>
+            <field xml.attribute="true">
+                <name>filename</name>
+                <type>String</type>
+            </field>
+            <field xml.attribute="true">
+                <name>msg</name>
+                <type>String</type>
+            </field>
+            <field xml.content="true">
+                <name>detail</name>
+                <type>String</type>
+            </field>
+        </fields>
+    </class>
+  </classes>
 </model>
