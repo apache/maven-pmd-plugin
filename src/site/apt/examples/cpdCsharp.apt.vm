@@ -1,0 +1,91 @@
+ ------
+ Finding duplicated code in C#
+ ------
+ Andreas Dangel
+ ------
+ 2020-10-02
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Finding duplicated code in C#
+
+ By default, the maven-pmd-plugin only supports the languages Java, JavaScript and JSP.
+ But {{{https://pmd.github.io/latest/pmd_userdocs_cpd.html#supported-languages}CPD supports many more languages}},
+ e.g. C#. In order to enable C# in your build, you need to
+ configure several parts:
+ 
+ * Add an additional plugin dependency for c# (pmd-cs module)
+
+ * Select the language <<<cs>>>.
+
+ * Configure the includes filter to consider <<<*.cs>>> (otherwise only java files will be analyzed)
+
+ * Configure the source directory (by default, only <<<src/main/java>>> is analyzed)
+
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <language>cs</language>
+          <minimumTokens>10</minimumTokens>
+          <includes>
+            <include>**/*.cs</include>
+          </includes>
+          <compileSourceRoots>
+            <compileSourceRoot>${basedir}/src/main/cs</compileSourceRoot>
+          </compileSourceRoots>
+          <printFailingErrors>true</printFailingErrors>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>cpd-check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+            <dependency>
+                <groupId>net.sourceforge.pmd</groupId>
+                <artifactId>pmd-cs</artifactId>
+                <version>${pmdVersion}</version>
+            </dependency>
+        </dependencies>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+</project>
++-----+
+
+ In this example, the C# source files are located in <<<src/main/cs>>>.
+
+ <<Note:>> The version for <<<net.sourceforge.pmd:pmd-cs>>> needs to match the PMD version, that is
+ being used. If you {{{./upgrading-PMD-at-runtime.html}upgrade PMD at runtime}} you'll need to make
+ sure, to change the version here as well.
+

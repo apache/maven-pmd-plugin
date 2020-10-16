@@ -98,4 +98,6 @@ ${project.name}
 
   * {{{./examples/jspReport.html}Analyzing Java Server Pages Code}}
 
+  * {{{./examples/cpdCsharp.html}Finding duplicated code in C#}}
+
   []

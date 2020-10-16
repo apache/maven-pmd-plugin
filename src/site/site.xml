@@ -42,6 +42,7 @@ under the License.
       <item name="Analyzing JavaScript" href="examples/javascriptReport.html"/>
       <item name="Analyzing Java Server Pages" href="examples/jspReport.html"/>
       <item name="Violations Exclusions" href="examples/violation-exclusions.html"/>
+      <item name="Duplicated code in C#" href="examples/cpdCsharp.html"/>
     </menu>
   </body>
 </project>
