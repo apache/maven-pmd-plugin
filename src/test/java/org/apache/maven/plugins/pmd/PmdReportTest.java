@@ -664,4 +664,30 @@ public class PmdReportTest
         final Renderer renderer = PmdExecutor.createRenderer( "net.sourceforge.pmd.renderers.CodeClimateRenderer", "UTF-8" );
         assertNotNull(renderer);
     }
+
+    public void testPmdReportCustomRulesNoExternalInfoUrl()
+            throws Exception
+    {
+        FileUtils.copyDirectoryStructure( new File( getBasedir(),
+                                                    "src/test/resources/unit/default-configuration/jxr-files" ),
+                                          new File( getBasedir(), "target/test/unit/default-configuration/target/site" ) );
+
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/pmd-report-custom-rules.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
+
+        File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+        renderer( mojo, generatedFile );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        String str = readFile( generatedFile );
+
+        // custom rule without link
+        assertEquals( 2, StringUtils.countMatches( str, "<td>CustomRule</td>" ) );
+        // standard rule with link
+        assertEquals( 4, StringUtils.countMatches( str, "\">UnusedPrivateField</a></td>" ) );
+    }
+
 }

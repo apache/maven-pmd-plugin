@@ -183,13 +183,28 @@ public class PmdReportGenerator
         sink.section_( level );
     }
 
+    private void addRuleName( Violation ruleViolation )
+    {
+        boolean hasUrl = StringUtils.isNotBlank( ruleViolation.getExternalInfoUrl() );
+
+        if ( hasUrl )
+        {
+            sink.link( ruleViolation.getExternalInfoUrl() );
+        }
+
+        sink.text( ruleViolation.getRule() );
+
+        if ( hasUrl )
+        {
+            sink.link_();
+        }
+    }
+
     private void processSingleRuleViolation( Violation ruleViolation, PmdFileInfo fileInfo )
     {
         sink.tableRow();
         sink.tableCell();
-        sink.link( ruleViolation.getExternalInfoUrl() );
-        sink.text( ruleViolation.getRule() );
-        sink.link_();
+        addRuleName( ruleViolation );
         sink.tableCell_();
         sink.tableCell();
         sink.text( ruleViolation.getText() );
