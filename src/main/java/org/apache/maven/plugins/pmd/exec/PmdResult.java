@@ -21,6 +21,8 @@ package org.apache.maven.plugins.pmd.exec;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilterReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -60,7 +62,8 @@ public class PmdResult
 
     private void loadResult( File pmdFile, String encoding ) throws MavenReportException
     {
-        try ( Reader reader1 = new InputStreamReader( new FileInputStream( pmdFile ), encoding ) )
+        try ( Reader reader1 = new BomFilter( encoding, new InputStreamReader(
+                new FileInputStream( pmdFile ), encoding ) ) )
         {
             PmdXpp3Reader reader = new PmdXpp3Reader();
             PmdErrorDetail details = reader.read( reader1, false );
@@ -79,6 +82,63 @@ public class PmdResult
         catch ( Exception e )
         {
             throw new MavenReportException( e.getMessage(), e );
+        }
+    }
+
+    // Note: This seems to be a bug in PMD's XMLRenderer. The BOM is rendered multiple times.
+    // once at the beginning of the file, which is Ok, but also in the middle of the file.
+    // This filter just skips all BOMs if the encoding is not UTF-8
+    private static class BomFilter extends FilterReader
+    {
+        private static final char BOM = '\uFEFF';
+        private final boolean filter;
+
+        BomFilter( String encoding, Reader in )
+        {
+            super( in );
+            filter = !"UTF-8".equalsIgnoreCase( encoding );
+        }
+
+        @Override
+        public int read() throws IOException
+        {
+            int c = super.read();
+
+            if ( !filter )
+            {
+                return c;
+            }
+
+            while ( c != -1 && c == BOM )
+            {
+                c = super.read();
+            }
+            return c;
+        }
+
+        @Override
+        public int read( char[] cbuf, int off, int len ) throws IOException
+        {
+            int count = super.read( cbuf, off, len );
+
+            if ( !filter )
+            {
+                return count;
+            }
+
+            if ( count != -1 )
+            {
+                for ( int i = off; i < off + count; i++ )
+                {
+                    if ( cbuf[i] == BOM )
+                    {
+                        // shift the content one char to the left
+                        System.arraycopy( cbuf, i + 1, cbuf, i, off + count - 1 - i );
+                        count--;
+                    }
+                }
+            }
+            return count;
         }
     }
 
