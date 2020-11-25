@@ -34,7 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeViolationsFromFile;
@@ -267,7 +266,15 @@ public class PmdExecutor extends Executor
                     ClassLoader classLoader = configuration.getClassLoader();
                     if ( classLoader instanceof Closeable )
                     {
-                        IOUtils.closeQuietly( (Closeable) classLoader );
+                        Closeable closeable = (Closeable) classLoader;
+                        try
+                        {
+                            closeable.close();
+                        }
+                        catch ( IOException ex )
+                        {
+                            // ignore
+                        }
                     }
                 }
                 if ( request.getBenchmarkOutputLocation() != null )
