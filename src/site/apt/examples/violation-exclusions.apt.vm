@@ -63,9 +63,15 @@ Violation Exclusions
 +-----+
 
   For cpd check, you can exclude classes to not verify. The properties file must have the following format:
+  
+  The differences here are that:
+  [[1]] org.apache.maven.ClassA and org.apache.maven.ClassB contain duplicated code across classes.
+  [[2]] org.apache.maven.ClassC and org.apache.maven.ClassD do not share duplicate code, but have duplicated code internally.
 
 +-----+
 org.apache.maven.ClassA,org.apache.maven.ClassB
+org.apache.maven.ClassC
+org.apache.maven.ClassD
 +-----+
 
   For pmd check, you can exclude rules per classes. The properties file must have the following format:
