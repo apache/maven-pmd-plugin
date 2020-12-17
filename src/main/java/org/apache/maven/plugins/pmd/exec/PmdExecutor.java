@@ -46,12 +46,11 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.Report;
-import net.sourceforge.pmd.RuleContext;
 import net.sourceforge.pmd.RulePriority;
-import net.sourceforge.pmd.RuleSetFactory;
-import net.sourceforge.pmd.RuleSetNotFoundException;
+import net.sourceforge.pmd.RuleSet;
+import net.sourceforge.pmd.RuleSetLoadException;
+import net.sourceforge.pmd.RuleSetLoader;
 import net.sourceforge.pmd.RuleViolation;
-import net.sourceforge.pmd.RulesetsFactoryUtils;
 import net.sourceforge.pmd.benchmark.TextTimingReportRenderer;
 import net.sourceforge.pmd.benchmark.TimeTracker;
 import net.sourceforge.pmd.benchmark.TimingReport;
@@ -231,6 +230,7 @@ public class PmdExecutor extends Executor
         }
 
         configuration.setRuleSets( request.getRulesets() );
+        configuration.setMinimumPriority( RulePriority.valueOf( request.getMinimumPriority() ) );
         if ( request.getBenchmarkOutputLocation() != null )
         {
             configuration.setBenchmark( true );
@@ -335,14 +335,16 @@ public class PmdExecutor extends Executor
     private void processFilesWithPMD( PMDConfiguration pmdConfiguration, List<DataSource> dataSources,
             PmdCollectingRenderer renderer ) throws MavenReportException
     {
-        RuleSetFactory ruleSetFactory = RulesetsFactoryUtils.createFactory(
-                RulePriority.valueOf( request.getMinimumPriority() ), true, true );
+        RuleSetLoader rulesetLoader = RuleSetLoader.fromPmdConfig( pmdConfiguration )
+                .warnDeprecated( true );
+        List<RuleSet> rulesets;
         try
         {
             // load the ruleset once to log out any deprecated rules as warnings
-            ruleSetFactory.createRuleSets( pmdConfiguration.getRuleSets() );
+            rulesets = rulesetLoader.loadFromResources(
+                    Arrays.asList( pmdConfiguration.getRuleSets().split( "\\s*,\\s*" ) ) );
         }
-        catch ( RuleSetNotFoundException e1 )
+        catch ( RuleSetLoadException e1 )
         {
             throw new MavenReportException( "The ruleset could not be loaded", e1 );
         }
@@ -350,10 +352,7 @@ public class PmdExecutor extends Executor
         try
         {
             LOG.debug( "Executing PMD..." );
-            RuleContext ruleContext = new RuleContext();
-            PMD.processFiles( pmdConfiguration, ruleSetFactory, dataSources, ruleContext,
-                    Arrays.<Renderer>asList( renderer ) );
-
+            PMD.processFiles( pmdConfiguration, rulesets, dataSources, Arrays.<Renderer>asList( renderer ) );
             LOG.debug( "PMD finished. Found {} violations.", renderer.getViolations().size() );
         }
         catch ( Exception e )
