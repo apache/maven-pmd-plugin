@@ -402,6 +402,7 @@ public class PmdExecutor extends Executor
         File targetDir = new File( request.getTargetDirectory() );
         targetDir.mkdirs();
         File targetFile = new File( targetDir, "pmd." + extension );
+        LOG.debug( "Target PMD output file: {}", targetFile  );
         try ( Writer writer = new OutputStreamWriter( new FileOutputStream( targetFile ),
                 request.getOutputEncoding() ) )
         {
@@ -429,7 +430,7 @@ public class PmdExecutor extends Executor
             throws MavenReportException
     {
         Renderer renderer = createRenderer( request.getFormat(), request.getOutputEncoding() );
-        writeReport( report, renderer, request.getFormat() );
+        writeReport( report, renderer, renderer.defaultFileExtension() );
     }
 
     /**
@@ -441,6 +442,7 @@ public class PmdExecutor extends Executor
      */
     public static Renderer createRenderer( String format, String outputEncoding ) throws MavenReportException
     {
+        LOG.debug( "Renderer requested: {}", format );
         Renderer result = null;
         if ( "xml".equals( format ) )
         {
