@@ -224,9 +224,34 @@ public abstract class AbstractPmdReport
 
     /**
      * <p>
-     * Specify the requirements for this jdk toolchain.
+     * Allow for configuration of the jvm used to run PMD via maven toolchains.
+     * This permits a configuration where the project is built with one jvm and PMD is executed with another.
      * This overrules the toolchain selected by the maven-toolchain-plugin.
      * </p>
+     *
+     * <p>Examples:</p>
+     * (see <a href="https://maven.apache.org/guides/mini/guide-using-toolchains.html">
+     *     Guide to Toolchains</a> for more info)
+     *
+     * <pre>
+     * {@code
+     *    <configuration>
+     *        ...
+     *        <jdkToolchain>
+     *            <version>1.11</version>
+     *        </jdkToolchain>
+     *    </configuration>
+     *
+     *    <configuration>
+     *        ...
+     *        <jdkToolchain>
+     *            <version>1.8</version>
+     *            <vendor>zulu</vendor>
+     *        </jdkToolchain>
+     *    </configuration>
+     *    }
+     * </pre>
+     *
      * <strong>note:</strong> requires at least Maven 3.3.1
      *
      * @since 3.14.0
