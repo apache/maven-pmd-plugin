@@ -376,7 +376,7 @@ public class PmdExecutor extends Executor
      */
     private void writeXmlReport( Report report ) throws MavenReportException
     {
-        File targetFile = writeReport( report, new XMLRenderer( request.getOutputEncoding() ), "xml" );
+        File targetFile = writeReport( report, new XMLRenderer( request.getOutputEncoding() ) );
         if ( request.isIncludeXmlInSite() )
         {
             File siteDir = new File( request.getReportOutputDirectory() );
@@ -392,7 +392,7 @@ public class PmdExecutor extends Executor
         }
     }
 
-    private File writeReport( Report report, Renderer r, String extension ) throws MavenReportException
+    private File writeReport( Report report, Renderer r ) throws MavenReportException
     {
         if ( r == null )
         {
@@ -401,6 +401,7 @@ public class PmdExecutor extends Executor
 
         File targetDir = new File( request.getTargetDirectory() );
         targetDir.mkdirs();
+        String extension = r.defaultFileExtension();
         File targetFile = new File( targetDir, "pmd." + extension );
         LOG.debug( "Target PMD output file: {}", targetFile  );
         try ( Writer writer = new OutputStreamWriter( new FileOutputStream( targetFile ),
@@ -430,7 +431,7 @@ public class PmdExecutor extends Executor
             throws MavenReportException
     {
         Renderer renderer = createRenderer( request.getFormat(), request.getOutputEncoding() );
-        writeReport( report, renderer, renderer.defaultFileExtension() );
+        writeReport( report, renderer );
     }
 
     /**
