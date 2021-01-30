@@ -39,10 +39,10 @@ public class AppSample
     /**
      * Unused method
      *
-     * @param unusedParam
+     * @param notUsedParam
      * @return a blank String
      */
-    private String unusedMethod( String unusedParam )
+    private String unusedMethod( String notUsedParam )
     {
         System.out.println( "This is just a test." );
 
