@@ -690,4 +690,58 @@ public class PmdReportTest
         assertEquals( 4, StringUtils.countMatches( str, "\">UnusedPrivateField</a></td>" ) );
     }
 
+    public void testPmdReportResolveRulesets()
+            throws Exception
+    {
+        int port = determineFreePort();
+        WireMockServer mockServer = new WireMockServer( port );
+        mockServer.start();
+
+        String sonarRuleset =
+            IOUtils.toString( getClass().getClassLoader().getResourceAsStream( "unit/default-configuration/rulesets/sonar-way-ruleset.xml" ),
+                    StandardCharsets.UTF_8 );
+
+        final String sonarProfileUrl = "/profiles/export?format=pmd&language=java&name=Sonar%2520way";
+        final String sonarExportRulesetUrl = "http://localhost:" + mockServer.port() + sonarProfileUrl;
+        final String myRulesetBaseUrl = "/config/my-ruleset.xml";
+        final String myRulesetUrl = "http://localhost:" + mockServer.port() + myRulesetBaseUrl;
+
+        mockServer.stubFor( WireMock.get( WireMock.urlEqualTo( sonarProfileUrl ) )
+                .willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
+                                                                                "text/xml" ).withBody( sonarRuleset ) ) );
+        mockServer.stubFor( WireMock.get( WireMock.urlEqualTo( myRulesetBaseUrl ) )
+                .willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
+                                                                                "text/xml" ).withBody( sonarRuleset ) ) );
+
+        FileUtils.copyDirectoryStructure( new File( getBasedir(),
+                                                    "src/test/resources/unit/default-configuration/jxr-files" ),
+                                          new File( getBasedir(), "target/test/unit/default-configuration/target/site" ) );
+
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/pmd-report-resolve-rulesets.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.rulesets[3] = sonarExportRulesetUrl;
+        mojo.rulesets[4] = myRulesetUrl;
+        mojo.execute();
+
+        // these are the rulesets, that have been copied to target/pmd/rulesets
+        File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/custom-rules.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/bestpractices.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/java-design.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/export_format_pmd_language_java_name_Sonar_2520way.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/my-ruleset.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        mockServer.stop();
+    }
+
 }

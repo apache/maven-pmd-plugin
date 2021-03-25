@@ -54,7 +54,6 @@ import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
-import net.sourceforge.pmd.RuleSetReferenceId;
 import net.sourceforge.pmd.renderers.Renderer;
 
 /**
@@ -118,7 +117,7 @@ public class PmdReport
      * (<code>/rulesets/java/maven-pmd-plugin-default.xml</code>).
      */
     @Parameter
-    private String[] rulesets = new String[] { "/rulesets/java/maven-pmd-plugin-default.xml" };
+    String[] rulesets = new String[] { "/rulesets/java/maven-pmd-plugin-default.xml" };
 
     /**
      * Controls whether the project's compile/test classpath should be passed to PMD to enable its type resolution
@@ -438,8 +437,8 @@ public class PmdReport
             {
                 String set = rulesets[idx];
                 getLog().debug( "Preparing ruleset: " + set );
-                RuleSetReferenceId id = new RuleSetReferenceId( set );
-                File ruleset = locator.getResourceAsFile( id.getRuleSetFileName(), getLocationTemp( set ) );
+                String rulesetFilename = determineRulesetFilename( set );
+                File ruleset = locator.getResourceAsFile( rulesetFilename, getLocationTemp( set ) );
                 if ( null == ruleset )
                 {
                     throw new MavenReportException( "Could not resolve " + set );
@@ -452,6 +451,36 @@ public class PmdReport
             throw new MavenReportException( e.getMessage(), e );
         }
         return StringUtils.join( sets, "," );
+    }
+
+    private String determineRulesetFilename( String ruleset )
+    {
+        String result = ruleset.trim();
+        String lowercase = result.toLowerCase( Locale.ROOT );
+        if ( lowercase.endsWith( ".xml" ) )
+        {
+            return result;
+        }
+
+        // assume last part is a single rule, e.g. myruleset.xml/SingleRule
+        if ( result.indexOf( '/' ) > -1 )
+        {
+            String rulesetFilename = result.substring( 0, result.lastIndexOf( '/' ) );
+            if ( rulesetFilename.toLowerCase( Locale.ROOT ).endsWith( ".xml" ) )
+            {
+                return rulesetFilename;
+            }
+        }
+        // maybe a built-in ruleset name, e.g. java-design -> rulesets/java/design.xml
+        int dashIndex = lowercase.indexOf( '-' );
+        if ( dashIndex > -1 && lowercase.indexOf( '-', dashIndex + 1 ) == -1 )
+        {
+            String language = result.substring( 0, dashIndex );
+            String rulesetName = result.substring( dashIndex + 1 );
+            return "rulesets/" + language + "/" + rulesetName + ".xml";
+        }
+        // fallback - no change of the given ruleset specifier
+        return result;
     }
 
     private void generateMavenSiteReport( Locale locale )
