@@ -72,7 +72,7 @@ public class PmdReport
      * with the default PMD version are
      * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>, <code>1.7</code>,
      * <code>1.8</code>, <code>9</code>, <code>10</code>, <code>11</code>, <code>12</code>, <code>13</code>,
-     * <code>14</code>, and <code>15</code>.
+     * <code>14</code>, <code>15</code>, and <code>16</code>.
      *
      * <p> You can override the default PMD version by specifying PMD as a dependency,
      * see <a href="examples/upgrading-PMD-at-runtime.html">Upgrading PMD at Runtime</a>.</p>
