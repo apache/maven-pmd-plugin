@@ -38,7 +38,7 @@ Upgrading PMD at Runtime
 +-----+
 <project>
   <properties>
-    <pmdVersion>...choose your version...</version>
+    <pmdVersion>...choose your version...</pmdVersion>
   </properties>
 ...
   <build>
