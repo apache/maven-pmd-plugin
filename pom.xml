@@ -89,7 +89,7 @@ under the License.
     <doxiaVersion>1.9.1</doxiaVersion>
     <doxiaSitetoolsVersion>1.9.2</doxiaSitetoolsVersion>
     <javaVersion>7</javaVersion><!-- Because PMD 5.4+ requires Java 7 -->
-    <pmdVersion>6.34.0</pmdVersion>
+    <pmdVersion>6.35.0</pmdVersion>
     <slf4jVersion>1.7.25</slf4jVersion>
     <sitePluginVersion>3.7.1</sitePluginVersion>
     <projectInfoReportsPluginVersion>3.0.0</projectInfoReportsPluginVersion>
@@ -160,6 +160,8 @@ under the License.
       <groupId>net.sourceforge.pmd</groupId>
       <artifactId>pmd-javascript</artifactId>
       <version>${pmdVersion}</version>
+      <!-- Note: Since PMD 6.35.0 at least Java 8 is required for JavaScript -->
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.pmd</groupId>
@@ -296,6 +298,11 @@ under the License.
                     <!-- asm dependency from PMD contains a java9 module-info.class -->
                     <ignoreClass>module-info</ignoreClass>
                   </ignoreClasses>
+                  <excludes>
+                    <!-- Note: Since PMD 6.35.0 at least Java 8 is required for JavaScript -->
+                    <exclude>net.sourceforge.pmd:pmd-javascript</exclude>
+                    <exclude>org.mozilla:rhino</exclude>
+                  </excludes>
                 </enforceBytecodeVersion>
               </rules>
               <fail>true</fail>

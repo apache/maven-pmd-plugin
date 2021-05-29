@@ -62,6 +62,14 @@ Analyzing JavaScript Code
             <compileSourceRoot>${basedir}/src/main/javascript</compileSourceRoot>
           </compileSourceRoots>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd-javascript</artifactId>
+            <version>${project.version}</version>
+            <!-- Note: Since PMD 6.35.0 at least Java 8 is required for JavaScript -->
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </reporting>
@@ -72,3 +80,7 @@ Analyzing JavaScript Code
  <<Note:>> Configuring <<<compileSourceRoots>>> only works with Maven 3.3.9 and later. For older versions,
  you'll need to use <build-helper-maven-plugin> with the <<<add-source>>> goal in order to add
  the additional source directories, so that PMD finds the JavaScript files.
+ 
+ <<Note:>> In order to analyze JavaScript sources, maven-pmd-plugin needs to run with Java 8 or later.
+ You'll need to add the optional dependencies to pmd-javascript explicitly.
+ 
