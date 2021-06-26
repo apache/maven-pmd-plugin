@@ -88,7 +88,7 @@ under the License.
     <mavenVersion>3.0</mavenVersion>
     <doxiaVersion>1.9.1</doxiaVersion>
     <doxiaSitetoolsVersion>1.9.2</doxiaSitetoolsVersion>
-    <javaVersion>7</javaVersion><!-- Because PMD 5.4+ requires Java 7 -->
+    <javaVersion>8</javaVersion><!-- Because PMD 6.35.0+ requires Java 8 -->
     <pmdVersion>6.34.0</pmdVersion>
     <slf4jVersion>1.7.25</slf4jVersion>
     <sitePluginVersion>3.7.1</sitePluginVersion>
