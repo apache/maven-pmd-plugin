@@ -100,4 +100,6 @@ ${project.name}
 
   * {{{./examples/cpdCsharp.html}Finding duplicated code in C#}}
 
+  * {{{./examples/differentRulesetForTests.html}Different ruleset for tests}}
+
   []

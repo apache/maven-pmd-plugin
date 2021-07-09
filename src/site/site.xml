@@ -43,6 +43,7 @@ under the License.
       <item name="Analyzing Java Server Pages" href="examples/jspReport.html"/>
       <item name="Violations Exclusions" href="examples/violation-exclusions.html"/>
       <item name="Duplicated code in C#" href="examples/cpdCsharp.html"/>
+      <item name="Different ruleset for tests" href="examples/differentRulesetForTests.html"/>
     </menu>
   </body>
 </project>
