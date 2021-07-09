@@ -1,0 +1,112 @@
+ ------
+ Using a different ruleset for tests
+ ------
+ Andreas Dangel
+ ------
+ 2021-07-09
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Using a different ruleset for tests
+
+ PMD shall be configured to scan test source code with a less strict
+ ruleset than production code. This can be achieved by configuring
+ multiple plugin
+ {{{https://maven.apache.org/guides/mini/guide-configuring-plugins.html#Using_the_executions_Tag}executions}}
+ with different configurations.
+ 
+ <<Note:>> There are different opinions whether one should lower
+ that quality just because it's "just test code". While test code doesn't run
+ in production, it's used to test production code, so you might consider
+ the test code then as your weakest link if you use less strict checks.
+
+ Here's the complete plugin configuration for this scenario:
+ 
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+            <includeTests>false</includeTests>
+            <rulesets>
+                <ruleset>config/pmd/pmdMain.xml</ruleset>
+            </rulesets>
+            <linkXRef>false</linkXRef>
+        </configuration>
+        <executions>
+            <execution>
+                <id>pmd-main</id>
+                <phase>verify</phase>
+                <goals>
+                    <goal>check</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>pmd-test</id>
+                <phase>verify</phase>
+                <goals>
+                    <goal>pmd</goal>
+                    <goal>check</goal>
+                </goals>
+                <configuration>
+                    <targetDirectory>\${project.build.directory}/pmdTest/</targetDirectory>
+                    <includeTests>true</includeTests>
+                    <excludeRoots>
+                        <excludeRoot>${basedir}/src/main/java</excludeRoot>
+                    </excludeRoots>
+                    <rulesets>
+                        <ruleset>config/pmd/pmdTest.xml</ruleset>
+                    </rulesets>
+                </configuration>
+            </execution>
+            <execution>
+                <id>cpd</id>
+                <phase>verify</phase>
+                <goals>
+                    <goal>cpd-check</goal>
+                </goals>
+            </execution>
+        </executions>
+     </plugin>
+      ...
+    </plugins>
+  </build>
+</project>
++-----+
+ 
+ It uses the ruleset <<<config/pmd/pmdMain.xml>>> for the main code without tests. This is configured
+ directly at the plugin level. The ruleset <<<config/pmd/pmdTest.xml>>> is used for the test code only.
+ This is configured in the execution with id <<<pmd-test>>>.
+
+ This solution has one downside though: PMD is run three times: Twice for the main code, and once for
+ the test code. The reason is that "pmd:check" triggers automatically "pmd:pmd", but it uses only the
+ standard configuration (e.g. it ignores the lifecycle/execution id).
+
+ The execution <<<pmd-test>>> calls once "pmd:pmd" for the test code (which creates
+ <<<target/pmdTest/pmd.xml>>>), then calls "pmd:check" - which itself calls "pmd:pmd" and uses
+ the default configuration - and finally runs "pmd:check" actually, which uses the execution
+ configuration and uses <<<target/pmdTest/pmd.xml>>> to decide whether to fail the build.
