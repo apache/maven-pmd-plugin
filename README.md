@@ -20,9 +20,9 @@ Contributing to [Apache Maven PMD Plugin](https://maven.apache.org/plugins/maven
 [![ASF Jira](https://img.shields.io/endpoint?url=https%3A%2F%2Fmaven.apache.org%2Fbadges%2Fasf_jira-MPMD.json)][jira]
 [![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/apache/maven.svg?label=License)][license]
 [![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven.plugins/maven-pmd-plugin.svg?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.maven.plugins/maven-pmd-plugin)
-[![Jenkins Status](https://img.shields.io/jenkins/s/https/ci-builds.apache.org/job/Maven/job/maven-box/job/maven-pmd-plugin/job/master.svg?)][build]
-[![Jenkins tests](https://img.shields.io/jenkins/t/https/ci-builds.apache.org/job/Maven/job/maven-box/job/maven-pmd-plugin/job/master.svg?)][test-results]
-
+[![GitHub CI](https://github.com/apache/maven-pmd-plugin/actions/workflows/maven.yml/badge.svg)](https://github.com/apache/maven-pmd-plugin/actions/workflows/maven.yml)
+[![Jenkins Status](https://img.shields.io/jenkins/s/https/ci-maven.apache.org/job/Maven/job/maven-box/job/maven-pmd-plugin/job/master.svg?)][build]
+[![Jenkins tests](https://img.shields.io/jenkins/t/https/ci-maven.apache.org/job/Maven/job/maven-box/job/maven-pmd-plugin/job/master.svg?)][test-results]
 
 You have found a bug or you have an idea for a cool new feature? Contributing
 code is a great way to give something back to the open source community. Before
