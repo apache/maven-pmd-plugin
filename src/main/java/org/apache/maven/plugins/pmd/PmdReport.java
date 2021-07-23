@@ -561,8 +561,8 @@ public class PmdReport
                 }
                 TransformableFilter filter = new AndFilter( Arrays.asList(
                         new ExclusionsFilter( exclusionPatterns ),
-                        includeTests ? ScopeFilter.including( "compile", "test" )
-                                     : ScopeFilter.including( "compile" )
+                        includeTests ? ScopeFilter.including( "compile", "provided", "test" )
+                                     : ScopeFilter.including( "compile", "provided" )
                 ) );
 
                 for ( MavenProject localProject : reactorProjects )

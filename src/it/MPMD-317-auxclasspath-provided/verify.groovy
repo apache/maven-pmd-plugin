@@ -33,12 +33,9 @@ auxclasspathLog = auxclasspathLog.replaceAll('\\\\', '/')
 assert 1 == auxclasspathLog.count( 'Using aux classpath:' )
 assert 1 == auxclasspathLog.count( 'Using aggregated aux classpath:' )
 
-assert 2 == auxclasspathLog.count( 'module-a/target/test-classes' )
 assert 2 == auxclasspathLog.count( 'module-a/target/classes' )
 
 // compile
 assert 2 == auxclasspathLog.count( 'org/apache/commons/commons-lang3/3.8.1/commons-lang3-3.8.1.jar' )
 // provided
 assert 2 == auxclasspathLog.count( 'javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar' )
-// test
-assert 2 == auxclasspathLog.count( 'commons-io/commons-io/2.6/commons-io-2.6.jar' )
