@@ -23,11 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugins.annotations.Component;
@@ -548,7 +546,7 @@ public class PmdReport
     {
         try
         {
-            Set<String> classpath = new HashSet<>();
+            List<String> classpath = new ArrayList<>();
             if ( aggregate )
             {
                 List<String> dependencies = new ArrayList<>();
@@ -563,7 +561,8 @@ public class PmdReport
                 }
                 TransformableFilter filter = new AndFilter( Arrays.asList(
                         new ExclusionsFilter( exclusionPatterns ),
-                        includeTests ? ScopeFilter.including( "compile", "test" ) : ScopeFilter.including( "compile" )
+                        includeTests ? ScopeFilter.including( "compile", "test" )
+                                     : ScopeFilter.including( "compile" )
                 ) );
 
                 for ( MavenProject localProject : reactorProjects )
@@ -572,20 +571,15 @@ public class PmdReport
                             session.getProjectBuildingRequest() );
 
                     Iterable<ArtifactResult> resolvedDependencies = dependencyResolver.resolveDependencies(
-                            buildingRequest, localProject.getModel(), filter );
+                            buildingRequest, localProject.getDependencies(), null, filter );
 
                     for ( ArtifactResult resolvedArtifact : resolvedDependencies )
                     {
                         dependencies.add( resolvedArtifact.getArtifact().getFile().toString() );
                     }
 
-                    List<String> projectClasspath = new ArrayList<>(
-                            localProject.getCompileClasspathElements() );
-
-                    if ( includeTests )
-                    {
-                        projectClasspath.addAll( localProject.getTestClasspathElements() );
-                    }
+                    List<String> projectClasspath = includeTests ? localProject.getTestClasspathElements()
+                            : localProject.getCompileClasspathElements();
 
                     // Add the project's target folder first
                     classpath.addAll( projectClasspath );
@@ -613,12 +607,8 @@ public class PmdReport
             }
             else
             {
-                classpath.addAll( project.getCompileClasspathElements() );
-
-                if ( includeTests )
-                {
-                    classpath.addAll( project.getTestClasspathElements() );
-                }
+                classpath.addAll( includeTests ? project.getTestClasspathElements()
+                                               : project.getCompileClasspathElements() );
 
                 getLog().debug( "Using aux classpath: " + classpath );
             }
