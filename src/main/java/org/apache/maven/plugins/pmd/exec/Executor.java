@@ -25,8 +25,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.SimpleFormatter;
@@ -125,17 +128,23 @@ abstract class Executor
         return classpath.toString();
     }
 
-    private static void buildClasspath( StringBuilder classpath, ClassLoader cl )
+    static void buildClasspath( StringBuilder classpath, ClassLoader cl )
     {
         if ( cl instanceof URLClassLoader )
         {
             for ( URL url : ( (URLClassLoader) cl ).getURLs() )
             {
-                String urlString = url.toString();
-                if ( urlString.startsWith( "file:" ) )
+                if ( "file".equalsIgnoreCase( url.getProtocol() ) )
                 {
-                    String f = urlString.substring( 5 ); //  strip "file:"
-                    classpath.append( f ).append( File.pathSeparatorChar );
+                    try
+                    {
+                        String filename = URLDecoder.decode( url.getPath(), StandardCharsets.UTF_8.name() );
+                        classpath.append( new File( filename ).getPath() ).append( File.pathSeparatorChar );
+                    }
+                    catch ( UnsupportedEncodingException e )
+                    {
+                        LOG.warn( "Ignoring " + url + " in classpath due to UnsupportedEncodingException", e );
+                    }
                 }
             }
         }
