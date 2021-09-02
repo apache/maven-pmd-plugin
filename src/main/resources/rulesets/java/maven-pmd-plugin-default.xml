@@ -34,6 +34,7 @@ under the License.
 
     <rule ref="category/java/bestpractices.xml/AvoidUsingHardCodedIP" />
     <rule ref="category/java/bestpractices.xml/CheckResultSet" />
+    <rule ref="category/java/bestpractices.xml/PrimitiveWrapperInstantiation" />
     <rule ref="category/java/bestpractices.xml/UnusedFormalParameter" />
     <rule ref="category/java/bestpractices.xml/UnusedLocalVariable" />
     <rule ref="category/java/bestpractices.xml/UnusedPrivateField" />
@@ -85,6 +86,5 @@ under the License.
     <rule ref="category/java/multithreading.xml/DoubleCheckedLocking" />
 
     <rule ref="category/java/performance.xml/BigIntegerInstantiation" />
-    <rule ref="category/java/performance.xml/BooleanInstantiation" />
 
 </ruleset>

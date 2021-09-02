@@ -138,6 +138,13 @@ under the License.
       <artifactId>maven-embedder</artifactId>
       <version>3.1.0</version>
       <scope>provided</scope>
+      <exclusions>
+        <!-- exclude old asm:asm, as pmd brings in a newer version (org.ow2.asm:asm) -->
+        <exclusion>
+          <groupId>asm</groupId>
+          <artifactId>asm</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- pmd -->

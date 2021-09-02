@@ -105,6 +105,12 @@ public class PmdReportTest
         assertTrue( str.contains( "Priority 4</h3>" ) );
         // the file App.java is mentioned 3 times: in prio 3, in prio 4 and in the files section
         assertEquals( 3, StringUtils.countMatches( str, "def/configuration/App.java" ) );
+
+        // there must be no warnings (like deprecated rules) in the log output
+        String output = CapturingPrintStream.getOutput();
+        assertFalse( output.contains( "deprecated Rule name" ) );
+        assertFalse( output.contains( "Discontinue using Rule name" ) );
+        assertFalse( output.contains( "is referenced multiple times" ) );
     }
 
     public void testDefaultConfigurationNotRenderRuleViolationPriority()
