@@ -170,6 +170,7 @@ public class CpdReport
     {
         if ( skip )
         {
+            getLog().info( "Skipping CPD execution" );
             return false;
         }
 

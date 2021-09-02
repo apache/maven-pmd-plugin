@@ -315,6 +315,7 @@ public class PmdReport
     {
         if ( skip )
         {
+            getLog().info( "Skipping PMD execution" );
             return false;
         }
 

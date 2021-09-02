@@ -365,6 +365,10 @@ public class PmdReportTest
 
         generatedFile = new File( getBasedir(), "target/test/unit/custom-configuration/target/site/pmd.html" );
         assertFalse( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        // the fact, the PMD execution has been skipped, should be logged
+        String output = CapturingPrintStream.getOutput();
+        assertTrue ( output.contains( "Skipping PMD execution" ) );
     }
 
     public void testSkipEmptyReportConfiguration()

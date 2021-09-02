@@ -84,10 +84,13 @@ public class PmdViolationCheckMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !skip )
+        if ( skip )
         {
-            executeCheck( "pmd.xml", "violation", "PMD violation", failurePriority );
+            getLog().info( "Skipping PMD execution" );
+            return;
         }
+
+        executeCheck( "pmd.xml", "violation", "PMD violation", failurePriority );
     }
 
     /**

@@ -75,10 +75,13 @@ public class CpdViolationCheckMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !skip )
+        if ( skip )
         {
-            executeCheck( "cpd.xml", "duplication", "CPD duplication", 10 );
+            getLog().info( "Skipping CPD execution" );
+            return;
         }
+
+        executeCheck( "cpd.xml", "duplication", "CPD duplication", 10 );
     }
 
     /**
