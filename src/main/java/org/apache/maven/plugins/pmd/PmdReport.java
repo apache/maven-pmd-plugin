@@ -398,6 +398,7 @@ public class PmdReport
             request.setJavaExecutable( javaExecutable );
         }
 
+        getLog().info( "PMD version: " + AbstractPmdReport.getPmdVersion() );
         pmdResult = PmdExecutor.execute( request );
     }
 

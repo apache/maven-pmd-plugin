@@ -111,6 +111,9 @@ public class PmdReportTest
         assertFalse( output.contains( "deprecated Rule name" ) );
         assertFalse( output.contains( "Discontinue using Rule name" ) );
         assertFalse( output.contains( "is referenced multiple times" ) );
+
+        // the version should be logged
+        assertTrue ( output.contains( "PMD version: " + AbstractPmdReport.getPmdVersion() ) );
     }
 
     public void testDefaultConfigurationNotRenderRuleViolationPriority()

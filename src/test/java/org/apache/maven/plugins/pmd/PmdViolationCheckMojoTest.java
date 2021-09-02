@@ -39,11 +39,21 @@ public class PmdViolationCheckMojoTest
         throws Exception
     {
         super.setUp();
+        CapturingPrintStream.init( true );
     }
 
     public void testDefaultConfiguration()
         throws Exception
     {
+        File testPomPmd =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
+        final PmdReport pmdMojo = (PmdReport) lookupMojo( "pmd", testPomPmd );
+        pmdMojo.execute();
+
+        // clear the output from previous pmd:pmd execution
+        CapturingPrintStream.init( true );
+
         try
         {
             final File testPom =
@@ -56,7 +66,11 @@ public class PmdViolationCheckMojoTest
         }
         catch ( final Exception e )
         {
-            assertTrue( true );
+            // the version should be logged
+            String output = CapturingPrintStream.getOutput();
+            assertTrue ( output.contains( "PMD version: " + AbstractPmdReport.getPmdVersion() ) );
+
+            assertTrue( e.getMessage().startsWith( "You have 8 PMD violations." ) );
         }
     }
 

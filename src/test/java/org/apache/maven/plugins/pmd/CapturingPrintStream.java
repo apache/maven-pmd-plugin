@@ -27,7 +27,7 @@ import org.slf4j.impl.MavenSlf4jSimpleFriend;
  * Captures log output from simple slf4j for asserting in unit tests.
  */
 class CapturingPrintStream extends PrintStream {
-    private final boolean quiet;
+    private boolean quiet;
     private StringBuilder buffer = new StringBuilder();
 
     private CapturingPrintStream( boolean quiet ) {
@@ -51,6 +51,7 @@ class CapturingPrintStream extends PrintStream {
         if ( capture != null )
         {
             capture.buffer.setLength( 0 );
+            capture.quiet = quiet;
         }
         else
         {

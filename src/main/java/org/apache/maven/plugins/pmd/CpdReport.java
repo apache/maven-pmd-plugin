@@ -249,6 +249,7 @@ public class CpdReport
                 request.setJavaExecutable( javaExecutable );
             }
 
+            getLog().info( "PMD version: " + AbstractPmdReport.getPmdVersion() );
             cpdResult = CpdExecutor.execute( request );
         }
         catch ( UnsupportedEncodingException e )

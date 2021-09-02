@@ -70,7 +70,7 @@ public class PmdViolationCheckMojo
      * Only values from 1 to 5 are valid.
      */
     @Parameter( property = "pmd.failurePriority", defaultValue = "5", required = true )
-    private int failurePriority;
+    private int failurePriority = 5;
 
     /**
      * Skip the PMD checks. Most useful on the command line via "-Dpmd.skip=true".

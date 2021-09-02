@@ -36,6 +36,7 @@ public class CpdViolationCheckMojoTest
         throws Exception
     {
         super.setUp();
+        CapturingPrintStream.init( true );
     }
 
     public void testDefaultConfiguration()
@@ -53,7 +54,11 @@ public class CpdViolationCheckMojoTest
         }
         catch ( final Exception e )
         {
-            assertTrue( true );
+            // the version should be logged
+            String output = CapturingPrintStream.getOutput();
+            assertTrue ( output.contains( "PMD version: " + AbstractPmdReport.getPmdVersion() ) );
+
+            assertTrue( e.getMessage().startsWith( "You have 1 CPD duplication." ) );
         }
     }
 

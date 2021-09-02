@@ -32,12 +32,12 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <configuration>          
-          <sourceDirectory>${basedir}/src/test/resources/unit/default-configuration</sourceDirectory>
+        <configuration>
+          <project implementation="org.apache.maven.plugins.pmd.stubs.DefaultConfigurationMavenProjectStub"/>
           <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
           <failOnViolation>true</failOnViolation>
-          <language>java</language>
-          <sourceEncoding>UTF-8</sourceEncoding>
+          <printFailingErrors>true</printFailingErrors>
+<!--           <failurePriority>5</failurePriority> -->
         </configuration>
       </plugin>
     </plugins>
