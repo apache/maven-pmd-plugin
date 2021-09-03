@@ -42,13 +42,22 @@ public class CpdViolationCheckMojoTest
     public void testDefaultConfiguration()
         throws Exception
     {
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
+        final CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
+        mojo.execute();
+
+        // clear the output from previous pmd:cpd execution
+        CapturingPrintStream.init( true );
+
         try
         {
-            final File testPom =
+            testPom =
                 new File( getBasedir(),
                           "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml" );
-            final CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
-            mojo.execute();
+            final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
+            cpdViolationMojo.execute();
 
             fail( "MojoFailureException should be thrown." );
         }
