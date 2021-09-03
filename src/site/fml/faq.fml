@@ -126,6 +126,12 @@ under the License.
           First pass will compile the projects (e.g. <code>mvn clean package</code>) and the second pass
           will execute PMD without clean via the verify phase (e.g. <code>mvn verify</code>).
         </p>
+        <p>
+          Since version 3.15.0 the new goal <a href="aggregate-pmd-mojo.html">aggregate-pmd</a> can be used
+          which allows to run everything with only one maven call. However, this goal invokes the lifecycle
+          <em>test-compile</em> before executing itself, which might lead to duplicated execution of some
+          plugins.
+        </p>
       </answer>
     </faq>
   </part>

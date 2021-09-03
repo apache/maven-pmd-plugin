@@ -60,8 +60,11 @@ public abstract class AbstractPmdViolationCheckMojo<D>
      * Whether to build an aggregated report at the root, or build individual reports.
      *
      * @since 2.2
+     * @deprecated since 3.15.0 Use the goal <code>pmd:aggregate-check</code> or
+     * <code>pmd:aggregate-cpd-check</code> instead.
      */
     @Parameter( property = "aggregate", defaultValue = "false" )
+    @Deprecated
     protected boolean aggregate;
 
     /**
@@ -129,7 +132,7 @@ public abstract class AbstractPmdViolationCheckMojo<D>
             return;
         }
 
-        if ( "pom".equals( project.getPackaging() ) && !aggregate )
+        if ( !isAggregator() && "pom".equalsIgnoreCase( project.getPackaging() ) )
         {
             return;
         }
@@ -316,5 +319,11 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     public Integer getMaxAllowedViolations()
     {
         return maxAllowedViolations;
+    }
+
+    protected boolean isAggregator()
+    {
+        // returning here aggregate for backwards compatibility
+        return aggregate;
     }
 }

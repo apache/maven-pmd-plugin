@@ -81,7 +81,7 @@ Configuration
   You can configure the minimum code size which trips the CPD.  The default of <<<100>>> tokens corresponds
   to approximately 5-10 lines of code.
 
-  Since PMD parses the Java source, it needs to know which Java version to use. CPD's default is <<<1.9>>>.
+  Since PMD parses the Java source, it needs to know which Java version to use.
   The following is a possible configuration:
 
 +-----+
@@ -106,6 +106,22 @@ Configuration
             <excludeRoot>target/generated-sources/stubs</excludeRoot>
           </excludeRoots>
         </configuration>
+        <reportSets>
+          <reportSet><!-- by default, id = "default" -->
+            <reports><!-- select non-aggregate reports -->
+              <report>pmd</report>
+              <report>cpd</report>
+            </reports>
+          </reportSet>
+          <reportSet><!-- aggregate reportSet, to define in poms having modules -->
+            <id>aggregate</id>
+            <inherited>false</inherited> <!-- don't run aggregate in child modules -->
+            <reports>
+              <report>aggregate-pmd</report>
+              <report>aggregate-cpd</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>

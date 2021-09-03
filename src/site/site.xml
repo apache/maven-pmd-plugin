@@ -35,6 +35,7 @@ under the License.
     <menu name="Examples">
       <item name="Upgrading PMD at Runtime" href="examples/upgrading-PMD-at-runtime.html"/>
       <item name="Multimodule Configuration" href="examples/multi-module-config.html"/>
+      <item name="Aggregating PMD reports" href="examples/aggregate.html"/>
       <item name="Remove Report" href="examples/removeReport.html"/>
       <item name="Target JDK and Toolchains" href="examples/targetJdk.html"/>
       <item name="Using Rule Sets" href="examples/usingRuleSets.html"/>

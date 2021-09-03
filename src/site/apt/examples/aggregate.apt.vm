@@ -1,0 +1,219 @@
+ ------
+ Aggregating PMD reports for Multi-Module-Projects
+ ------
+ Andreas Dangel
+ ------
+ 2021-09-03
+ ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Aggregating PMD reports for Multi-Module-Projects
+
+ For example, consider the following directory structure:
+
++-----+
+
+Project
+  |-- pom.xml
+  |-- Module1
+  |   `-- pom.xml
+  |   `-- Module 2
+  |       `-- pom.xml
+  |   `-- Module 3
+  |       `-- pom.xml
+  |-- Module4
+  |   `-- pom.xml
+  `-- Module5
+    `-- pom.xml
+
++-----+
+
+ Since 3.15.0 the <<<aggregate>>> has changed a little bit. It'll generate aggregated 
+ reports at every level.
+ To get only an aggregated project at root level, you need to configure the pom like:
+ 
++-----+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${project.version}</version>
+        <reportSets>
+          <reportSet>
+            <id>aggregate</id>
+            <inherited>false</inherited> <!-- don't run aggregate in child modules -->
+            <reports>
+              <report>aggregate-pmd</report>
+              <report>aggregate-cpd</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>default</id>
+            <reports>
+              <report>pmd</report>
+              <report>cpd</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+    ...
+  </reporting>
+  ...
+</project>
++-----+
+
+* Using The <<<aggregate>>> Goals
+
+ The {{{../pmd-mojo.html#aggregate}\<aggregate/\>}} parameter doesn't make sure, that the project is
+ compiled before executing PMD which might lead to wrong results. Therefore the report goals
+ <<<aggregate-pmd>>> and <<<aggregate-cpd>>> have been introduced. You could define these goals in the
+ \<build/\> element (using the \<execution/\> tag) or \<reporting/\> element (using the \<reportSet/\> tag) as shown
+ below.
+
++-----+
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <!-- Default configuration for all reports -->
+          ...
+        </configuration>
+        <executions>
+          <execution>
+            <id>aggregate</id>
+            <goals>
+              <goal>aggregate-pmd</goal>
+              <goal>aggregate-cpd</goal>
+            </goals>
+            <phase>site</phase>
+            <configuration>
+              <!-- Specific configuration for the aggregate report -->
+              ...
+            </configuration>
+          </execution>
+          ...
+        </executions>
+      </plugin>
+      ...
+    </plugins>
+  </build>
+  ...
+</project>
++-----+
+
++-----+
+<project>
+  ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <!-- Default configuration for all reports -->
+          ...
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <id>non-aggregate</id>
+            <configuration>
+              <!-- Specific configuration for the non aggregate report -->
+              ...
+            </configuration>
+            <reports>
+              <report>pmd</report>
+              <report>cpd</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>aggregate</id>
+            <configuration>
+              <!-- Specific configuration for the aggregate report -->
+              ...
+            </configuration>
+            <reports>
+              <report>aggregate-pmd</report>
+              <report>aggregate-cpd</report>
+            </reports>
+          </reportSet>
+          ...
+        </reportSets>
+      </plugin>
+      ...
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----+
+
+* Generate aggregate PMD without duplicate execution of phase test-compile
+
+ * The standard goal <<<aggregate-pmd>>> invokes separate lifecyle <<<test-compile>>>.
+
+ * In a CI environment you now might execute something like <<<mvn clean deploy site site-deploy>>>.
+
+ * During <<<site>>> build the standard reports will trigger <<<test-compile>>> again,
+ depending on your build this may take some time, because
+ stuff like <<<enforcer>>> or generating stubs from a WDSL will be invoked again, which may lead
+ to longer build times.
+
+ * As of version 3.15.0 a new report is defined, <<<aggregate-pmd-no-fork>>>
+ which will not trigger above phases a second time.
+
+ * Note: This is only a problem for PMD report. CPD does not invoke a separate lifecycle.
+
+ * Configure this in your <<<reporting>>> section as follows:
+
++-----+
+<project>
+  ...
+  <reporting>
+    <excludeDefaults>true</excludeDefaults>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${project.version}</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>aggregate-pmd-no-fork</report>
+              <report>aggregate-cpd</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
++-----+

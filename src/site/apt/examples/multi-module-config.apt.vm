@@ -182,6 +182,13 @@ whizbang
             <ruleset>whizbang/pmd-ruleset.xml</ruleset>
           </rulesets>
         </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>pmd</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>

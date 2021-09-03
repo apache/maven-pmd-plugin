@@ -39,7 +39,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
- * Fail the build if there were any PMD violations in the source code.
+ * Fails the build if there were any PMD violations in the source code.
  *
  * @version $Id$
  * @since 2.0

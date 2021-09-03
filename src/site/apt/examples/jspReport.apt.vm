@@ -65,6 +65,13 @@ Analyzing JSP Code
             <compileSourceRoot>${basedir}/src/main/webapp</compileSourceRoot>
           </compileSourceRoots>
         </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>pmd</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>

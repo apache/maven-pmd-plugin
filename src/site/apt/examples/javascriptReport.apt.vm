@@ -62,6 +62,13 @@ Analyzing JavaScript Code
             <compileSourceRoot>${basedir}/src/main/javascript</compileSourceRoot>
           </compileSourceRoots>
         </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>pmd</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>

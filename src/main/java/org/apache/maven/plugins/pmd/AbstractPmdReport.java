@@ -23,13 +23,17 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
@@ -40,6 +44,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.FileUtils;
@@ -80,7 +85,7 @@ public abstract class AbstractPmdReport
      * Set the output format type, in addition to the HTML report. Must be one of: "none", "csv", "xml", "txt" or the
      * full class name of the PMD renderer to use. See the net.sourceforge.pmd.renderers package javadoc for available
      * renderers. XML is produced in any case, since this format is needed
-     * for the check goals (pmd:check, pmd:cpd-check).
+     * for the check goals (pmd:check, pmd:aggregator-check, pmd:cpd-check, pmd:aggregator-cpd-check).
      */
     @Parameter( property = "format", defaultValue = "xml" )
     protected String format = "xml";
@@ -160,8 +165,11 @@ public abstract class AbstractPmdReport
      * Whether to build an aggregated report at the root, or build individual reports.
      *
      * @since 2.2
+     * @deprecated since 3.15.0 Use the goals <code>pmd:aggregate-pmd</code> and <code>pmd:aggregate-cpd</code>
+     * instead.
      */
     @Parameter( property = "aggregate", defaultValue = "false" )
+    @Deprecated
     protected boolean aggregate;
 
     /**
@@ -421,9 +429,9 @@ public abstract class AbstractPmdReport
                 }
             }
         }
-        if ( aggregate )
+        if ( isAggregator() )
         {
-            for ( MavenProject localProject : reactorProjects )
+            for ( MavenProject localProject : getAggregatedProjects() )
             {
                 List<String> localCompileSourceRoots = localProject.getCompileSourceRoots();
                 for ( String root : localCompileSourceRoots )
@@ -551,7 +559,7 @@ public abstract class AbstractPmdReport
             return false;
         }
 
-        if ( "pom".equals( project.getPackaging() ) && !aggregate )
+        if ( !isAggregator() && "pom".equalsIgnoreCase( project.getPackaging() ) )
         {
             return false;
         }
@@ -661,5 +669,63 @@ public abstract class AbstractPmdReport
         }
 
         return tc;
+    }
+
+    protected boolean isAggregator()
+    {
+        // returning here aggregate for backwards compatibility
+        return aggregate;
+    }
+
+    // Note: same logic as in m-javadoc-p (MJAVADOC-134)
+    protected Collection<MavenProject> getAggregatedProjects()
+    {
+        Map<Path, MavenProject> reactorProjectsMap = new HashMap<>();
+        for ( MavenProject reactorProject : this.reactorProjects )
+        {
+            reactorProjectsMap.put( reactorProject.getBasedir().toPath(), reactorProject );
+        }
+
+        return modulesForAggregatedProject( project, reactorProjectsMap );
+    }
+
+    /**
+     * Recursively add the modules of the aggregatedProject to the set of aggregatedModules.
+     * 
+     * @param aggregatedProject the project being aggregated
+     * @param reactorProjectsMap map of (still) available reactor projects 
+     * @throws MavenReportException if any
+     */
+    private Set<MavenProject> modulesForAggregatedProject( MavenProject aggregatedProject,
+                                                           Map<Path, MavenProject> reactorProjectsMap )
+    {
+        // Maven does not supply an easy way to get the projects representing
+        // the modules of a project. So we will get the paths to the base
+        // directories of the modules from the project and compare with the
+        // base directories of the projects in the reactor.
+
+        if ( aggregatedProject.getModules().isEmpty() )
+        {
+            return Collections.singleton( aggregatedProject );
+        }
+
+        List<Path> modulePaths = new LinkedList<Path>();
+        for ( String module :  aggregatedProject.getModules() )
+        {
+            modulePaths.add( new File( aggregatedProject.getBasedir(), module ).toPath() );
+        }
+
+        Set<MavenProject> aggregatedModules = new LinkedHashSet<>();
+
+        for ( Path modulePath : modulePaths )
+        {
+            MavenProject module = reactorProjectsMap.remove( modulePath );
+            if ( module != null )
+            {
+                aggregatedModules.addAll( modulesForAggregatedProject( module, reactorProjectsMap ) );
+            }
+        }
+
+        return aggregatedModules;
     }
 }
