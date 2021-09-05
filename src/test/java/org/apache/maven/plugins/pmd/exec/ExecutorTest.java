@@ -25,8 +25,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.Assert;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class ExecutorTest extends TestCase

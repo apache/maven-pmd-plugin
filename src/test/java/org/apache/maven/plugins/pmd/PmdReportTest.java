@@ -245,10 +245,11 @@ public class PmdReportTest
         final String sonarProfileUrl = sonarBaseUrl + "/export?format=pmd&language=java&name=Sonar%2520way";
         final String sonarExportRulesetUrl = "http://localhost:" + mockServer.port() + sonarProfileUrl;
 
-        mockServer.stubFor( WireMock.get( WireMock.urlEqualTo( sonarBaseUrl ) ).willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
+        WireMock.configureFor( "localhost", port );
+        WireMock.stubFor( WireMock.get( WireMock.urlEqualTo( sonarBaseUrl ) ).willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
                                                                                                                                                "text/html" ).withBody( sonarMainPageHtml ) ) );
 
-        mockServer.stubFor( WireMock.get( WireMock.urlEqualTo( sonarProfileUrl ) ).willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
+        WireMock.stubFor( WireMock.get( WireMock.urlEqualTo( sonarProfileUrl ) ).willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
                                                                                                                                                   "text/xml" ).withBody( sonarRuleset ) ) );
 
         URL url = getClass().getClassLoader().getResource( "rulesets/java/basic.xml" );
@@ -719,10 +720,11 @@ public class PmdReportTest
         final String myRulesetBaseUrl = "/config/my-ruleset.xml";
         final String myRulesetUrl = "http://localhost:" + mockServer.port() + myRulesetBaseUrl;
 
-        mockServer.stubFor( WireMock.get( WireMock.urlEqualTo( sonarProfileUrl ) )
+        WireMock.configureFor( "localhost", port );
+        WireMock.stubFor( WireMock.get( WireMock.urlEqualTo( sonarProfileUrl ) )
                 .willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
                                                                                 "text/xml" ).withBody( sonarRuleset ) ) );
-        mockServer.stubFor( WireMock.get( WireMock.urlEqualTo( myRulesetBaseUrl ) )
+        WireMock.stubFor( WireMock.get( WireMock.urlEqualTo( myRulesetBaseUrl ) )
                 .willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
                                                                                 "text/xml" ).withBody( sonarRuleset ) ) );
 
