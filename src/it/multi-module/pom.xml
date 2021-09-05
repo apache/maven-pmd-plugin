@@ -71,6 +71,14 @@ under the License.
         <configuration>
           <skipPmdError>false</skipPmdError>
         </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>pmd</report>
+              <report>cpd</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>

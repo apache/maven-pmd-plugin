@@ -57,7 +57,8 @@ import org.codehaus.plexus.util.StringUtils;
 import net.sourceforge.pmd.renderers.Renderer;
 
 /**
- * Creates a PMD report.
+ * Creates a PMD site report based on the rulesets and configuration set in the plugin.
+ * It can also generate a pmd output file aside from the site report in any of the following formats: xml, csv or txt.
  *
  * @author Brett Porter
  * @version $Id$
@@ -489,7 +490,8 @@ public class PmdReport
         throws MavenReportException
     {
         Sink sink = getSink();
-        PmdReportGenerator doxiaRenderer = new PmdReportGenerator( getLog(), sink, getBundle( locale ), aggregate );
+        PmdReportGenerator doxiaRenderer = new PmdReportGenerator( getLog(), sink, getBundle( locale ),
+                isAggregator() );
         doxiaRenderer.setRenderRuleViolationPriority( renderRuleViolationPriority );
         doxiaRenderer.setRenderViolationsByPriority( renderViolationsByPriority );
         doxiaRenderer.setFiles( filesToProcess );
@@ -549,7 +551,7 @@ public class PmdReport
         try
         {
             List<String> classpath = new ArrayList<>();
-            if ( aggregate )
+            if ( isAggregator() )
             {
                 List<String> dependencies = new ArrayList<>();
 
@@ -557,7 +559,7 @@ public class PmdReport
                 // if module a depends on module b and both are in the reactor
                 // then we don't want to resolve the dependency as an artifact.
                 List<String> exclusionPatterns = new ArrayList<>();
-                for ( MavenProject localProject : reactorProjects )
+                for ( MavenProject localProject : getAggregatedProjects() )
                 {
                     exclusionPatterns.add( localProject.getGroupId() + ":" + localProject.getArtifactId() );
                 }
@@ -567,7 +569,7 @@ public class PmdReport
                                      : ScopeFilter.including( "compile", "provided" )
                 ) );
 
-                for ( MavenProject localProject : reactorProjects )
+                for ( MavenProject localProject : getAggregatedProjects() )
                 {
                     ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(
                             session.getProjectBuildingRequest() );

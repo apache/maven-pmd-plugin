@@ -37,19 +37,37 @@ ${project.name}
 
 * Goals Overview
 
-  This plugin has 4 goals:
+  This plugin has the following goals:
 
   * {{{./pmd-mojo.html}pmd:pmd}} creates a PMD site report based on the rulesets and configuration set in the plugin.
     It can also generate a pmd output file aside from the site report in any of the following formats: xml, csv or txt.
 
-  * {{{./cpd-mojo.html}pmd:cpd}} generates a report for PMD's Copy/Paste Detector (CPD) tool.  It can also
+  * {{{./aggregate-pmd-mojo.html}pmd:aggregate-pmd}} creates a PMD site report in an <<aggregator>> project
+    based on the rulesets and configuration set in the plugin. It can also generate a pmd output file aside from
+    the site report in any of the following formats: xml, csv or txt.
+
+  * {{{./aggregate-pmd-no-fork-mojo.html}pmd:aggregate-pmd-no-fork}} creates a PMD site report in an <<aggregator>>
+    project without forking the <<<test-compile>>> phase again.
+
+  * {{{./cpd-mojo.html}pmd:cpd}} creates a report for PMD's Copy/Paste Detector (CPD) tool. It can also
     generate a cpd results file in any of these formats: xml, csv or txt.
 
-  * {{{./check-mojo.html}pmd:check}} verifies that the PMD report is empty and fails the build if it is not.
-    This goal is executed by default when <<<pmd:pmd>>> is executed.
+  * {{{./aggregate-cpd-mojo}pmd:aggregate-cpd}} creates a report for PMD's Copy/Paste Detector (CPD) tool
+    in an <<aggregator>> project. It can also generate a cpd results file in any of these formats: xml, csv or txt.
 
-  * {{{./cpd-check-mojo.html}pmd:cpd-check}} verifies that the CPD report is empty and fails the build if it is not.
-    This goal is executed by default when <<<pmd:cpd>>> is executed.
+  * {{{./check-mojo.html}pmd:check}} fails the build if there were any PMD violations in the source code.
+    This goal invokes automatically <<<pmd:pmd>>> prior to executing itself.
+
+  * {{{./aggregate-pmd-check-mojo.html}pmd:aggregate-pmd-check}} fails the build in an <<aggregator>> project if there
+    were any PMD violations in the source code.
+    This goal invokes automatically <<<pmd:aggregate-pmd>>> prior to executing itself.
+
+  * {{{./cpd-check-mojo.html}pmd:cpd-check}} fails the build if there were any CPD violations in the source code.
+    This goal invokes automatically <<<pmd:cpd>>> prior to executing itself.
+
+  * {{{./aggregate-cpd-check-mojo.html}pmd:aggregate-cpd-check}} fails the build in an <<aggregator>> project
+    if there were any CPD violations in the source code.
+    This goal invokes automatically <<<pmd:aggregate-cpd>>> prior to executing itself.
 
 * Usage
 
@@ -85,6 +103,8 @@ ${project.name}
   * {{{./examples/upgrading-PMD-at-runtime.html}Upgrading PMD at Runtime}}
 
   * {{{./examples/multi-module-config.html}Multimodule Configuration}}
+
+  * {{{./examples/aggregate.html}Aggregating PMD reports for Multi-Module-Projects}}
 
   * {{{./examples/removeReport.html}Remove Report}}
 

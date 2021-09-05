@@ -41,8 +41,10 @@ import net.sourceforge.pmd.cpd.JavaTokenizer;
 import net.sourceforge.pmd.cpd.renderer.CPDRenderer;
 
 /**
- * Creates a report for PMD's CPD tool. See
- * <a href="https://pmd.github.io/latest/pmd_userdocs_cpd.html">Finding duplicated code</a>
+ * Creates a report for PMD's Copy/Paste Detector (CPD) tool.
+ * It can also generate a cpd results file in any of these formats: xml, csv or txt.
+ *
+ * <p>See <a href="https://pmd.github.io/latest/pmd_userdocs_cpd.html">Finding duplicated code</a>
  * for more details.
  *
  * @author Mike Perham
@@ -265,7 +267,8 @@ public class CpdReport
 
     private void generateMavenSiteReport( Locale locale )
     {
-        CpdReportGenerator gen = new CpdReportGenerator( getSink(), filesToProcess, getBundle( locale ), aggregate );
+        CpdReportGenerator gen = new CpdReportGenerator( getSink(), filesToProcess, getBundle( locale ),
+                isAggregator() );
         gen.generate( cpdResult.getDuplications() );
     }
 
