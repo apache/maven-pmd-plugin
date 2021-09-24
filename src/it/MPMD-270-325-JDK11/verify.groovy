@@ -1,3 +1,4 @@
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,12 +18,7 @@
  * under the License.
  */
 
-import java.util.ArrayList;
-
-public class Foo
-{
-    public Foo( final ArrayList<String> foo )
-    {
-    }
-
-}
+File buildLog = new File( basedir, 'build.log' )
+assert buildLog.exists()
+assert buildLog.text.contains( '[INFO] PMD Failure: com.mycompany.app.Foo:26 Rule:UnusedFormalParameter Priority:3' )
+assert !buildLog.text.contains( '[WARNING]' )

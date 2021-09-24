@@ -1,3 +1,4 @@
+package com.mycompany.app;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -18,5 +19,12 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
-assert buildLog.exists()
+import java.util.ArrayList;
+
+public class Foo
+{
+    public Foo( final ArrayList<String> foo )
+    {
+    }
+
+}
