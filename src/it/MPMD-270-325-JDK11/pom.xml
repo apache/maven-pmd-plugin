@@ -28,6 +28,7 @@ under the License.
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>11</java.version>
   </properties>
 
   <build>
@@ -38,8 +39,8 @@ under the License.
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.0</version>
           <configuration>
-            <target>11</target>
-            <source>11</source>
+            <target>${java.version}</target>
+            <source>${java.version}</source>
           </configuration>
         </plugin>
       </plugins>
@@ -56,7 +57,7 @@ under the License.
           <failOnViolation>true</failOnViolation>
           <failurePriority>4</failurePriority>
           <printFailingErrors>true</printFailingErrors>
-          <targetJdk>11</targetJdk>
+          <targetJdk>${java.version}</targetJdk>
           <sourceEncoding>UTF-8</sourceEncoding>
           <minimumTokens>100</minimumTokens>
         </configuration>

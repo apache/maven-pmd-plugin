@@ -23,12 +23,12 @@ under the License.
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugins.pmd.it</groupId>
-  <artifactId>empty-rulests</artifactId>
+  <artifactId>MPMD-280-JDK12</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>my-app</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>12</java.version>
   </properties>
 
   <build>
@@ -39,8 +39,8 @@ under the License.
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.0</version>
           <configuration>
-            <target>12</target>
-            <source>12</source>
+            <target>${java.version}</target>
+            <source>${java.version}</source>
           </configuration>
         </plugin>
       </plugins>
@@ -51,21 +51,15 @@ under the License.
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
+          <linkXRef>false</linkXRef>
           <skipPmdError>false</skipPmdError>
           <skip>false</skip>
           <failOnViolation>true</failOnViolation>
           <failurePriority>4</failurePriority>
-          <targetJdk>12</targetJdk>
+          <printFailingErrors>true</printFailingErrors>
+          <targetJdk>${java.version}</targetJdk>
           <sourceEncoding>UTF-8</sourceEncoding>
           <minimumTokens>100</minimumTokens>
-          <excludes>
-            <exclude>**/*Bean.java</exclude>
-            <exclude>**/generated/*.java</exclude>
-          </excludes>
-          <excludeRoots>
-            <excludeRoot>target/generated-sources/stubs</excludeRoot>
-          </excludeRoots>
-          <rulesets/>
         </configuration>
         <executions>
           <execution>

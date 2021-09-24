@@ -51,21 +51,15 @@ under the License.
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
+          <linkXRef>false</linkXRef>
           <skipPmdError>false</skipPmdError>
           <skip>false</skip>
           <failOnViolation>true</failOnViolation>
           <failurePriority>4</failurePriority>
+          <printFailingErrors>true</printFailingErrors>
           <targetJdk>${java.version}</targetJdk>
           <sourceEncoding>UTF-8</sourceEncoding>
           <minimumTokens>100</minimumTokens>
-          <excludes>
-            <exclude>**/*Bean.java</exclude>
-            <exclude>**/generated/*.java</exclude>
-          </excludes>
-          <excludeRoots>
-            <excludeRoot>target/generated-sources/stubs</excludeRoot>
-          </excludeRoots>
-          <rulesets/>
         </configuration>
         <executions>
           <execution>
