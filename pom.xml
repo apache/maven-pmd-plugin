@@ -85,7 +85,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenVersion>3.1.0</mavenVersion>
+    <mavenVersion>3.1.1</mavenVersion>
     <doxiaVersion>1.9.1</doxiaVersion>
     <doxiaSitetoolsVersion>1.9.2</doxiaSitetoolsVersion>
     <javaVersion>8</javaVersion><!-- Because PMD 6.35.0+ requires Java 8 -->
@@ -132,25 +132,12 @@ under the License.
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
       <version>${mavenVersion}</version>
-      <exclusions>
-          <exclusion>
-              <groupId>org.sonatype.sisu</groupId>
-              <artifactId>sisu-guice</artifactId>
-          </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-embedder</artifactId>
       <version>${mavenVersion}</version>
       <scope>provided</scope>
-      <exclusions>
-        <!-- exclude old asm:asm, as pmd brings in a newer version (org.ow2.asm:asm) -->
-        <exclusion>
-          <groupId>asm</groupId>
-          <artifactId>asm</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- pmd -->
@@ -247,15 +234,15 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>${mavenVersion}</version>
+      <version>3.1.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.github.tomakehurst</groupId>
       <artifactId>wiremock</artifactId>
       <!-- that's a very old version, but it's the newest one that brings in
-           a old guava version, that is compatible with maven 3.1.0.
-           maven 3.1.0 uses guava 10, wiremock 1.49 uses guava 13.0.1
+           a old guava version, that is compatible with maven 3.1.1.
+           maven 3.1.1 uses guava 11, wiremock 1.49 uses guava 13.0.1
       -->
       <version>1.49</version>
       <scope>test</scope>
