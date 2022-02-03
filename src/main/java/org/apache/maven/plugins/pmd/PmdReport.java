@@ -428,9 +428,14 @@ public class PmdReport
      */
     private String resolveRulesets() throws MavenReportException
     {
-        // configure ResourceManager
+        // configure ResourceManager - will search for urls (URLResourceLoader) and files in various directories:
+        // in the directory of the current project's pom file - note: extensions might replace the pom file on the fly
         locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
-        locator.addSearchPath( "url", "" );
+        // in the current project's directory
+        locator.addSearchPath( FileResourceLoader.ID, project.getBasedir().getAbsolutePath() );
+        // in the base directory - that's the directory of the initial pom requested to build,
+        // e.g. the root of a multi module build
+        locator.addSearchPath( FileResourceLoader.ID, session.getRequest().getBaseDirectory() );
         locator.setOutputDirectory( rulesetsTargetDirectory );
 
         String[] sets = new String[rulesets.length];

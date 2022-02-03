@@ -28,7 +28,12 @@ import org.apache.maven.doxia.site.decoration.DecorationModel;
 import org.apache.maven.doxia.siterenderer.DocumentContent;
 import org.apache.maven.doxia.siterenderer.RendererException;
 import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.WriterFactory;
 
 /**
@@ -82,5 +87,27 @@ public abstract class AbstractPmdReportTest
     public static boolean lowerCaseContains( String text, String contains )
     {
         return text.toLowerCase( Locale.ROOT ).contains( contains.toLowerCase( Locale.ROOT ) );
+    }
+
+    @Override
+    protected Mojo lookupMojo( String goal, File pom ) throws Exception
+    {
+        Mojo mojo = super.lookupMojo( goal, pom );
+        return mockMavenSession( mojo );
+    }
+
+    private Mojo mockMavenSession(Mojo mojo) throws IllegalAccessException {
+        String basedir = getBasedir();
+        if ( ReflectionUtils.getFieldByNameIncludingSuperclasses( "session", mojo.getClass() ) != null )
+        {
+            MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest() {
+                public String getBaseDirectory() {
+                    return basedir;
+                };
+            };
+            ReflectionUtils.setVariableValueInObject( mojo, "session",
+                    new MavenSession( null, null, executionRequest, null ) );
+        }
+        return mojo;
     }
 }

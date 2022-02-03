@@ -21,23 +21,13 @@ package org.apache.maven.plugins.pmd;
 
 import java.io.File;
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
  */
 public class CpdViolationCheckMojoTest
-    extends AbstractMojoTestCase
+    extends AbstractPmdReportTest
 {
-    /** {@inheritDoc} */
-    @Override
-    protected void setUp()
-        throws Exception
-    {
-        super.setUp();
-        CapturingPrintStream.init( true );
-    }
 
     public void testDefaultConfiguration()
         throws Exception
