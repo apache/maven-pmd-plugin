@@ -44,6 +44,7 @@ under the License.
             <!-- note, the port of the http urls will be replaced by the unit test -->
             <ruleset>http://localhost:12345/profiles/export?format=pmd&amp;language=java&amp;name=Sonar%2520way</ruleset>
             <ruleset>http://localhost:12345/config/my-ruleset.xml</ruleset>
+            <ruleset>http://localhost:12345/projects/OURPROJECT/repos/ourproject-pmd/raw/InProgressRuleset.xml?at=refs%2Fheads%2Fmaster</ruleset>
           </rulesets>
           <format>xml</format>
           <linkXRef>true</linkXRef>

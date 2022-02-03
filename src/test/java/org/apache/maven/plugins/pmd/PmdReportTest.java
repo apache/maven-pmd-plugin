@@ -719,12 +719,17 @@ public class PmdReportTest
         final String sonarExportRulesetUrl = "http://localhost:" + mockServer.port() + sonarProfileUrl;
         final String myRulesetBaseUrl = "/config/my-ruleset.xml";
         final String myRulesetUrl = "http://localhost:" + mockServer.port() + myRulesetBaseUrl;
+        final String notAInternalRulesetBaseUrl = "/projects/OURPROJECT/repos/ourproject-pmd/raw/InProgressRuleset.xml?at=refs%2Fheads%2Fmaster";
+        final String notAInternalRulesetUrl = "http://localhost:" + mockServer.port() + notAInternalRulesetBaseUrl;
 
         WireMock.configureFor( "localhost", port );
         WireMock.stubFor( WireMock.get( WireMock.urlEqualTo( sonarProfileUrl ) )
                 .willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
                                                                                 "text/xml" ).withBody( sonarRuleset ) ) );
         WireMock.stubFor( WireMock.get( WireMock.urlEqualTo( myRulesetBaseUrl ) )
+                .willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
+                                                                                "text/xml" ).withBody( sonarRuleset ) ) );
+        WireMock.stubFor( WireMock.get( WireMock.urlEqualTo( notAInternalRulesetBaseUrl ) )
                 .willReturn( WireMock.aResponse().withStatus( 200 ).withHeader( "Content-Type",
                                                                                 "text/xml" ).withBody( sonarRuleset ) ) );
 
@@ -738,6 +743,7 @@ public class PmdReportTest
         PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
         mojo.rulesets[3] = sonarExportRulesetUrl;
         mojo.rulesets[4] = myRulesetUrl;
+        mojo.rulesets[5] = notAInternalRulesetUrl;
         mojo.execute();
 
         // these are the rulesets, that have been copied to target/pmd/rulesets
@@ -754,6 +760,9 @@ public class PmdReportTest
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/my-ruleset.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/InProgressRuleset.xml_at_refs_2Fheads_2Fmaster.xml" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
         mockServer.stop();

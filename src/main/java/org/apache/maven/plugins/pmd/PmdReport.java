@@ -460,7 +460,7 @@ public class PmdReport
     {
         String result = ruleset.trim();
         String lowercase = result.toLowerCase( Locale.ROOT );
-        if ( lowercase.endsWith( ".xml" ) )
+        if ( lowercase.startsWith( "http://" ) || lowercase.startsWith( "https://" ) || lowercase.endsWith( ".xml" ) )
         {
             return result;
         }
