@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
-    <version>34</version>
+    <version>35-SNAPSHOT</version>
     <relativePath />
   </parent>
 
@@ -87,7 +87,7 @@ under the License.
   <properties>
     <mavenVersion>4.0.0-alpha-1-SNAPSHOT</mavenVersion>
     <doxiaVersion>2.0.0-M2-SNAPSHOT</doxiaVersion>
-    <doxiaSitetoolsVersion>2.0.0-M1-SNAPSHOT</doxiaSitetoolsVersion>
+    <doxiaSitetoolsVersion>2.0.0-M3-SNAPSHOT</doxiaSitetoolsVersion>
     <javaVersion>8</javaVersion><!-- Because PMD 6.35.0+ requires Java 8 -->
     <pmdVersion>6.41.0</pmdVersion>
     <slf4jVersion>1.7.25</slf4jVersion>
@@ -326,7 +326,7 @@ under the License.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.20</version>
+        <version>1.21</version>
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>
