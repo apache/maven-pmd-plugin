@@ -35,6 +35,7 @@ import java.util.Set;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.pmd.model.ProcessingError;
+import org.apache.maven.plugins.pmd.model.SuppressedViolation;
 import org.apache.maven.plugins.pmd.model.Violation;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -57,6 +58,8 @@ public class PmdReportGenerator
     private ResourceBundle bundle;
 
     private Set<Violation> violations = new HashSet<>();
+
+    private List<SuppressedViolation> suppressedViolations = new ArrayList<>();
 
     private List<ProcessingError> processingErrors = new ArrayList<>();
 
@@ -91,6 +94,11 @@ public class PmdReportGenerator
     public List<Violation> getViolations()
     {
         return new ArrayList<>( violations );
+    }
+
+    public void setSuppressedViolations( Collection<SuppressedViolation> suppressedViolations )
+    {
+        this.suppressedViolations = new ArrayList<>( suppressedViolations );
     }
 
     public void setProcessingErrors( Collection<ProcessingError> errors )
@@ -377,6 +385,73 @@ public class PmdReportGenerator
         }
     }
 
+    // PMD might run the analysis multi-threaded, so the suppressed violations might be reported
+    // out of order. We sort them here by filename before writing them to
+    // the report.
+    private void renderSuppressedViolations()
+        throws IOException
+    {
+        sink.section1();
+        sink.sectionTitle1();
+        sink.text( bundle.getString( "report.pmd.suppressedViolations.title" ) );
+        sink.sectionTitle1_();
+
+        Collections.sort( suppressedViolations, new Comparator<SuppressedViolation>()
+        {
+            @Override
+            public int compare( SuppressedViolation o1, SuppressedViolation o2 )
+            {
+                return o1.getFilename().compareTo( o2.getFilename() );
+            }
+        } );
+
+        sink.table();
+        sink.tableRow();
+        sink.tableHeaderCell();
+        sink.text( bundle.getString( "report.pmd.suppressedViolations.column.filename" ) );
+        sink.tableHeaderCell_();
+        sink.tableHeaderCell();
+        sink.text( bundle.getString( "report.pmd.suppressedViolations.column.ruleMessage" ) );
+        sink.tableHeaderCell_();
+        sink.tableHeaderCell();
+        sink.text( bundle.getString( "report.pmd.suppressedViolations.column.suppressionType" ) );
+        sink.tableHeaderCell_();
+        sink.tableHeaderCell();
+        sink.text( bundle.getString( "report.pmd.suppressedViolations.column.userMessage" ) );
+        sink.tableHeaderCell_();
+        sink.tableRow_();
+
+        for ( SuppressedViolation suppressedViolation : suppressedViolations )
+        {
+            String filename = suppressedViolation.getFilename();
+            PmdFileInfo fileInfo = determineFileInfo( filename );
+            filename = shortenFilename( filename, fileInfo );
+
+            sink.tableRow();
+
+            sink.tableCell();
+            sink.text( filename );
+            sink.tableCell_();
+
+            sink.tableCell();
+            sink.text( suppressedViolation.getRuleMessage() );
+            sink.tableCell_();
+
+            sink.tableCell();
+            sink.text( suppressedViolation.getSuppressionType() );
+            sink.tableCell_();
+
+            sink.tableCell();
+            sink.text( suppressedViolation.getUserMessage() );
+            sink.tableCell_();
+
+            sink.tableRow_();
+        }
+
+        sink.table_();
+        sink.section1_();
+    }
+
     private void processProcessingErrors() throws IOException
     {
         // sort the problem by filename first, since PMD is executed multi-threaded
@@ -490,6 +565,11 @@ public class PmdReportGenerator
             sink.paragraph();
             sink.text( bundle.getString( "report.pmd.noProblems" ) );
             sink.paragraph_();
+        }
+
+        if ( !suppressedViolations.isEmpty() )
+        {
+            renderSuppressedViolations();
         }
 
         if ( !processingErrors.isEmpty() )

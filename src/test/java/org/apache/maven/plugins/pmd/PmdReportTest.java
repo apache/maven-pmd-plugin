@@ -530,6 +530,51 @@ public class PmdReportTest
         String str = readFile( generatedFile );
 
         // check that there is no violation reported for "unusedVar2" - as it is suppressed
+        assertFalse( str.contains( "Avoid unused private fields such as 'unusedVar2'.\n </violation>" ) );
+        // but it appears as suppressed
+        assertTrue( str.contains( "suppressiontype=\"nopmd\" msg=\"Avoid unused private fields such as 'unusedVar2'.\"" ));
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+        renderer( mojo, generatedFile );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        // check if there's a link to the JXR files
+        str = readFile( generatedFile );
+
+        assertTrue( str.contains( "/xref/def/configuration/AppSample.html#L27" ) );
+        // suppressed violation
+        assertTrue( str.contains( "Avoid unused private fields such as 'unusedVar2'." ) );
+    }
+
+    public void testSuppressMarkerConfigurationWithoutRendering()
+        throws Exception
+    {
+        File testPom =
+            new File( getBasedir(),
+                      "src/test/resources/unit/default-configuration/pmd-with-suppressMarker-no-render-plugin-config.xml" );
+        PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+        mojo.execute();
+
+        // check if the PMD files were generated
+        File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        String str = readFile( generatedFile );
+
+        // check that there is no violation reported for "unusedVar2" - as it is suppressed
+        assertFalse( str.contains( "Avoid unused private fields such as 'unusedVar2'.\n </violation>" ) );
+        // but it appears as suppressed
+        assertTrue( str.contains( "suppressiontype=\"nopmd\" msg=\"Avoid unused private fields such as 'unusedVar2'.\"" ));
+
+        generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+        renderer( mojo, generatedFile );
+        assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+
+        // check if there's a link to the JXR files
+        str = readFile( generatedFile );
+
+        assertTrue( str.contains( "/xref/def/configuration/AppSample.html#L27" ) );
+        // suppressed violations are not rendered
         assertFalse( str.contains( "Avoid unused private fields such as 'unusedVar2'." ) );
     }
 

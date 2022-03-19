@@ -46,6 +46,13 @@ under the License.
           </association>
         </field>
         <field>
+          <name>suppressedViolations</name>
+          <association xml.tagName="suppressedviolation" xml.itemsStyle="flat">
+            <type>SuppressedViolation</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
           <name>errors</name>
           <association xml.tagName="error" xml.itemsStyle="flat">
             <type>ProcessingError</type>
@@ -125,6 +132,27 @@ under the License.
           </code>
         </codeSegment>
       </codeSegments>
+    </class>
+    <class>
+        <name>SuppressedViolation</name>
+        <fields>
+            <field xml.attribute="true">
+                <name>filename</name>
+                <type>String</type>
+            </field>
+            <field xml.tagName="suppressiontype" xml.attribute="true">
+                <name>suppressionType</name>
+                <type>String</type>
+            </field>
+            <field xml.tagName="msg" xml.attribute="true">
+                <name>ruleMessage</name>
+                <type>String</type>
+            </field>
+            <field xml.tagName="usermsg" xml.attribute="true">
+                <name>userMessage</name>
+                <type>String</type>
+            </field>
+        </fields>
     </class>
     <class>
         <name>ProcessingError</name>

@@ -22,12 +22,15 @@ package org.apache.maven.plugins.pmd;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.plexus.util.StringUtils;
 
 import net.sourceforge.pmd.Report;
 import net.sourceforge.pmd.Report.ProcessingError;
+import net.sourceforge.pmd.Report.SuppressedViolation;
 import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.renderers.AbstractRenderer;
 import net.sourceforge.pmd.util.datasource.DataSource;
@@ -41,8 +44,9 @@ import net.sourceforge.pmd.util.datasource.DataSource;
  */
 public class PmdCollectingRenderer extends AbstractRenderer
 {
-    private List<ProcessingError> errors = Collections.synchronizedList( new ArrayList<ProcessingError>() );
-    private List<RuleViolation> violations = Collections.synchronizedList( new ArrayList<RuleViolation>() );
+    private List<ProcessingError> errors = Collections.synchronizedList( new ArrayList<>() );
+    private List<RuleViolation> violations = Collections.synchronizedList( new ArrayList<>() );
+    private List<SuppressedViolation> suppressed = Collections.synchronizedList( new ArrayList<> () );
 
     /**
      * Collects all reports from all threads.
@@ -57,6 +61,7 @@ public class PmdCollectingRenderer extends AbstractRenderer
     {
         violations.addAll( report.getViolations() );
         errors.addAll( report.getProcessingErrors() );
+        suppressed.addAll( report.getSuppressedViolations() );
     }
 
     /**
@@ -128,6 +133,19 @@ public class PmdCollectingRenderer extends AbstractRenderer
         for ( ProcessingError e : errors )
         {
             report.addError( e );
+        }
+        Map<Integer, String> suppressedLines = new HashMap<Integer, String>();
+        for ( SuppressedViolation s : suppressed )
+        {
+            if ( s.suppressedByNOPMD() )
+            {
+                suppressedLines.put( s.getRuleViolation().getBeginLine(), s.getUserMessage() );
+            }
+        }
+        report.suppress( suppressedLines );
+        for ( SuppressedViolation s : suppressed )
+        {
+            report.addRuleViolation( s.getRuleViolation() );
         }
         return report;
     }

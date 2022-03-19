@@ -32,6 +32,7 @@ import java.util.List;
 import org.apache.maven.plugins.pmd.model.PmdErrorDetail;
 import org.apache.maven.plugins.pmd.model.PmdFile;
 import org.apache.maven.plugins.pmd.model.ProcessingError;
+import org.apache.maven.plugins.pmd.model.SuppressedViolation;
 import org.apache.maven.plugins.pmd.model.Violation;
 import org.apache.maven.plugins.pmd.model.io.xpp3.PmdXpp3Reader;
 import org.apache.maven.reporting.MavenReportException;
@@ -43,6 +44,7 @@ public class PmdResult
 {
     private final List<ProcessingError> processingErrors = new ArrayList<>();
     private final List<Violation> violations = new ArrayList<>();
+    private final List<SuppressedViolation> suppressedViolations = new ArrayList<>();
 
     public static final PmdResult EMPTY = new PmdResult();
 
@@ -68,6 +70,7 @@ public class PmdResult
             PmdXpp3Reader reader = new PmdXpp3Reader();
             PmdErrorDetail details = reader.read( reader1, false );
             processingErrors.addAll( details.getErrors() );
+            suppressedViolations.addAll( details.getSuppressedViolations() );
 
             for ( PmdFile file : details.getFiles() )
             {
@@ -145,6 +148,11 @@ public class PmdResult
     public Collection<Violation> getViolations()
     {
         return violations;
+    }
+
+    public Collection<SuppressedViolation> getSuppressedViolations()
+    {
+        return suppressedViolations;
     }
 
     public Collection<ProcessingError> getErrors()
