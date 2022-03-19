@@ -85,7 +85,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenVersion>3.1.1</mavenVersion>
+    <mavenVersion>3.2.5</mavenVersion>
     <doxiaVersion>1.9.1</doxiaVersion>
     <doxiaSitetoolsVersion>1.9.2</doxiaSitetoolsVersion>
     <javaVersion>8</javaVersion><!-- Because PMD 6.35.0+ requires Java 8 -->
@@ -135,7 +135,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
-      <version>${mavenVersion}</version>
+      <version>3.2.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
