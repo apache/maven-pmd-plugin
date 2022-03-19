@@ -277,6 +277,22 @@ under the License.
             </excludes>
           </configuration>
         </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>taglist-maven-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.10.1</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>3.16.0</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -386,21 +402,6 @@ under the License.
             <configuration>
               <targetJdk>${javaVersion}</targetJdk>
               <skipEmptyReport>false</skipEmptyReport>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>l10n-maven-plugin</artifactId>
-            <version>1.0-alpha-2</version>
-            <configuration>
-              <locales>
-                <locale>de</locale>
-                <locale>fr</locale>
-                <locale>it</locale>
-                <locale>nl</locale>
-                <locale>pt_BR</locale>
-                <locale>sv</locale>
-              </locales>
             </configuration>
           </plugin>
         </plugins>
