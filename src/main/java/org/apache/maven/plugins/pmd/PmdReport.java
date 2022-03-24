@@ -217,6 +217,14 @@ public class PmdReport
     private boolean renderViolationsByPriority = true;
 
     /**
+     * Add a section in the HTML report that lists the suppressed violations.
+     *
+     * @since 3.17.0
+     */
+    @Parameter( property = "pmd.renderSuppressedViolations", defaultValue = "true" )
+    private boolean renderSuppressedViolations = true;
+
+    /**
      * Before PMD is executed, the configured rulesets are resolved and copied into this directory.
      * <p>Note: Before 3.13.0, this was by default ${project.build.directory}.
      *
@@ -501,6 +509,10 @@ public class PmdReport
         doxiaRenderer.setRenderViolationsByPriority( renderViolationsByPriority );
         doxiaRenderer.setFiles( filesToProcess );
         doxiaRenderer.setViolations( pmdResult.getViolations() );
+        if ( renderSuppressedViolations )
+        {
+            doxiaRenderer.setSuppressedViolations( pmdResult.getSuppressedViolations() );
+        }
         if ( renderProcessingErrors )
         {
             doxiaRenderer.setProcessingErrors( pmdResult.getErrors() );
