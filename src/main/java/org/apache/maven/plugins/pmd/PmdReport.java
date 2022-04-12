@@ -434,7 +434,7 @@ public class PmdReport
      * @return comma separated list of absolute file paths of ruleset files
      * @throws MavenReportException if a ruleset could not be found
      */
-    private String resolveRulesets() throws MavenReportException
+    private List<String> resolveRulesets() throws MavenReportException
     {
         // configure ResourceManager - will search for urls (URLResourceLoader) and files in various directories:
         // in the directory of the current project's pom file - note: extensions might replace the pom file on the fly
@@ -466,7 +466,7 @@ public class PmdReport
         {
             throw new MavenReportException( e.getMessage(), e );
         }
-        return StringUtils.join( sets, "," );
+        return Arrays.asList( sets );
     }
 
     private String determineRulesetFilename( String ruleset )

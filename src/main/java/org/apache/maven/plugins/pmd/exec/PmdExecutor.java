@@ -29,25 +29,20 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeViolationsFromFile;
-import org.apache.maven.plugins.pmd.PmdCollectingRenderer;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.pmd.PMD;
+import net.sourceforge.pmd.PmdAnalysis;
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.Report;
 import net.sourceforge.pmd.RulePriority;
-import net.sourceforge.pmd.RuleSet;
 import net.sourceforge.pmd.RuleSetLoadException;
 import net.sourceforge.pmd.RuleSetLoader;
 import net.sourceforge.pmd.RuleViolation;
@@ -63,8 +58,7 @@ import net.sourceforge.pmd.renderers.HTMLRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
-import net.sourceforge.pmd.util.datasource.DataSource;
-import net.sourceforge.pmd.util.datasource.FileDataSource;
+import net.sourceforge.pmd.util.Predicate;
 
 /**
  * Executes PMD with the configuration provided via {@link PmdRequest}.
@@ -146,13 +140,13 @@ public class PmdExecutor extends Executor
 
     /**
      * Execute PMD analysis from CLI.
-     * 
+     *
      * <p>
      * Single arg with the filename to the serialized {@link PmdRequest}.
-     * 
+     *
      * <p>
      * Exit-code: 0 = success, 1 = failure in executing
-     * 
+     *
      * @param args
      */
     public static void main( String[] args )
@@ -211,14 +205,9 @@ public class PmdExecutor extends Executor
         {
             configuration.setSourceEncoding( request.getSourceEncoding() );
         }
-        try
-        {
-            configuration.prependClasspath( request.getAuxClasspath() );
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
-        }
+
+        configuration.prependAuxClasspath( request.getAuxClasspath() );
+
         if ( request.getSuppressMarker() != null )
         {
             configuration.setSuppressMarker( request.getSuppressMarker() );
@@ -240,15 +229,10 @@ public class PmdExecutor extends Executor
             configuration.setBenchmark( true );
         }
         List<File> files = request.getFiles();
-        List<DataSource> dataSources = new ArrayList<>( files.size() );
-        for ( File f : files )
-        {
-            dataSources.add( new FileDataSource( f ) );
-        }
 
-        PmdCollectingRenderer renderer = new PmdCollectingRenderer();
+        Report report = null;
 
-        if ( StringUtils.isBlank( request.getRulesets() ) )
+        if ( request.getRulesets().isEmpty() )
         {
             LOG.debug( "Skipping PMD execution as no rulesets are defined." );
         }
@@ -261,7 +245,7 @@ public class PmdExecutor extends Executor
 
             try
             {
-                processFilesWithPMD( configuration, dataSources, renderer );
+                report = processFilesWithPMD( configuration, files );
             }
             finally
             {
@@ -290,21 +274,21 @@ public class PmdExecutor extends Executor
             }
         }
 
-        if ( renderer.hasErrors() )
+        if ( report != null && !report.getProcessingErrors().isEmpty() )
         {
+            List<Report.ProcessingError> errors = report.getProcessingErrors();
             if ( !request.isSkipPmdError() )
             {
                 LOG.error( "PMD processing errors:" );
-                LOG.error( renderer.getErrorsAsString( request.isDebugEnabled() ) );
-                throw new MavenReportException( "Found " + renderer.getErrors().size() + " PMD processing errors" );
+                LOG.error( getErrorsAsString( errors, request.isDebugEnabled() ) );
+                throw new MavenReportException( "Found " + errors.size()
+                        + " PMD processing errors" );
             }
-            LOG.warn( "There are {} PMD processing errors:", renderer.getErrors().size() );
-            LOG.warn( renderer.getErrorsAsString( request.isDebugEnabled() ) );
+            LOG.warn( "There are {} PMD processing errors:", errors.size() );
+            LOG.warn( getErrorsAsString( errors, request.isDebugEnabled() ) );
         }
 
-        removeExcludedViolations( renderer.getViolations() );
-
-        Report report = renderer.asReport();
+        report = removeExcludedViolations( report );
         // always write XML report, as this might be needed by the check mojo
         // we need to output it even if the file list is empty or we have no violations
         // so the "check" goals can check for violations
@@ -323,6 +307,25 @@ public class PmdExecutor extends Executor
         return new PmdResult( new File( request.getTargetDirectory(), "pmd.xml" ), request.getOutputEncoding() );
     }
 
+    /**
+     * Gets the errors as a single string. Each error is in its own line.
+     * @param withDetails if <code>true</code> then add the error details additionally (contains e.g. the stacktrace)
+     * @return the errors as string
+     */
+    private String getErrorsAsString( List<Report.ProcessingError> errors, boolean withDetails )
+    {
+        List<String> errorsAsString = new ArrayList<>( errors.size() );
+        for ( Report.ProcessingError error : errors )
+        {
+            errorsAsString.add( error.getFile() + ": " + error.getMsg() );
+            if ( withDetails )
+            {
+                errorsAsString.add( error.getDetail() );
+            }
+        }
+        return String.join( System.lineSeparator(), errorsAsString );
+    }
+
     private void writeBenchmarkReport( TimingReport timingReport, String benchmarkOutputLocation, String encoding )
     {
         try ( Writer writer = new OutputStreamWriter( new FileOutputStream( benchmarkOutputLocation ), encoding ) )
@@ -336,28 +339,31 @@ public class PmdExecutor extends Executor
         }
     }
 
-    private void processFilesWithPMD( PMDConfiguration pmdConfiguration, List<DataSource> dataSources,
-            PmdCollectingRenderer renderer ) throws MavenReportException
+    private Report processFilesWithPMD( PMDConfiguration pmdConfiguration, List<File> files )
+            throws MavenReportException
     {
+        Report report = null;
         RuleSetLoader rulesetLoader = RuleSetLoader.fromPmdConfig( pmdConfiguration )
                 .warnDeprecated( true );
-        List<RuleSet> rulesets;
         try
         {
             // load the ruleset once to log out any deprecated rules as warnings
-            rulesets = rulesetLoader.loadFromResources(
-                    Arrays.asList( pmdConfiguration.getRuleSets().split( "\\s*,\\s*" ) ) );
+            rulesetLoader.loadFromResources( pmdConfiguration.getRuleSetPaths() );
         }
         catch ( RuleSetLoadException e1 )
         {
             throw new MavenReportException( "The ruleset could not be loaded", e1 );
         }
 
-        try
+        try ( PmdAnalysis pmdAnalysis = PmdAnalysis.create( pmdConfiguration ) )
         {
+            for ( File file : files )
+            {
+                pmdAnalysis.files().addFile( file.toPath() );
+            }
             LOG.debug( "Executing PMD..." );
-            PMD.processFiles( pmdConfiguration, rulesets, dataSources, Arrays.<Renderer>asList( renderer ) );
-            LOG.debug( "PMD finished. Found {} violations.", renderer.getViolations().size() );
+            report = pmdAnalysis.performAnalysisAndCollectReport();
+            LOG.debug( "PMD finished. Found {} violations.", report.getViolations().size() );
         }
         catch ( Exception e )
         {
@@ -367,7 +373,9 @@ public class PmdExecutor extends Executor
                 throw new MavenReportException( message, e );
             }
             LOG.warn( message, e );
+
         }
+        return report;
     }
 
     /**
@@ -412,7 +420,10 @@ public class PmdExecutor extends Executor
         {
             r.setWriter( writer );
             r.start();
-            r.renderFileReport( report );
+            if ( report != null )
+            {
+                r.renderFileReport( report );
+            }
             r.end();
             r.flush();
         }
@@ -480,9 +491,14 @@ public class PmdExecutor extends Executor
         return result;
     }
 
-    private void removeExcludedViolations( List<RuleViolation> violations )
+    private Report removeExcludedViolations( Report report )
             throws MavenReportException
     {
+        if ( report == null )
+        {
+            return null;
+        }
+
         ExcludeViolationsFromFile excludeFromFile = new ExcludeViolationsFromFile();
 
         try
@@ -496,19 +512,19 @@ public class PmdExecutor extends Executor
 
         LOG.debug( "Removing excluded violations. Using {} configured exclusions.",
                 excludeFromFile.countExclusions() );
-        int violationsBefore = violations.size();
+        int violationsBefore = report.getViolations().size();
 
-        Iterator<RuleViolation> iterator = violations.iterator();
-        while ( iterator.hasNext() )
+        Report filtered = report.filterViolations( new Predicate<RuleViolation>()
         {
-            RuleViolation rv = iterator.next();
-            if ( excludeFromFile.isExcludedFromFailure( rv ) )
+            @Override
+            public boolean test( RuleViolation ruleViolation )
             {
-                iterator.remove();
+                return !excludeFromFile.isExcludedFromFailure( ruleViolation );
             }
-        }
+        } );
 
-        int numberOfExcludedViolations = violationsBefore - violations.size();
+        int numberOfExcludedViolations = violationsBefore - filtered.getViolations().size();
         LOG.debug( "Excluded {} violations.", numberOfExcludedViolations );
+        return filtered;
     }
 }

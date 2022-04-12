@@ -45,7 +45,7 @@ public class PmdRequest implements Serializable
     private String auxClasspath;
     private String suppressMarker;
     private String analysisCacheLocation;
-    private String rulesets;
+    private List<String> rulesets;
     private String sourceEncoding;
     private List<File> files = new ArrayList<>();
 
@@ -114,7 +114,7 @@ public class PmdRequest implements Serializable
         this.analysisCacheLocation = analysisCacheLocation;
     }
 
-    public void setRulesets( String rulesets )
+    public void setRulesets( List<String> rulesets )
     {
         this.rulesets = rulesets;
     }
@@ -223,7 +223,7 @@ public class PmdRequest implements Serializable
         return analysisCacheLocation;
     }
 
-    public String getRulesets()
+    public List<String> getRulesets()
     {
         return rulesets;
     }

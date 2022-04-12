@@ -39,6 +39,9 @@ under the License.
 ### 📝 Documentation updates
 * [MPMD-333](https://issues.apache.org/jira/browse/MPMD-333) - Add release notes documentation
 
+### 👻 Maintenance
+* [MPMD-336](https://issues.apache.org/jira/browse/MPMD-336) - Replace deprecated calls to PMD
+
 ### 📦 Dependency updates
 * [MPMD-329](https://issues.apache.org/jira/browse/MPMD-329) - Upgrade to PMD 6.45.0
 * [MPMD-330](https://issues.apache.org/jira/browse/MPMD-330) - Upgrade Maven Parent to 35
@@ -50,7 +53,7 @@ under the License.
 **Release Date:** 2022-02-05
 
 **JIRA:** [Release Notes - Maven PMD Plugin - Version 3.16.0](https://issues.apache.org/jira/projects/MPMD/versions/12350599)
- 
+
 **GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.16.0>
 
 ### 🐛 Bug Fixes
@@ -70,7 +73,7 @@ under the License.
 ## Version 3.15.0
 
 **Release Date:** 2021-09-06
- 
+
 **JIRA:** [Release Notes - Maven PMD Plugin - Version 3.15.0](https://issues.apache.org/jira/projects/MPMD/versions/12349432)
 
 ### 🐛 Bug Fixes
@@ -98,7 +101,7 @@ under the License.
 ## Version 3.14.0
 
 **Release Date:** 2020-10-24
- 
+
 **JIRA:** [Release Notes - Maven PMD Plugin - Version 3.14.0](https://issues.apache.org/jira/projects/MPMD/versions/12346940)
 
 ### 🐛 Bug Fixes
@@ -119,7 +122,7 @@ under the License.
 ## Version 3.13.0
 
 **Release Date:** 2020-01-25
- 
+
 **JIRA:** [Release Notes - Maven PMD Plugin - Version 3.13.0](https://issues.apache.org/jira/projects/MPMD/versions/12345409)
 
 ### 🐛 Bug Fixes
@@ -147,7 +150,7 @@ under the License.
 ## Version 3.12.0
 
 **Release Date:** 2019-04-11
- 
+
 **JIRA:** [Release Notes - Maven PMD Plugin - Version 3.12.0](https://issues.apache.org/jira/projects/MPMD/versions/12344380)
 
 ### 🐛 Bug Fixes

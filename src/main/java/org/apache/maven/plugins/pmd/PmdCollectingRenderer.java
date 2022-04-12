@@ -41,7 +41,9 @@ import net.sourceforge.pmd.util.datasource.DataSource;
  * from a pmd execution.
  * 
  * @author Andreas Dangel
+ * @deprecated not used anymore
  */
+@Deprecated
 public class PmdCollectingRenderer extends AbstractRenderer
 {
     private List<ProcessingError> errors = Collections.synchronizedList( new ArrayList<>() );
