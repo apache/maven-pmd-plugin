@@ -207,6 +207,10 @@ public class PmdExecutor extends Executor
         LOG.debug( "Using language " + languageVersion );
         configuration.setDefaultLanguageVersion( languageVersion );
 
+        if ( request.getSourceEncoding() != null )
+        {
+            configuration.setSourceEncoding( request.getSourceEncoding() );
+        }
         try
         {
             configuration.prependClasspath( request.getAuxClasspath() );
