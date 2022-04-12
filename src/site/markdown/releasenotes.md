@@ -30,6 +30,7 @@ under the License.
 **GitHub:** <https://github.com/apache/maven-pmd-plugin/releases>
 
 ## 🐛 Bug Fixes
+* [MPMD-334](https://issues.apache.org/jira/browse/MPMD-334) - Source Encoding parameter is ignored
 
 ## 🚀 New features and improvements
 * [MPMD-309](https://issues.apache.org/jira/browse/MPMD-309) - Add configuration option to show suppressed violations
