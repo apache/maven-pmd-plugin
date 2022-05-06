@@ -29,17 +29,17 @@ under the License.
 
 **GitHub:** <https://github.com/apache/maven-pmd-plugin/releases>
 
-## 🐛 Bug Fixes
+### 🐛 Bug Fixes
 * [MPMD-334](https://issues.apache.org/jira/browse/MPMD-334) - Source Encoding parameter is ignored
 
-## 🚀 New features and improvements
+### 🚀 New features and improvements
 * [MPMD-309](https://issues.apache.org/jira/browse/MPMD-309) - Add configuration option to show suppressed violations
 * [MPMD-332](https://issues.apache.org/jira/browse/MPMD-332) - Support Java 18
 
 ### 📝 Documentation updates
 * [MPMD-333](https://issues.apache.org/jira/browse/MPMD-333) - Add release notes documentation
 
-## 📦 Dependency updates
+### 📦 Dependency updates
 * [MPMD-329](https://issues.apache.org/jira/browse/MPMD-329) - Upgrade to PMD 6.45.0
 * [MPMD-330](https://issues.apache.org/jira/browse/MPMD-330) - Upgrade Maven Parent to 35
 * [MPMD-331](https://issues.apache.org/jira/browse/MPMD-331) - Require Maven 3.2.5+
@@ -52,18 +52,18 @@ under the License.
  
 **GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.16.0>
 
-## 🐛 Bug Fixes
+### 🐛 Bug Fixes
 * [MPMD-325](https://issues.apache.org/jira/browse/MPMD-325) - Could not find class due to IncompatibleClassChangeError warning
 * [MPMD-324](https://issues.apache.org/jira/browse/MPMD-324) - Ruleset URLs have hyphen replaced with forwardslash
 * [MPMD-323](https://issues.apache.org/jira/browse/MPMD-323) - ResourceManager should use project base dir instead of pom location
 
-## 🔧 Build
+### 🔧 Build
 * [MPMD-328](https://issues.apache.org/jira/browse/MPMD-328) - Shared GitHub Actions
 
-## 🚀 New features and improvements
+### 🚀 New features and improvements
 * [MPMD-327](https://issues.apache.org/jira/browse/MPMD-327) - Upgrade to PMD 6.42.0
 
-## 📦 Dependency updates
+### 📦 Dependency updates
 * [MPMD-326](https://issues.apache.org/jira/browse/MPMD-326) - Set Maven 3.1.1 as minimum version
 
 ## Version 3.15.0
