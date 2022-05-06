@@ -41,4 +41,4 @@ assert 2 == auxclasspathLog.count( 'org/apache/commons/commons-lang3/3.8.1/commo
 // provided
 assert 2 == auxclasspathLog.count( 'javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar' )
 // test
-assert 2 == auxclasspathLog.count( 'commons-io/commons-io/2.6/commons-io-2.6.jar' )
+assert 2 == auxclasspathLog.count( 'commons-io/commons-io/2.7/commons-io-2.7.jar' )
