@@ -43,6 +43,7 @@ under the License.
 * [MPMD-329](https://issues.apache.org/jira/browse/MPMD-329) - Upgrade to PMD 6.45.0
 * [MPMD-330](https://issues.apache.org/jira/browse/MPMD-330) - Upgrade Maven Parent to 35
 * [MPMD-331](https://issues.apache.org/jira/browse/MPMD-331) - Require Maven 3.2.5+
+* [MPMD-337](https://issues.apache.org/jira/browse/MPMD-337) - Upgrade Maven Parent to 36
 
 ## Version 3.16.0
 
