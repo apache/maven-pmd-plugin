@@ -337,7 +337,7 @@ public class PmdReport
                 if ( skipEmptyReport )
                 {
                     result = pmdResult.hasViolations();
-                    if ( result )
+                    if ( !result )
                     {
                         getLog().debug( "Skipping report since skipEmptyReport is true and "
                                             + "there are no PMD violations." );

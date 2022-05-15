@@ -185,7 +185,7 @@ public class CpdReport
                 if ( skipEmptyReport )
                 {
                     result = cpdResult.hasDuplications();
-                    if ( result )
+                    if ( !result )
                     {
                         getLog().debug( "Skipping report since skipEmptyReport is true and there are no CPD issues." );
                     }
@@ -232,11 +232,11 @@ public class CpdReport
             request.setLanguageProperties( languageProperties );
             request.setSourceEncoding( determineEncoding( !filesToProcess.isEmpty() ) );
             request.addFiles( filesToProcess.keySet() );
-            
+
             request.setShowPmdLog( showPmdLog );
             request.setColorizedLog( MessageUtils.isColorEnabled() );
             request.setLogLevel( determineCurrentRootLogLevel() );
-            
+
             request.setExcludeFromFailureFile( excludeFromFailureFile );
             request.setTargetDirectory( targetDirectory.getAbsolutePath() );
             request.setOutputEncoding( getOutputEncoding() );
