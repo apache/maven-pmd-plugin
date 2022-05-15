@@ -91,8 +91,8 @@ under the License.
     <javaVersion>8</javaVersion><!-- Because PMD 6.35.0+ requires Java 8 -->
     <pmdVersion>6.45.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
-    <sitePluginVersion>3.7.1</sitePluginVersion>
-    <projectInfoReportsPluginVersion>3.0.0</projectInfoReportsPluginVersion>
+    <sitePluginVersion>3.12.0</sitePluginVersion>
+    <projectInfoReportsPluginVersion>3.3.0</projectInfoReportsPluginVersion>
     <project.build.outputTimestamp>2022-02-05T09:47:26Z</project.build.outputTimestamp>
   </properties>
 
