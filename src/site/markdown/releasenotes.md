@@ -31,6 +31,7 @@ under the License.
 
 ### 🐛 Bug Fixes
 * [MPMD-334](https://issues.apache.org/jira/browse/MPMD-334) - Source Encoding parameter is ignored
+* [MPMD-342](https://issues.apache.org/jira/browse/MPMD-342) - No debug log message issued when empty report shall be skipped and not issues have been found
 
 ### 🚀 New features and improvements
 * [MPMD-309](https://issues.apache.org/jira/browse/MPMD-309) - Add configuration option to show suppressed violations
@@ -47,6 +48,10 @@ under the License.
 * [MPMD-330](https://issues.apache.org/jira/browse/MPMD-330) - Upgrade Maven Parent to 35
 * [MPMD-331](https://issues.apache.org/jira/browse/MPMD-331) - Require Maven 3.2.5+
 * [MPMD-337](https://issues.apache.org/jira/browse/MPMD-337) - Upgrade Maven Parent to 36
+* [MPMD-338](https://issues.apache.org/jira/browse/MPMD-338) - Upgrade to Doxia/Doxia Sitetools to 1.11.1
+* [MPMD-339](https://issues.apache.org/jira/browse/MPMD-339) - Upgrade plugins in ITs
+* [MPMD-340](https://issues.apache.org/jira/browse/MPMD-340) - Upgrade Maven Reporting API/Impl to 3.1.0
+* [MPMD-341](https://issues.apache.org/jira/browse/MPMD-341) - Upgrade Maven Plugin Test Harness to 3.3.0
 
 ## Version 3.16.0
 
