@@ -40,6 +40,7 @@ under the License.
     <rule ref="category/java/bestpractices.xml/UnusedPrivateField" />
     <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod" />
 
+    <rule ref="category/java/codestyle.xml/EmptyControlStatement" />
     <rule ref="category/java/codestyle.xml/ExtendsObject" />
     <rule ref="category/java/codestyle.xml/ForLoopShouldBeWhileLoop" />
     <rule ref="category/java/codestyle.xml/TooManyStaticImports" />
@@ -47,6 +48,7 @@ under the License.
     <rule ref="category/java/codestyle.xml/UnnecessaryImport" />
     <rule ref="category/java/codestyle.xml/UnnecessaryModifier" />
     <rule ref="category/java/codestyle.xml/UnnecessaryReturn" />
+    <rule ref="category/java/codestyle.xml/UnnecessarySemicolon" />
     <rule ref="category/java/codestyle.xml/UselessParentheses" />
     <rule ref="category/java/codestyle.xml/UselessQualifiedThis" />
 
@@ -63,15 +65,6 @@ under the License.
     <rule ref="category/java/errorprone.xml/ClassCastExceptionWithToArray" />
     <rule ref="category/java/errorprone.xml/DontUseFloatTypeForLoopIndices" />
     <rule ref="category/java/errorprone.xml/EmptyCatchBlock" />
-    <rule ref="category/java/errorprone.xml/EmptyFinallyBlock" />
-    <rule ref="category/java/errorprone.xml/EmptyIfStmt" />
-    <rule ref="category/java/errorprone.xml/EmptyInitializer" />
-    <rule ref="category/java/errorprone.xml/EmptyStatementBlock" />
-    <rule ref="category/java/errorprone.xml/EmptyStatementNotInLoop" />
-    <rule ref="category/java/errorprone.xml/EmptySwitchStatements" />
-    <rule ref="category/java/errorprone.xml/EmptySynchronizedBlock" />
-    <rule ref="category/java/errorprone.xml/EmptyTryBlock" />
-    <rule ref="category/java/errorprone.xml/EmptyWhileStmt" />
     <rule ref="category/java/errorprone.xml/JumbledIncrementer" />
     <rule ref="category/java/errorprone.xml/MisplacedNullCheck" />
     <rule ref="category/java/errorprone.xml/OverrideBothEqualsAndHashcode" />

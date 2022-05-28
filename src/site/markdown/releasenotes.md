@@ -52,6 +52,7 @@ under the License.
 * [MPMD-339](https://issues.apache.org/jira/browse/MPMD-339) - Upgrade plugins in ITs
 * [MPMD-340](https://issues.apache.org/jira/browse/MPMD-340) - Upgrade Maven Reporting API/Impl to 3.1.0
 * [MPMD-341](https://issues.apache.org/jira/browse/MPMD-341) - Upgrade Maven Plugin Test Harness to 3.3.0
+* [MPMD-343](https://issues.apache.org/jira/browse/MPMD-343) - Upgrade to PMD 6.46.0
 
 ## Version 3.16.0
 
