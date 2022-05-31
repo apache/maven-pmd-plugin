@@ -21,38 +21,42 @@ under the License.
 
 # Release Notes
 
-## Version 3.17.0-SNAPSHOT
+## Version 3.17.0
 
-**Release Date:** not released yet
+**Release Date:** 2022-05-31
 
 **JIRA:** [Release Notes - Maven PMD Plugin - Version 3.17.0](https://issues.apache.org/jira/projects/MPMD/versions/12351350)
 
-**GitHub:** <https://github.com/apache/maven-pmd-plugin/releases>
-
-### 🐛 Bug Fixes
-* [MPMD-334](https://issues.apache.org/jira/browse/MPMD-334) - Source Encoding parameter is ignored
-* [MPMD-342](https://issues.apache.org/jira/browse/MPMD-342) - No debug log message issued when empty report shall be skipped and not issues have been found
+**GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.17.0>
 
 ### 🚀 New features and improvements
-* [MPMD-309](https://issues.apache.org/jira/browse/MPMD-309) - Add configuration option to show suppressed violations
-* [MPMD-332](https://issues.apache.org/jira/browse/MPMD-332) - Support Java 18
+* [MPMD-309](https://issues.apache.org/jira/browse/MPMD-309) - Add configuration option to show suppressed violations (#59) @adangel
+* [MPMD-332](https://issues.apache.org/jira/browse/MPMD-332) - Support Java 18 (#63) @adangel
+
+### 🐛 Bug Fixes
+* [MPMD-334](https://issues.apache.org/jira/browse/MPMD-334) - Source Encoding parameter is ignored (#64) @laoseth
+* [MPMD-342](https://issues.apache.org/jira/browse/MPMD-342) - No debug log message issued when empty report shall be ski… (#69) @michael-o
 
 ### 📝 Documentation updates
-* [MPMD-333](https://issues.apache.org/jira/browse/MPMD-333) - Add release notes documentation
+* [MPMD-333](https://issues.apache.org/jira/browse/MPMD-333) - Add release notes documentation (#61) @adangel
 
 ### 👻 Maintenance
-* [MPMD-336](https://issues.apache.org/jira/browse/MPMD-336) - Replace deprecated calls to PMD
+* [MPMD-336](https://issues.apache.org/jira/browse/MPMD-336) - Replace deprecated calls to PMD (#66) @adangel
 
 ### 📦 Dependency updates
 * [MPMD-329](https://issues.apache.org/jira/browse/MPMD-329) - Upgrade to PMD 6.45.0
-* [MPMD-330](https://issues.apache.org/jira/browse/MPMD-330) - Upgrade Maven Parent to 35
-* [MPMD-331](https://issues.apache.org/jira/browse/MPMD-331) - Require Maven 3.2.5+
-* [MPMD-337](https://issues.apache.org/jira/browse/MPMD-337) - Upgrade Maven Parent to 36
+* [MPMD-330](https://issues.apache.org/jira/browse/MPMD-330) - Upgrade Maven Parent to 35 (#60) @adangel
+* [MPMD-331](https://issues.apache.org/jira/browse/MPMD-331) - Require Maven 3.2.5+ (#60) @adangel
+* [MPMD-337](https://issues.apache.org/jira/browse/MPMD-337) - Upgrade Maven Parent to 36 (#67) @adangel
 * [MPMD-338](https://issues.apache.org/jira/browse/MPMD-338) - Upgrade to Doxia/Doxia Sitetools to 1.11.1
 * [MPMD-339](https://issues.apache.org/jira/browse/MPMD-339) - Upgrade plugins in ITs
 * [MPMD-340](https://issues.apache.org/jira/browse/MPMD-340) - Upgrade Maven Reporting API/Impl to 3.1.0
 * [MPMD-341](https://issues.apache.org/jira/browse/MPMD-341) - Upgrade Maven Plugin Test Harness to 3.3.0
-* [MPMD-343](https://issues.apache.org/jira/browse/MPMD-343) - Upgrade to PMD 6.46.0
+* [MPMD-343](https://issues.apache.org/jira/browse/MPMD-343) - Upgrade to PMD 6.46.0 (#71) @adangel
+* Bump release-drafter/release-drafter from 5.19.0 to 5.20.0 (#68) @dependabot
+* Bump release-drafter/release-drafter from 5.18.1 to 5.19.0 (#58) @dependabot
+* Bump commons-io from 2.6 to 2.7 in /src/it/MPMD-318-auxclasspath-includeTests/module-a (#65) @dependabot
+* Bump slf4jVersion from 1.7.25 to 1.7.36 (#53) @dependabot
 
 ## Version 3.16.0
 
