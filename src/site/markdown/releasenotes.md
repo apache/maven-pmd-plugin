@@ -21,6 +21,17 @@ under the License.
 
 # Release Notes
 
+## Version 3.18.0
+
+**Release Date:** ??
+
+**JIRA:** [Release Notes - Maven PMD Plugin - Version 3.18.0](https://issues.apache.org/jira/projects/MPMD/versions/12351813)
+
+**GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.18.0>
+
+### 📦 Dependency updates
+* [MPMD-345](https://issues.apache.org/jira/browse/MPMD-345) - Upgrade to PMD 6.47.0
+
 ## Version 3.17.0
 
 **Release Date:** 2022-05-31
