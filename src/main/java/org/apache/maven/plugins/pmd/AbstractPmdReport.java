@@ -491,7 +491,7 @@ public abstract class AbstractPmdReport
         {
             try
             {
-                if ( sourceDirectoryToCheck.getCanonicalPath().startsWith( excludeDir.getCanonicalPath() ) )
+                if ( sourceDirectoryToCheck.getCanonicalFile().toPath().startsWith(excludeDir.getCanonicalFile().toPath()) )
                 {
                     getLog().debug( "Directory " + sourceDirectoryToCheck.getAbsolutePath()
                                         + " has been excluded as it matches excludeRoot "
