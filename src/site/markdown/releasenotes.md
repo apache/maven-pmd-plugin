@@ -31,6 +31,7 @@ under the License.
 
 ### 📦 Dependency updates
 * [MPMD-345](https://issues.apache.org/jira/browse/MPMD-345) - Upgrade to PMD 6.47.0
+* [MPMD-347](https://issues.apache.org/jira/browse/MPMD-347) - Upgrade to PMD 6.48.0
 
 ## Version 3.17.0
 
