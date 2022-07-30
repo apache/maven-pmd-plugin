@@ -30,11 +30,18 @@ under the License.
 **GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.18.0>
 
 ### 🚀 New features and improvements
-* [MPMD-348](https://issues.apache.org/jira/browse/MPMD-348) - Support Java 19
+* [[MPMD-348]](https://issues.apache.org/jira/browse/MPMD-348) - Support Java 19 (#82) @adangel
+
+### 🐛 Bug Fixes
+* [SECURITY] Fix Partial Path Traversal Vulnerability (#80) @JLLeitschuh
 
 ### 📦 Dependency updates
-* [MPMD-345](https://issues.apache.org/jira/browse/MPMD-345) - Upgrade to PMD 6.47.0
-* [MPMD-347](https://issues.apache.org/jira/browse/MPMD-347) - Upgrade to PMD 6.48.0
+* [[MPMD-347]](https://issues.apache.org/jira/browse/MPMD-347) - Upgrade to PMD 6.48.0 (#81) @adangel
+* Bump maven-plugins from 36 to 37 (#79) @dependabot
+* [[MPMD-345]](https://issues.apache.org/jira/browse/MPMD-345) - Upgrade to PMD 6.47.0 (#73) @adangel
+* Bump commons-lang3 from 3.8.1 to 3.12.0 (#72) @dependabot
+* Bump plexus-resources from 1.1.0 to 1.2.0 (#56) @dependabot
+* Bump animal-sniffer-maven-plugin from 1.16 to 1.21 (#54) @dependabot
 
 ## Version 3.17.0
 
