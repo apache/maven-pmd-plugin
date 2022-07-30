@@ -29,6 +29,9 @@ under the License.
 
 **GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.18.0>
 
+### 🚀 New features and improvements
+* [MPMD-348](https://issues.apache.org/jira/browse/MPMD-348) - Support Java 19
+
 ### 📦 Dependency updates
 * [MPMD-345](https://issues.apache.org/jira/browse/MPMD-345) - Upgrade to PMD 6.47.0
 * [MPMD-347](https://issues.apache.org/jira/browse/MPMD-347) - Upgrade to PMD 6.48.0
