@@ -38,7 +38,7 @@ under the License.
           <targetDirectory>${basedir}/target/test/unit/parse-error/target</targetDirectory>
           <rulesetsTargetDirectory>${basedir}/target/test/unit/parse-error/target/pmd/rulesets</rulesetsTargetDirectory>
           <format>xml</format>
-          <sourceEncoding>UTF-8</sourceEncoding>
+          <inputEncoding>UTF-8</inputEncoding>
           <skipPmdError>false</skipPmdError>
           <compileSourceRoots>
             <compileSourceRoot>${basedir}/src/test/resources/unit/processing-error/src</compileSourceRoot>

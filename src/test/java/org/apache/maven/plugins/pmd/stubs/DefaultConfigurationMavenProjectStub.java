@@ -30,14 +30,13 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
  */
 public class DefaultConfigurationMavenProjectStub
-    extends MavenProjectStub
+    extends PmdProjectStub
 {
     private List<ReportPlugin> reportPlugins = new ArrayList<>();
 

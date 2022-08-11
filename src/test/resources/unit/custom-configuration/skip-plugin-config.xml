@@ -40,9 +40,9 @@ under the License.
           <format>csv</format>
           <linkXRef>true</linkXRef>
           <xrefLocation>${basedir}/target/test/unit/skip-configuration/target/site/xref</xrefLocation>
-          <sourceEncoding>ISO-8859-1</sourceEncoding>
+          <inputEncoding>ISO-8859-1</inputEncoding>
           <targetJdk>1.4</targetJdk>
-          <minimumPriority>4</minimumPriority>          
+          <minimumPriority>4</minimumPriority>
           <skip>true</skip>
         </configuration>
         <dependencies>

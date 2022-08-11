@@ -36,17 +36,18 @@ under the License.
           <project implementation="org.apache.maven.plugins.pmd.stubs.CustomConfigurationMavenProjectStub"/>
           <outputDirectory>${basedir}/target/test/unit/custom-configuration/target/site</outputDirectory>
           <targetDirectory>${basedir}/target/test/unit/custom-configuration/target</targetDirectory>
+          <localRepository>${localRepository}</localRepository>
           <rulesetsTargetDirectory>${basedir}/target/test/unit/custom-configuration/target/pmd/rulesets</rulesetsTargetDirectory>
           <format>csv</format>
           <linkXRef>true</linkXRef>
           <xrefLocation>${basedir}/target/test/unit/custom-configuration/target/site/xref</xrefLocation>
-          <sourceEncoding>ISO-8859-1</sourceEncoding>
+          <inputEncoding>ISO-8859-1</inputEncoding>
           <rulesets>
             <ruleset>rulesets/java/maven-pmd-plugin-default.xml</ruleset>
             <ruleset>${basedir}/src/test/resources/unit/custom-configuration/resources/rulesets/custom.xml</ruleset>
           </rulesets>
           <targetJdk>1.4</targetJdk>
-          <minimumPriority>4</minimumPriority>          
+          <minimumPriority>4</minimumPriority>
           <excludes>
             <exclude>**/Sample.java</exclude>
             <exclude>**/AnotherSample.java</exclude>
@@ -54,7 +55,6 @@ under the License.
           <compileSourceRoots>
             <compileSourceRoot>${basedir}/src/test/resources/unit/custom-configuration/</compileSourceRoot>
           </compileSourceRoots>
-          <sourceEncoding>UTF-8</sourceEncoding>
         </configuration>
         <dependencies>
           <dependency>

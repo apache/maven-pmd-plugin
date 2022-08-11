@@ -58,7 +58,6 @@ under the License.
           <failurePriority>4</failurePriority>
           <printFailingErrors>true</printFailingErrors>
           <targetJdk>${java.version}</targetJdk>
-          <sourceEncoding>UTF-8</sourceEncoding>
           <minimumTokens>100</minimumTokens>
         </configuration>
         <executions>

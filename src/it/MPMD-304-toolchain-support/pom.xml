@@ -54,7 +54,6 @@ under the License.
           <failOnViolation>false</failOnViolation>
           <printFailingErrors>true</printFailingErrors>
           <targetJdk>${java.version}</targetJdk>
-          <sourceEncoding>UTF-8</sourceEncoding>
           <minimumTokens>10</minimumTokens>
         </configuration>
         <executions>

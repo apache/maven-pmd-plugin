@@ -40,7 +40,7 @@ under the License.
           <format>xhtml</format>
           <linkXRef>false</linkXRef>
           <xrefLocation>${basedir}/target/test/unit/invalid-format/target/site/xref</xrefLocation>
-          <sourceEncoding>ISO-8859-1</sourceEncoding>
+          <inputEncoding>ISO-8859-1</inputEncoding>
         </configuration>
       </plugin>
     </plugins>

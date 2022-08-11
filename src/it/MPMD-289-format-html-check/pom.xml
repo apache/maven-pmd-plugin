@@ -30,6 +30,10 @@ under the License.
     Then report format is html, xml format should still be created so that the check goal still works.
   </description>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -41,7 +45,6 @@ under the License.
           <skip>false</skip>
           <failOnViolation>true</failOnViolation>
           <failurePriority>4</failurePriority>
-          <sourceEncoding>UTF-8</sourceEncoding>
           <minimumTokens>100</minimumTokens>
           <skipEmptyReport>false</skipEmptyReport>
           <format>html</format>

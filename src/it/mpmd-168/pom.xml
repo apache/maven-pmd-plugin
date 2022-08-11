@@ -31,6 +31,10 @@ under the License.
     Verify the "skipEmptyReport" parameter.
   </description>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -51,7 +55,6 @@ under the License.
         <configuration>
           <verbose>true</verbose>
           <minimumTokens>25</minimumTokens>
-          <sourceEncoding>UTF-8</sourceEncoding>
           <failOnViolation>false</failOnViolation> <!-- force execution of both goals, will be checked with verify-script -->
           <skipPmdError>false</skipPmdError>
           <skipEmptyReport>true</skipEmptyReport>
@@ -74,7 +77,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.3</version>
+        <version>@jxrPluginVersion@</version>
       </plugin>
     </plugins>
   </reporting>

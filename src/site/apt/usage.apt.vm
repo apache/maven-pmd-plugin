@@ -74,7 +74,7 @@ Configuration
   The reports will link directly to the cross-referenced source if you enable this with the <<<linkXRef>>> parameter.
   See the {{{http://maven.apache.org/plugins/maven-jxr-plugin/}JXR plugin}} for more details.
 
-  If your source uses a non-default encoding, you can use the <<<sourceEncoding>>> parameter to tell Maven which
+  If your source uses a non-default encoding, you can use the <<<inputEncoding>>> parameter to tell Maven which
   encoding to use when reading the java source.  Note also the ability to exclude source which you want
   to ignore.
 
@@ -95,7 +95,7 @@ Configuration
         <version>${project.version}</version>
         <configuration>
           <linkXref>true</linkXref>
-          <sourceEncoding>utf-8</sourceEncoding>
+          <inputEncoding>utf-8</inputEncoding>
           <minimumTokens>100</minimumTokens>
           <targetJdk>1.5</targetJdk>
           <excludes>

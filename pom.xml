@@ -91,8 +91,10 @@ under the License.
     <javaVersion>8</javaVersion><!-- Because PMD 6.35.0+ requires Java 8 -->
     <pmdVersion>6.48.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
-    <sitePluginVersion>3.12.0</sitePluginVersion>
-    <projectInfoReportsPluginVersion>3.3.0</projectInfoReportsPluginVersion>
+    <aetherVersion>1.0.0.v20140518</aetherVersion>
+    <sitePluginVersion>3.12.1</sitePluginVersion>
+    <projectInfoReportsPluginVersion>3.4.1</projectInfoReportsPluginVersion>
+    <jxrPluginVersion>3.3.0</jxrPluginVersion>
     <project.build.outputTimestamp>2022-05-31T17:37:31Z</project.build.outputTimestamp>
   </properties>
 
@@ -203,18 +205,24 @@ under the License.
         doxia-site-renderer requires transitively dom4j 1.1 which provides a very old version of jaxen (same jar).
         PMD requires a newer version of jaxen, which is not compatible.
       -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpclient</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- shared -->
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
-      <version>3.1.0</version>
+      <version>3.1.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>3.1.0</version>
+      <version>3.2.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -243,11 +251,43 @@ under the License.
     <dependency>
       <groupId>com.github.tomakehurst</groupId>
       <artifactId>wiremock</artifactId>
-      <!-- that's a very old version, but it's the newest one that brings in
-           a old guava version, that is compatible with maven 3.1.1.
-           maven 3.1.1 uses guava 11, wiremock 1.49 uses guava 13.0.1
-      -->
-      <version>1.49</version>
+      <version>1.58</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpclient</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.aether</groupId>
+      <artifactId>aether-api</artifactId>
+      <version>${aetherVersion}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.aether</groupId>
+      <artifactId>aether-impl</artifactId>
+      <version>${aetherVersion}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.aether</groupId>
+      <artifactId>aether-connector-basic</artifactId>
+      <version>${aetherVersion}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.aether</groupId>
+      <artifactId>aether-transport-wagon</artifactId>
+      <version>${aetherVersion}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-http-lightweight</artifactId>
+      <version>3.5.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>

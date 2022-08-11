@@ -51,7 +51,6 @@ import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
-import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 
 import net.sourceforge.pmd.renderers.Renderer;
@@ -287,35 +286,16 @@ public class PmdReport
     public void executeReport( Locale locale )
         throws MavenReportException
     {
+        ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
         try
         {
-            execute( locale );
+            Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
+
+            generateMavenSiteReport( locale );
         }
         finally
         {
-            if ( getSink() != null )
-            {
-                getSink().close();
-            }
-        }
-    }
-
-    private void execute( Locale locale )
-        throws MavenReportException
-    {
-        if ( !skip && canGenerateReport() )
-        {
-            ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
-            try
-            {
-                Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
-
-                generateMavenSiteReport( locale );
-            }
-            finally
-            {
-                Thread.currentThread().setContextClassLoader( origLoader );
-            }
+            Thread.currentThread().setContextClassLoader( origLoader );
         }
     }
 
@@ -382,7 +362,7 @@ public class PmdReport
         request.setLanguageAndVersion( language, targetJdk );
         request.setRulesets( resolveRulesets() );
         request.setAuxClasspath( typeResolution ? determineAuxClasspath() : null );
-        request.setSourceEncoding( getSourceEncoding() );
+        request.setSourceEncoding( getInputEncoding() );
         request.addFiles( filesToProcess.keySet() );
         request.setMinimumPriority( minimumPriority );
         request.setSuppressMarker( suppressMarker );
@@ -411,22 +391,6 @@ public class PmdReport
         getLog().info( "PMD version: " + AbstractPmdReport.getPmdVersion() );
         pmdResult = PmdExecutor.execute( request );
     }
-
-    protected String getSourceEncoding()
-    {
-        String encoding = super.getSourceEncoding();
-        if ( StringUtils.isEmpty( encoding ) )
-        {
-            encoding = ReaderFactory.FILE_ENCODING;
-            if ( !filesToProcess.isEmpty() )
-            {
-                getLog().warn( "File encoding has not been set, using platform encoding " + ReaderFactory.FILE_ENCODING
-                               + ", i.e. build is platform dependent!" );
-            }
-        }
-        return encoding;
-    }
-
 
     /**
      * Resolves the configured rulesets and copies them as files into the {@link #rulesetsTargetDirectory}.

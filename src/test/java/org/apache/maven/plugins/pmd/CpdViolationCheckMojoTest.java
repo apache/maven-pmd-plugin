@@ -26,24 +26,20 @@ import java.io.File;
  * @version $Id$
  */
 public class CpdViolationCheckMojoTest
-    extends AbstractPmdReportTest
+    extends AbstractPmdReportTestCase
 {
 
     public void testDefaultConfiguration()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
-        final CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
-        mojo.execute();
+        generateReport( "cpd", "default-configuration/cpd-default-configuration-plugin-config.xml" );
 
         // clear the output from previous pmd:cpd execution
         CapturingPrintStream.init( true );
 
         try
         {
-            testPom =
+            File testPom =
                 new File( getBasedir(),
                           "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml" );
             final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
@@ -65,13 +61,9 @@ public class CpdViolationCheckMojoTest
         throws Exception
     {
 
-        File testPom =
-            new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
-        final CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
-        mojo.execute();
+        generateReport( "cpd", "default-configuration/cpd-default-configuration-plugin-config.xml" );
 
-        testPom =
+        File testPom =
             new File( getBasedir(),
                       "src/test/resources/unit/default-configuration/cpd-check-notfailonviolation-plugin-config.xml" );
         final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
@@ -102,13 +94,9 @@ public class CpdViolationCheckMojoTest
     public void testExclusionsConfiguration()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml" );
-        final CpdReport mojo = (CpdReport) lookupMojo( "cpd", testPom );
-        mojo.execute();
+        generateReport( "cpd", "default-configuration/cpd-default-configuration-plugin-config.xml" );
 
-        testPom =
+        File testPom =
             new File( getBasedir(),
                       "src/test/resources/unit/default-configuration/cpd-check-cpd-exclusions-configuration-plugin-config.xml" );
         final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );

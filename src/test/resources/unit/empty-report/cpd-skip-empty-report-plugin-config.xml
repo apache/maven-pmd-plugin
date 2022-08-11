@@ -39,7 +39,7 @@ under the License.
           <compileSourceRoots>
             <compileSourceRoot>${basedir}/src/test/resources/unit/empty-report/java/</compileSourceRoot>
           </compileSourceRoots>
-          <sourceEncoding>UTF-8</sourceEncoding>
+          <inputEncoding>UTF-8</inputEncoding>
           <minimumTokens>100</minimumTokens>
           <skipEmptyReport>true</skipEmptyReport>
         </configuration>

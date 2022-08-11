@@ -19,7 +19,6 @@ package org.apache.maven.plugins.pmd;
  * under the License.
  */
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
@@ -34,8 +33,6 @@ import org.apache.maven.plugins.pmd.exec.CpdResult;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.apache.maven.toolchain.Toolchain;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.WriterFactory;
 
 import net.sourceforge.pmd.cpd.JavaTokenizer;
 import net.sourceforge.pmd.cpd.renderer.CPDRenderer;
@@ -134,36 +131,16 @@ public class CpdReport
     public void executeReport( Locale locale )
         throws MavenReportException
     {
+        ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
         try
         {
-            execute( locale );
+            Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
+
+            generateMavenSiteReport( locale );
         }
         finally
         {
-            if ( getSink() != null )
-            {
-                getSink().close();
-            }
-        }
-    }
-
-    private void execute( Locale locale )
-        throws MavenReportException
-    {
-        if ( !skip && canGenerateReport() )
-        {
-            ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
-            try
-            {
-                Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
-
-                generateMavenSiteReport( locale );
-            }
-            finally
-            {
-                Thread.currentThread().setContextClassLoader( origLoader );
-            }
-
+            Thread.currentThread().setContextClassLoader( origLoader );
         }
     }
 
@@ -230,7 +207,7 @@ public class CpdReport
             request.setMinimumTokens( minimumTokens );
             request.setLanguage( language );
             request.setLanguageProperties( languageProperties );
-            request.setSourceEncoding( determineEncoding( !filesToProcess.isEmpty() ) );
+            request.setSourceEncoding( getInputEncoding() );
             request.addFiles( filesToProcess.keySet() );
 
             request.setShowPmdLog( showPmdLog );
@@ -257,7 +234,7 @@ public class CpdReport
         }
         catch ( UnsupportedEncodingException e )
         {
-            throw new MavenReportException( "Encoding '" + getSourceEncoding() + "' is not supported.", e );
+            throw new MavenReportException( "Encoding '" + getInputEncoding() + "' is not supported.", e );
         }
         catch ( IOException e )
         {
@@ -270,27 +247,6 @@ public class CpdReport
         CpdReportGenerator gen = new CpdReportGenerator( getSink(), filesToProcess, getBundle( locale ),
                 isAggregator() );
         gen.generate( cpdResult.getDuplications() );
-    }
-
-    private String determineEncoding( boolean showWarn )
-        throws UnsupportedEncodingException
-    {
-        String encoding = WriterFactory.FILE_ENCODING;
-        if ( StringUtils.isNotEmpty( getSourceEncoding() ) )
-        {
-
-            encoding = getSourceEncoding();
-            // test encoding as CPD will convert exception into a RuntimeException
-            WriterFactory.newWriter( new ByteArrayOutputStream(), encoding );
-
-        }
-        else if ( showWarn )
-        {
-            getLog().warn( "File encoding has not been set, using platform encoding " + WriterFactory.FILE_ENCODING
-                               + ", i.e. build is platform dependent!" );
-            encoding = WriterFactory.FILE_ENCODING;
-        }
-        return encoding;
     }
 
     /**

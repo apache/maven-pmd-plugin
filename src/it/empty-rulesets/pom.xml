@@ -52,7 +52,6 @@ under the License.
           <failOnViolation>true</failOnViolation>
           <failurePriority>4</failurePriority>
           <targetJdk>1.7</targetJdk>
-          <sourceEncoding>UTF-8</sourceEncoding>
           <minimumTokens>100</minimumTokens>
           <excludes>
             <exclude>**/*Bean.java</exclude>

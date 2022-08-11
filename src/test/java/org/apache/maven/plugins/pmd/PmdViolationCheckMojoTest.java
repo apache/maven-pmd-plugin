@@ -28,17 +28,13 @@ import org.apache.maven.plugin.MojoFailureException;
  * @version $Id$
  */
 public class PmdViolationCheckMojoTest
-    extends AbstractPmdReportTest
+    extends AbstractPmdReportTestCase
 {
 
     public void testDefaultConfiguration()
         throws Exception
     {
-        File testPomPmd =
-            new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
-        final PmdReport pmdMojo = (PmdReport) lookupMojo( "pmd", testPomPmd );
-        pmdMojo.execute();
+        generateReport( "pmd", "default-configuration/default-configuration-plugin-config.xml" );
 
         // clear the output from previous pmd:pmd execution
         CapturingPrintStream.init( true );
@@ -66,13 +62,9 @@ public class PmdViolationCheckMojoTest
     public void testNotFailOnViolation()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
-        final PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
-        mojo.execute();
+        generateReport( "pmd", "default-configuration/default-configuration-plugin-config.xml" );
 
-        testPom =
+        File testPom =
             new File( getBasedir(),
                       "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml" );
         final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
@@ -84,13 +76,9 @@ public class PmdViolationCheckMojoTest
     public void testMaxAllowedViolations()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(),
-                "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
-        final PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
-        mojo.execute();
+        generateReport( "pmd", "default-configuration/default-configuration-plugin-config.xml" );
 
-        testPom =
+        File testPom =
             new File( getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-notfailmaxviolation-plugin-config.xml" );
         final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
@@ -125,13 +113,9 @@ public class PmdViolationCheckMojoTest
     public void testFailurePriority()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
-        final PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
-        mojo.execute();
+        generateReport( "pmd", "default-configuration/default-configuration-plugin-config.xml" );
 
-        testPom =
+        File testPom =
             new File( getBasedir(),
                       "src/test/resources/unit/default-configuration/pmd-check-failonpriority-plugin-config.xml" );
         PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
@@ -185,13 +169,9 @@ public class PmdViolationCheckMojoTest
     public void testViolationExclusion()
         throws Exception
     {
-        File testPom =
-            new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" );
-        final PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
-        mojo.execute();
+        generateReport( "pmd", "default-configuration/default-configuration-plugin-config.xml" );
 
-        testPom =
+        File testPom =
             new File( getBasedir(),
                       "src/test/resources/unit/default-configuration/pmd-check-pmd-exclusions-configuration-plugin-config.xml" );
         final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo( "check", testPom );
