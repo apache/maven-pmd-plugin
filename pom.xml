@@ -30,7 +30,7 @@ under the License.
   </parent>
 
   <artifactId>maven-pmd-plugin</artifactId>
-  <version>3.18.0-SNAPSHOT</version>
+  <version>3.18.0</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven PMD Plugin</name>
@@ -67,7 +67,7 @@ under the License.
     <connection>scm:git:https://gitbox.apache.org/repos/asf/maven-pmd-plugin.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/maven-pmd-plugin.git</developerConnection>
     <url>https://github.com/apache/maven-pmd-plugin/tree/${project.scm.tag}</url>
-    <tag>HEAD</tag>
+    <tag>maven-pmd-plugin-3.18.0</tag>
   </scm>
   <issueManagement>
     <system>JIRA</system>
@@ -95,7 +95,7 @@ under the License.
     <sitePluginVersion>3.12.1</sitePluginVersion>
     <projectInfoReportsPluginVersion>3.4.1</projectInfoReportsPluginVersion>
     <jxrPluginVersion>3.3.0</jxrPluginVersion>
-    <project.build.outputTimestamp>2022-05-31T17:37:31Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2022-08-20T07:06:57Z</project.build.outputTimestamp>
   </properties>
 
   <dependencies>
