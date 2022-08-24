@@ -21,27 +21,50 @@ under the License.
 
 # Release Notes
 
+## Version 3.19.0
+
+**Release Date:** ???
+
+**JIRA:** [Release Notes - Maven PMD Plugin - Version 3.19.0](https://issues.apache.org/jira/projects/MPMD/versions/TODO)
+
+**GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.19.0>
+
+### 🚀 New features and improvements
+
+### 🐛 Bug Fixes
+
+### 📦 Dependency updates
+
 ## Version 3.18.0
 
-**Release Date:** ??
+**Release Date:** 2022-08-20
 
 **JIRA:** [Release Notes - Maven PMD Plugin - Version 3.18.0](https://issues.apache.org/jira/projects/MPMD/versions/12351813)
 
 **GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.18.0>
 
 ### 🚀 New features and improvements
-* [[MPMD-348]](https://issues.apache.org/jira/browse/MPMD-348) - Support Java 19 (#82) @adangel
+* [MPMD-348](https://issues.apache.org/jira/browse/MPMD-348) - Support Java 19 (#82) @adangel
 
 ### 🐛 Bug Fixes
 * [SECURITY] Fix Partial Path Traversal Vulnerability (#80) @JLLeitschuh
 
 ### 📦 Dependency updates
-* [[MPMD-347]](https://issues.apache.org/jira/browse/MPMD-347) - Upgrade to PMD 6.48.0 (#81) @adangel
+* [MPMD-352](https://issues.apache.org/jira/browse/MPMD-352) - Upgrade Maven Common Artifact Filters to 3.3.1
+* [MPMD-351](https://issues.apache.org/jira/browse/MPMD-351) - Upgrade Maven Artifact Transfer to 0.13.1
+* [MPMD-350](https://issues.apache.org/jira/browse/MPMD-350) - Upgrade Maven Shared Utils to 3.3.4
+* [MPMD-349](https://issues.apache.org/jira/browse/MPMD-349) - Upgrade Maven Reporting API to 3.1.1/Maven Reporting Impl to 3.2.0 (#84) @michael-o
+* [MPMD-347](https://issues.apache.org/jira/browse/MPMD-347) - Upgrade to PMD 6.48.0 (#81) @adangel
 * Bump maven-plugins from 36 to 37 (#79) @dependabot
-* [[MPMD-345]](https://issues.apache.org/jira/browse/MPMD-345) - Upgrade to PMD 6.47.0 (#73) @adangel
+* [MPMD-345](https://issues.apache.org/jira/browse/MPMD-345) - Upgrade to PMD 6.47.0 (#73) @adangel
 * Bump commons-lang3 from 3.8.1 to 3.12.0 (#72) @dependabot
 * Bump plexus-resources from 1.1.0 to 1.2.0 (#56) @dependabot
 * Bump animal-sniffer-maven-plugin from 1.16 to 1.21 (#54) @dependabot
+
+### 💥 Compatibility Notice
+
+For technical reasons the parameter `sourceEncoding` has been replaced with `inputEncoding`.
+For details please see [MPMD-349](https://issues.apache.org/jira/browse/MPMD-349)/[2b7d2d7065bae1f984c82d210062064376fbd430](https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=commit;h=2b7d2d7065bae1f984c82d210062064376fbd430).
 
 ## Version 3.17.0
 
