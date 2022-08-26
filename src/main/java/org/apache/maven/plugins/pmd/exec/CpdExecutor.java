@@ -170,7 +170,7 @@ public class CpdExecutor extends Executor
 
     private CpdResult run() throws MavenReportException
     {
-        setupPmdLogging( request.isShowPmdLog(), request.isColorizedLog(), request.getLogLevel() );
+        setupPmdLogging( request.isShowPmdLog(), request.getLogLevel() );
 
         try
         {

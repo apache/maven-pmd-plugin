@@ -176,7 +176,7 @@ public class PmdExecutor extends Executor
 
     private PmdResult run() throws MavenReportException
     {
-        setupPmdLogging( request.isShowPmdLog(), request.isColorizedLog(), request.getLogLevel() );
+        setupPmdLogging( request.isShowPmdLog(), request.getLogLevel() );
 
         PMDConfiguration configuration = new PMDConfiguration();
         LanguageVersion languageVersion = null;

@@ -50,7 +50,6 @@ public class PmdRequest implements Serializable
     private List<File> files = new ArrayList<>();
 
     private boolean showPmdLog;
-    private boolean colorizedLog;
     private String logLevel;
     private boolean skipPmdError;
 
@@ -152,11 +151,6 @@ public class PmdRequest implements Serializable
     public void setShowPmdLog( boolean showPmdLog )
     {
         this.showPmdLog = showPmdLog;
-    }
-
-    public void setColorizedLog( boolean colorizedLog )
-    {
-        this.colorizedLog = colorizedLog;
     }
 
     public void setLogLevel( String logLevel )
@@ -261,11 +255,6 @@ public class PmdRequest implements Serializable
     public boolean isShowPmdLog()
     {
         return showPmdLog;
-    }
-
-    public boolean isColorizedLog()
-    {
-        return colorizedLog;
     }
 
     public String getLogLevel()
