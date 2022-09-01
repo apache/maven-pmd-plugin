@@ -90,7 +90,7 @@ under the License.
     <doxiaSitetoolsVersion>1.11.1</doxiaSitetoolsVersion>
     <javaVersion>8</javaVersion><!-- Because PMD 6.35.0+ requires Java 8 -->
     <pmdVersion>6.49.0</pmdVersion>
-    <slf4jVersion>1.7.36</slf4jVersion>
+    <slf4jVersion>2.0.0</slf4jVersion>
     <aetherVersion>1.0.0.v20140518</aetherVersion>
     <sitePluginVersion>3.12.1</sitePluginVersion>
     <projectInfoReportsPluginVersion>3.4.1</projectInfoReportsPluginVersion>
