@@ -31,7 +31,6 @@ import org.apache.maven.plugins.pmd.exec.CpdExecutor;
 import org.apache.maven.plugins.pmd.exec.CpdRequest;
 import org.apache.maven.plugins.pmd.exec.CpdResult;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.apache.maven.toolchain.Toolchain;
 
 import net.sourceforge.pmd.cpd.JavaTokenizer;
@@ -211,7 +210,6 @@ public class CpdReport
             request.addFiles( filesToProcess.keySet() );
 
             request.setShowPmdLog( showPmdLog );
-            request.setColorizedLog( MessageUtils.isColorEnabled() );
             request.setLogLevel( determineCurrentRootLogLevel() );
 
             request.setExcludeFromFailureFile( excludeFromFailureFile );

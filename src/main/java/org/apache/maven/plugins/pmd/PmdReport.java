@@ -45,7 +45,6 @@ import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResult;
 import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolver;
-import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.apache.maven.toolchain.Toolchain;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
@@ -374,7 +373,6 @@ public class PmdReport
         request.setOutputEncoding( getOutputEncoding() );
         request.setFormat( format );
         request.setShowPmdLog( showPmdLog );
-        request.setColorizedLog( MessageUtils.isColorEnabled() );
         request.setSkipPmdError( skipPmdError );
         request.setIncludeXmlInSite( includeXmlInSite );
         request.setReportOutputDirectory( getReportOutputDirectory().getAbsolutePath() );

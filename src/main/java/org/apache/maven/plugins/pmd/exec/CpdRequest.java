@@ -47,7 +47,6 @@ public class CpdRequest implements Serializable
     private List<File> files = new ArrayList<>();
 
     private boolean showPmdLog;
-    private boolean colorizedLog;
     private String logLevel;
 
     private String excludeFromFailureFile;
@@ -122,11 +121,6 @@ public class CpdRequest implements Serializable
         this.showPmdLog = showPmdLog;
     }
 
-    public void setColorizedLog( boolean colorizedLog )
-    {
-        this.colorizedLog = colorizedLog;
-    }
-
     public void setLogLevel( String logLevel )
     {
         this.logLevel = logLevel;
@@ -195,11 +189,6 @@ public class CpdRequest implements Serializable
     public boolean isShowPmdLog()
     {
         return showPmdLog;
-    }
-
-    public boolean isColorizedLog()
-    {
-        return colorizedLog;
     }
 
     public String getLogLevel()

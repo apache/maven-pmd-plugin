@@ -36,7 +36,6 @@ import java.util.logging.SimpleFormatter;
 
 import org.apache.maven.cli.logging.Slf4jConfiguration;
 import org.apache.maven.cli.logging.Slf4jConfigurationFactory;
-import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
@@ -54,10 +53,8 @@ abstract class Executor
      */
     private java.util.logging.Logger julLogger;
 
-    protected void setupPmdLogging( boolean showPmdLog, boolean colorizedLog, String logLevel )
+    protected void setupPmdLogging( boolean showPmdLog, String logLevel )
     {
-        MessageUtils.setColorEnabled( colorizedLog );
-
         if ( !showPmdLog )
         {
             return;
