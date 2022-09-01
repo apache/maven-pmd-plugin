@@ -25,16 +25,18 @@ under the License.
 
 **Release Date:** ???
 
-**JIRA:** [Release Notes - Maven PMD Plugin - Version 3.19.0](https://issues.apache.org/jira/projects/MPMD/versions/TODO)
+**JIRA:** [Release Notes - Maven PMD Plugin - Version 3.19.0](https://issues.apache.org/jira/projects/MPMD/versions/12352255)
 
 **GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.19.0>
 
-### 🚀 New features and improvements
-
 ### 🐛 Bug Fixes
+* [MPMD-353](https://issues.apache.org/jira/browse/MPMD-353) - API incompatibility with jansi after upgrading m-shared-utils (#91) @adangel
 
 ### 📦 Dependency updates
+* Bump animal-sniffer-maven-plugin from 1.21 to 1.22 (#88) @dependabot
+* Bump wiremock from 1.49 to 2.27.2 (#57) @dependabot
 * [MPMD-354](https://issues.apache.org/jira/browse/MPMD-354) - Upgrade to PMD 6.49.0 (#92) @adangel
+* Bump release-drafter/release-drafter from 5.20.0 to 5.20.1 (#86) @dependabot
 
 ## Version 3.18.0
 
