@@ -23,7 +23,7 @@ under the License.
 
 ## Version 3.19.0
 
-**Release Date:** ???
+**Release Date:** 2022-09-01
 
 **JIRA:** [Release Notes - Maven PMD Plugin - Version 3.19.0](https://issues.apache.org/jira/projects/MPMD/versions/12352255)
 
