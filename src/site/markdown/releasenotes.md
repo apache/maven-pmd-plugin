@@ -34,6 +34,7 @@ under the License.
 ### 🐛 Bug Fixes
 
 ### 📦 Dependency updates
+* [MPMD-354](https://issues.apache.org/jira/browse/MPMD-354) - Upgrade to PMD 6.49.0 (#92) @adangel
 
 ## Version 3.18.0
 
