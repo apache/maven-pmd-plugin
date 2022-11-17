@@ -552,6 +552,8 @@ public class PmdReport
                 {
                     ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(
                             session.getProjectBuildingRequest() );
+                    // use any additional configured repo as well
+                    buildingRequest.getRemoteRepositories().addAll( localProject.getRemoteArtifactRepositories() );
 
                     Iterable<ArtifactResult> resolvedDependencies = dependencyResolver.resolveDependencies(
                             buildingRequest, localProject.getDependencies(), null, filter );
