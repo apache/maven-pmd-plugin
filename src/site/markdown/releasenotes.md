@@ -21,6 +21,26 @@ under the License.
 
 # Release Notes
 
+## Version 3.20.0
+
+**Release Date:** ????-??-??
+
+**JIRA:** [Release Notes - Maven PMD Plugin - Version 3.20.0](https://issues.apache.org/jira/projects/MPMD/versions/12352270)
+
+**GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.20.0>
+
+### 🐛 Bug Fixes
+
+* [MPMD-335](https://issues.apache.org/jira/browse/MPMD-335) - Aggregate mode doesn't use additional repositories ([#101](https://github.com/apache/maven-pmd-plugin/pull/101)) @adangel
+
+### 📦 Dependency updates
+
+* [MPMD-357](https://issues.apache.org/jira/browse/MPMD-357) - Upgrade to PMD 6.51.0 ([#100](https://github.com/apache/maven-pmd-plugin/pull/100)) @adangel
+* Bump release-drafter/release-drafter from 5.21.0 to 5.21.1 ([#99](https://github.com/apache/maven-pmd-plugin/pull/99)) @dependabot
+* [MPMD-356](https://issues.apache.org/jira/browse/MPMD-356) - Upgrade to PMD 6.50.0 ([#98](https://github.com/apache/maven-pmd-plugin/pull/98)) @adangel
+* Bump maven-common-artifact-filters from 3.3.1 to 3.3.2 ([#95](https://github.com/apache/maven-pmd-plugin/pull/95)) @dependabot
+* Bump release-drafter/release-drafter from 5.20.1 to 5.21.0 ([#93](https://github.com/apache/maven-pmd-plugin/pull/93)) @dependabot
+
 ## Version 3.19.0
 
 **Release Date:** 2022-09-01
