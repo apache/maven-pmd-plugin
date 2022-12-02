@@ -24,11 +24,11 @@ assert buildLog.exists()
 File pmdXml = new File( basedir, 'target/pmd.xml' )
 assert pmdXml.exists()
 
-File pmdHtmlReport = new File ( basedir, 'target/site/pmd.html' )
+File pmdHtmlReport = new File ( basedir, 'target/reports/pmd.html' )
 assert pmdHtmlReport.exists()
 
 File cpdXml = new File( basedir, 'target/cpd.xml' )
 assert cpdXml.exists()
 
-File cpdHtmlReport = new File ( basedir, 'target/site/cpd.html' )
+File cpdHtmlReport = new File ( basedir, 'target/reports/cpd.html' )
 assert cpdHtmlReport.exists()

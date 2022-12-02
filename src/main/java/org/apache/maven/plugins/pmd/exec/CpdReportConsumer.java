@@ -67,12 +67,12 @@ class CpdReportConsumer implements Consumer<CPDReport> {
 
     private void writeXmlReport(CPDReport cpd) throws IOException {
         File targetFile = writeReport(cpd, new XMLRenderer(request.getOutputEncoding()), "xml");
-        if (request.isIncludeXmlInSite()) {
-            File siteDir = new File(request.getReportOutputDirectory());
-            if (!siteDir.exists() && !siteDir.mkdirs()) {
-                throw new IOException("Couldn't create report output directory: " + siteDir);
+        if (request.isIncludeXmlInReports()) {
+            File outputDirectory = new File(request.getReportOutputDirectory());
+            if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
+                throw new IOException("Couldn't create report output directory: " + outputDirectory);
             }
-            FileUtils.copyFile(targetFile, new File(siteDir, "cpd.xml"));
+            FileUtils.copyFile(targetFile, new File(outputDirectory, "cpd.xml"));
         }
     }
 
@@ -88,7 +88,7 @@ class CpdReportConsumer implements Consumer<CPDReport> {
 
         File targetDir = new File(request.getTargetDirectory());
         if (!targetDir.exists() && !targetDir.mkdirs()) {
-            throw new IOException("Couldn't create report output directory: " + targetDir);
+            throw new IOException("Couldn't create report target directory: " + targetDir);
         }
 
         File targetFile = new File(targetDir, "cpd." + extension);

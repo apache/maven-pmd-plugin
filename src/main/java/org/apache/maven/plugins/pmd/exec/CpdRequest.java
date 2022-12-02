@@ -50,7 +50,7 @@ public class CpdRequest implements Serializable {
     private String targetDirectory;
     private String outputEncoding;
     private String format;
-    private boolean includeXmlInSite;
+    private boolean includeXmlInReports;
     private String reportOutputDirectory;
     private boolean ignoreAnnotations;
     private boolean ignoreIdentifiers;
@@ -96,8 +96,8 @@ public class CpdRequest implements Serializable {
         this.format = format;
     }
 
-    public void setIncludeXmlInSite(boolean includeXmlInSite) {
-        this.includeXmlInSite = includeXmlInSite;
+    public void setIncludeXmlInReports(boolean includeXmlInReports) {
+        this.includeXmlInReports = includeXmlInReports;
     }
 
     public void setReportOutputDirectory(String reportOutputDirectory) {
@@ -148,8 +148,8 @@ public class CpdRequest implements Serializable {
         return format;
     }
 
-    public boolean isIncludeXmlInSite() {
-        return includeXmlInSite;
+    public boolean isIncludeXmlInReports() {
+        return includeXmlInReports;
     }
 
     public String getReportOutputDirectory() {

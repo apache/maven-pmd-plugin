@@ -86,11 +86,11 @@ under the License.
     <pmdVersion>7.3.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
     <resolverVersion>1.4.1</resolverVersion>
-    <doxiaVersion>1.12.0</doxiaVersion>
+    <doxiaVersion>2.0.0-M12</doxiaVersion>
     <compilerPluginVersion>3.11.0</compilerPluginVersion>
-    <sitePluginVersion>3.12.1</sitePluginVersion>
-    <projectInfoReportsPluginVersion>3.4.3</projectInfoReportsPluginVersion>
-    <jxrPluginVersion>3.3.0</jxrPluginVersion>
+    <sitePluginVersion>3.20.0</sitePluginVersion>
+    <projectInfoReportsPluginVersion>3.7.0</projectInfoReportsPluginVersion>
+    <jxrPluginVersion>3.4.0</jxrPluginVersion>
     <project.build.outputTimestamp>2024-07-10T19:17:23Z</project.build.outputTimestamp>
   </properties>
 
@@ -193,55 +193,18 @@ under the License.
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
       <version>${doxiaVersion}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-container-default</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-core</artifactId>
       <version>${doxiaVersion}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-container-default</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-site-renderer</artifactId>
-      <version>1.11.1</version>
-      <scope>runtime</scope>
-      <!--
-        Note: doxia-site-renderer needs to be defined AFTER pmd:
-        doxia-site-renderer requires transitively dom4j 1.1 which provides a very old version of jaxen (same jar).
-        PMD requires a newer version of jaxen, which is not compatible.
-      -->
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpclient</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-container-default</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-component-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- shared -->
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>3.2.0</version>
+      <version>4.0.0-M15</version>
     </dependency>
 
     <!-- plexus -->
