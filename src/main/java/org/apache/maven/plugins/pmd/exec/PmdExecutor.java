@@ -237,7 +237,11 @@ public class PmdExecutor extends Executor {
         // always write XML report, as this might be needed by the check mojo
         // we need to output it even if the file list is empty or we have no violations
         // so the "check" goals can check for violations
-        writeXmlReport(report);
+        try {
+            writeXmlReport(report);
+        } catch (IOException e) {
+            throw new MavenReportException("Failed to write XML report", e);
+        }
 
         // write any other format except for xml and html. xml has just been produced.
         // html format is produced by the maven site formatter. Excluding html here
@@ -245,7 +249,11 @@ public class PmdExecutor extends Executor {
         // considering the html/css styling
         String format = request.getFormat();
         if (!"html".equals(format) && !"xml".equals(format)) {
-            writeFormattedReport(report);
+            try {
+                writeFormattedReport(report);
+            } catch (IOException e) {
+                throw new MavenReportException("Failed to write formatted " + format + " report", e);
+            }
         }
 
         return new PmdResult(new File(request.getTargetDirectory(), "pmd.xml"), request.getOutputEncoding());
@@ -313,29 +321,29 @@ public class PmdExecutor extends Executor {
      * @param report
      * @throws MavenReportException
      */
-    private void writeXmlReport(Report report) throws MavenReportException {
+    private void writeXmlReport(Report report) throws IOException {
         File targetFile = writeReport(report, new XMLRenderer(request.getOutputEncoding()));
-        if (request.isIncludeXmlInSite()) {
-            File siteDir = new File(request.getReportOutputDirectory());
-            siteDir.mkdirs();
-            try {
-                FileUtils.copyFile(targetFile, new File(siteDir, "pmd.xml"));
-            } catch (IOException e) {
-                throw new MavenReportException(e.getMessage(), e);
+        if (request.isIncludeXmlInReports()) {
+            File outputDirectory = new File(request.getReportOutputDirectory());
+            if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
+                throw new IOException("Couldn't create report output directory: " + outputDirectory);
             }
+            FileUtils.copyFile(targetFile, new File(outputDirectory, "pmd.xml"));
         }
     }
 
-    private File writeReport(Report report, Renderer r) throws MavenReportException {
+    private File writeReport(Report report, Renderer r) throws IOException {
         if (r == null) {
             return null;
         }
 
         File targetDir = new File(request.getTargetDirectory());
-        targetDir.mkdirs();
+        if (!targetDir.exists() && !targetDir.mkdirs()) {
+            throw new IOException("Couldn't create report target directory: " + targetDir);
+        }
+
         String extension = r.defaultFileExtension();
         File targetFile = new File(targetDir, "pmd." + extension);
-        LOG.debug("Target PMD output file: {}", targetFile);
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(targetFile), request.getOutputEncoding())) {
             r.setWriter(writer);
             r.start();
@@ -344,8 +352,6 @@ public class PmdExecutor extends Executor {
             }
             r.end();
             r.flush();
-        } catch (IOException ioe) {
-            throw new MavenReportException(ioe.getMessage(), ioe);
         }
 
         return targetFile;
@@ -357,7 +363,7 @@ public class PmdExecutor extends Executor {
      * @param report
      * @throws MavenReportException
      */
-    private void writeFormattedReport(Report report) throws MavenReportException {
+    private void writeFormattedReport(Report report) throws IOException, MavenReportException {
         Renderer renderer = createRenderer(request.getFormat(), request.getOutputEncoding());
         writeReport(report, renderer);
     }
