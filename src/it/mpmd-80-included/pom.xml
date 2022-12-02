@@ -28,7 +28,7 @@ under the License.
 
   <name>MPMD-80 included</name>
   <description>
-    Test that the cpd.xml and pmd.xml files are included in the generated site.
+    Test that the cpd.xml and pmd.xml files are included in the generated reports output directory.
   </description>
 
   <build>
@@ -48,7 +48,7 @@ under the License.
         <version>@project.version@</version>
         <configuration>
           <skipPmdError>false</skipPmdError>
-          <includeXmlInSite>true</includeXmlInSite>
+          <includeXmlInReports>true</includeXmlInReports>
         </configuration>
       </plugin>
     </plugins>

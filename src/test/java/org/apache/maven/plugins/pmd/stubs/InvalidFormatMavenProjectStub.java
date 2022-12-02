@@ -41,8 +41,7 @@ public class InvalidFormatMavenProjectStub extends PmdProjectStub {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
 
-        try (InputStream is = new FileInputStream(
-                new File(getBasedir() + "/src/test/resources/unit/invalid-format/invalid-format-plugin-config.xml"))) {
+        try (InputStream is = new FileInputStream(new File(getBasedir() + "/" + getPOM()))) {
             model = pomReader.read(is);
             setModel(model);
         } catch (Exception e) {
@@ -61,13 +60,13 @@ public class InvalidFormatMavenProjectStub extends PmdProjectStub {
 
         Build build = new Build();
         build.setFinalName(model.getBuild().getFinalName());
-        build.setDirectory(getBasedir() + "/target/test/unit/invalid-format/target");
-        build.setSourceDirectory(getBasedir() + "/src/test/resources/unit/invalid-format");
+        build.setDirectory(getBasedir() + "/target");
+        build.setSourceDirectory(getBasedir().getAbsolutePath());
         setBuild(build);
 
         String basedir = getBasedir().getAbsolutePath();
         List<String> compileSourceRoots = new ArrayList<>();
-        compileSourceRoots.add(basedir + "/src/test/resources/unit/invalid-format/invalid/format");
+        compileSourceRoots.add(basedir + "/invalid/format");
         setCompileSourceRoots(compileSourceRoots);
 
         Artifact artifact = new PmdPluginArtifactStub(getGroupId(), getArtifactId(), getVersion(), getPackaging());
@@ -87,5 +86,15 @@ public class InvalidFormatMavenProjectStub extends PmdProjectStub {
     @Override
     public Build getBuild() {
         return build;
+    }
+
+    @Override
+    public File getBasedir() {
+        return new File(super.getBasedir() + "/invalid-format");
+    }
+
+    @Override
+    protected String getPOM() {
+        return "invalid-format-plugin-config.xml";
     }
 }
