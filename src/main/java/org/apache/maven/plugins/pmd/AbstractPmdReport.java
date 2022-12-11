@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Reporting;
@@ -272,15 +271,6 @@ public abstract class AbstractPmdReport
     protected MavenProject getProject()
     {
         return project;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Renderer getSiteRenderer()
-    {
-        return siteRenderer;
     }
 
     protected String constructXRefLocation( boolean test )
