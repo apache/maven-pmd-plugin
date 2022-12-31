@@ -35,6 +35,7 @@ under the License.
 
 ### 📦 Dependency updates
 
+* [MPMD-360](https://issues.apache.org/jira/browse/MPMD-360) - Upgrade to PMD 6.53.0 ([#109](https://github.com/apache/maven-pmd-plugin/pull/109)) @adangel
 * [MPMD-358](https://issues.apache.org/jira/browse/MPMD-358) - Upgrade to PMD 6.52.0 ([#104](https://github.com/apache/maven-pmd-plugin/pull/104)) @adangel
 * [MPMD-357](https://issues.apache.org/jira/browse/MPMD-357) - Upgrade to PMD 6.51.0 ([#100](https://github.com/apache/maven-pmd-plugin/pull/100)) @adangel
 * Bump release-drafter/release-drafter from 5.21.0 to 5.21.1 ([#99](https://github.com/apache/maven-pmd-plugin/pull/99)) @dependabot
