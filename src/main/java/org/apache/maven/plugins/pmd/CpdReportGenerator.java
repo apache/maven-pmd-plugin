@@ -165,6 +165,7 @@ public class CpdReportGenerator
             String code = duplication.getCodefragment();
 
             sink.table();
+            sink.tableRows( null, false );
             sink.tableRow();
             sink.tableHeaderCell();
             sink.text( bundle.getString( "report.cpd.column.file" ) );
@@ -201,6 +202,7 @@ public class CpdReportGenerator
             sink.verbatim_();
             sink.rawText( "</td>" );
             sink.tableRow_();
+            sink.tableRows_();
             sink.table_();
         }
 

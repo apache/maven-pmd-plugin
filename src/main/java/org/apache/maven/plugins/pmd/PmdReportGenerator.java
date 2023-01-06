@@ -166,6 +166,7 @@ public class PmdReportGenerator
         sink.sectionTitle_( level );
 
         sink.table();
+        sink.tableRows( null, false );
         sink.tableRow();
         sink.tableHeaderCell();
         sink.text( bundle.getString( "report.pmd.column.rule" ) );
@@ -187,6 +188,7 @@ public class PmdReportGenerator
 
     private void endFileSection( int level )
     {
+        sink.tableRows_();
         sink.table_();
         sink.section_( level );
     }
@@ -406,6 +408,7 @@ public class PmdReportGenerator
         } );
 
         sink.table();
+        sink.tableRows( null, false );
         sink.tableRow();
         sink.tableHeaderCell();
         sink.text( bundle.getString( "report.pmd.suppressedViolations.column.filename" ) );
@@ -448,6 +451,7 @@ public class PmdReportGenerator
             sink.tableRow_();
         }
 
+        sink.tableRows_();
         sink.table_();
         sink.section1_();
     }
@@ -471,6 +475,7 @@ public class PmdReportGenerator
         sink.sectionTitle1_();
 
         sink.table();
+        sink.tableRows( null, false );
         sink.tableRow();
         sink.tableHeaderCell();
         sink.text( bundle.getString( "report.pmd.processingErrors.column.filename" ) );
@@ -485,6 +490,7 @@ public class PmdReportGenerator
             processSingleProcessingError( error );
         }
 
+        sink.tableRows_();
         sink.table_();
 
         sink.section1_();
