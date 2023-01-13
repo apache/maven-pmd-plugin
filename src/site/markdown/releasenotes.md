@@ -21,20 +21,34 @@ under the License.
 
 # Release Notes
 
-## Version 3.20.0
+## Version 3.21.0
 
 **Release Date:** ????-??-??
+
+**JIRA:** [Release Notes - Maven PMD Plugin - Version 3.21.0](https://issues.apache.org/jira/projects/MPMD)
+
+**GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.21.0>
+
+### 🐛 Bug Fixes
+### 👻 Maintenance
+### 📝 Documentation updates
+### 📦 Dependency updates
+
+## Version 3.20.0
+
+**Release Date:** 2023-01-06
 
 **JIRA:** [Release Notes - Maven PMD Plugin - Version 3.20.0](https://issues.apache.org/jira/projects/MPMD/versions/12352270)
 
 **GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.20.0>
 
 ### 🐛 Bug Fixes
-
 * [MPMD-335](https://issues.apache.org/jira/browse/MPMD-335) - Aggregate mode doesn't use additional repositories ([#101](https://github.com/apache/maven-pmd-plugin/pull/101)) @adangel
 
-### 📦 Dependency updates
+### 👻 Maintenance
+* [MPMD-361](https://issues.apache.org/jira/browse/MPMD-361) - Explicitly start and end tables with Doxia Sinks in report renderers
 
+### 📦 Dependency updates
 * [MPMD-360](https://issues.apache.org/jira/browse/MPMD-360) - Upgrade to PMD 6.53.0 ([#109](https://github.com/apache/maven-pmd-plugin/pull/109)) @adangel
 * [MPMD-358](https://issues.apache.org/jira/browse/MPMD-358) - Upgrade to PMD 6.52.0 ([#104](https://github.com/apache/maven-pmd-plugin/pull/104)) @adangel
 * [MPMD-357](https://issues.apache.org/jira/browse/MPMD-357) - Upgrade to PMD 6.51.0 ([#100](https://github.com/apache/maven-pmd-plugin/pull/100)) @adangel
