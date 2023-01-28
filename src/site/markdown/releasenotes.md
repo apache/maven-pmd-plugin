@@ -33,6 +33,7 @@ under the License.
 ### 👻 Maintenance
 ### 📝 Documentation updates
 ### 📦 Dependency updates
+* [MPMD-364](https://issues.apache.org/jira/browse/MPMD-364) - Upgrade to PMD 6.54.0 ([#112](https://github.com/apache/maven-pmd-plugin/pull/112)) (@adangel)
 
 ## Version 3.20.0
 
