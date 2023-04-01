@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.pmd;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import java.io.File;
 
@@ -25,81 +24,65 @@ import java.io.File;
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
  */
-public class CpdViolationCheckMojoTest
-    extends AbstractPmdReportTestCase
-{
+public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
 
-    public void testDefaultConfiguration()
-        throws Exception
-    {
-        generateReport( "cpd", "default-configuration/cpd-default-configuration-plugin-config.xml" );
+    public void testDefaultConfiguration() throws Exception {
+        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
         // clear the output from previous pmd:cpd execution
-        CapturingPrintStream.init( true );
+        CapturingPrintStream.init(true);
 
-        try
-        {
-            File testPom =
-                new File( getBasedir(),
-                          "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml" );
-            final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
+        try {
+            File testPom = new File(
+                    getBasedir(),
+                    "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml");
+            final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo("cpd-check", testPom);
             cpdViolationMojo.execute();
 
-            fail( "MojoFailureException should be thrown." );
-        }
-        catch ( final Exception e )
-        {
+            fail("MojoFailureException should be thrown.");
+        } catch (final Exception e) {
             // the version should be logged
             String output = CapturingPrintStream.getOutput();
-            assertTrue ( output.contains( "PMD version: " + AbstractPmdReport.getPmdVersion() ) );
+            assertTrue(output.contains("PMD version: " + AbstractPmdReport.getPmdVersion()));
 
-            assertTrue( e.getMessage().startsWith( "You have 1 CPD duplication." ) );
+            assertTrue(e.getMessage().startsWith("You have 1 CPD duplication."));
         }
     }
 
-    public void testNotFailOnViolation()
-        throws Exception
-    {
+    public void testNotFailOnViolation() throws Exception {
 
-        generateReport( "cpd", "default-configuration/cpd-default-configuration-plugin-config.xml" );
+        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
-        File testPom =
-            new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/cpd-check-notfailonviolation-plugin-config.xml" );
-        final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
+        File testPom = new File(
+                getBasedir(),
+                "src/test/resources/unit/default-configuration/cpd-check-notfailonviolation-plugin-config.xml");
+        final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo("cpd-check", testPom);
         cpdViolationMojo.execute();
 
-        assertTrue( true );
+        assertTrue(true);
     }
 
-    public void testException()
-        throws Exception
-    {
-        try
-        {
-            final File testPom =
-                new File( getBasedir(),
-                          "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml" );
-            final CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
+    public void testException() throws Exception {
+        try {
+            final File testPom = new File(
+                    getBasedir(),
+                    "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml");
+            final CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo("cpd-check", testPom);
             mojo.execute();
 
-            fail( "MojoFailureException should be thrown." );
-        }
-        catch ( final Exception e )
-        {
-            assertTrue( true );
+            fail("MojoFailureException should be thrown.");
+        } catch (final Exception e) {
+            assertTrue(true);
         }
     }
 
-    public void testExclusionsConfiguration()
-        throws Exception
-    {
-        generateReport( "cpd", "default-configuration/cpd-default-configuration-plugin-config.xml" );
+    public void testExclusionsConfiguration() throws Exception {
+        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
-        File testPom =
-            new File( getBasedir(),
-                      "src/test/resources/unit/default-configuration/cpd-check-cpd-exclusions-configuration-plugin-config.xml" );
-        final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo( "cpd-check", testPom );
+        File testPom = new File(
+                getBasedir(),
+                "src/test/resources/unit/default-configuration/cpd-check-cpd-exclusions-configuration-plugin-config.xml");
+        final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo("cpd-check", testPom);
 
         // this call shouldn't throw an exception, as the classes with duplications have been excluded
         cpdViolationMojo.execute();

@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +26,7 @@ import org.apache.maven.project.MavenProject;
 /**
  * @version $Id$
  */
-public class PmdFileInfo
-{
+public class PmdFileInfo {
 
     private MavenProject project;
 
@@ -36,34 +34,25 @@ public class PmdFileInfo
 
     private String xref;
 
-    public PmdFileInfo( MavenProject project, File dir, String x )
-        throws IOException
-    {
+    public PmdFileInfo(MavenProject project, File dir, String x) throws IOException {
         this.project = project;
-        if ( dir.isAbsolute() )
-        {
+        if (dir.isAbsolute()) {
             this.sourceDir = dir.getCanonicalFile();
-        }
-        else
-        {
-            this.sourceDir = new File( project.getBasedir(), dir.getPath() ).getCanonicalFile();
+        } else {
+            this.sourceDir = new File(project.getBasedir(), dir.getPath()).getCanonicalFile();
         }
         this.xref = x;
     }
 
-    public String getXrefLocation()
-    {
+    public String getXrefLocation() {
         return xref;
     }
 
-    public File getSourceDirectory()
-    {
+    public File getSourceDirectory() {
         return sourceDir;
     }
 
-    public MavenProject getProject()
-    {
+    public MavenProject getProject() {
         return project;
     }
-
 }

@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -18,13 +17,12 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>maven-plugins</artifactId>
     <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-plugins</artifactId>
     <version>39</version>
     <relativePath />
   </parent>
@@ -34,11 +32,9 @@ under the License.
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven PMD Plugin</name>
-  <description>
-    A Maven plugin for the PMD toolkit, that produces a report on both code rule violations and detected copy and paste
+  <description>A Maven plugin for the PMD toolkit, that produces a report on both code rule violations and detected copy and paste
     fragments,
-    as well as being able to fail the build based on these metrics.
-  </description>
+    as well as being able to fail the build based on these metrics.</description>
   <inceptionYear>2005</inceptionYear>
 
   <contributors>
@@ -66,8 +62,8 @@ under the License.
   <scm>
     <connection>scm:git:https://gitbox.apache.org/repos/asf/maven-pmd-plugin.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/maven-pmd-plugin.git</developerConnection>
-    <url>https://github.com/apache/maven-pmd-plugin/tree/${project.scm.tag}</url>
     <tag>HEAD</tag>
+    <url>https://github.com/apache/maven-pmd-plugin/tree/${project.scm.tag}</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
@@ -88,7 +84,8 @@ under the License.
     <mavenVersion>3.2.5</mavenVersion>
     <doxiaVersion>1.12.0</doxiaVersion>
     <doxiaSitetoolsVersion>1.11.1</doxiaSitetoolsVersion>
-    <javaVersion>8</javaVersion><!-- Because PMD 6.35.0+ requires Java 8 -->
+    <javaVersion>8</javaVersion>
+    <!-- Because PMD 6.35.0+ requires Java 8 -->
     <pmdVersion>6.55.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
     <aetherVersion>1.0.0.v20140518</aetherVersion>
@@ -358,11 +355,11 @@ under the License.
         </configuration>
         <executions>
           <execution>
-            <phase>generate-sources</phase>
             <goals>
               <goal>java</goal>
               <goal>xpp3-reader</goal>
             </goals>
+            <phase>generate-sources</phase>
           </execution>
         </executions>
       </plugin>
@@ -380,10 +377,10 @@ under the License.
         <executions>
           <execution>
             <id>check-java-1.8-compat</id>
-            <phase>process-classes</phase>
             <goals>
               <goal>check</goal>
             </goals>
+            <phase>process-classes</phase>
           </execution>
         </executions>
       </plugin>

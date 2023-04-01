@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd.exec;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,36 +33,28 @@ import org.apache.maven.reporting.MavenReportException;
 /**
  * Provides access to the result of the CPD analysis.
  */
-public class CpdResult
-{
+public class CpdResult {
     private final List<Duplication> duplications = new ArrayList<>();
 
-    public CpdResult( File report, String encoding ) throws MavenReportException
-    {
-        loadResult( report, encoding );
+    public CpdResult(File report, String encoding) throws MavenReportException {
+        loadResult(report, encoding);
     }
 
-    public List<Duplication> getDuplications()
-    {
+    public List<Duplication> getDuplications() {
         return duplications;
     }
 
-    public boolean hasDuplications()
-    {
+    public boolean hasDuplications() {
         return !duplications.isEmpty();
     }
 
-    private void loadResult( File report, String encoding ) throws MavenReportException
-    {
-        try ( Reader reader1 = new InputStreamReader( new FileInputStream( report ), encoding ) )
-        {
+    private void loadResult(File report, String encoding) throws MavenReportException {
+        try (Reader reader1 = new InputStreamReader(new FileInputStream(report), encoding)) {
             CpdXpp3Reader reader = new CpdXpp3Reader();
-            CpdErrorDetail details = reader.read( reader1, false );
-            duplications.addAll( details.getDuplications() );
-        }
-        catch ( Exception e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
+            CpdErrorDetail details = reader.read(reader1, false);
+            duplications.addAll(details.getDuplications());
+        } catch (Exception e) {
+            throw new MavenReportException(e.getMessage(), e);
         }
     }
 }

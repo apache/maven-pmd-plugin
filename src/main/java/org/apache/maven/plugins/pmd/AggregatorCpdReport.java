@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import org.apache.maven.plugins.annotations.Mojo;
 
@@ -30,12 +29,10 @@ import org.apache.maven.plugins.annotations.Mojo;
  *
  * @since 3.15.0
  */
-@Mojo( name = "aggregate-cpd", aggregator = true, threadSafe = true )
-public class AggregatorCpdReport extends CpdReport
-{
+@Mojo(name = "aggregate-cpd", aggregator = true, threadSafe = true)
+public class AggregatorCpdReport extends CpdReport {
     @Override
-    protected boolean isAggregator()
-    {
+    protected boolean isAggregator() {
         return true;
     }
 }

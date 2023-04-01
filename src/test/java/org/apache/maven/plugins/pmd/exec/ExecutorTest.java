@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,31 +16,29 @@ package org.apache.maven.plugins.pmd.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd.exec;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import org.apache.commons.lang3.SystemUtils;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
+import org.apache.commons.lang3.SystemUtils;
 
-public class ExecutorTest extends TestCase
-{
+public class ExecutorTest extends TestCase {
     public void testBuildClasspath() throws MalformedURLException {
         String basename = "home/test/dir with space/mylib.jar";
         String pathname = new File("/", basename).getPath();
-        if ( SystemUtils.IS_OS_WINDOWS )
-        {
-            pathname = new File( File.listRoots()[0], basename ).getPath();
+        if (SystemUtils.IS_OS_WINDOWS) {
+            pathname = new File(File.listRoots()[0], basename).getPath();
         }
-        URL[] urls = new URL[] { new File(pathname).toURI().toURL() };
-        URLClassLoader mockedClassLoader = new URLClassLoader( urls );
+        URL[] urls = new URL[] {new File(pathname).toURI().toURL()};
+        URLClassLoader mockedClassLoader = new URLClassLoader(urls);
 
         StringBuilder classpath = new StringBuilder();
         Executor.buildClasspath(classpath, mockedClassLoader);
-        Assert.assertEquals( pathname + File.pathSeparator, classpath.toString() );
+        Assert.assertEquals(pathname + File.pathSeparator, classpath.toString());
     }
 }

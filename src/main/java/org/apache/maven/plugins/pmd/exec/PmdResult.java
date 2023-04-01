@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd.exec;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,103 +39,81 @@ import org.apache.maven.reporting.MavenReportException;
 /**
  * Provides access to the result of the pmd analysis.
  */
-public class PmdResult
-{
+public class PmdResult {
     private final List<ProcessingError> processingErrors = new ArrayList<>();
     private final List<Violation> violations = new ArrayList<>();
     private final List<SuppressedViolation> suppressedViolations = new ArrayList<>();
 
     public static final PmdResult EMPTY = new PmdResult();
 
-    private PmdResult()
-    {
+    private PmdResult() {}
+
+    public PmdResult(File pmdFile, String encoding) throws MavenReportException {
+        loadResult(pmdFile, encoding);
     }
 
-    public PmdResult( File pmdFile, String encoding ) throws MavenReportException
-    {
-        loadResult( pmdFile, encoding );
-    }
-
-    public boolean hasViolations()
-    {
+    public boolean hasViolations() {
         return !violations.isEmpty();
     }
 
-    private void loadResult( File pmdFile, String encoding ) throws MavenReportException
-    {
-        try ( Reader reader1 = new BomFilter( encoding, new InputStreamReader(
-                new FileInputStream( pmdFile ), encoding ) ) )
-        {
+    private void loadResult(File pmdFile, String encoding) throws MavenReportException {
+        try (Reader reader1 = new BomFilter(encoding, new InputStreamReader(new FileInputStream(pmdFile), encoding))) {
             PmdXpp3Reader reader = new PmdXpp3Reader();
-            PmdErrorDetail details = reader.read( reader1, false );
-            processingErrors.addAll( details.getErrors() );
-            suppressedViolations.addAll( details.getSuppressedViolations() );
+            PmdErrorDetail details = reader.read(reader1, false);
+            processingErrors.addAll(details.getErrors());
+            suppressedViolations.addAll(details.getSuppressedViolations());
 
-            for ( PmdFile file : details.getFiles() )
-            {
+            for (PmdFile file : details.getFiles()) {
                 String filename = file.getName();
-                for ( Violation violation : file.getViolations() )
-                {
-                    violation.setFileName( filename );
-                    violations.add( violation );
+                for (Violation violation : file.getViolations()) {
+                    violation.setFileName(filename);
+                    violations.add(violation);
                 }
             }
-        }
-        catch ( Exception e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
+        } catch (Exception e) {
+            throw new MavenReportException(e.getMessage(), e);
         }
     }
 
     // Note: This seems to be a bug in PMD's XMLRenderer. The BOM is rendered multiple times.
     // once at the beginning of the file, which is Ok, but also in the middle of the file.
     // This filter just skips all BOMs if the encoding is not UTF-8
-    private static class BomFilter extends FilterReader
-    {
+    private static class BomFilter extends FilterReader {
         private static final char BOM = '\uFEFF';
         private final boolean filter;
 
-        BomFilter( String encoding, Reader in )
-        {
-            super( in );
-            filter = !"UTF-8".equalsIgnoreCase( encoding );
+        BomFilter(String encoding, Reader in) {
+            super(in);
+            filter = !"UTF-8".equalsIgnoreCase(encoding);
         }
 
         @Override
-        public int read() throws IOException
-        {
+        public int read() throws IOException {
             int c = super.read();
 
-            if ( !filter )
-            {
+            if (!filter) {
                 return c;
             }
 
-            while ( c != -1 && c == BOM )
-            {
+            while (c != -1 && c == BOM) {
                 c = super.read();
             }
             return c;
         }
 
         @Override
-        public int read( char[] cbuf, int off, int len ) throws IOException
-        {
-            int count = super.read( cbuf, off, len );
+        public int read(char[] cbuf, int off, int len) throws IOException {
+            int count = super.read(cbuf, off, len);
 
-            if ( !filter )
-            {
+            if (!filter) {
                 return count;
             }
 
-            if ( count != -1 )
-            {
-                for ( int i = off; i < off + count; i++ )
-                {
-                    if ( cbuf[i] == BOM )
-                    {
+            if (count != -1) {
+                for (int i = off; i < off + count; i++) {
+                    if (cbuf[i] == BOM) {
                         // shift the content one char to the left
-                        System.arraycopy( cbuf, i + 1, cbuf, i, off + count - 1 - i );
+                        System.arraycopy(cbuf, i + 1, cbuf, i, off + count - 1 - i);
                         count--;
                     }
                 }
@@ -145,18 +122,15 @@ public class PmdResult
         }
     }
 
-    public Collection<Violation> getViolations()
-    {
+    public Collection<Violation> getViolations() {
         return violations;
     }
 
-    public Collection<SuppressedViolation> getSuppressedViolations()
-    {
+    public Collection<SuppressedViolation> getSuppressedViolations() {
         return suppressedViolations;
     }
 
-    public Collection<ProcessingError> getErrors()
-    {
+    public Collection<ProcessingError> getErrors() {
         return processingErrors;
     }
 }

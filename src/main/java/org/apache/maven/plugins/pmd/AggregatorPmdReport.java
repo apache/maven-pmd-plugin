@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -27,17 +26,14 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 /**
  * Creates a PMD site report in an <b>aggregator</b> project based on the rulesets and configuration set in the plugin.
  * It can also generate a pmd output file aside from the site report in any of the following formats: xml, csv or txt.
- * 
+ *
  * @since 3.15.0
  */
-@Mojo( name = "aggregate-pmd", aggregator = true, threadSafe = true,
-    requiresDependencyResolution = ResolutionScope.TEST )
-@Execute( phase = LifecyclePhase.TEST_COMPILE )
-public class AggregatorPmdReport extends PmdReport
-{
+@Mojo(name = "aggregate-pmd", aggregator = true, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST)
+@Execute(phase = LifecyclePhase.TEST_COMPILE)
+public class AggregatorPmdReport extends PmdReport {
     @Override
-    protected boolean isAggregator()
-    {
+    protected boolean isAggregator() {
         return true;
     }
 }
