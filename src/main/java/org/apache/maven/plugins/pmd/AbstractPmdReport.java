@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Reporting;
@@ -48,7 +49,6 @@ import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.PathTool;
-import org.codehaus.plexus.util.StringUtils;
 
 import net.sourceforge.pmd.PMDVersion;
 

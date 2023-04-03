@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugins.pmd.model.CpdFile;
 import org.apache.maven.plugins.pmd.model.Duplication;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Class that generated the CPD report.

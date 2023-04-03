@@ -32,12 +32,12 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.pmd.model.ProcessingError;
 import org.apache.maven.plugins.pmd.model.SuppressedViolation;
 import org.apache.maven.plugins.pmd.model.Violation;
-import org.codehaus.plexus.util.StringUtils;
 
 import net.sourceforge.pmd.RulePriority;
 
