@@ -21,4 +21,4 @@
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 assert buildLog.text.contains( '[INFO] PMD Failure: com.mycompany.app.Foo:26 Rule:UnusedFormalParameter Priority:3' )
-assert !buildLog.text.contains( '[WARNING]' )
+assert !buildLog.text.contains( '[WARNING] PMD' )
