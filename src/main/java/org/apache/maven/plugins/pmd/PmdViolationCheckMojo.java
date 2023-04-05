@@ -125,10 +125,12 @@ public class PmdViolationCheckMojo
     }
 
     @Override
-    protected List<Violation> getErrorDetails(File pmdFile) throws XmlPullParserException, IOException {
-        try (InputStream in = new FileInputStream(pmdFile)) {
+    protected List<Violation> getErrorDetails( File pmdFile ) throws XmlPullParserException, IOException
+    {
+        try ( InputStream in = new FileInputStream( pmdFile ) )
+        {
             PmdXpp3Reader reader = new PmdXpp3Reader();
-            PmdErrorDetail details = reader.read(in, false);
+            PmdErrorDetail details = reader.read( in, false );
             List<Violation> violations = new ArrayList<>();
             for ( PmdFile file : details.getFiles() )
             {

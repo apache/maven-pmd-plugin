@@ -115,10 +115,12 @@ public class CpdViolationCheckMojo
      * {@inheritDoc}
      */
     @Override
-    protected List<Duplication> getErrorDetails(File cpdFile) throws XmlPullParserException, IOException {
-        try (InputStream in = new FileInputStream(cpdFile)) {
+    protected List<Duplication> getErrorDetails( File cpdFile ) throws XmlPullParserException, IOException
+    {
+        try ( InputStream in = new FileInputStream( cpdFile ) )
+        {
             CpdXpp3Reader reader = new CpdXpp3Reader();
-            CpdErrorDetail details = reader.read(in, false);
+            CpdErrorDetail details = reader.read( in, false );
             return details.getDuplications();
         }
     }
