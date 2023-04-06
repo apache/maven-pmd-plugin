@@ -19,8 +19,9 @@
 package org.apache.maven.plugins.pmd;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -106,9 +107,9 @@ public class CpdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Duplica
      */
     @Override
     protected List<Duplication> getErrorDetails(File cpdFile) throws XmlPullParserException, IOException {
-        try (FileReader fileReader = new FileReader(cpdFile)) {
+        try (InputStream in = new FileInputStream(cpdFile)) {
             CpdXpp3Reader reader = new CpdXpp3Reader();
-            CpdErrorDetail details = reader.read(fileReader, false);
+            CpdErrorDetail details = reader.read(in, false);
             return details.getDuplications();
         }
     }

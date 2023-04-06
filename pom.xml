@@ -346,7 +346,6 @@ under the License.
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
         <configuration>
-          <useJava5>true</useJava5>
           <models>
             <model>src/main/mdo/pmd.mdo</model>
             <model>src/main/mdo/cpd.mdo</model>

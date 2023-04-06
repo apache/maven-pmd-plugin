@@ -19,8 +19,9 @@
 package org.apache.maven.plugins.pmd;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,10 +114,9 @@ public class PmdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Violati
 
     @Override
     protected List<Violation> getErrorDetails(File pmdFile) throws XmlPullParserException, IOException {
-        try (FileReader reader1 = new FileReader(pmdFile)) {
+        try (InputStream in = new FileInputStream(pmdFile)) {
             PmdXpp3Reader reader = new PmdXpp3Reader();
-            PmdErrorDetail details = reader.read(reader1, false);
-
+            PmdErrorDetail details = reader.read(in, false);
             List<Violation> violations = new ArrayList<>();
             for (PmdFile file : details.getFiles()) {
                 String fullPath = file.getName();
