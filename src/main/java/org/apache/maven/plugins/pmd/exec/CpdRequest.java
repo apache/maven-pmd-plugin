@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd.exec;
 
 import java.io.File;
 import java.io.Serializable;
@@ -29,13 +28,12 @@ import java.util.Properties;
 /**
  * Data object to store all configuration options needed to execute CPD
  * as a separate process.
- * 
+ *
  * <p>This class is intended to be serialized and read back.
- * 
+ *
  * <p>Some properties might be optional and can be <code>null</code>.
  */
-public class CpdRequest implements Serializable
-{
+public class CpdRequest implements Serializable {
     private static final long serialVersionUID = -7585852992660240668L;
 
     private String javaExecutable;
@@ -56,143 +54,115 @@ public class CpdRequest implements Serializable
     private boolean includeXmlInSite;
     private String reportOutputDirectory;
 
-    public void setJavaExecutable( String javaExecutable )
-    {
+    public void setJavaExecutable(String javaExecutable) {
         this.javaExecutable = javaExecutable;
     }
 
-    public void setMinimumTokens( int minimumTokens )
-    {
+    public void setMinimumTokens(int minimumTokens) {
         this.minimumTokens = minimumTokens;
     }
 
-    public void setLanguage( String language )
-    {
+    public void setLanguage(String language) {
         this.language = language;
     }
 
-    public void setLanguageProperties( Properties languageProperties )
-    {
+    public void setLanguageProperties(Properties languageProperties) {
         this.languageProperties = languageProperties;
     }
 
-    public void setSourceEncoding( String sourceEncoding )
-    {
+    public void setSourceEncoding(String sourceEncoding) {
         this.sourceEncoding = sourceEncoding;
     }
 
-    public void addFiles( Collection<File> files )
-    {
-        this.files.addAll( files );
+    public void addFiles(Collection<File> files) {
+        this.files.addAll(files);
     }
 
-    public void setExcludeFromFailureFile( String excludeFromFailureFile )
-    {
+    public void setExcludeFromFailureFile(String excludeFromFailureFile) {
         this.excludeFromFailureFile = excludeFromFailureFile;
     }
 
-    public void setTargetDirectory( String targetDirectory )
-    {
+    public void setTargetDirectory(String targetDirectory) {
         this.targetDirectory = targetDirectory;
     }
 
-    public void setOutputEncoding( String outputEncoding )
-    {
+    public void setOutputEncoding(String outputEncoding) {
         this.outputEncoding = outputEncoding;
     }
 
-    public void setFormat( String format )
-    {
+    public void setFormat(String format) {
         this.format = format;
     }
 
-    public void setIncludeXmlInSite( boolean includeXmlInSite )
-    {
+    public void setIncludeXmlInSite(boolean includeXmlInSite) {
         this.includeXmlInSite = includeXmlInSite;
     }
 
-    public void setReportOutputDirectory( String reportOutputDirectory )
-    {
+    public void setReportOutputDirectory(String reportOutputDirectory) {
         this.reportOutputDirectory = reportOutputDirectory;
     }
 
-    public void setShowPmdLog( boolean showPmdLog )
-    {
+    public void setShowPmdLog(boolean showPmdLog) {
         this.showPmdLog = showPmdLog;
     }
 
-    public void setLogLevel( String logLevel )
-    {
+    public void setLogLevel(String logLevel) {
         this.logLevel = logLevel;
     }
 
-    public String getJavaExecutable()
-    {
+    public String getJavaExecutable() {
         return javaExecutable;
     }
 
-    public int getMinimumTokens()
-    {
+    public int getMinimumTokens() {
         return minimumTokens;
     }
 
-    public String getLanguage()
-    {
+    public String getLanguage() {
         return language;
     }
 
-    public Properties getLanguageProperties()
-    {
+    public Properties getLanguageProperties() {
         return languageProperties;
     }
 
-    public String getSourceEncoding()
-    {
+    public String getSourceEncoding() {
         return sourceEncoding;
     }
 
-    public List<File> getFiles()
-    {
+    public List<File> getFiles() {
         return files;
     }
 
-    public String getExcludeFromFailureFile()
-    {
+    public String getExcludeFromFailureFile() {
         return excludeFromFailureFile;
     }
 
-    public String getTargetDirectory()
-    {
+    public String getTargetDirectory() {
         return targetDirectory;
     }
 
-    public String getOutputEncoding()
-    {
+    public String getOutputEncoding() {
         return outputEncoding;
     }
 
-    public String getFormat()
-    {
+    public String getFormat() {
         return format;
     }
 
-    public boolean isIncludeXmlInSite()
-    {
+    public boolean isIncludeXmlInSite() {
         return includeXmlInSite;
     }
 
-    public String getReportOutputDirectory()
-    {
+    public String getReportOutputDirectory() {
         return reportOutputDirectory;
     }
 
-    public boolean isShowPmdLog()
-    {
+    public boolean isShowPmdLog() {
         return showPmdLog;
     }
 
-    public String getLogLevel()
-    {
+    public String getLogLevel() {
         return logLevel;
     }
 }

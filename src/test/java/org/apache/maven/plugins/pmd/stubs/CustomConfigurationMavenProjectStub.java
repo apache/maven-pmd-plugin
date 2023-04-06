@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd.stubs;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.pmd.stubs;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd.stubs;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd.stubs;
 
 import java.io.File;
 import java.io.FileReader;
@@ -35,85 +34,73 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
  */
-public class CustomConfigurationMavenProjectStub
-    extends PmdProjectStub
-{
+public class CustomConfigurationMavenProjectStub extends PmdProjectStub {
     private Build build;
 
     private List<ReportPlugin> reportPlugins = new ArrayList<>();
 
-    public CustomConfigurationMavenProjectStub()
-    {
+    public CustomConfigurationMavenProjectStub() {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
 
-        try
-        {
-            model =
-                pomReader.read( new FileReader( new File( getBasedir()
-                    + "/src/test/resources/unit/custom-configuration/custom-configuration-plugin-config.xml" ) ) );
-            setModel( model );
-        }
-        catch ( Exception e )
-        {
+        try {
+            model = pomReader.read(new FileReader(new File(getBasedir()
+                    + "/src/test/resources/unit/custom-configuration/custom-configuration-plugin-config.xml")));
+            setModel(model);
+        } catch (Exception e) {
 
         }
 
-        setGroupId( model.getGroupId() );
-        setArtifactId( model.getArtifactId() );
-        setVersion( model.getVersion() );
-        setName( model.getName() );
-        setUrl( model.getUrl() );
-        setPackaging( model.getPackaging() );
+        setGroupId(model.getGroupId());
+        setArtifactId(model.getArtifactId());
+        setVersion(model.getVersion());
+        setName(model.getName());
+        setUrl(model.getUrl());
+        setPackaging(model.getPackaging());
 
         Scm scm = new Scm();
-        scm.setConnection( "scm:svn:http://svn.apache.org/maven/sample/trunk" );
-        setScm( scm );
+        scm.setConnection("scm:svn:http://svn.apache.org/maven/sample/trunk");
+        setScm(scm);
 
         Build build = new Build();
-        build.setFinalName( model.getBuild().getFinalName() );
-        build.setDirectory( getBasedir() + "/target/test/unit/custom-configuration/target" );
-        build.setSourceDirectory( getBasedir() + "/src/test/resources/unit/custom-configuration" );
-        setBuild( build );
+        build.setFinalName(model.getBuild().getFinalName());
+        build.setDirectory(getBasedir() + "/target/test/unit/custom-configuration/target");
+        build.setSourceDirectory(getBasedir() + "/src/test/resources/unit/custom-configuration");
+        setBuild(build);
 
-        setReportPlugins( model.getReporting().getPlugins() );
+        setReportPlugins(model.getReporting().getPlugins());
 
         String basedir = getBasedir().getAbsolutePath();
         List<String> compileSourceRoots = new ArrayList<>();
-        compileSourceRoots.add( basedir + "/src/test/resources/unit/custom-configuration/custom/configuration" );
-        setCompileSourceRoots( compileSourceRoots );
+        compileSourceRoots.add(basedir + "/src/test/resources/unit/custom-configuration/custom/configuration");
+        setCompileSourceRoots(compileSourceRoots);
 
-        Artifact artifact = new PmdPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging() );
-        artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
-        setArtifact( artifact );
+        Artifact artifact = new PmdPluginArtifactStub(getGroupId(), getArtifactId(), getVersion(), getPackaging());
+        artifact.setArtifactHandler(new DefaultArtifactHandlerStub());
+        setArtifact(artifact);
 
-        setFile( new File( getBasedir().getAbsolutePath() + "/pom.xml" ) );
+        setFile(new File(getBasedir().getAbsolutePath() + "/pom.xml"));
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setBuild( Build build )
-    {
+    public void setBuild(Build build) {
         this.build = build;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Build getBuild()
-    {
+    public Build getBuild() {
         return build;
     }
 
-    public void setReportPlugins( List<ReportPlugin> plugins )
-    {
+    public void setReportPlugins(List<ReportPlugin> plugins) {
         this.reportPlugins = plugins;
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<ReportPlugin> getReportPlugins()
-    {
+    public List<ReportPlugin> getReportPlugins() {
         return reportPlugins;
     }
-
 }

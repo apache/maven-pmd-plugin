@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.pmd;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import java.io.PrintStream;
 
@@ -30,51 +29,41 @@ class CapturingPrintStream extends PrintStream {
     private boolean quiet;
     private StringBuilder buffer = new StringBuilder();
 
-    private CapturingPrintStream( boolean quiet ) {
-        super( System.out, true );
+    private CapturingPrintStream(boolean quiet) {
+        super(System.out, true);
         this.quiet = quiet;
     }
 
     @Override
-    public void println( String x )
-    {
-        if ( !quiet )
-        {
-            super.println( x );
+    public void println(String x) {
+        if (!quiet) {
+            super.println(x);
         }
-        buffer.append( x ).append( System.lineSeparator() );
+        buffer.append(x).append(System.lineSeparator());
     }
 
-    public static void init( boolean quiet )
-    {
+    public static void init(boolean quiet) {
         CapturingPrintStream capture = get();
-        if ( capture != null )
-        {
-            capture.buffer.setLength( 0 );
+        if (capture != null) {
+            capture.buffer.setLength(0);
             capture.quiet = quiet;
-        }
-        else
-        {
-            capture = new CapturingPrintStream( quiet );
-            System.setOut( capture );
+        } else {
+            capture = new CapturingPrintStream(quiet);
+            System.setOut(capture);
             MavenSlf4jSimpleFriend.init();
         }
     }
 
-    public static CapturingPrintStream get()
-    {
-        if ( System.out instanceof CapturingPrintStream )
-        {
+    public static CapturingPrintStream get() {
+        if (System.out instanceof CapturingPrintStream) {
             return (CapturingPrintStream) System.out;
         }
         return null;
     }
 
-    public static String getOutput()
-    {
+    public static String getOutput() {
         CapturingPrintStream stream = get();
-        if ( stream != null )
-        {
+        if (stream != null) {
             stream.flush();
             return stream.buffer.toString();
         }

@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,11 +28,10 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import net.sourceforge.pmd.RuleViolation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.model.Violation;
-
-import net.sourceforge.pmd.RuleViolation;
 
 /**
  * This class contains utility for loading property files, which define which PMD violations
@@ -42,52 +40,41 @@ import net.sourceforge.pmd.RuleViolation;
  *
  * @author Andreas Dangel
  */
-public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation>
-{
+public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation> {
     private Map<String, Set<String>> excludeFromFailureClasses = new HashMap<>();
 
     @Override
-    public void loadExcludeFromFailuresData( final String excludeFromFailureFile )
-        throws MojoExecutionException
-    {
-        if ( StringUtils.isEmpty( excludeFromFailureFile ) )
-        {
+    public void loadExcludeFromFailuresData(final String excludeFromFailureFile) throws MojoExecutionException {
+        if (StringUtils.isEmpty(excludeFromFailureFile)) {
             return;
         }
 
-        File file = new File( excludeFromFailureFile );
-        if ( !file.exists() )
-        {
+        File file = new File(excludeFromFailureFile);
+        if (!file.exists()) {
             return;
         }
         final Properties props = new Properties();
-        try ( FileInputStream fileInputStream = new FileInputStream( new File( excludeFromFailureFile ) ) )
-        {
-            props.load( fileInputStream );
+        try (FileInputStream fileInputStream = new FileInputStream(new File(excludeFromFailureFile))) {
+            props.load(fileInputStream);
+        } catch (final IOException e) {
+            throw new MojoExecutionException("Cannot load properties file " + excludeFromFailureFile, e);
         }
-        catch ( final IOException e )
-        {
-            throw new MojoExecutionException( "Cannot load properties file " + excludeFromFailureFile, e );
-        }
-        for ( final Entry<Object, Object> propEntry : props.entrySet() )
-        {
+        for (final Entry<Object, Object> propEntry : props.entrySet()) {
             final Set<String> excludedRuleSet = new HashSet<>();
             final String className = propEntry.getKey().toString();
-            final String[] excludedRules = propEntry.getValue().toString().split( "," );
-            for ( final String excludedRule : excludedRules )
-            {
-                excludedRuleSet.add( excludedRule.trim() );
+            final String[] excludedRules = propEntry.getValue().toString().split(",");
+            for (final String excludedRule : excludedRules) {
+                excludedRuleSet.add(excludedRule.trim());
             }
-            excludeFromFailureClasses.put( className, excludedRuleSet );
+            excludeFromFailureClasses.put(className, excludedRuleSet);
         }
     }
 
     @Override
-    public boolean isExcludedFromFailure( final Violation errorDetail )
-    {
-        final String className = extractClassName( errorDetail.getViolationPackage(), errorDetail.getViolationClass(),
-                errorDetail.getFileName() );
-        return isExcludedFromFailure( className, errorDetail.getRule() );
+    public boolean isExcludedFromFailure(final Violation errorDetail) {
+        final String className = extractClassName(
+                errorDetail.getViolationPackage(), errorDetail.getViolationClass(), errorDetail.getFileName());
+        return isExcludedFromFailure(className, errorDetail.getRule());
     }
 
     /**
@@ -97,51 +84,41 @@ public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation>
      * @param errorDetail the violation to check
      * @return <code>true</code> if the violation should be excluded, <code>false</code> otherwise.
      */
-    public boolean isExcludedFromFailure( final RuleViolation errorDetail )
-    {
-        final String className = extractClassName( errorDetail.getPackageName(), errorDetail.getClassName(),
-                errorDetail.getFilename() );
-        return isExcludedFromFailure( className, errorDetail.getRule().getName() );
+    public boolean isExcludedFromFailure(final RuleViolation errorDetail) {
+        final String className =
+                extractClassName(errorDetail.getPackageName(), errorDetail.getClassName(), errorDetail.getFilename());
+        return isExcludedFromFailure(className, errorDetail.getRule().getName());
     }
 
     @Override
-    public int countExclusions()
-    {
+    public int countExclusions() {
         int result = 0;
-        for ( Set<String> rules : excludeFromFailureClasses.values() )
-        {
+        for (Set<String> rules : excludeFromFailureClasses.values()) {
             result += rules.size();
         }
         return result;
     }
 
-    private boolean isExcludedFromFailure( String className, String ruleName )
-    {
-        final Set<String> excludedRuleSet = excludeFromFailureClasses.get( className );
-        return excludedRuleSet != null && excludedRuleSet.contains( ruleName );
+    private boolean isExcludedFromFailure(String className, String ruleName) {
+        final Set<String> excludedRuleSet = excludeFromFailureClasses.get(className);
+        return excludedRuleSet != null && excludedRuleSet.contains(ruleName);
     }
 
-    private String extractClassName( String packageName, String className, String fullPath )
-    {
+    private String extractClassName(String packageName, String className, String fullPath) {
         // for some reason, some violations don't contain the package name, so we have to guess the full class name
         // this looks like a bug in PMD - at least for UnusedImport rule.
-        if ( StringUtils.isNotEmpty( packageName ) && StringUtils.isNotEmpty( className ) )
-        {
+        if (StringUtils.isNotEmpty(packageName) && StringUtils.isNotEmpty(className)) {
             return packageName + "." + className;
-        }
-        else if ( StringUtils.isNotEmpty( packageName ) )
-        {
+        } else if (StringUtils.isNotEmpty(packageName)) {
             String fileName = fullPath;
-            fileName = fileName.substring( fileName.lastIndexOf( File.separatorChar ) + 1 );
-            fileName = fileName.substring( 0, fileName.length() - 5 );
+            fileName = fileName.substring(fileName.lastIndexOf(File.separatorChar) + 1);
+            fileName = fileName.substring(0, fileName.length() - 5);
             return packageName + "." + fileName;
-        }
-        else
-        {
+        } else {
             final String fileName = fullPath;
-            final int javaIdx = fileName.indexOf( File.separator + "java" + File.separator );
-            return fileName.substring( javaIdx >= 0 ? javaIdx + 6 : 0, fileName.length() - 5 ).replace(
-                File.separatorChar, '.' );
+            final int javaIdx = fileName.indexOf(File.separator + "java" + File.separator);
+            return fileName.substring(javaIdx >= 0 ? javaIdx + 6 : 0, fileName.length() - 5)
+                    .replace(File.separatorChar, '.');
         }
     }
 }

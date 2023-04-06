@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -28,13 +27,11 @@ import org.apache.maven.plugins.annotations.Mojo;
  *
  * @since 3.15.0
  */
-@Mojo( name = "aggregate-pmd-check", defaultPhase = LifecyclePhase.VERIFY, aggregator = true, threadSafe = true )
-@Execute( goal = "aggregate-pmd" )
-public class AggregatorPmdViolationCheckMojo extends PmdViolationCheckMojo
-{
+@Mojo(name = "aggregate-pmd-check", defaultPhase = LifecyclePhase.VERIFY, aggregator = true, threadSafe = true)
+@Execute(goal = "aggregate-pmd")
+public class AggregatorPmdViolationCheckMojo extends PmdViolationCheckMojo {
     @Override
-    protected boolean isAggregator()
-    {
+    protected boolean isAggregator() {
         return true;
     }
 }
