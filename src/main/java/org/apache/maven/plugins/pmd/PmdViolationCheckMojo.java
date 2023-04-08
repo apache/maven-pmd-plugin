@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,24 +16,26 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.pmd.model.PmdErrorDetail;
-import org.apache.maven.plugins.pmd.model.PmdFile;
-import org.apache.maven.plugins.pmd.model.Violation;
-import org.apache.maven.plugins.pmd.model.io.xpp3.PmdXpp3Reader;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.pmd.model.PmdErrorDetail;
+import org.apache.maven.plugins.pmd.model.PmdFile;
+import org.apache.maven.plugins.pmd.model.Violation;
+import org.apache.maven.plugins.pmd.model.io.xpp3.PmdXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -44,17 +44,14 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name = "check", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true )
-@Execute( goal = "pmd" )
-public class PmdViolationCheckMojo
-    extends AbstractPmdViolationCheckMojo<Violation>
-{
+@Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
+@Execute(goal = "pmd")
+public class PmdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Violation> {
     /**
      * Default constructor. Initializes with the correct {@link ExcludeViolationsFromFile}.
      */
-    public PmdViolationCheckMojo()
-    {
-        super( new ExcludeViolationsFromFile() );
+    public PmdViolationCheckMojo() {
+        super(new ExcludeViolationsFromFile());
     }
 
     /**
@@ -69,78 +66,64 @@ public class PmdViolationCheckMojo
      * Setting a value of 1 will treat all violations as warnings.
      * Only values from 1 to 5 are valid.
      */
-    @Parameter( property = "pmd.failurePriority", defaultValue = "5", required = true )
+    @Parameter(property = "pmd.failurePriority", defaultValue = "5", required = true)
     private int failurePriority = 5;
 
     /**
      * Skip the PMD checks. Most useful on the command line via "-Dpmd.skip=true".
      */
-    @Parameter( property = "pmd.skip", defaultValue = "false" )
+    @Parameter(property = "pmd.skip", defaultValue = "false")
     private boolean skip;
 
     /**
      * {@inheritDoc}
      */
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        if ( skip )
-        {
-            getLog().info( "Skipping PMD execution" );
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skip) {
+            getLog().info("Skipping PMD execution");
             return;
         }
 
-        executeCheck( "pmd.xml", "violation", "PMD violation", failurePriority );
+        executeCheck("pmd.xml", "violation", "PMD violation", failurePriority);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void printError( Violation item, String severity )
-    {
+    protected void printError(Violation item, String severity) {
 
-        StringBuilder buff = new StringBuilder( 100 );
-        buff.append( "PMD " ).append( severity ).append( ": " );
-        if ( item.getViolationClass() != null )
-        {
-            if ( item.getViolationPackage() != null )
-            {
-                buff.append( item.getViolationPackage() );
-                buff.append( "." );
+        StringBuilder buff = new StringBuilder(100);
+        buff.append("PMD ").append(severity).append(": ");
+        if (item.getViolationClass() != null) {
+            if (item.getViolationPackage() != null) {
+                buff.append(item.getViolationPackage());
+                buff.append(".");
             }
-            buff.append( item.getViolationClass() );
+            buff.append(item.getViolationClass());
+        } else {
+            buff.append(item.getFileName());
         }
-        else
-        {
-            buff.append( item.getFileName() );
-        }
-        buff.append( ":" );
-        buff.append( item.getBeginline() );
-        buff.append( " Rule:" ).append( item.getRule() );
-        buff.append( " Priority:" ).append( item.getPriority() );
-        buff.append( " " ).append( item.getText() ).append( "." );
+        buff.append(":");
+        buff.append(item.getBeginline());
+        buff.append(" Rule:").append(item.getRule());
+        buff.append(" Priority:").append(item.getPriority());
+        buff.append(" ").append(item.getText()).append(".");
 
-        this.getLog().info( buff.toString() );
+        this.getLog().info(buff.toString());
     }
 
     @Override
-    protected List<Violation> getErrorDetails( File pmdFile )
-        throws XmlPullParserException, IOException
-    {
-        try ( FileReader reader1 = new FileReader( pmdFile ) )
-        {
+    protected List<Violation> getErrorDetails(File pmdFile) throws XmlPullParserException, IOException {
+        try (InputStream in = new FileInputStream(pmdFile)) {
             PmdXpp3Reader reader = new PmdXpp3Reader();
-            PmdErrorDetail details = reader.read( reader1, false );
-
+            PmdErrorDetail details = reader.read(in, false);
             List<Violation> violations = new ArrayList<>();
-            for ( PmdFile file : details.getFiles() )
-            {
+            for (PmdFile file : details.getFiles()) {
                 String fullPath = file.getName();
 
-                for ( Violation violation : file.getViolations() )
-                {
-                    violation.setFileName( getFilename( fullPath, violation.getViolationPackage() ) );
-                    violations.add( violation );
+                for (Violation violation : file.getViolations()) {
+                    violation.setFileName(getFilename(fullPath, violation.getViolationPackage()));
+                    violations.add(violation);
                 }
             }
             return violations;
@@ -148,34 +131,29 @@ public class PmdViolationCheckMojo
     }
 
     @Override
-    protected int getPriority( Violation errorDetail )
-    {
+    protected int getPriority(Violation errorDetail) {
         return errorDetail.getPriority();
     }
 
     @Override
-    protected ViolationDetails<Violation> newViolationDetailsInstance()
-    {
+    protected ViolationDetails<Violation> newViolationDetailsInstance() {
         return new ViolationDetails<>();
     }
 
-    private String getFilename( String fullpath, String pkg )
-    {
-        int index = fullpath.lastIndexOf( File.separatorChar );
+    private String getFilename(String fullpath, String pkg) {
+        int index = fullpath.lastIndexOf(File.separatorChar);
 
-        while ( StringUtils.isNotEmpty( pkg ) )
-        {
-            index = fullpath.substring( 0, index ).lastIndexOf( File.separatorChar );
+        while (StringUtils.isNotEmpty(pkg)) {
+            index = fullpath.substring(0, index).lastIndexOf(File.separatorChar);
 
-            int dot = pkg.indexOf( '.' );
+            int dot = pkg.indexOf('.');
 
-            if ( dot < 0 )
-            {
+            if (dot < 0) {
                 break;
             }
-            pkg = pkg.substring( dot + 1 );
+            pkg = pkg.substring(dot + 1);
         }
 
-        return fullpath.substring( index + 1 );
+        return fullpath.substring(index + 1);
     }
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import net.sourceforge.pmd.renderers.Renderer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugins.annotations.Component;
@@ -52,8 +52,6 @@ import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 
-import net.sourceforge.pmd.renderers.Renderer;
-
 /**
  * Creates a PMD site report based on the rulesets and configuration set in the plugin.
  * It can also generate a pmd output file aside from the site report in any of the following formats: xml, csv or txt.
@@ -62,10 +60,8 @@ import net.sourceforge.pmd.renderers.Renderer;
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name = "pmd", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
-public class PmdReport
-    extends AbstractPmdReport
-{
+@Mojo(name = "pmd", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST)
+public class PmdReport extends AbstractPmdReport {
     /**
      * The target JDK to analyze based on. Should match the source used in the compiler plugin. Valid values
      * with the default PMD version are
@@ -81,7 +77,7 @@ public class PmdReport
      *   <b>Note:</b> this parameter is only used if the language parameter is set to <code>java</code>.
      * </p>
      */
-    @Parameter( property = "targetJdk", defaultValue = "${maven.compiler.source}" )
+    @Parameter(property = "targetJdk", defaultValue = "${maven.compiler.source}")
     private String targetJdk;
 
     /**
@@ -90,7 +86,7 @@ public class PmdReport
      *
      * @since 3.0
      */
-    @Parameter( defaultValue = "java" )
+    @Parameter(defaultValue = "java")
     private String language;
 
     /**
@@ -98,7 +94,7 @@ public class PmdReport
      *
      * @since 2.1
      */
-    @Parameter( property = "minimumPriority", defaultValue = "5" )
+    @Parameter(property = "minimumPriority", defaultValue = "5")
     private int minimumPriority = 5;
 
     /**
@@ -106,7 +102,7 @@ public class PmdReport
      *
      * @since 2.1
      */
-    @Parameter( property = "pmd.skip", defaultValue = "false" )
+    @Parameter(property = "pmd.skip", defaultValue = "false")
     private boolean skip;
 
     /**
@@ -117,7 +113,7 @@ public class PmdReport
      * (<code>/rulesets/java/maven-pmd-plugin-default.xml</code>).
      */
     @Parameter
-    String[] rulesets = new String[] { "/rulesets/java/maven-pmd-plugin-default.xml" };
+    String[] rulesets = new String[] {"/rulesets/java/maven-pmd-plugin-default.xml"};
 
     /**
      * Controls whether the project's compile/test classpath should be passed to PMD to enable its type resolution
@@ -125,7 +121,7 @@ public class PmdReport
      *
      * @since 3.0
      */
-    @Parameter( property = "pmd.typeResolution", defaultValue = "true" )
+    @Parameter(property = "pmd.typeResolution", defaultValue = "true")
     private boolean typeResolution;
 
     /**
@@ -133,7 +129,7 @@ public class PmdReport
      *
      * @since 3.1
      */
-    @Parameter( property = "pmd.benchmark", defaultValue = "false" )
+    @Parameter(property = "pmd.benchmark", defaultValue = "false")
     private boolean benchmark;
 
     /**
@@ -141,8 +137,7 @@ public class PmdReport
      *
      * @since 3.1
      */
-    @Parameter( property = "pmd.benchmarkOutputFilename",
-                    defaultValue = "${project.build.directory}/pmd-benchmark.txt" )
+    @Parameter(property = "pmd.benchmarkOutputFilename", defaultValue = "${project.build.directory}/pmd-benchmark.txt")
     private String benchmarkOutputFilename;
 
     /**
@@ -152,7 +147,7 @@ public class PmdReport
      *
      * @since 3.4
      */
-    @Parameter( property = "pmd.suppressMarker" )
+    @Parameter(property = "pmd.suppressMarker")
     private String suppressMarker;
 
     /**
@@ -160,7 +155,7 @@ public class PmdReport
      *
      * @since 3.1
      */
-    @Parameter( property = "pmd.skipPmdError", defaultValue = "true" )
+    @Parameter(property = "pmd.skipPmdError", defaultValue = "true")
     private boolean skipPmdError;
 
     /**
@@ -171,7 +166,7 @@ public class PmdReport
      *
      * @since 3.8
      */
-    @Parameter( property = "pmd.analysisCache", defaultValue = "false" )
+    @Parameter(property = "pmd.analysisCache", defaultValue = "false")
     private boolean analysisCache;
 
     /**
@@ -183,7 +178,7 @@ public class PmdReport
      *
      * @since 3.8
      */
-    @Parameter( property = "pmd.analysisCacheLocation", defaultValue = "${project.build.directory}/pmd/pmd.cache" )
+    @Parameter(property = "pmd.analysisCacheLocation", defaultValue = "${project.build.directory}/pmd/pmd.cache")
     private String analysisCacheLocation;
 
     /**
@@ -195,7 +190,7 @@ public class PmdReport
      *
      * @since 3.9.0
      */
-    @Parameter( property = "pmd.renderProcessingErrors", defaultValue = "true" )
+    @Parameter(property = "pmd.renderProcessingErrors", defaultValue = "true")
     private boolean renderProcessingErrors = true;
 
     /**
@@ -203,7 +198,7 @@ public class PmdReport
      *
      * @since 3.10.0
      */
-    @Parameter( property = "pmd.renderRuleViolationPriority", defaultValue = "true" )
+    @Parameter(property = "pmd.renderRuleViolationPriority", defaultValue = "true")
     private boolean renderRuleViolationPriority = true;
 
     /**
@@ -212,7 +207,7 @@ public class PmdReport
      *
      * @since 3.12.0
      */
-    @Parameter( property = "pmd.renderViolationsByPriority", defaultValue = "true" )
+    @Parameter(property = "pmd.renderViolationsByPriority", defaultValue = "true")
     private boolean renderViolationsByPriority = true;
 
     /**
@@ -220,7 +215,7 @@ public class PmdReport
      *
      * @since 3.17.0
      */
-    @Parameter( property = "pmd.renderSuppressedViolations", defaultValue = "true" )
+    @Parameter(property = "pmd.renderSuppressedViolations", defaultValue = "true")
     private boolean renderSuppressedViolations = true;
 
     /**
@@ -229,7 +224,7 @@ public class PmdReport
      *
      * @since 3.13.0
      */
-    @Parameter( property = "pmd.rulesetsTargetDirectory", defaultValue = "${project.build.directory}/pmd/rulesets" )
+    @Parameter(property = "pmd.rulesetsTargetDirectory", defaultValue = "${project.build.directory}/pmd/rulesets")
     private File rulesetsTargetDirectory;
 
     /**
@@ -253,18 +248,16 @@ public class PmdReport
      * {@inheritDoc}
      */
     @Override
-    public String getName( Locale locale )
-    {
-        return getBundle( locale ).getString( "report.pmd.name" );
+    public String getName(Locale locale) {
+        return getBundle(locale).getString("report.pmd.name");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getDescription( Locale locale )
-    {
-        return getBundle( locale ).getString( "report.pmd.description" );
+    public String getDescription(Locale locale) {
+        return getBundle(locale).getString("report.pmd.description");
     }
 
     /**
@@ -274,121 +267,98 @@ public class PmdReport
      * @param rulesets the PMD rulesets to be used.
      * @see #rulesets
      */
-    public void setRulesets( String[] rulesets )
-    {
-        this.rulesets = Arrays.copyOf( rulesets, rulesets.length );
+    public void setRulesets(String[] rulesets) {
+        this.rulesets = Arrays.copyOf(rulesets, rulesets.length);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void executeReport( Locale locale )
-        throws MavenReportException
-    {
+    public void executeReport(Locale locale) throws MavenReportException {
         ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
-        try
-        {
-            Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
+        try {
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
-            generateMavenSiteReport( locale );
-        }
-        finally
-        {
-            Thread.currentThread().setContextClassLoader( origLoader );
+            generateMavenSiteReport(locale);
+        } finally {
+            Thread.currentThread().setContextClassLoader(origLoader);
         }
     }
 
     @Override
-    public boolean canGenerateReport()
-    {
-        if ( skip )
-        {
-            getLog().info( "Skipping PMD execution" );
+    public boolean canGenerateReport() {
+        if (skip) {
+            getLog().info("Skipping PMD execution");
             return false;
         }
 
         boolean result = super.canGenerateReport();
-        if ( result )
-        {
-            try
-            {
+        if (result) {
+            try {
                 executePmd();
-                if ( skipEmptyReport )
-                {
+                if (skipEmptyReport) {
                     result = pmdResult.hasViolations();
-                    if ( !result )
-                    {
-                        getLog().debug( "Skipping report since skipEmptyReport is true and "
-                                            + "there are no PMD violations." );
+                    if (!result) {
+                        getLog().debug("Skipping report since skipEmptyReport is true and "
+                                + "there are no PMD violations.");
                     }
                 }
-            }
-            catch ( MavenReportException e )
-            {
-                throw new RuntimeException( e );
+            } catch (MavenReportException e) {
+                throw new RuntimeException(e);
             }
         }
         return result;
     }
 
-    private void executePmd()
-        throws MavenReportException
-    {
-        if ( pmdResult != null )
-        {
+    private void executePmd() throws MavenReportException {
+        if (pmdResult != null) {
             // PMD has already been run
-            getLog().debug( "PMD has already been run - skipping redundant execution." );
+            getLog().debug("PMD has already been run - skipping redundant execution.");
             return;
         }
 
-        try
-        {
+        try {
             filesToProcess = getFilesToProcess();
 
-            if ( filesToProcess.isEmpty() && !"java".equals( language ) )
-            {
-                getLog().warn( "No files found to process. Did you add your additional source folders like javascript?"
-                                   + " (see also build-helper-maven-plugin)" );
+            if (filesToProcess.isEmpty() && !"java".equals(language)) {
+                getLog().warn("No files found to process. Did you add your additional source folders like javascript?"
+                        + " (see also build-helper-maven-plugin)");
             }
+        } catch (IOException e) {
+            throw new MavenReportException("Can't get file list", e);
         }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( "Can't get file list", e );
-        }
-
 
         PmdRequest request = new PmdRequest();
-        request.setLanguageAndVersion( language, targetJdk );
-        request.setRulesets( resolveRulesets() );
-        request.setAuxClasspath( typeResolution ? determineAuxClasspath() : null );
-        request.setSourceEncoding( getInputEncoding() );
-        request.addFiles( filesToProcess.keySet() );
-        request.setMinimumPriority( minimumPriority );
-        request.setSuppressMarker( suppressMarker );
-        request.setBenchmarkOutputLocation( benchmark ? benchmarkOutputFilename : null );
-        request.setAnalysisCacheLocation( analysisCache ? analysisCacheLocation : null );
-        request.setExcludeFromFailureFile( excludeFromFailureFile );
+        request.setLanguageAndVersion(language, targetJdk);
+        request.setRulesets(resolveRulesets());
+        request.setAuxClasspath(typeResolution ? determineAuxClasspath() : null);
+        request.setSourceEncoding(getInputEncoding());
+        request.addFiles(filesToProcess.keySet());
+        request.setMinimumPriority(minimumPriority);
+        request.setSuppressMarker(suppressMarker);
+        request.setBenchmarkOutputLocation(benchmark ? benchmarkOutputFilename : null);
+        request.setAnalysisCacheLocation(analysisCache ? analysisCacheLocation : null);
+        request.setExcludeFromFailureFile(excludeFromFailureFile);
 
-        request.setTargetDirectory( targetDirectory.getAbsolutePath() );
-        request.setOutputEncoding( getOutputEncoding() );
-        request.setFormat( format );
-        request.setShowPmdLog( showPmdLog );
-        request.setSkipPmdError( skipPmdError );
-        request.setIncludeXmlInSite( includeXmlInSite );
-        request.setReportOutputDirectory( getReportOutputDirectory().getAbsolutePath() );
-        request.setLogLevel( determineCurrentRootLogLevel() );
+        request.setTargetDirectory(targetDirectory.getAbsolutePath());
+        request.setOutputEncoding(getOutputEncoding());
+        request.setFormat(format);
+        request.setShowPmdLog(showPmdLog);
+        request.setSkipPmdError(skipPmdError);
+        request.setIncludeXmlInSite(includeXmlInSite);
+        request.setReportOutputDirectory(getReportOutputDirectory().getAbsolutePath());
+        request.setLogLevel(determineCurrentRootLogLevel());
 
         Toolchain tc = getToolchain();
-        if ( tc != null )
-        {
-            getLog().info( "Toolchain in maven-pmd-plugin: " + tc );
-            String javaExecutable = tc.findTool( "java" ); //NOI18N
-            request.setJavaExecutable( javaExecutable );
+        if (tc != null) {
+            getLog().info("Toolchain in maven-pmd-plugin: " + tc);
+            String javaExecutable = tc.findTool("java"); // NOI18N
+            request.setJavaExecutable(javaExecutable);
         }
 
-        getLog().info( "PMD version: " + AbstractPmdReport.getPmdVersion() );
-        pmdResult = PmdExecutor.execute( request );
+        getLog().info("PMD version: " + AbstractPmdReport.getPmdVersion());
+        pmdResult = PmdExecutor.execute(request);
     }
 
     /**
@@ -397,99 +367,81 @@ public class PmdReport
      * @return comma separated list of absolute file paths of ruleset files
      * @throws MavenReportException if a ruleset could not be found
      */
-    private List<String> resolveRulesets() throws MavenReportException
-    {
+    private List<String> resolveRulesets() throws MavenReportException {
         // configure ResourceManager - will search for urls (URLResourceLoader) and files in various directories:
         // in the directory of the current project's pom file - note: extensions might replace the pom file on the fly
-        locator.addSearchPath( FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath() );
+        locator.addSearchPath(
+                FileResourceLoader.ID, project.getFile().getParentFile().getAbsolutePath());
         // in the current project's directory
-        locator.addSearchPath( FileResourceLoader.ID, project.getBasedir().getAbsolutePath() );
+        locator.addSearchPath(FileResourceLoader.ID, project.getBasedir().getAbsolutePath());
         // in the base directory - that's the directory of the initial pom requested to build,
         // e.g. the root of a multi module build
-        locator.addSearchPath( FileResourceLoader.ID, session.getRequest().getBaseDirectory() );
-        locator.setOutputDirectory( rulesetsTargetDirectory );
+        locator.addSearchPath(FileResourceLoader.ID, session.getRequest().getBaseDirectory());
+        locator.setOutputDirectory(rulesetsTargetDirectory);
 
         String[] sets = new String[rulesets.length];
-        try
-        {
-            for ( int idx = 0; idx < rulesets.length; idx++ )
-            {
+        try {
+            for (int idx = 0; idx < rulesets.length; idx++) {
                 String set = rulesets[idx];
-                getLog().debug( "Preparing ruleset: " + set );
-                String rulesetFilename = determineRulesetFilename( set );
-                File ruleset = locator.getResourceAsFile( rulesetFilename, getLocationTemp( set ) );
-                if ( null == ruleset )
-                {
-                    throw new MavenReportException( "Could not resolve " + set );
+                getLog().debug("Preparing ruleset: " + set);
+                String rulesetFilename = determineRulesetFilename(set);
+                File ruleset = locator.getResourceAsFile(rulesetFilename, getLocationTemp(set));
+                if (null == ruleset) {
+                    throw new MavenReportException("Could not resolve " + set);
                 }
                 sets[idx] = ruleset.getAbsolutePath();
             }
+        } catch (ResourceNotFoundException | FileResourceCreationException e) {
+            throw new MavenReportException(e.getMessage(), e);
         }
-        catch ( ResourceNotFoundException | FileResourceCreationException e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
-        }
-        return Arrays.asList( sets );
+        return Arrays.asList(sets);
     }
 
-    private String determineRulesetFilename( String ruleset )
-    {
+    private String determineRulesetFilename(String ruleset) {
         String result = ruleset.trim();
-        String lowercase = result.toLowerCase( Locale.ROOT );
-        if ( lowercase.startsWith( "http://" ) || lowercase.startsWith( "https://" ) || lowercase.endsWith( ".xml" ) )
-        {
+        String lowercase = result.toLowerCase(Locale.ROOT);
+        if (lowercase.startsWith("http://") || lowercase.startsWith("https://") || lowercase.endsWith(".xml")) {
             return result;
         }
 
         // assume last part is a single rule, e.g. myruleset.xml/SingleRule
-        if ( result.indexOf( '/' ) > -1 )
-        {
-            String rulesetFilename = result.substring( 0, result.lastIndexOf( '/' ) );
-            if ( rulesetFilename.toLowerCase( Locale.ROOT ).endsWith( ".xml" ) )
-            {
+        if (result.indexOf('/') > -1) {
+            String rulesetFilename = result.substring(0, result.lastIndexOf('/'));
+            if (rulesetFilename.toLowerCase(Locale.ROOT).endsWith(".xml")) {
                 return rulesetFilename;
             }
         }
         // maybe a built-in ruleset name, e.g. java-design -> rulesets/java/design.xml
-        int dashIndex = lowercase.indexOf( '-' );
-        if ( dashIndex > -1 && lowercase.indexOf( '-', dashIndex + 1 ) == -1 )
-        {
-            String language = result.substring( 0, dashIndex );
-            String rulesetName = result.substring( dashIndex + 1 );
+        int dashIndex = lowercase.indexOf('-');
+        if (dashIndex > -1 && lowercase.indexOf('-', dashIndex + 1) == -1) {
+            String language = result.substring(0, dashIndex);
+            String rulesetName = result.substring(dashIndex + 1);
             return "rulesets/" + language + "/" + rulesetName + ".xml";
         }
         // fallback - no change of the given ruleset specifier
         return result;
     }
 
-    private void generateMavenSiteReport( Locale locale )
-        throws MavenReportException
-    {
+    private void generateMavenSiteReport(Locale locale) throws MavenReportException {
         Sink sink = getSink();
-        PmdReportGenerator doxiaRenderer = new PmdReportGenerator( getLog(), sink, getBundle( locale ),
-                isAggregator() );
-        doxiaRenderer.setRenderRuleViolationPriority( renderRuleViolationPriority );
-        doxiaRenderer.setRenderViolationsByPriority( renderViolationsByPriority );
-        doxiaRenderer.setFiles( filesToProcess );
-        doxiaRenderer.setViolations( pmdResult.getViolations() );
-        if ( renderSuppressedViolations )
-        {
-            doxiaRenderer.setSuppressedViolations( pmdResult.getSuppressedViolations() );
+        PmdReportGenerator doxiaRenderer = new PmdReportGenerator(getLog(), sink, getBundle(locale), isAggregator());
+        doxiaRenderer.setRenderRuleViolationPriority(renderRuleViolationPriority);
+        doxiaRenderer.setRenderViolationsByPriority(renderViolationsByPriority);
+        doxiaRenderer.setFiles(filesToProcess);
+        doxiaRenderer.setViolations(pmdResult.getViolations());
+        if (renderSuppressedViolations) {
+            doxiaRenderer.setSuppressedViolations(pmdResult.getSuppressedViolations());
         }
-        if ( renderProcessingErrors )
-        {
-            doxiaRenderer.setProcessingErrors( pmdResult.getErrors() );
+        if (renderProcessingErrors) {
+            doxiaRenderer.setProcessingErrors(pmdResult.getErrors());
         }
 
-        try
-        {
+        try {
             doxiaRenderer.beginDocument();
             doxiaRenderer.render();
             doxiaRenderer.endDocument();
-        }
-        catch ( IOException e )
-        {
-            getLog().warn( "Failure creating the report: " + e.getLocalizedMessage(), e );
+        } catch (IOException e) {
+            getLog().warn("Failure creating the report: " + e.getLocalizedMessage(), e);
         }
     }
 
@@ -499,111 +451,95 @@ public class PmdReport
      * @param name the name of the file whose location is to be resolved
      * @return a String that contains the absolute file name of the file
      */
-    protected String getLocationTemp( String name )
-    {
+    protected String getLocationTemp(String name) {
         String loc = name;
-        if ( loc.indexOf( '/' ) != -1 )
-        {
-            loc = loc.substring( loc.lastIndexOf( '/' ) + 1 );
+        if (loc.indexOf('/') != -1) {
+            loc = loc.substring(loc.lastIndexOf('/') + 1);
         }
-        if ( loc.indexOf( '\\' ) != -1 )
-        {
-            loc = loc.substring( loc.lastIndexOf( '\\' ) + 1 );
+        if (loc.indexOf('\\') != -1) {
+            loc = loc.substring(loc.lastIndexOf('\\') + 1);
         }
 
         // MPMD-127 in the case that the rules are defined externally on a url
         // we need to replace some special url characters that cannot be
         // used in filenames on disk or produce ackward filenames.
         // replace all occurrences of the following characters: ? : & = %
-        loc = loc.replaceAll( "[\\?\\:\\&\\=\\%]", "_" );
+        loc = loc.replaceAll("[\\?\\:\\&\\=\\%]", "_");
 
-        if ( !loc.endsWith( ".xml" ) )
-        {
+        if (!loc.endsWith(".xml")) {
             loc = loc + ".xml";
         }
 
-        getLog().debug( "Before: " + name + " After: " + loc );
+        getLog().debug("Before: " + name + " After: " + loc);
         return loc;
     }
 
-    private String determineAuxClasspath() throws MavenReportException
-    {
-        try
-        {
+    private String determineAuxClasspath() throws MavenReportException {
+        try {
             List<String> classpath = new ArrayList<>();
-            if ( isAggregator() )
-            {
+            if (isAggregator()) {
                 List<String> dependencies = new ArrayList<>();
 
                 // collect exclusions for projects within the reactor
                 // if module a depends on module b and both are in the reactor
                 // then we don't want to resolve the dependency as an artifact.
                 List<String> exclusionPatterns = new ArrayList<>();
-                for ( MavenProject localProject : getAggregatedProjects() )
-                {
-                    exclusionPatterns.add( localProject.getGroupId() + ":" + localProject.getArtifactId() );
+                for (MavenProject localProject : getAggregatedProjects()) {
+                    exclusionPatterns.add(localProject.getGroupId() + ":" + localProject.getArtifactId());
                 }
-                TransformableFilter filter = new AndFilter( Arrays.asList(
-                        new ExclusionsFilter( exclusionPatterns ),
-                        includeTests ? ScopeFilter.including( "compile", "provided", "test" )
-                                     : ScopeFilter.including( "compile", "provided" )
-                ) );
+                TransformableFilter filter = new AndFilter(Arrays.asList(
+                        new ExclusionsFilter(exclusionPatterns),
+                        includeTests
+                                ? ScopeFilter.including("compile", "provided", "test")
+                                : ScopeFilter.including("compile", "provided")));
 
-                for ( MavenProject localProject : getAggregatedProjects() )
-                {
-                    ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(
-                            session.getProjectBuildingRequest() );
+                for (MavenProject localProject : getAggregatedProjects()) {
+                    ProjectBuildingRequest buildingRequest =
+                            new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
                     // use any additional configured repo as well
-                    buildingRequest.getRemoteRepositories().addAll( localProject.getRemoteArtifactRepositories() );
+                    buildingRequest.getRemoteRepositories().addAll(localProject.getRemoteArtifactRepositories());
 
                     Iterable<ArtifactResult> resolvedDependencies = dependencyResolver.resolveDependencies(
-                            buildingRequest, localProject.getDependencies(), null, filter );
+                            buildingRequest, localProject.getDependencies(), null, filter);
 
-                    for ( ArtifactResult resolvedArtifact : resolvedDependencies )
-                    {
-                        dependencies.add( resolvedArtifact.getArtifact().getFile().toString() );
+                    for (ArtifactResult resolvedArtifact : resolvedDependencies) {
+                        dependencies.add(
+                                resolvedArtifact.getArtifact().getFile().toString());
                     }
 
-                    List<String> projectClasspath = includeTests ? localProject.getTestClasspathElements()
+                    List<String> projectClasspath = includeTests
+                            ? localProject.getTestClasspathElements()
                             : localProject.getCompileClasspathElements();
 
                     // Add the project's target folder first
-                    classpath.addAll( projectClasspath );
-                    if ( !localProject.isExecutionRoot() )
-                    {
-                        for ( String path : projectClasspath )
-                        {
-                            File pathFile = new File( path );
+                    classpath.addAll(projectClasspath);
+                    if (!localProject.isExecutionRoot()) {
+                        for (String path : projectClasspath) {
+                            File pathFile = new File(path);
                             String[] children = pathFile.list();
 
-                            if ( !pathFile.exists() || ( children != null && children.length == 0 ) )
-                            {
-                                getLog().warn( "The project " + localProject.getArtifactId()
-                                    + " does not seem to be compiled. PMD results might be inaccurate." );
+                            if (!pathFile.exists() || (children != null && children.length == 0)) {
+                                getLog().warn("The project " + localProject.getArtifactId()
+                                        + " does not seem to be compiled. PMD results might be inaccurate.");
                             }
                         }
                     }
-
                 }
 
                 // Add the dependencies as last entries
-                classpath.addAll( dependencies );
+                classpath.addAll(dependencies);
 
-                getLog().debug( "Using aggregated aux classpath: " + classpath );
-            }
-            else
-            {
-                classpath.addAll( includeTests ? project.getTestClasspathElements()
-                                               : project.getCompileClasspathElements() );
+                getLog().debug("Using aggregated aux classpath: " + classpath);
+            } else {
+                classpath.addAll(
+                        includeTests ? project.getTestClasspathElements() : project.getCompileClasspathElements());
 
-                getLog().debug( "Using aux classpath: " + classpath );
+                getLog().debug("Using aux classpath: " + classpath);
             }
-            String path = StringUtils.join( classpath.iterator(), File.pathSeparator );
+            String path = StringUtils.join(classpath.iterator(), File.pathSeparator);
             return path;
-        }
-        catch ( Exception e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
+        } catch (Exception e) {
+            throw new MavenReportException(e.getMessage(), e);
         }
     }
 
@@ -611,14 +547,12 @@ public class PmdReport
      * {@inheritDoc}
      */
     @Override
-    public String getOutputName()
-    {
+    public String getOutputName() {
         return "pmd";
     }
 
-    private static ResourceBundle getBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "pmd-report", locale, PmdReport.class.getClassLoader() );
+    private static ResourceBundle getBundle(Locale locale) {
+        return ResourceBundle.getBundle("pmd-report", locale, PmdReport.class.getClassLoader());
     }
 
     /**
@@ -629,8 +563,7 @@ public class PmdReport
      * @deprecated Use {@link PmdExecutor#createRenderer(String, String)} instead.
      */
     @Deprecated
-    public final Renderer createRenderer() throws MavenReportException
-    {
-        return PmdExecutor.createRenderer( format, getOutputEncoding() );
+    public final Renderer createRenderer() throws MavenReportException {
+        return PmdExecutor.createRenderer(format, getOutputEncoding());
     }
 }

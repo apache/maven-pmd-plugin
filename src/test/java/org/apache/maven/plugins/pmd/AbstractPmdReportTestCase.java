@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,9 +40,7 @@ import org.eclipse.aether.repository.LocalRepository;
  * @version $Id$
  * @since 2.5
  */
-public abstract class AbstractPmdReportTestCase
-    extends AbstractMojoTestCase
-{
+public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     private ArtifactStubFactory artifactStubFactory;
 
     /**
@@ -52,13 +49,11 @@ public abstract class AbstractPmdReportTestCase
     private MavenProject testMavenProject;
 
     @Override
-    protected void setUp()
-        throws Exception
-    {
+    protected void setUp() throws Exception {
         super.setUp();
-        CapturingPrintStream.init( true );
+        CapturingPrintStream.init(true);
 
-        artifactStubFactory = new DependencyArtifactStubFactory( getTestFile( "target" ), true, false );
+        artifactStubFactory = new DependencyArtifactStubFactory(getTestFile("target"), true, false);
         artifactStubFactory.getWorkingDir().mkdirs();
     }
 
@@ -67,8 +62,7 @@ public abstract class AbstractPmdReportTestCase
      *
      * @return the maven project
      */
-    protected MavenProject getTestMavenProject()
-    {
+    protected MavenProject getTestMavenProject() {
         return testMavenProject;
     }
 
@@ -79,15 +73,13 @@ public abstract class AbstractPmdReportTestCase
      * @return the generated report as file
      * @throws IOException if the return file doesnt exist
      */
-    protected File getGeneratedReport( String name )
-        throws IOException
-    {
-        String outputDirectory = getBasedir() + "/target/test/unit/" + getTestMavenProject().getArtifactId();
+    protected File getGeneratedReport(String name) throws IOException {
+        String outputDirectory =
+                getBasedir() + "/target/test/unit/" + getTestMavenProject().getArtifactId();
 
-        File report = new File( outputDirectory, name );
-        if ( !report.exists() )
-        {
-            throw new IOException( "File not found. Attempted: " + report );
+        File report = new File(outputDirectory, name);
+        if (!report.exists()) {
+            throw new IOException("File not found. Attempted: " + report);
         }
 
         return report;
@@ -101,57 +93,50 @@ public abstract class AbstractPmdReportTestCase
      * @return the generated HTML file
      * @throws Exception if any
      */
-    protected File generateReport( String goal, String pluginXml )
-        throws Exception
-    {
-        File pluginXmlFile = new File( getBasedir(), "src/test/resources/unit/" + pluginXml );
-        AbstractPmdReport mojo  = createReportMojo( goal, pluginXmlFile );
-        return generateReport( mojo, pluginXmlFile );
+    protected File generateReport(String goal, String pluginXml) throws Exception {
+        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + pluginXml);
+        AbstractPmdReport mojo = createReportMojo(goal, pluginXmlFile);
+        return generateReport(mojo, pluginXmlFile);
     }
 
-    protected AbstractPmdReport createReportMojo( String goal, File pluginXmlFile )
-        throws Exception
-    {
-        AbstractPmdReport mojo = (AbstractPmdReport) lookupMojo( goal, pluginXmlFile );
-        assertNotNull( "Mojo not found.", mojo );
+    protected AbstractPmdReport createReportMojo(String goal, File pluginXmlFile) throws Exception {
+        AbstractPmdReport mojo = (AbstractPmdReport) lookupMojo(goal, pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo);
 
-        LegacySupport legacySupport = lookup( LegacySupport.class );
-        legacySupport.setSession( newMavenSession( new MavenProjectStub() ) );
+        LegacySupport legacySupport = lookup(LegacySupport.class);
+        legacySupport.setSession(newMavenSession(new MavenProjectStub()));
         DefaultRepositorySystemSession repoSession =
-            (DefaultRepositorySystemSession) legacySupport.getRepositorySession();
-        repoSession.setLocalRepositoryManager( new SimpleLocalRepositoryManagerFactory().newInstance( repoSession, new LocalRepository( artifactStubFactory.getWorkingDir() ) ) );
+                (DefaultRepositorySystemSession) legacySupport.getRepositorySession();
+        repoSession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repoSession, new LocalRepository(artifactStubFactory.getWorkingDir())));
 
-        setVariableValueToObject( mojo, "session", legacySupport.getSession() );
-        setVariableValueToObject( mojo, "remoteRepositories", mojo.getProject().getRemoteArtifactRepositories() );
+        setVariableValueToObject(mojo, "session", legacySupport.getSession());
+        setVariableValueToObject(mojo, "remoteRepositories", mojo.getProject().getRemoteArtifactRepositories());
         return mojo;
     }
 
-    protected File generateReport( AbstractPmdReport mojo, File pluginXmlFile )
-        throws Exception
-    {
+    protected File generateReport(AbstractPmdReport mojo, File pluginXmlFile) throws Exception {
         mojo.execute();
 
-        ProjectBuilder builder = lookup( ProjectBuilder.class );
+        ProjectBuilder builder = lookup(ProjectBuilder.class);
 
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
-        buildingRequest.setRepositorySession( lookup( LegacySupport.class ).getRepositorySession() );
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
 
-        testMavenProject = builder.build( pluginXmlFile, buildingRequest ).getProject();
+        testMavenProject = builder.build(pluginXmlFile, buildingRequest).getProject();
 
         File outputDir = mojo.getReportOutputDirectory();
         String filename = mojo.getOutputName() + ".html";
 
-        return new File( outputDir, filename );
+        return new File(outputDir, filename);
     }
 
     /**
      * Read the contents of the specified file object into a string
      */
-    protected String readFile( File pmdTestDir, String fileName ) throws IOException
-    {
-        return new String( Files.readAllBytes( pmdTestDir.toPath().resolve( fileName ) ) );
+    protected String readFile(File pmdTestDir, String fileName) throws IOException {
+        return new String(Files.readAllBytes(pmdTestDir.toPath().resolve(fileName)));
     }
-
 
     /**
      * Checks, whether the string <code>contained</code> is contained in
@@ -161,8 +146,7 @@ public abstract class AbstractPmdReportTestCase
      * @param contains the string, the should be searched
      * @return <code>true</code> if the string is contained, otherwise <code>false</code>.
      */
-    public static boolean lowerCaseContains( String text, String contains )
-    {
-        return text.toLowerCase( Locale.ROOT ).contains( contains.toLowerCase( Locale.ROOT ) );
+    public static boolean lowerCaseContains(String text, String contains) {
+        return text.toLowerCase(Locale.ROOT).contains(contains.toLowerCase(Locale.ROOT));
     }
 }

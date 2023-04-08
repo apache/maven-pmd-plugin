@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import net.sourceforge.pmd.PMDVersion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.ReportPlugin;
@@ -50,17 +50,13 @@ import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.PathTool;
 
-import net.sourceforge.pmd.PMDVersion;
-
 /**
  * Base class for the PMD reports.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
-public abstract class AbstractPmdReport
-    extends AbstractMavenReport
-{
+public abstract class AbstractPmdReport extends AbstractMavenReport {
     // ----------------------------------------------------------------------
     // Configurables
     // ----------------------------------------------------------------------
@@ -68,7 +64,7 @@ public abstract class AbstractPmdReport
     /**
      * The output directory for the intermediate XML report.
      */
-    @Parameter( property = "project.build.directory", required = true )
+    @Parameter(property = "project.build.directory", required = true)
     protected File targetDirectory;
 
     /**
@@ -77,26 +73,26 @@ public abstract class AbstractPmdReport
      * renderers. XML is produced in any case, since this format is needed
      * for the check goals (pmd:check, pmd:aggregator-check, pmd:cpd-check, pmd:aggregator-cpd-check).
      */
-    @Parameter( property = "format", defaultValue = "xml" )
+    @Parameter(property = "format", defaultValue = "xml")
     protected String format = "xml";
 
     /**
      * Link the violation line numbers to the source xref. Links will be created automatically if the jxr plugin is
      * being used.
      */
-    @Parameter( property = "linkXRef", defaultValue = "true" )
+    @Parameter(property = "linkXRef", defaultValue = "true")
     private boolean linkXRef;
 
     /**
      * Location of the Xrefs to link to.
      */
-    @Parameter( defaultValue = "${project.reporting.outputDirectory}/xref" )
+    @Parameter(defaultValue = "${project.reporting.outputDirectory}/xref")
     private File xrefLocation;
 
     /**
      * Location of the Test Xrefs to link to.
      */
-    @Parameter( defaultValue = "${project.reporting.outputDirectory}/xref-test" )
+    @Parameter(defaultValue = "${project.reporting.outputDirectory}/xref-test")
     private File xrefTestLocation;
 
     /**
@@ -124,7 +120,7 @@ public abstract class AbstractPmdReport
      * Defaults to <code>project.compileSourceRoots</code>.
      * @since 3.7
      */
-    @Parameter( defaultValue = "${project.compileSourceRoots}" )
+    @Parameter(defaultValue = "${project.compileSourceRoots}")
     private List<String> compileSourceRoots;
 
     /**
@@ -132,7 +128,7 @@ public abstract class AbstractPmdReport
      * Defaults to <code>project.testCompileSourceRoots</code>
      * @since 3.7
      */
-    @Parameter( defaultValue = "${project.testCompileSourceRoots}" )
+    @Parameter(defaultValue = "${project.testCompileSourceRoots}")
     private List<String> testSourceRoots;
 
     /**
@@ -148,7 +144,7 @@ public abstract class AbstractPmdReport
      *
      * @since 2.2
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter(defaultValue = "false")
     protected boolean includeTests;
 
     /**
@@ -158,7 +154,7 @@ public abstract class AbstractPmdReport
      * @deprecated since 3.15.0 Use the goals <code>pmd:aggregate-pmd</code> and <code>pmd:aggregate-cpd</code>
      * instead.
      */
-    @Parameter( property = "aggregate", defaultValue = "false" )
+    @Parameter(property = "aggregate", defaultValue = "false")
     @Deprecated
     protected boolean aggregate;
 
@@ -167,7 +163,7 @@ public abstract class AbstractPmdReport
      *
      * @since 3.0
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter(defaultValue = "false")
     protected boolean includeXmlInSite;
 
     /**
@@ -178,7 +174,7 @@ public abstract class AbstractPmdReport
      *
      * @since 3.1
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter(defaultValue = "false")
     protected boolean skipEmptyReport;
 
     /**
@@ -189,7 +185,7 @@ public abstract class AbstractPmdReport
      *
      * @since 3.7
      */
-    @Parameter( property = "pmd.excludeFromFailureFile", defaultValue = "" )
+    @Parameter(property = "pmd.excludeFromFailureFile", defaultValue = "")
     protected String excludeFromFailureFile;
 
     /**
@@ -201,7 +197,7 @@ public abstract class AbstractPmdReport
      *
      * @since 3.9.0
      */
-    @Parameter( defaultValue = "true", property = "pmd.showPmdLog" )
+    @Parameter(defaultValue = "true", property = "pmd.showPmdLog")
     protected boolean showPmdLog = true;
 
     /**
@@ -248,14 +244,14 @@ public abstract class AbstractPmdReport
     /**
      * The projects in the reactor for aggregation report.
      */
-    @Parameter( property = "reactorProjects", readonly = true )
+    @Parameter(property = "reactorProjects", readonly = true)
     protected List<MavenProject> reactorProjects;
 
     /**
      * The current build session instance. This is used for
      * toolchain manager API calls and for dependency resolver API calls.
      */
-    @Parameter( defaultValue = "${session}", required = true, readonly = true )
+    @Parameter(defaultValue = "${session}", required = true, readonly = true)
     protected MavenSession session;
 
     @Component
@@ -268,50 +264,39 @@ public abstract class AbstractPmdReport
      * {@inheritDoc}
      */
     @Override
-    protected MavenProject getProject()
-    {
+    protected MavenProject getProject() {
         return project;
     }
 
-    protected String constructXRefLocation( boolean test )
-    {
+    protected String constructXRefLocation(boolean test) {
         String location = null;
-        if ( linkXRef )
-        {
+        if (linkXRef) {
             File xrefLoc = test ? xrefTestLocation : xrefLocation;
 
             String relativePath =
-                PathTool.getRelativePath( outputDirectory.getAbsolutePath(), xrefLoc.getAbsolutePath() );
-            if ( StringUtils.isEmpty( relativePath ) )
-            {
+                    PathTool.getRelativePath(outputDirectory.getAbsolutePath(), xrefLoc.getAbsolutePath());
+            if (StringUtils.isEmpty(relativePath)) {
                 relativePath = ".";
             }
             relativePath = relativePath + "/" + xrefLoc.getName();
-            if ( xrefLoc.exists() )
-            {
+            if (xrefLoc.exists()) {
                 // XRef was already generated by manual execution of a lifecycle binding
                 location = relativePath;
-            }
-            else
-            {
+            } else {
                 // Not yet generated - check if the report is on its way
                 Reporting reporting = project.getModel().getReporting();
-                List<ReportPlugin> reportPlugins = reporting != null
-                        ? reporting.getPlugins()
-                        : Collections.<ReportPlugin>emptyList();
-                for ( ReportPlugin plugin : reportPlugins )
-                {
+                List<ReportPlugin> reportPlugins =
+                        reporting != null ? reporting.getPlugins() : Collections.<ReportPlugin>emptyList();
+                for (ReportPlugin plugin : reportPlugins) {
                     String artifactId = plugin.getArtifactId();
-                    if ( "maven-jxr-plugin".equals( artifactId ) || "jxr-maven-plugin".equals( artifactId ) )
-                    {
+                    if ("maven-jxr-plugin".equals(artifactId) || "jxr-maven-plugin".equals(artifactId)) {
                         location = relativePath;
                     }
                 }
             }
 
-            if ( location == null )
-            {
-                getLog().warn( "Unable to locate Source XRef to link to - DISABLED" );
+            if (location == null) {
+                getLog().warn("Unable to locate Source XRef to link to - DISABLED");
             }
         }
         return location;
@@ -324,112 +309,88 @@ public abstract class AbstractPmdReport
      * @throws IOException If an I/O error occurs during construction of the
      *                     canonical pathnames of the files
      */
-    protected Map<File, PmdFileInfo> getFilesToProcess()
-        throws IOException
-    {
-        if ( aggregate && !project.isExecutionRoot() )
-        {
+    protected Map<File, PmdFileInfo> getFilesToProcess() throws IOException {
+        if (aggregate && !project.isExecutionRoot()) {
             return Collections.emptyMap();
         }
 
-        if ( excludeRoots == null )
-        {
+        if (excludeRoots == null) {
             excludeRoots = new File[0];
         }
 
-        Collection<File> excludeRootFiles = new HashSet<>( excludeRoots.length );
+        Collection<File> excludeRootFiles = new HashSet<>(excludeRoots.length);
 
-        for ( File file : excludeRoots )
-        {
-            if ( file.isDirectory() )
-            {
-                excludeRootFiles.add( file );
+        for (File file : excludeRoots) {
+            if (file.isDirectory()) {
+                excludeRootFiles.add(file);
             }
         }
 
         List<PmdFileInfo> directories = new ArrayList<>();
 
-        if ( null == compileSourceRoots )
-        {
+        if (null == compileSourceRoots) {
             compileSourceRoots = project.getCompileSourceRoots();
         }
-        if ( compileSourceRoots != null )
-        {
-            for ( String root : compileSourceRoots )
-            {
-                File sroot = new File( root );
-                if ( sroot.exists() )
-                {
-                    String sourceXref = constructXRefLocation( false );
-                    directories.add( new PmdFileInfo( project, sroot, sourceXref ) );
+        if (compileSourceRoots != null) {
+            for (String root : compileSourceRoots) {
+                File sroot = new File(root);
+                if (sroot.exists()) {
+                    String sourceXref = constructXRefLocation(false);
+                    directories.add(new PmdFileInfo(project, sroot, sourceXref));
                 }
             }
         }
 
-        if ( null == testSourceRoots )
-        {
+        if (null == testSourceRoots) {
             testSourceRoots = project.getTestCompileSourceRoots();
         }
-        if ( includeTests && testSourceRoots != null )
-        {
-            for ( String root : testSourceRoots )
-            {
-                File sroot = new File( root );
-                if ( sroot.exists() )
-                {
-                    String testXref = constructXRefLocation( true );
-                    directories.add( new PmdFileInfo( project, sroot, testXref ) );
+        if (includeTests && testSourceRoots != null) {
+            for (String root : testSourceRoots) {
+                File sroot = new File(root);
+                if (sroot.exists()) {
+                    String testXref = constructXRefLocation(true);
+                    directories.add(new PmdFileInfo(project, sroot, testXref));
                 }
             }
         }
-        if ( isAggregator() )
-        {
-            for ( MavenProject localProject : getAggregatedProjects() )
-            {
+        if (isAggregator()) {
+            for (MavenProject localProject : getAggregatedProjects()) {
                 List<String> localCompileSourceRoots = localProject.getCompileSourceRoots();
-                for ( String root : localCompileSourceRoots )
-                {
-                    File sroot = new File( root );
-                    if ( sroot.exists() )
-                    {
-                        String sourceXref = constructXRefLocation( false );
-                        directories.add( new PmdFileInfo( localProject, sroot, sourceXref ) );
+                for (String root : localCompileSourceRoots) {
+                    File sroot = new File(root);
+                    if (sroot.exists()) {
+                        String sourceXref = constructXRefLocation(false);
+                        directories.add(new PmdFileInfo(localProject, sroot, sourceXref));
                     }
                 }
-                if ( includeTests )
-                {
+                if (includeTests) {
                     List<String> localTestCompileSourceRoots = localProject.getTestCompileSourceRoots();
-                    for ( String root : localTestCompileSourceRoots )
-                    {
-                        File sroot = new File( root );
-                        if ( sroot.exists() )
-                        {
-                            String testXref = constructXRefLocation( true );
-                            directories.add( new PmdFileInfo( localProject, sroot, testXref ) );
+                    for (String root : localTestCompileSourceRoots) {
+                        File sroot = new File(root);
+                        if (sroot.exists()) {
+                            String testXref = constructXRefLocation(true);
+                            directories.add(new PmdFileInfo(localProject, sroot, testXref));
                         }
                     }
                 }
             }
-
         }
 
         String excluding = getExcludes();
-        getLog().debug( "Exclusions: " + excluding );
+        getLog().debug("Exclusions: " + excluding);
         String including = getIncludes();
-        getLog().debug( "Inclusions: " + including );
+        getLog().debug("Inclusions: " + including);
 
         Map<File, PmdFileInfo> files = new TreeMap<>();
 
-        for ( PmdFileInfo finfo : directories )
-        {
-            getLog().debug( "Searching for files in directory " + finfo.getSourceDirectory().toString() );
+        for (PmdFileInfo finfo : directories) {
+            getLog().debug("Searching for files in directory "
+                    + finfo.getSourceDirectory().toString());
             File sourceDirectory = finfo.getSourceDirectory();
-            if ( sourceDirectory.isDirectory() && !isDirectoryExcluded( excludeRootFiles, sourceDirectory ) )
-            {
-                List<File> newfiles = FileUtils.getFiles( sourceDirectory, including, excluding );
-                for ( File newfile : newfiles )
-                {
-                    files.put( newfile.getCanonicalFile(), finfo );
+            if (sourceDirectory.isDirectory() && !isDirectoryExcluded(excludeRootFiles, sourceDirectory)) {
+                List<File> newfiles = FileUtils.getFiles(sourceDirectory, including, excluding);
+                for (File newfile : newfiles) {
+                    files.put(newfile.getCanonicalFile(), finfo);
                 }
             }
         }
@@ -437,29 +398,22 @@ public abstract class AbstractPmdReport
         return files;
     }
 
-    private boolean isDirectoryExcluded( Collection<File> excludeRootFiles, File sourceDirectoryToCheck )
-    {
+    private boolean isDirectoryExcluded(Collection<File> excludeRootFiles, File sourceDirectoryToCheck) {
         boolean returnVal = false;
-        for ( File excludeDir : excludeRootFiles )
-        {
-            try
-            {
-                if ( sourceDirectoryToCheck
-                    .getCanonicalFile()
-                    .toPath()
-                    .startsWith( excludeDir.getCanonicalFile().toPath() ) )
-                {
-                    getLog().debug( "Directory " + sourceDirectoryToCheck.getAbsolutePath()
-                                        + " has been excluded as it matches excludeRoot "
-                                        + excludeDir.getAbsolutePath() );
+        for (File excludeDir : excludeRootFiles) {
+            try {
+                if (sourceDirectoryToCheck
+                        .getCanonicalFile()
+                        .toPath()
+                        .startsWith(excludeDir.getCanonicalFile().toPath())) {
+                    getLog().debug("Directory " + sourceDirectoryToCheck.getAbsolutePath()
+                            + " has been excluded as it matches excludeRoot "
+                            + excludeDir.getAbsolutePath());
                     returnVal = true;
                     break;
                 }
-            }
-            catch ( IOException e )
-            {
-                getLog().warn( "Error while checking " + sourceDirectoryToCheck
-                               + " whether it should be excluded.", e );
+            } catch (IOException e) {
+                getLog().warn("Error while checking " + sourceDirectoryToCheck + " whether it should be excluded.", e);
             }
         }
         return returnVal;
@@ -470,18 +424,15 @@ public abstract class AbstractPmdReport
      *
      * @return The comma separated list of effective include patterns, never <code>null</code>.
      */
-    private String getIncludes()
-    {
+    private String getIncludes() {
         Collection<String> patterns = new LinkedHashSet<>();
-        if ( includes != null )
-        {
-            patterns.addAll( includes );
+        if (includes != null) {
+            patterns.addAll(includes);
         }
-        if ( patterns.isEmpty() )
-        {
-            patterns.add( "**/*.java" );
+        if (patterns.isEmpty()) {
+            patterns.add("**/*.java");
         }
-        return StringUtils.join( patterns.iterator(), "," );
+        return StringUtils.join(patterns.iterator(), ",");
     }
 
     /**
@@ -489,134 +440,111 @@ public abstract class AbstractPmdReport
      *
      * @return The comma separated list of effective exclude patterns, never <code>null</code>.
      */
-    private String getExcludes()
-    {
-        Collection<String> patterns = new LinkedHashSet<>( FileUtils.getDefaultExcludesAsList() );
-        if ( excludes != null )
-        {
-            patterns.addAll( excludes );
+    private String getExcludes() {
+        Collection<String> patterns = new LinkedHashSet<>(FileUtils.getDefaultExcludesAsList());
+        if (excludes != null) {
+            patterns.addAll(excludes);
         }
-        return StringUtils.join( patterns.iterator(), "," );
+        return StringUtils.join(patterns.iterator(), ",");
     }
 
-    protected boolean isXml()
-    {
-        return "xml".equals( format );
+    protected boolean isXml() {
+        return "xml".equals(format);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean canGenerateReport()
-    {
-        if ( aggregate && !project.isExecutionRoot() )
-        {
+    public boolean canGenerateReport() {
+        if (aggregate && !project.isExecutionRoot()) {
             return false;
         }
 
-        if ( !isAggregator() && "pom".equalsIgnoreCase( project.getPackaging() ) )
-        {
+        if (!isAggregator() && "pom".equalsIgnoreCase(project.getPackaging())) {
             return false;
         }
 
         // if format is XML, we need to output it even if the file list is empty
         // so the "check" goals can check for failures
-        if ( isXml() )
-        {
+        if (isXml()) {
             return true;
         }
-        try
-        {
+        try {
             filesToProcess = getFilesToProcess();
-            if ( filesToProcess.isEmpty() )
-            {
+            if (filesToProcess.isEmpty()) {
                 return false;
             }
-        }
-        catch ( IOException e )
-        {
-            getLog().error( e );
+        } catch (IOException e) {
+            getLog().error(e);
         }
         return true;
     }
 
-    protected String determineCurrentRootLogLevel()
-    {
-        String logLevel = System.getProperty( "org.slf4j.simpleLogger.defaultLogLevel" );
-        if ( logLevel == null )
-        {
-            logLevel = System.getProperty( "maven.logging.root.level" );
+    protected String determineCurrentRootLogLevel() {
+        String logLevel = System.getProperty("org.slf4j.simpleLogger.defaultLogLevel");
+        if (logLevel == null) {
+            logLevel = System.getProperty("maven.logging.root.level");
         }
-        if ( logLevel == null )
-        {
+        if (logLevel == null) {
             // TODO: logback level
             logLevel = "info";
         }
         return logLevel;
     }
 
-    static String getPmdVersion()
-    {
+    static String getPmdVersion() {
         return PMDVersion.VERSION;
     }
 
-    //TODO remove the part with ToolchainManager lookup once we depend on
-    //3.0.9 (have it as prerequisite). Define as regular component field then.
-    protected final Toolchain getToolchain()
-    {
+    // TODO remove the part with ToolchainManager lookup once we depend on
+    // 3.0.9 (have it as prerequisite). Define as regular component field then.
+    protected final Toolchain getToolchain() {
         Toolchain tc = null;
 
-        if ( jdkToolchain != null )
-        {
+        if (jdkToolchain != null) {
             // Maven 3.3.1 has plugin execution scoped Toolchain Support
-            try
-            {
-                Method getToolchainsMethod =
-                    toolchainManager.getClass().getMethod( "getToolchains", MavenSession.class, String.class,
-                                                           Map.class );
+            try {
+                Method getToolchainsMethod = toolchainManager
+                        .getClass()
+                        .getMethod("getToolchains", MavenSession.class, String.class, Map.class);
 
-                @SuppressWarnings( "unchecked" )
+                @SuppressWarnings("unchecked")
                 List<Toolchain> tcs =
-                    (List<Toolchain>) getToolchainsMethod.invoke( toolchainManager, session, "jdk",
-                                                                  jdkToolchain );
+                        (List<Toolchain>) getToolchainsMethod.invoke(toolchainManager, session, "jdk", jdkToolchain);
 
-                if ( tcs != null && !tcs.isEmpty() )
-                {
-                    tc = tcs.get( 0 );
+                if (tcs != null && !tcs.isEmpty()) {
+                    tc = tcs.get(0);
                 }
-            }
-            catch ( NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e )
-            {
+            } catch (NoSuchMethodException
+                    | SecurityException
+                    | IllegalAccessException
+                    | IllegalArgumentException
+                    | InvocationTargetException e) {
                 // ignore
             }
         }
 
-        if ( tc == null )
-        {
-            tc = toolchainManager.getToolchainFromBuildContext( "jdk", session );
+        if (tc == null) {
+            tc = toolchainManager.getToolchainFromBuildContext("jdk", session);
         }
 
         return tc;
     }
 
-    protected boolean isAggregator()
-    {
+    protected boolean isAggregator() {
         // returning here aggregate for backwards compatibility
         return aggregate;
     }
 
     // Note: same logic as in m-javadoc-p (MJAVADOC-134)
-    protected Collection<MavenProject> getAggregatedProjects()
-    {
+    protected Collection<MavenProject> getAggregatedProjects() {
         Map<Path, MavenProject> reactorProjectsMap = new HashMap<>();
-        for ( MavenProject reactorProject : this.reactorProjects )
-        {
-            reactorProjectsMap.put( reactorProject.getBasedir().toPath(), reactorProject );
+        for (MavenProject reactorProject : this.reactorProjects) {
+            reactorProjectsMap.put(reactorProject.getBasedir().toPath(), reactorProject);
         }
 
-        return modulesForAggregatedProject( project, reactorProjectsMap );
+        return modulesForAggregatedProject(project, reactorProjectsMap);
     }
 
     /**
@@ -626,33 +554,28 @@ public abstract class AbstractPmdReport
      * @param reactorProjectsMap map of (still) available reactor projects
      * @throws MavenReportException if any
      */
-    private Set<MavenProject> modulesForAggregatedProject( MavenProject aggregatedProject,
-                                                           Map<Path, MavenProject> reactorProjectsMap )
-    {
+    private Set<MavenProject> modulesForAggregatedProject(
+            MavenProject aggregatedProject, Map<Path, MavenProject> reactorProjectsMap) {
         // Maven does not supply an easy way to get the projects representing
         // the modules of a project. So we will get the paths to the base
         // directories of the modules from the project and compare with the
         // base directories of the projects in the reactor.
 
-        if ( aggregatedProject.getModules().isEmpty() )
-        {
-            return Collections.singleton( aggregatedProject );
+        if (aggregatedProject.getModules().isEmpty()) {
+            return Collections.singleton(aggregatedProject);
         }
 
         List<Path> modulePaths = new LinkedList<Path>();
-        for ( String module :  aggregatedProject.getModules() )
-        {
-            modulePaths.add( new File( aggregatedProject.getBasedir(), module ).toPath() );
+        for (String module : aggregatedProject.getModules()) {
+            modulePaths.add(new File(aggregatedProject.getBasedir(), module).toPath());
         }
 
         Set<MavenProject> aggregatedModules = new LinkedHashSet<>();
 
-        for ( Path modulePath : modulePaths )
-        {
-            MavenProject module = reactorProjectsMap.remove( modulePath );
-            if ( module != null )
-            {
-                aggregatedModules.addAll( modulesForAggregatedProject( module, reactorProjectsMap ) );
+        for (Path modulePath : modulePaths) {
+            MavenProject module = reactorProjectsMap.remove(modulePath);
+            if (module != null) {
+                aggregatedModules.addAll(modulesForAggregatedProject(module, reactorProjectsMap));
             }
         }
 

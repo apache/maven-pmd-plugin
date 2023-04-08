@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +29,7 @@ import java.util.List;
  * @author Robert Scholte
  * @since 2.7
  */
-public class ViolationDetails<D>
-{
+public class ViolationDetails<D> {
     private List<D> warningDetails = new ArrayList<>();
 
     private List<D> failureDetails = new ArrayList<>();
@@ -39,32 +37,28 @@ public class ViolationDetails<D>
     /**
      * @return the warningDetails, never {@code null}
      */
-    public List<D> getWarningDetails()
-    {
+    public List<D> getWarningDetails() {
         return warningDetails;
     }
 
     /**
      * @param warningDetails the warningDetails to set
      */
-    public void setWarningDetails( List<D> warningDetails )
-    {
+    public void setWarningDetails(List<D> warningDetails) {
         this.warningDetails = warningDetails;
     }
 
     /**
      * @return the failureDetails, never {@code null}
      */
-    public List<D> getFailureDetails()
-    {
+    public List<D> getFailureDetails() {
         return failureDetails;
     }
 
     /**
      * @param failureDetails the failureDetails to set
      */
-    public void setFailureDetails( List<D> failureDetails )
-    {
+    public void setFailureDetails(List<D> failureDetails) {
         this.failureDetails = failureDetails;
     }
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -26,15 +25,14 @@ import org.apache.maven.plugin.MojoExecutionException;
  * or {@link org.apache.maven.plugins.pmd.model.Duplication}.
  * @author Andreas Dangel
  */
-public interface ExcludeFromFile<D>
-{
+public interface ExcludeFromFile<D> {
     /**
      * Loads the exclude definitions from the given file.
      *
      * @param excludeFromFailureFile the path to the properties file
      * @throws MojoExecutionException if the properties file couldn't be loaded
      */
-    void loadExcludeFromFailuresData( String excludeFromFailureFile ) throws MojoExecutionException;
+    void loadExcludeFromFailuresData(String excludeFromFailureFile) throws MojoExecutionException;
 
     /**
      * Determines how many exclusions are considered.
@@ -49,6 +47,5 @@ public interface ExcludeFromFile<D>
      * @param errorDetail the violation to check
      * @return <code>true</code> if the violation should be excluded, <code>false</code> otherwise.
      */
-    boolean isExcludedFromFailure( D errorDetail );
-
+    boolean isExcludedFromFailure(D errorDetail);
 }

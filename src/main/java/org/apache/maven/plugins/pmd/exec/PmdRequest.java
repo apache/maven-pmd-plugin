@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd.exec;
 
 import java.io.File;
 import java.io.Serializable;
@@ -28,13 +27,12 @@ import java.util.List;
 /**
  * Data object to store all configuration options needed to execute PMD
  * as a separate process.
- * 
+ *
  * <p>This class is intended to be serialized and read back.
- * 
+ *
  * <p>Some properties might be optional and can be <code>null</code>.
  */
-public class PmdRequest implements Serializable
-{
+public class PmdRequest implements Serializable {
     private static final long serialVersionUID = -6324416880563476455L;
 
     private String javaExecutable;
@@ -67,223 +65,172 @@ public class PmdRequest implements Serializable
      * @param language the language
      * @param targetJdk the language version, optional, can be <code>null</code>
      */
-    public void setLanguageAndVersion( String language, String targetJdk )
-    {
-        if ( "java".equals( language ) || null == language )
-        {
+    public void setLanguageAndVersion(String language, String targetJdk) {
+        if ("java".equals(language) || null == language) {
             this.language = "java";
             this.languageVersion = targetJdk;
-        }
-        else if ( "javascript".equals( language ) || "ecmascript".equals( language ) )
-        {
+        } else if ("javascript".equals(language) || "ecmascript".equals(language)) {
             this.language = "ecmascript";
-        }
-        else if ( "jsp".equals( language ) )
-        {
+        } else if ("jsp".equals(language)) {
             this.language = "jsp";
-        }
-        else
-        {
+        } else {
             this.language = language;
         }
     }
 
-    public void setJavaExecutable( String javaExecutable )
-    {
+    public void setJavaExecutable(String javaExecutable) {
         this.javaExecutable = javaExecutable;
     }
 
-    public void setMinimumPriority( int minimumPriority )
-    {
+    public void setMinimumPriority(int minimumPriority) {
         this.minimumPriority = minimumPriority;
     }
 
-    public void setAuxClasspath( String auxClasspath )
-    {
+    public void setAuxClasspath(String auxClasspath) {
         this.auxClasspath = auxClasspath;
     }
 
-    public void setSuppressMarker( String suppressMarker )
-    {
+    public void setSuppressMarker(String suppressMarker) {
         this.suppressMarker = suppressMarker;
     }
 
-    public void setAnalysisCacheLocation( String analysisCacheLocation )
-    {
+    public void setAnalysisCacheLocation(String analysisCacheLocation) {
         this.analysisCacheLocation = analysisCacheLocation;
     }
 
-    public void setRulesets( List<String> rulesets )
-    {
+    public void setRulesets(List<String> rulesets) {
         this.rulesets = rulesets;
     }
 
-    public void setSourceEncoding( String sourceEncoding )
-    {
+    public void setSourceEncoding(String sourceEncoding) {
         this.sourceEncoding = sourceEncoding;
     }
 
-    public void addFiles( Collection<File> files )
-    {
-        this.files.addAll( files );
+    public void addFiles(Collection<File> files) {
+        this.files.addAll(files);
     }
 
-    public void setBenchmarkOutputLocation( String benchmarkOutputLocation )
-    {
+    public void setBenchmarkOutputLocation(String benchmarkOutputLocation) {
         this.benchmarkOutputLocation = benchmarkOutputLocation;
     }
 
-    public void setTargetDirectory( String targetDirectory )
-    {
+    public void setTargetDirectory(String targetDirectory) {
         this.targetDirectory = targetDirectory;
     }
 
-    public void setOutputEncoding( String outputEncoding )
-    {
+    public void setOutputEncoding(String outputEncoding) {
         this.outputEncoding = outputEncoding;
     }
 
-    public void setFormat( String format )
-    {
+    public void setFormat(String format) {
         this.format = format;
     }
 
-    public void setShowPmdLog( boolean showPmdLog )
-    {
+    public void setShowPmdLog(boolean showPmdLog) {
         this.showPmdLog = showPmdLog;
     }
 
-    public void setLogLevel( String logLevel )
-    {
+    public void setLogLevel(String logLevel) {
         this.logLevel = logLevel;
     }
 
-    public void setSkipPmdError( boolean skipPmdError )
-    {
+    public void setSkipPmdError(boolean skipPmdError) {
         this.skipPmdError = skipPmdError;
     }
 
-    public void setIncludeXmlInSite( boolean includeXmlInSite )
-    {
+    public void setIncludeXmlInSite(boolean includeXmlInSite) {
         this.includeXmlInSite = includeXmlInSite;
     }
 
-    public void setReportOutputDirectory( String reportOutputDirectory )
-    {
+    public void setReportOutputDirectory(String reportOutputDirectory) {
         this.reportOutputDirectory = reportOutputDirectory;
     }
 
-    public void setExcludeFromFailureFile( String excludeFromFailureFile )
-    {
+    public void setExcludeFromFailureFile(String excludeFromFailureFile) {
         this.excludeFromFailureFile = excludeFromFailureFile;
     }
 
-
-
-
-
-    public String getJavaExecutable()
-    {
+    public String getJavaExecutable() {
         return javaExecutable;
     }
 
-    public String getLanguage()
-    {
+    public String getLanguage() {
         return language;
     }
 
-    public String getLanguageVersion()
-    {
+    public String getLanguageVersion() {
         return languageVersion;
     }
 
-    public int getMinimumPriority()
-    {
+    public int getMinimumPriority() {
         return minimumPriority;
     }
 
-    public String getAuxClasspath()
-    {
+    public String getAuxClasspath() {
         return auxClasspath;
     }
 
-    public String getSuppressMarker()
-    {
+    public String getSuppressMarker() {
         return suppressMarker;
     }
 
-    public String getAnalysisCacheLocation()
-    {
+    public String getAnalysisCacheLocation() {
         return analysisCacheLocation;
     }
 
-    public List<String> getRulesets()
-    {
+    public List<String> getRulesets() {
         return rulesets;
     }
 
-    public String getSourceEncoding()
-    {
+    public String getSourceEncoding() {
         return sourceEncoding;
     }
 
-    public List<File> getFiles()
-    {
+    public List<File> getFiles() {
         return files;
     }
 
-    public String getBenchmarkOutputLocation()
-    {
+    public String getBenchmarkOutputLocation() {
         return benchmarkOutputLocation;
     }
 
-    public String getTargetDirectory()
-    {
+    public String getTargetDirectory() {
         return targetDirectory;
     }
 
-    public String getOutputEncoding()
-    {
+    public String getOutputEncoding() {
         return outputEncoding;
     }
 
-    public String getFormat()
-    {
+    public String getFormat() {
         return format;
     }
 
-    public boolean isShowPmdLog()
-    {
+    public boolean isShowPmdLog() {
         return showPmdLog;
     }
 
-    public String getLogLevel()
-    {
+    public String getLogLevel() {
         return logLevel;
     }
 
-    public boolean isDebugEnabled()
-    {
-        return "debug".equals( logLevel );
+    public boolean isDebugEnabled() {
+        return "debug".equals(logLevel);
     }
 
-    public boolean isSkipPmdError()
-    {
+    public boolean isSkipPmdError() {
         return skipPmdError;
     }
 
-    public boolean isIncludeXmlInSite()
-    {
+    public boolean isIncludeXmlInSite() {
         return includeXmlInSite;
     }
 
-    public String getReportOutputDirectory()
-    {
+    public String getReportOutputDirectory() {
         return reportOutputDirectory;
     }
 
-    public String getExcludeFromFailureFile()
-    {
+    public String getExcludeFromFailureFile() {
         return excludeFromFailureFile;
     }
 }

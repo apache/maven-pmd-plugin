@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.pmd;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.pmd;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.pmd;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -25,6 +24,8 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import net.sourceforge.pmd.cpd.JavaTokenizer;
+import net.sourceforge.pmd.cpd.renderer.CPDRenderer;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.pmd.exec.CpdExecutor;
@@ -32,9 +33,6 @@ import org.apache.maven.plugins.pmd.exec.CpdRequest;
 import org.apache.maven.plugins.pmd.exec.CpdResult;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.toolchain.Toolchain;
-
-import net.sourceforge.pmd.cpd.JavaTokenizer;
-import net.sourceforge.pmd.cpd.renderer.CPDRenderer;
 
 /**
  * Creates a report for PMD's Copy/Paste Detector (CPD) tool.
@@ -47,23 +45,21 @@ import net.sourceforge.pmd.cpd.renderer.CPDRenderer;
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name = "cpd", threadSafe = true )
-public class CpdReport
-    extends AbstractPmdReport
-{
+@Mojo(name = "cpd", threadSafe = true)
+public class CpdReport extends AbstractPmdReport {
     /**
      * The programming language to be analyzed by CPD. Valid values are currently <code>java</code>,
      * <code>javascript</code> or <code>jsp</code>.
      *
      * @since 3.5
      */
-    @Parameter( defaultValue = "java" )
+    @Parameter(defaultValue = "java")
     private String language;
 
     /**
      * The minimum number of tokens that need to be duplicated before it causes a violation.
      */
-    @Parameter( property = "minimumTokens", defaultValue = "100" )
+    @Parameter(property = "minimumTokens", defaultValue = "100")
     private int minimumTokens;
 
     /**
@@ -71,7 +67,7 @@ public class CpdReport
      *
      * @since 2.1
      */
-    @Parameter( property = "cpd.skip", defaultValue = "false" )
+    @Parameter(property = "cpd.skip", defaultValue = "false")
     private boolean skip;
 
     /**
@@ -81,7 +77,7 @@ public class CpdReport
      *
      * @since 2.5
      */
-    @Parameter( property = "cpd.ignoreLiterals", defaultValue = "false" )
+    @Parameter(property = "cpd.ignoreLiterals", defaultValue = "false")
     private boolean ignoreLiterals;
 
     /**
@@ -89,7 +85,7 @@ public class CpdReport
      *
      * @since 2.5
      */
-    @Parameter( property = "cpd.ignoreIdentifiers", defaultValue = "false" )
+    @Parameter(property = "cpd.ignoreIdentifiers", defaultValue = "false")
     private boolean ignoreIdentifiers;
 
     /**
@@ -97,7 +93,7 @@ public class CpdReport
      *
      * @since 3.11.0
      */
-    @Parameter( property = "cpd.ignoreAnnotations", defaultValue = "false" )
+    @Parameter(property = "cpd.ignoreAnnotations", defaultValue = "false")
     private boolean ignoreAnnotations;
 
     /**
@@ -110,154 +106,123 @@ public class CpdReport
     /**
      * {@inheritDoc}
      */
-    public String getName( Locale locale )
-    {
-        return getBundle( locale ).getString( "report.cpd.name" );
+    public String getName(Locale locale) {
+        return getBundle(locale).getString("report.cpd.name");
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getDescription( Locale locale )
-    {
-        return getBundle( locale ).getString( "report.cpd.description" );
+    public String getDescription(Locale locale) {
+        return getBundle(locale).getString("report.cpd.description");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void executeReport( Locale locale )
-        throws MavenReportException
-    {
+    public void executeReport(Locale locale) throws MavenReportException {
         ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
-        try
-        {
-            Thread.currentThread().setContextClassLoader( this.getClass().getClassLoader() );
+        try {
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
-            generateMavenSiteReport( locale );
-        }
-        finally
-        {
-            Thread.currentThread().setContextClassLoader( origLoader );
+            generateMavenSiteReport(locale);
+        } finally {
+            Thread.currentThread().setContextClassLoader(origLoader);
         }
     }
 
     @Override
-    public boolean canGenerateReport()
-    {
-        if ( skip )
-        {
-            getLog().info( "Skipping CPD execution" );
+    public boolean canGenerateReport() {
+        if (skip) {
+            getLog().info("Skipping CPD execution");
             return false;
         }
 
         boolean result = super.canGenerateReport();
-        if ( result )
-        {
-            try
-            {
+        if (result) {
+            try {
                 executeCpd();
-                if ( skipEmptyReport )
-                {
+                if (skipEmptyReport) {
                     result = cpdResult.hasDuplications();
-                    if ( !result )
-                    {
-                        getLog().debug( "Skipping report since skipEmptyReport is true and there are no CPD issues." );
+                    if (!result) {
+                        getLog().debug("Skipping report since skipEmptyReport is true and there are no CPD issues.");
                     }
                 }
-            }
-            catch ( MavenReportException e )
-            {
-                throw new RuntimeException( e );
+            } catch (MavenReportException e) {
+                throw new RuntimeException(e);
             }
         }
         return result;
     }
 
-    private void executeCpd()
-        throws MavenReportException
-    {
-        if ( cpdResult != null )
-        {
+    private void executeCpd() throws MavenReportException {
+        if (cpdResult != null) {
             // CPD has already been run
-            getLog().debug( "CPD has already been run - skipping redundant execution." );
+            getLog().debug("CPD has already been run - skipping redundant execution.");
             return;
         }
 
         Properties languageProperties = new Properties();
-        if ( ignoreLiterals )
-        {
-            languageProperties.setProperty( JavaTokenizer.IGNORE_LITERALS, "true" );
+        if (ignoreLiterals) {
+            languageProperties.setProperty(JavaTokenizer.IGNORE_LITERALS, "true");
         }
-        if ( ignoreIdentifiers )
-        {
-            languageProperties.setProperty( JavaTokenizer.IGNORE_IDENTIFIERS, "true" );
+        if (ignoreIdentifiers) {
+            languageProperties.setProperty(JavaTokenizer.IGNORE_IDENTIFIERS, "true");
         }
-        if ( ignoreAnnotations )
-        {
-            languageProperties.setProperty( JavaTokenizer.IGNORE_ANNOTATIONS, "true" );
+        if (ignoreAnnotations) {
+            languageProperties.setProperty(JavaTokenizer.IGNORE_ANNOTATIONS, "true");
         }
-        try
-        {
+        try {
             filesToProcess = getFilesToProcess();
 
             CpdRequest request = new CpdRequest();
-            request.setMinimumTokens( minimumTokens );
-            request.setLanguage( language );
-            request.setLanguageProperties( languageProperties );
-            request.setSourceEncoding( getInputEncoding() );
-            request.addFiles( filesToProcess.keySet() );
+            request.setMinimumTokens(minimumTokens);
+            request.setLanguage(language);
+            request.setLanguageProperties(languageProperties);
+            request.setSourceEncoding(getInputEncoding());
+            request.addFiles(filesToProcess.keySet());
 
-            request.setShowPmdLog( showPmdLog );
-            request.setLogLevel( determineCurrentRootLogLevel() );
+            request.setShowPmdLog(showPmdLog);
+            request.setLogLevel(determineCurrentRootLogLevel());
 
-            request.setExcludeFromFailureFile( excludeFromFailureFile );
-            request.setTargetDirectory( targetDirectory.getAbsolutePath() );
-            request.setOutputEncoding( getOutputEncoding() );
-            request.setFormat( format );
-            request.setIncludeXmlInSite( includeXmlInSite );
-            request.setReportOutputDirectory( getReportOutputDirectory().getAbsolutePath() );
+            request.setExcludeFromFailureFile(excludeFromFailureFile);
+            request.setTargetDirectory(targetDirectory.getAbsolutePath());
+            request.setOutputEncoding(getOutputEncoding());
+            request.setFormat(format);
+            request.setIncludeXmlInSite(includeXmlInSite);
+            request.setReportOutputDirectory(getReportOutputDirectory().getAbsolutePath());
 
             Toolchain tc = getToolchain();
-            if ( tc != null )
-            {
-                getLog().info( "Toolchain in maven-pmd-plugin: " + tc );
-                String javaExecutable = tc.findTool( "java" ); //NOI18N
-                request.setJavaExecutable( javaExecutable );
+            if (tc != null) {
+                getLog().info("Toolchain in maven-pmd-plugin: " + tc);
+                String javaExecutable = tc.findTool("java"); // NOI18N
+                request.setJavaExecutable(javaExecutable);
             }
 
-            getLog().info( "PMD version: " + AbstractPmdReport.getPmdVersion() );
-            cpdResult = CpdExecutor.execute( request );
-        }
-        catch ( UnsupportedEncodingException e )
-        {
-            throw new MavenReportException( "Encoding '" + getInputEncoding() + "' is not supported.", e );
-        }
-        catch ( IOException e )
-        {
-            throw new MavenReportException( e.getMessage(), e );
+            getLog().info("PMD version: " + AbstractPmdReport.getPmdVersion());
+            cpdResult = CpdExecutor.execute(request);
+        } catch (UnsupportedEncodingException e) {
+            throw new MavenReportException("Encoding '" + getInputEncoding() + "' is not supported.", e);
+        } catch (IOException e) {
+            throw new MavenReportException(e.getMessage(), e);
         }
     }
 
-    private void generateMavenSiteReport( Locale locale )
-    {
-        CpdReportGenerator gen = new CpdReportGenerator( getSink(), filesToProcess, getBundle( locale ),
-                isAggregator() );
-        gen.generate( cpdResult.getDuplications() );
+    private void generateMavenSiteReport(Locale locale) {
+        CpdReportGenerator gen = new CpdReportGenerator(getSink(), filesToProcess, getBundle(locale), isAggregator());
+        gen.generate(cpdResult.getDuplications());
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getOutputName()
-    {
+    public String getOutputName() {
         return "cpd";
     }
 
-    private static ResourceBundle getBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "cpd-report", locale, CpdReport.class.getClassLoader() );
+    private static ResourceBundle getBundle(Locale locale) {
+        return ResourceBundle.getBundle("cpd-report", locale, CpdReport.class.getClassLoader());
     }
 
     /**
@@ -268,8 +233,7 @@ public class CpdReport
      * @deprecated Use {@link CpdExecutor#createRenderer(String, String)} instead.
      */
     @Deprecated
-    public CPDRenderer createRenderer() throws MavenReportException
-    {
-        return CpdExecutor.createRenderer( format, getOutputEncoding() );
+    public CPDRenderer createRenderer() throws MavenReportException {
+        return CpdExecutor.createRenderer(format, getOutputEncoding());
     }
 }
