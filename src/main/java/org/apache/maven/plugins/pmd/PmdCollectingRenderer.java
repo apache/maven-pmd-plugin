@@ -26,13 +26,12 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.pmd.Report;
-
-import org.apache.commons.lang3.StringUtils;
 import net.sourceforge.pmd.Report.ProcessingError;
 import net.sourceforge.pmd.Report.SuppressedViolation;
 import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.renderers.AbstractRenderer;
 import net.sourceforge.pmd.util.datasource.DataSource;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
