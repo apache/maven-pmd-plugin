@@ -35,7 +35,6 @@ import org.apache.maven.plugins.pmd.model.PmdErrorDetail;
 import org.apache.maven.plugins.pmd.model.PmdFile;
 import org.apache.maven.plugins.pmd.model.Violation;
 import org.apache.maven.plugins.pmd.model.io.xpp3.PmdXpp3Reader;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -143,7 +142,7 @@ public class PmdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Violati
     private String getFilename(String fullpath, String pkg) {
         int index = fullpath.lastIndexOf(File.separatorChar);
 
-        while (StringUtils.isNotEmpty(pkg)) {
+        while ((pkg != null && !pkg.isEmpty())) {
             index = fullpath.substring(0, index).lastIndexOf(File.separatorChar);
 
             int dot = pkg.indexOf('.');

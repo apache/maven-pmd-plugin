@@ -29,7 +29,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import net.sourceforge.pmd.RuleViolation;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.model.Violation;
 
@@ -45,7 +44,7 @@ public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation> {
 
     @Override
     public void loadExcludeFromFailuresData(final String excludeFromFailureFile) throws MojoExecutionException {
-        if (StringUtils.isEmpty(excludeFromFailureFile)) {
+        if (excludeFromFailureFile == null || excludeFromFailureFile.isEmpty()) {
             return;
         }
 
@@ -107,9 +106,9 @@ public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation> {
     private String extractClassName(String packageName, String className, String fullPath) {
         // for some reason, some violations don't contain the package name, so we have to guess the full class name
         // this looks like a bug in PMD - at least for UnusedImport rule.
-        if (StringUtils.isNotEmpty(packageName) && StringUtils.isNotEmpty(className)) {
+        if ((packageName != null && !packageName.isEmpty()) && (className != null && !className.isEmpty())) {
             return packageName + "." + className;
-        } else if (StringUtils.isNotEmpty(packageName)) {
+        } else if (packageName != null && !packageName.isEmpty()) {
             String fileName = fullPath;
             fileName = fileName.substring(fileName.lastIndexOf(File.separatorChar) + 1);
             fileName = fileName.substring(0, fileName.length() - 5);
