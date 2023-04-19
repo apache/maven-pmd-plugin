@@ -142,7 +142,7 @@ public class PmdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Violati
     private String getFilename(String fullpath, String pkg) {
         int index = fullpath.lastIndexOf(File.separatorChar);
 
-        while ((pkg != null && !pkg.isEmpty())) {
+        while (pkg != null && !pkg.isEmpty()) {
             index = fullpath.substring(0, index).lastIndexOf(File.separatorChar);
 
             int dot = pkg.indexOf('.');

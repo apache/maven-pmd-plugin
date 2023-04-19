@@ -106,7 +106,7 @@ public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation> {
     private String extractClassName(String packageName, String className, String fullPath) {
         // for some reason, some violations don't contain the package name, so we have to guess the full class name
         // this looks like a bug in PMD - at least for UnusedImport rule.
-        if ((packageName != null && !packageName.isEmpty()) && (className != null && !className.isEmpty())) {
+        if (packageName != null && !packageName.isEmpty() && className != null && !className.isEmpty()) {
             return packageName + "." + className;
         } else if (packageName != null && !packageName.isEmpty()) {
             String fileName = fullPath;
