@@ -275,7 +275,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
 
             String relativePath =
                     PathTool.getRelativePath(outputDirectory.getAbsolutePath(), xrefLoc.getAbsolutePath());
-            if (StringUtils.isEmpty(relativePath)) {
+            if (relativePath == null || relativePath.isEmpty()) {
                 relativePath = ".";
             }
             relativePath = relativePath + "/" + xrefLoc.getName();
