@@ -385,7 +385,7 @@ public class PmdReport extends AbstractPmdReport {
                 String set = rulesets[idx];
                 getLog().debug("Preparing ruleset: " + set);
                 String rulesetFilename = determineRulesetFilename(set);
-                File ruleset = locator.getResourceAsFile(rulesetFilename, getLocationTemp(set));
+                File ruleset = locator.getResourceAsFile(rulesetFilename, getLocationTemp(set, idx + 1));
                 if (null == ruleset) {
                     throw new MavenReportException("Could not resolve " + set);
                 }
@@ -449,9 +449,10 @@ public class PmdReport extends AbstractPmdReport {
      * Convenience method to get the location of the specified file name.
      *
      * @param name the name of the file whose location is to be resolved
+     * @param position position in the list of rulesets (1-based)
      * @return a String that contains the absolute file name of the file
      */
-    protected String getLocationTemp(String name) {
+    protected String getLocationTemp(String name, int position) {
         String loc = name;
         if (loc.indexOf('/') != -1) {
             loc = loc.substring(loc.lastIndexOf('/') + 1);
@@ -466,9 +467,10 @@ public class PmdReport extends AbstractPmdReport {
         // replace all occurrences of the following characters: ? : & = %
         loc = loc.replaceAll("[\\?\\:\\&\\=\\%]", "_");
 
-        if (!loc.endsWith(".xml")) {
-            loc = loc + ".xml";
+        if (loc.endsWith(".xml")) {
+            loc = loc.substring(0, loc.length() - 4);
         }
+        loc = String.format("%03d-%s.xml", position, loc);
 
         getLog().debug("Before: " + name + " After: " + loc);
         return loc;
