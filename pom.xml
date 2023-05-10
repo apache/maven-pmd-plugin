@@ -85,12 +85,12 @@ under the License.
     <doxiaVersion>1.12.0</doxiaVersion>
     <doxiaSitetoolsVersion>1.11.1</doxiaSitetoolsVersion>
     <javaVersion>8</javaVersion>
-    <!-- Because PMD 6.35.0+ requires Java 8 -->
     <pmdVersion>6.55.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
     <aetherVersion>1.0.0.v20140518</aetherVersion>
+    <compilerPluginVersion>3.11.0</compilerPluginVersion>
     <sitePluginVersion>3.12.1</sitePluginVersion>
-    <projectInfoReportsPluginVersion>3.4.1</projectInfoReportsPluginVersion>
+    <projectInfoReportsPluginVersion>3.4.3</projectInfoReportsPluginVersion>
     <jxrPluginVersion>3.3.0</jxrPluginVersion>
     <project.build.outputTimestamp>2023-01-06T22:00:33Z</project.build.outputTimestamp>
   </properties>
