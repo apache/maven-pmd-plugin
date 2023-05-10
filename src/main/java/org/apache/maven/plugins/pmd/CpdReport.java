@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 import net.sourceforge.pmd.cpd.JavaTokenizer;
 import net.sourceforge.pmd.cpd.renderer.CPDRenderer;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.pmd.exec.CpdExecutor;
@@ -33,6 +33,7 @@ import org.apache.maven.plugins.pmd.exec.CpdRequest;
 import org.apache.maven.plugins.pmd.exec.CpdResult;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.toolchain.Toolchain;
+import org.codehaus.plexus.i18n.I18N;
 
 /**
  * Creates a report for PMD's Copy/Paste Detector (CPD) tool.
@@ -97,24 +98,35 @@ public class CpdReport extends AbstractPmdReport {
     private boolean ignoreAnnotations;
 
     /**
+     * Internationalization component
+     */
+    @Component
+    private I18N i18n;
+
+    /**
      * Contains the result of the last CPD execution.
      * It might be <code>null</code> which means, that CPD
      * has not been executed yet.
      */
     private CpdResult cpdResult;
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getName(Locale locale) {
-        return getBundle(locale).getString("report.cpd.name");
+        return getI18nString(locale, "name");
+    }
+
+    /** {@inheritDoc} */
+    public String getDescription(Locale locale) {
+        return getI18nString(locale, "description");
     }
 
     /**
-     * {@inheritDoc}
+     * @param locale The locale
+     * @param key The key to search for
+     * @return The text appropriate for the locale.
      */
-    public String getDescription(Locale locale) {
-        return getBundle(locale).getString("report.cpd.description");
+    protected String getI18nString(Locale locale, String key) {
+        return i18n.getString("cpd-report", locale, "report.cpd." + key);
     }
 
     /**
@@ -126,7 +138,9 @@ public class CpdReport extends AbstractPmdReport {
         try {
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
-            generateMavenSiteReport(locale);
+            CpdReportRenderer r = new CpdReportRenderer(
+                    getSink(), i18n, locale, filesToProcess, cpdResult.getDuplications(), isAggregator());
+            r.render();
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }
@@ -209,20 +223,11 @@ public class CpdReport extends AbstractPmdReport {
         }
     }
 
-    private void generateMavenSiteReport(Locale locale) {
-        CpdReportGenerator gen = new CpdReportGenerator(getSink(), filesToProcess, getBundle(locale), isAggregator());
-        gen.generate(cpdResult.getDuplications());
-    }
-
     /**
      * {@inheritDoc}
      */
     public String getOutputName() {
         return "cpd";
-    }
-
-    private static ResourceBundle getBundle(Locale locale) {
-        return ResourceBundle.getBundle("cpd-report", locale, CpdReport.class.getClassLoader());
     }
 
     /**

@@ -86,9 +86,9 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         assertTrue(str.contains("pmd_rules_java_bestpractices.html#unusedprivatefield\">UnusedPrivateField</a>"));
 
         // there should be the section Violations By Priority
-        assertTrue(str.contains("Violations By Priority</h2>"));
-        assertTrue(str.contains("Priority 3</h3>"));
-        assertTrue(str.contains("Priority 4</h3>"));
+        assertTrue(str.contains("Violations By Priority</h3>"));
+        assertTrue(str.contains("Priority 3</h4>"));
+        assertTrue(str.contains("Priority 4</h4>"));
         // the file App.java is mentioned 3 times: in prio 3, in prio 4 and in the files section
         assertEquals(3, StringUtils.countMatches(str, "def/configuration/App.java"));
 
@@ -605,7 +605,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         String str = readFile(generatedReport);
 
         // custom rule without link
-        assertEquals(2, StringUtils.countMatches(str, "<td>CustomRule</td>"));
+        assertEquals(2, StringUtils.countMatches(str, "<td align=\"left\">CustomRule</td>"));
         // standard rule with link
         assertEquals(4, StringUtils.countMatches(str, "\">UnusedPrivateField</a></td>"));
     }

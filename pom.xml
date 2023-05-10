@@ -86,6 +86,7 @@ under the License.
     <pmdVersion>6.55.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
     <aetherVersion>1.0.0.v20140518</aetherVersion>
+    <doxiaVersion>1.12.0</doxiaVersion>
     <compilerPluginVersion>3.11.0</compilerPluginVersion>
     <sitePluginVersion>3.12.1</sitePluginVersion>
     <projectInfoReportsPluginVersion>3.4.3</projectInfoReportsPluginVersion>
@@ -139,6 +140,12 @@ under the License.
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
       <version>3.3.2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.sonatype.sisu</groupId>
+          <artifactId>sisu-inject-plexus</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -190,7 +197,24 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
-      <version>1.12.0</version>
+      <version>${doxiaVersion}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-core</artifactId>
+      <version>${doxiaVersion}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
@@ -206,6 +230,14 @@ under the License.
         <exclusion>
           <groupId>org.apache.httpcomponents</groupId>
           <artifactId>httpclient</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -227,6 +259,17 @@ under the License.
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-i18n</artifactId>
+      <version>1.0-beta-10</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
     <!-- test -->
     <dependency>
@@ -240,6 +283,12 @@ under the License.
       <artifactId>maven-plugin-testing-harness</artifactId>
       <version>3.3.0</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.github.tomakehurst</groupId>

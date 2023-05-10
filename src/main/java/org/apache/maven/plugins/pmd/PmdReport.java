@@ -24,10 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 import net.sourceforge.pmd.renderers.Renderer;
-import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -46,6 +44,7 @@ import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResult;
 import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolver;
 import org.apache.maven.toolchain.Toolchain;
+import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
@@ -238,26 +237,35 @@ public class PmdReport extends AbstractPmdReport {
     private DependencyResolver dependencyResolver;
 
     /**
+     * Internationalization component
+     */
+    @Component
+    private I18N i18n;
+
+    /**
      * Contains the result of the last PMD execution.
      * It might be <code>null</code> which means, that PMD
      * has not been executed yet.
      */
     private PmdResult pmdResult;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
+    /** {@inheritDoc} */
     public String getName(Locale locale) {
-        return getBundle(locale).getString("report.pmd.name");
+        return getI18nString(locale, "name");
+    }
+
+    /** {@inheritDoc} */
+    public String getDescription(Locale locale) {
+        return getI18nString(locale, "description");
     }
 
     /**
-     * {@inheritDoc}
+     * @param locale The locale
+     * @param key The key to search for
+     * @return The text appropriate for the locale.
      */
-    @Override
-    public String getDescription(Locale locale) {
-        return getBundle(locale).getString("report.pmd.description");
+    protected String getI18nString(Locale locale, String key) {
+        return i18n.getString("pmd-report", locale, "report.pmd." + key);
     }
 
     /**
@@ -280,7 +288,24 @@ public class PmdReport extends AbstractPmdReport {
         try {
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
-            generateMavenSiteReport(locale);
+            PmdReportRenderer r = new PmdReportRenderer(
+                    getLog(),
+                    getSink(),
+                    i18n,
+                    locale,
+                    filesToProcess,
+                    pmdResult.getViolations(),
+                    renderRuleViolationPriority,
+                    renderViolationsByPriority,
+                    isAggregator());
+            if (renderSuppressedViolations) {
+                r.setSuppressedViolations(pmdResult.getSuppressedViolations());
+            }
+            if (renderProcessingErrors) {
+                r.setProcessingErrors(pmdResult.getErrors());
+            }
+
+            r.render();
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }
@@ -422,29 +447,6 @@ public class PmdReport extends AbstractPmdReport {
         return result;
     }
 
-    private void generateMavenSiteReport(Locale locale) throws MavenReportException {
-        Sink sink = getSink();
-        PmdReportGenerator doxiaRenderer = new PmdReportGenerator(getLog(), sink, getBundle(locale), isAggregator());
-        doxiaRenderer.setRenderRuleViolationPriority(renderRuleViolationPriority);
-        doxiaRenderer.setRenderViolationsByPriority(renderViolationsByPriority);
-        doxiaRenderer.setFiles(filesToProcess);
-        doxiaRenderer.setViolations(pmdResult.getViolations());
-        if (renderSuppressedViolations) {
-            doxiaRenderer.setSuppressedViolations(pmdResult.getSuppressedViolations());
-        }
-        if (renderProcessingErrors) {
-            doxiaRenderer.setProcessingErrors(pmdResult.getErrors());
-        }
-
-        try {
-            doxiaRenderer.beginDocument();
-            doxiaRenderer.render();
-            doxiaRenderer.endDocument();
-        } catch (IOException e) {
-            getLog().warn("Failure creating the report: " + e.getLocalizedMessage(), e);
-        }
-    }
-
     /**
      * Convenience method to get the location of the specified file name.
      *
@@ -549,10 +551,6 @@ public class PmdReport extends AbstractPmdReport {
     @Override
     public String getOutputName() {
         return "pmd";
-    }
-
-    private static ResourceBundle getBundle(Locale locale) {
-        return ResourceBundle.getBundle("pmd-report", locale, PmdReport.class.getClassLoader());
     }
 
     /**

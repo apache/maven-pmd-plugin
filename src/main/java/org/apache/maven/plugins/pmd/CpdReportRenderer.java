@@ -18,15 +18,21 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import javax.swing.text.html.HTML.Attribute;
+
 import java.io.File;
-import java.util.List;
+import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.SinkEventAttributes;
+import org.apache.maven.doxia.sink.impl.SinkEventAttributeSet;
 import org.apache.maven.plugins.pmd.model.CpdFile;
 import org.apache.maven.plugins.pmd.model.Duplication;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReportRenderer;
+import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -35,66 +41,66 @@ import org.codehaus.plexus.util.StringUtils;
  * @author mperham
  * @version $Id$
  */
-public class CpdReportGenerator {
-    private Sink sink;
+public class CpdReportRenderer extends AbstractMavenReportRenderer {
+    private final I18N i18n;
 
-    private Map<File, PmdFileInfo> fileMap;
+    private final Locale locale;
 
-    private ResourceBundle bundle;
+    private final Map<File, PmdFileInfo> files;
 
-    private boolean aggregate;
+    private final Collection<Duplication> duplications;
 
-    public CpdReportGenerator(Sink sink, Map<File, PmdFileInfo> fileMap, ResourceBundle bundle, boolean aggregate) {
-        this.sink = sink;
-        this.fileMap = fileMap;
-        this.bundle = bundle;
+    private final boolean aggregate;
+
+    public CpdReportRenderer(
+            Sink sink,
+            I18N i18n,
+            Locale locale,
+            Map<File, PmdFileInfo> files,
+            Collection<Duplication> duplications,
+            boolean aggregate) {
+        super(sink);
+        this.i18n = i18n;
+        this.locale = locale;
+        this.files = files;
+        this.duplications = duplications;
         this.aggregate = aggregate;
     }
 
-    /**
-     * Method that returns the title of the CPD Report
-     *
-     * @return a String that contains the title
-     */
-    private String getTitle() {
-        return bundle.getString("report.cpd.title");
+    @Override
+    public String getTitle() {
+        return getI18nString("title");
     }
 
     /**
-     * Method that generates the start of the CPD report.
+     * @param key The key.
+     * @return The translated string.
      */
-    public void beginDocument() {
-        sink.head();
-        sink.title();
-        sink.text(getTitle());
-        sink.title_();
-        sink.head_();
+    private String getI18nString(String key) {
+        return i18n.getString("cpd-report", locale, "report.cpd." + key);
+    }
 
-        sink.body();
-
-        sink.section1();
-        sink.sectionTitle1();
-        sink.text(getTitle());
-        sink.sectionTitle1_();
+    @Override
+    protected void renderBody() {
+        startSection(getTitle());
 
         sink.paragraph();
-        sink.text(bundle.getString("report.cpd.cpdlink") + " ");
-        sink.link("https://pmd.github.io/latest/pmd_userdocs_cpd.html");
-        sink.text("CPD");
-        sink.link_();
+        sink.text(getI18nString("cpdlink") + " ");
+        link("https://pmd.github.io/latest/pmd_userdocs_cpd.html", "CPD");
         sink.text(" " + AbstractPmdReport.getPmdVersion() + ".");
         sink.paragraph_();
 
-        sink.section1_();
-
         // TODO overall summary
 
-        sink.section1();
-        sink.sectionTitle1();
-        sink.text(bundle.getString("report.cpd.dupes"));
-        sink.sectionTitle1_();
+        if (!duplications.isEmpty()) {
+            renderDuplications();
+        } else {
+            paragraph(getI18nString("noProblems"));
+        }
 
         // TODO files summary
+
+        endSection();
     }
 
     /**
@@ -104,7 +110,7 @@ public class CpdReportGenerator {
         // Get information for report generation
         String filename = duplicationMark.getPath();
         File file = new File(filename);
-        PmdFileInfo fileInfo = fileMap.get(file);
+        PmdFileInfo fileInfo = files.get(file);
         File sourceDirectory = fileInfo.getSourceDirectory();
         filename = StringUtils.substring(
                 filename, sourceDirectory.getAbsolutePath().length() + 1);
@@ -113,13 +119,9 @@ public class CpdReportGenerator {
         int line = duplicationMark.getLine();
 
         sink.tableRow();
-        sink.tableCell();
-        sink.text(filename);
-        sink.tableCell_();
+        tableCell(filename);
         if (aggregate) {
-            sink.tableCell();
-            sink.text(projectFile.getName());
-            sink.tableCell_();
+            tableCell(projectFile.getName());
         }
         sink.tableCell();
 
@@ -136,37 +138,19 @@ public class CpdReportGenerator {
         sink.tableRow_();
     }
 
-    /**
-     * Method that generates the contents of the CPD report
-     *
-     * @param duplications the found duplications
-     */
-    public void generate(List<Duplication> duplications) {
-        beginDocument();
-
-        if (duplications.isEmpty()) {
-            sink.paragraph();
-            sink.text(bundle.getString("report.cpd.noProblems"));
-            sink.paragraph_();
-        }
+    private void renderDuplications() {
+        startSection(getI18nString("dupes"));
 
         for (Duplication duplication : duplications) {
             String code = duplication.getCodefragment();
 
-            sink.table();
-            sink.tableRows(null, false);
+            startTable();
             sink.tableRow();
-            sink.tableHeaderCell();
-            sink.text(bundle.getString("report.cpd.column.file"));
-            sink.tableHeaderCell_();
+            tableHeaderCell(getI18nString("column.file"));
             if (aggregate) {
-                sink.tableHeaderCell();
-                sink.text(bundle.getString("report.cpd.column.project"));
-                sink.tableHeaderCell_();
+                tableHeaderCell(getI18nString("column.project"));
             }
-            sink.tableHeaderCell();
-            sink.text(bundle.getString("report.cpd.column.line"));
-            sink.tableHeaderCell_();
+            tableHeaderCell(getI18nString("column.line"));
             sink.tableRow_();
 
             // Iterating on every token entry
@@ -179,22 +163,17 @@ public class CpdReportGenerator {
 
             int colspan = 2;
             if (aggregate) {
-                ++colspan;
+                colspan = 3;
             }
-            // TODO Cleaner way to do this?
-            sink.rawText("<td colspan='" + colspan + "'>");
-            sink.verbatim(null);
-            sink.text(code);
-            sink.verbatim_();
-            sink.rawText("</td>");
+            SinkEventAttributes att = new SinkEventAttributeSet();
+            att.addAttribute(Attribute.COLSPAN, colspan);
+            sink.tableCell(att);
+            verbatimText(code);
+            sink.tableCell_();
             sink.tableRow_();
-            sink.tableRows_();
-            sink.table_();
+            endTable();
         }
 
-        sink.section1_();
-        sink.body_();
-        sink.flush();
-        sink.close();
+        endSection();
     }
 }
