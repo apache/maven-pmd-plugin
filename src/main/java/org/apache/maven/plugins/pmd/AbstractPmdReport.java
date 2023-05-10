@@ -260,9 +260,6 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     /** The files that are being analyzed. */
     protected Map<File, PmdFileInfo> filesToProcess;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected MavenProject getProject() {
         return project;

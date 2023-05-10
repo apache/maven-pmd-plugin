@@ -32,7 +32,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <configuration>          
+        <configuration>
           <sourceDirectory>${basedir}/src/test/resources/unit/custom-configuration</sourceDirectory>
           <targetDirectory>${basedir}/target/test/unit/custom-configuration/target</targetDirectory>
           <rulesetsTargetDirectory>${basedir}/target/test/unit/custom-configuration/target/pmd/rulesets</rulesetsTargetDirectory>
