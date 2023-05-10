@@ -82,8 +82,6 @@ under the License.
 
   <properties>
     <mavenVersion>3.2.5</mavenVersion>
-    <doxiaVersion>1.12.0</doxiaVersion>
-    <doxiaSitetoolsVersion>1.11.1</doxiaSitetoolsVersion>
     <javaVersion>8</javaVersion>
     <pmdVersion>6.55.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
@@ -112,6 +110,12 @@ under the License.
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
+      <version>${mavenVersion}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-compat</artifactId>
       <version>${mavenVersion}</version>
       <scope>provided</scope>
     </dependency>
@@ -186,17 +190,13 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-sink-api</artifactId>
-      <version>${doxiaVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-decoration-model</artifactId>
-      <version>${doxiaSitetoolsVersion}</version>
+      <version>1.12.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-site-renderer</artifactId>
-      <version>${doxiaSitetoolsVersion}</version>
+      <version>1.11.1</version>
+      <scope>runtime</scope>
       <!--
         Note: doxia-site-renderer needs to be defined AFTER pmd:
         doxia-site-renderer requires transitively dom4j 1.1 which provides a very old version of jaxen (same jar).
@@ -213,18 +213,8 @@ under the License.
     <!-- shared -->
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-api</artifactId>
-      <version>3.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
       <version>3.2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-shared-utils</artifactId>
-      <version>3.3.4</version>
     </dependency>
 
     <!-- plexus -->
@@ -239,6 +229,12 @@ under the License.
     </dependency>
 
     <!-- test -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-testing</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
