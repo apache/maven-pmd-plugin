@@ -28,7 +28,7 @@ under the License.
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>11</java.version>
+    <javaVersion>11</javaVersion>
   </properties>
 
   <build>
@@ -39,8 +39,8 @@ under the License.
           <artifactId>maven-compiler-plugin</artifactId>
           <version>@compilerPluginVersion@</version>
           <configuration>
-            <target>${java.version}</target>
-            <source>${java.version}</source>
+            <target>${javaVersion}</target>
+            <source>${javaVersion}</source>
           </configuration>
         </plugin>
       </plugins>
@@ -53,7 +53,7 @@ under the License.
         <configuration>
           <failOnViolation>false</failOnViolation>
           <printFailingErrors>true</printFailingErrors>
-          <targetJdk>${java.version}</targetJdk>
+          <targetJdk>${javaVersion}</targetJdk>
           <minimumTokens>10</minimumTokens>
         </configuration>
         <executions>
@@ -81,7 +81,7 @@ under the License.
         <configuration>
           <toolchains>
             <jdk>
-              <version>${java.version}</version>
+              <version>${javaVersion}</version>
               <vendor>oracle</vendor>
             </jdk>
           </toolchains>
