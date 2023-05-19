@@ -21,22 +21,53 @@ under the License.
 
 # Release Notes
 
-## Version 3.21.0
+## Version ???
 
 **Release Date:** ????-??-??
 
-**JIRA:** [Release Notes - Maven PMD Plugin - Version 3.21.0](https://issues.apache.org/jira/projects/MPMD)
+**JIRA:** [Release Notes - Maven PMD Plugin - Version ???](https://issues.apache.org/jira/projects/MPMD)
+
+**GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-???>
+
+### 🚀 New features and improvements
+### 🐛 Bug Fixes
+### 👻 Maintenance
+### 📝 Documentation updates
+### 📦 Dependency updates
+
+## Version 3.21.0
+
+**Release Date:** 2023-05-12
+
+**JIRA:** [Release Notes - Maven PMD Plugin - Version 3.21.0](https://issues.apache.org/jira/projects/MPMD/versions/12352863)
 
 **GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.21.0>
 
 ### 🚀 New features and improvements
 * [MPMD-365](https://issues.apache.org/jira/browse/MPMD-365) - Support Java 20 ([#116](https://github.com/apache/maven-pmd-plugin/pull/116)) @adangel
+* [MPMD-375](https://issues.apache.org/jira/browse/MPMD-375) - Replace *ReportGenerators with new *ReportRenderers ([#130](https://github.com/apache/maven-pmd-plugin/pull/130)) @michael-o
+
 ### 🐛 Bug Fixes
+* [MPMD-369](https://issues.apache.org/jira/browse/MPMD-369) - System encoding conflicts with XML encoding in CpdViolationCheckMojo ([#122](https://github.com/apache/maven-pmd-plugin/pull/122)) @elharo
+* [MPMD-373](https://issues.apache.org/jira/browse/MPMD-373) - System property java.version is overwritten in ITs as model property ([#128](https://github.com/apache/maven-pmd-plugin/pull/128)) @michael-o
+
 ### 👻 Maintenance
-### 📝 Documentation updates
+* [MPMD-374](https://issues.apache.org/jira/browse/MPMD-374) - Remove deprecated and unused PmdCollectingRenderer ([#128](https://github.com/apache/maven-pmd-plugin/pull/128)) @michael-o
+* Move commons-lang3 to test scope ([#131](https://github.com/apache/maven-pmd-plugin/pull/131)) @elharo
+* [MNG-6829](https://issues.apache.org/jira/browse/MNG-6829) - Replace any StringUtils#isEmpty(String) and #isNotEmpty(String) ([#124](https://github.com/apache/maven-pmd-plugin/pull/124)) @timtebeek
+* Remove vestigial useJava5 parameter ([#119](https://github.com/apache/maven-pmd-plugin/pull/119)) @elharo
+* [MPMD-367](https://issues.apache.org/jira/browse/MPMD-367) - Verify / ubuntu-latest jdk-11-temurin 3.9.1 broken at head in MPMD<!-- -->-270-325-JDK11 ([#121](https://github.com/apache/maven-pmd-plugin/pull/121)) @elharo
+
 ### 📦 Dependency updates
 * [MPMD-364](https://issues.apache.org/jira/browse/MPMD-364) - Upgrade to PMD 6.55.0 ([#115](https://github.com/apache/maven-pmd-plugin/pull/115)) @dependabot
 * [MPMD-364](https://issues.apache.org/jira/browse/MPMD-364) - Upgrade to PMD 6.54.0 ([#112](https://github.com/apache/maven-pmd-plugin/pull/112)) @adangel
+* [MPMD-366](https://issues.apache.org/jira/browse/MPMD-366) - Update parent pom to 39 ([#118](https://github.com/apache/maven-pmd-plugin/pull/118)) @elharo
+* [MPMD-372](https://issues.apache.org/jira/browse/MPMD-372) - Upgrade plugins and components (in ITs) ([#128](https://github.com/apache/maven-pmd-plugin/pull/128)) @michael-o
+* Bump animal-sniffer-maven-plugin from 1.22 to 1.23 ([#117](https://github.com/apache/maven-pmd-plugin/pull/117)) @dependabot
+* Bump release-drafter/release-drafter from 5.21.1 to 5.23.0 ([#114](https://github.com/apache/maven-pmd-plugin/pull/114)) @dependabot
+* Bump apache/maven-gh-actions-shared from 2 to 3 ([#113](https://github.com/apache/maven-pmd-plugin/pull/113)) @dependabot
+* Bump doxia-sink-api from 1.11.1 to 1.12.0 ([#111](https://github.com/apache/maven-pmd-plugin/pull/111)) @dependabot
+* Bump wagon-http-lightweight from 3.5.2 to 3.5.3 ([#108](https://github.com/apache/maven-pmd-plugin/pull/108)) @dependabot
 
 ## Version 3.20.0
 
