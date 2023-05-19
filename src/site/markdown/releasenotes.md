@@ -32,6 +32,7 @@ under the License.
 ### 🚀 New features and improvements
 ### 🐛 Bug Fixes
 ### 👻 Maintenance
+* Move commons-lang3 to test scope ([#131](https://github.com/apache/maven-pmd-plugin/pull/131)) @elharo
 ### 📝 Documentation updates
 ### 📦 Dependency updates
 
@@ -53,7 +54,6 @@ under the License.
 
 ### 👻 Maintenance
 * [MPMD-374](https://issues.apache.org/jira/browse/MPMD-374) - Remove deprecated and unused PmdCollectingRenderer ([#128](https://github.com/apache/maven-pmd-plugin/pull/128)) @michael-o
-* Move commons-lang3 to test scope ([#131](https://github.com/apache/maven-pmd-plugin/pull/131)) @elharo
 * [MNG-6829](https://issues.apache.org/jira/browse/MNG-6829) - Replace any StringUtils#isEmpty(String) and #isNotEmpty(String) ([#124](https://github.com/apache/maven-pmd-plugin/pull/124)) @timtebeek
 * Remove vestigial useJava5 parameter ([#119](https://github.com/apache/maven-pmd-plugin/pull/119)) @elharo
 * [MPMD-367](https://issues.apache.org/jira/browse/MPMD-367) - Verify / ubuntu-latest jdk-11-temurin 3.9.1 broken at head in MPMD<!-- -->-270-325-JDK11 ([#121](https://github.com/apache/maven-pmd-plugin/pull/121)) @elharo
