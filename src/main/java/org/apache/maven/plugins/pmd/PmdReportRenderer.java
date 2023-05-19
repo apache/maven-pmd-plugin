@@ -112,7 +112,7 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
         return i18n.getString("pmd-report", locale, "report.pmd." + key);
     }
 
-    public void renderBody() {
+    protected void renderBody() {
         startSection(getTitle());
 
         sink.paragraph();
