@@ -31,6 +31,7 @@ under the License.
 
 ### 🚀 New features and improvements
 ### 🐛 Bug Fixes
+* [MPMD-371](https://issues.apache.org/jira/browse/MPMD-371) - Using two ruleset files with same name in different directories ([#127](https://github.com/apache/maven-pmd-plugin/pull/127)) @harbulot
 ### 👻 Maintenance
 * Move commons-lang3 to test scope ([#131](https://github.com/apache/maven-pmd-plugin/pull/131)) @elharo
 ### 📝 Documentation updates
