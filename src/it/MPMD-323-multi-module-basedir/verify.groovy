@@ -17,8 +17,8 @@
  * under the License.
  */
 
-String[] files = [ "module-a/target/pmd.xml", "module-a/target/pmd/rulesets/ruleset.xml",
-                   "module-b/target/pmd.xml", "module-b/target/pmd/rulesets/ruleset.xml" ]
+String[] files = [ "module-a/target/pmd.xml", "module-a/target/pmd/rulesets/001-ruleset.xml",
+                   "module-b/target/pmd.xml", "module-b/target/pmd/rulesets/001-ruleset.xml" ]
 
 files.each
 {

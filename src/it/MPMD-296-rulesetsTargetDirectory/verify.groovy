@@ -22,13 +22,13 @@ File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
 // default configuration
-File defaultRuleset = new File( basedir, 'target/pmd/rulesets/maven-pmd-plugin-default.xml' )
+File defaultRuleset = new File( basedir, 'target/pmd/rulesets/001-maven-pmd-plugin-default.xml' )
 assert defaultRuleset.exists()
 
 // backwards compatible configuration (profile customTargetOld)
-File customTargetOld = new File( basedir, 'target/maven-pmd-plugin-default.xml' )
+File customTargetOld = new File( basedir, 'target/001-maven-pmd-plugin-default.xml' )
 assert customTargetOld.exists()
 
 // custom configuration (profile customTarget)
-File customTarget = new File( basedir, 'target/pmd-custom/maven-pmd-plugin-default.xml' )
+File customTarget = new File( basedir, 'target/pmd-custom/001-maven-pmd-plugin-default.xml' )
 assert customTarget.exists()

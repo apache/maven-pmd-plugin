@@ -67,7 +67,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         // check if the rulesets, that have been applied, have been copied
         generatedFile = new File(
                 getBasedir(),
-                "target/test/unit/default-configuration/target/pmd/rulesets/maven-pmd-plugin-default.xml");
+                "target/test/unit/default-configuration/target/pmd/rulesets/001-maven-pmd-plugin-default.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         // check if there's a link to the JXR files
@@ -159,16 +159,16 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         // these are the rulesets, that have been applied...
-        generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/bestpractices.xml");
+        generatedFile = new File(
+                getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/001-bestpractices.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/codestyle.xml");
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/002-codestyle.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/errorprone.xml");
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/003-errorprone.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         String str = readFile(generatedReport);
@@ -231,20 +231,21 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         // the resolved and extracted rulesets
-        generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/basic.xml");
+        generatedFile =
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/001-basic.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/imports.xml");
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/002-unusedcode.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/unusedcode.xml");
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/003-imports.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile = new File(
                 getBasedir(),
-                "target/test/unit/default-configuration/target/pmd/rulesets/export_format_pmd_language_java_name_Sonar_2520way.xml");
+                "target/test/unit/default-configuration/target/pmd/rulesets/004-export_format_pmd_language_java_name_Sonar_2520way.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         // check if there's a link to the JXR files
@@ -278,7 +279,9 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         File generatedFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/pmd.csv");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
-        generatedFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/pmd/rulesets/custom.xml");
+        // 001-maven-pmd-plugin-default.xml is also generated, so we get 002-custom.xml
+        generatedFile =
+                new File(getBasedir(), "target/test/unit/custom-configuration/target/pmd/rulesets/002-custom.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         // check if custom ruleset was applied
@@ -419,9 +422,10 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
 
         assertEquals(
                 "locationTemp is not correctly encoding filename",
-                "export_format_pmd_language_java_name_some_2520name.xml",
+                "001-export_format_pmd_language_java_name_some_2520name.xml",
                 mojo.getLocationTemp(
-                        "http://nemo.sonarsource.org/sonar/profiles/export?format=pmd&language=java&name=some%2520name"));
+                        "http://nemo.sonarsource.org/sonar/profiles/export?format=pmd&language=java&name=some%2520name",
+                        1));
     }
 
     /**
@@ -485,23 +489,24 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         // these are the rulesets, that have been applied...
-        generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/bestpractices.xml");
+        generatedFile = new File(
+                getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/001-bestpractices.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/codestyle.xml");
-        assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
-
-        generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/design.xml");
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/002-codestyle.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/errorprone.xml");
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/003-design.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/security.xml");
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/004-errorprone.xml");
+        assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
+
+        generatedFile =
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/005-security.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         String str = readFile(generatedReport);
@@ -659,30 +664,30 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         generateReport(mojo, testPom);
 
         // these are the rulesets, that have been copied to target/pmd/rulesets
-        File generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/custom-rules.xml");
+        File generatedFile = new File(
+                getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/001-custom-rules.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
-        generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/bestpractices.xml");
+        generatedFile = new File(
+                getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/002-bestpractices.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
-        generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/java-design.xml");
+        generatedFile = new File(
+                getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/003-java-design.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile = new File(
                 getBasedir(),
-                "target/test/unit/default-configuration/target/pmd/rulesets/export_format_pmd_language_java_name_Sonar_2520way.xml");
+                "target/test/unit/default-configuration/target/pmd/rulesets/004-export_format_pmd_language_java_name_Sonar_2520way.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/my-ruleset.xml");
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/005-my-ruleset.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile = new File(
                 getBasedir(),
-                "target/test/unit/default-configuration/target/pmd/rulesets/InProgressRuleset.xml_at_refs_2Fheads_2Fmaster.xml");
+                "target/test/unit/default-configuration/target/pmd/rulesets/006-InProgressRuleset.xml_at_refs_2Fheads_2Fmaster.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         mockServer.stop();
