@@ -27,8 +27,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Locale;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.plexus.util.FileUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -54,11 +54,11 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     public void testDefaultConfiguration() throws Exception {
         File generatedReport =
                 generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
-        assertTrue(FileUtils.fileExists(generatedReport.getAbsolutePath()));
+        assertTrue(new File(generatedReport.getAbsolutePath()).exists());
 
         // check if the CPD files were generated
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
-        assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
+        assertTrue(new File(generatedFile.getAbsolutePath()).exists());
 
         // check the contents of cpd.html
         String str = readFile(generatedReport);
@@ -82,9 +82,9 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
 
         // check if the CPD files were generated
         File generatedFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/cpd.xml");
-        assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
+        assertTrue(new File(generatedFile.getAbsolutePath()).exists());
         generatedFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/cpd.txt");
-        assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
+        assertTrue(new File(generatedFile.getAbsolutePath()).exists());
 
         // check the contents of cpd.txt
         String str = readFile(generatedFile);
@@ -101,11 +101,11 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
      */
     public void testCustomConfiguration() throws Exception {
         File generatedReport = generateReport("cpd", "custom-configuration/cpd-custom-configuration-plugin-config.xml");
-        assertTrue(FileUtils.fileExists(generatedReport.getAbsolutePath()));
+        assertTrue(new File(generatedReport.getAbsolutePath()).exists());
 
         // check if the CPD files were generated
         File generatedFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/cpd.csv");
-        assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
+        assertTrue(new File(generatedFile.getAbsolutePath()).exists());
 
         String str = readFile(generatedReport);
         // Contents that should NOT be in the report
@@ -162,7 +162,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
 
         // check if the CPD files were generated
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
-        assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
+        assertTrue(new File(generatedFile.getAbsolutePath()).exists());
 
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document pmdCpdDocument = builder.parse(generatedFile);
@@ -183,7 +183,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         generateReport("cpd", "default-configuration/cpd-report-include-xml-in-site-plugin-config.xml");
 
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
-        assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
+        assertTrue(new File(generatedFile.getAbsolutePath()).exists());
 
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document pmdCpdDocument = builder.parse(generatedFile);
@@ -193,7 +193,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         assertTrue(str.contains("</pmd-cpd>"));
 
         File siteReport = new File(getBasedir(), "target/test/unit/default-configuration/target/site/cpd.xml");
-        assertTrue(FileUtils.fileExists(siteReport.getAbsolutePath()));
+        assertTrue(new File(siteReport.getAbsolutePath()).exists());
         String siteReportContent = readFile(siteReport);
         assertTrue(siteReportContent.contains("</pmd-cpd>"));
         assertEquals(str, siteReportContent);
@@ -202,13 +202,13 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     public void testSkipEmptyReportConfiguration() throws Exception {
         // verify the generated files do not exist because PMD was skipped
         File generatedReport = generateReport("cpd", "empty-report/cpd-skip-empty-report-plugin-config.xml");
-        assertFalse(FileUtils.fileExists(generatedReport.getAbsolutePath()));
+        assertFalse(new File(generatedReport.getAbsolutePath()).exists());
     }
 
     public void testEmptyReportConfiguration() throws Exception {
         // verify the generated files do exist, even if there are no violations
         File generatedReport = generateReport("cpd", "empty-report/cpd-empty-report-plugin-config.xml");
-        assertTrue(FileUtils.fileExists(generatedReport.getAbsolutePath()));
+        assertTrue(new File(generatedReport.getAbsolutePath()).exists());
 
         String str = readFile(generatedReport);
         assertFalse(lowerCaseContains(str, "Hello.java"));
@@ -224,7 +224,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
 
             // check if the CPD files were generated
             File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
-            assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
+            assertTrue(new File(generatedFile.getAbsolutePath()).exists());
             String str = readFile(generatedFile);
             assertTrue(lowerCaseContains(str, "AppSample.java"));
         } finally {
@@ -237,7 +237,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
 
         // verify  the generated file to exist and violations are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
-        assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
+        assertTrue(new File(generatedFile.getAbsolutePath()).exists());
         String str = readFile(generatedFile);
         assertTrue(lowerCaseContains(str, "Sample.js"));
         assertTrue(lowerCaseContains(str, "SampleDup.js"));
@@ -248,7 +248,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
 
         // verify  the generated file to exist and violations are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
-        assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
+        assertTrue(new File(generatedFile.getAbsolutePath()).exists());
         String str = readFile(generatedFile);
         assertTrue(lowerCaseContains(str, "sample.jsp"));
         assertTrue(lowerCaseContains(str, "sampleDup.jsp"));
@@ -259,7 +259,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
 
         // verify  the generated file to exist and no duplications are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
-        assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
+        assertTrue(new File(generatedFile.getAbsolutePath()).exists());
         String str = readFile(generatedFile);
         assertEquals(0, StringUtils.countMatches(str, "<duplication"));
     }
