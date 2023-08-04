@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 
 import net.sourceforge.pmd.renderers.Renderer;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -503,8 +504,11 @@ public class PmdReport extends AbstractPmdReport {
                     // use any additional configured repo as well
                     buildingRequest.getRemoteRepositories().addAll(localProject.getRemoteArtifactRepositories());
 
+                    List<Dependency> managedDependencies = localProject.getDependencyManagement() == null
+                            ? null
+                            : localProject.getDependencyManagement().getDependencies();
                     Iterable<ArtifactResult> resolvedDependencies = dependencyResolver.resolveDependencies(
-                            buildingRequest, localProject.getDependencies(), null, filter);
+                            buildingRequest, localProject.getDependencies(), managedDependencies, filter);
 
                     for (ArtifactResult resolvedArtifact : resolvedDependencies) {
                         dependencies.add(
