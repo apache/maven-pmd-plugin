@@ -503,8 +503,11 @@ public class PmdReport extends AbstractPmdReport {
                     // use any additional configured repo as well
                     buildingRequest.getRemoteRepositories().addAll(localProject.getRemoteArtifactRepositories());
 
+                    List<Dependency> managedDependencies = localProject.getDependencyManagement() == null
+                            ? null
+                            : localProject.getDependencyManagement().getDependencies();
                     Iterable<ArtifactResult> resolvedDependencies = dependencyResolver.resolveDependencies(
-                            buildingRequest, localProject.getDependencies(), null, filter);
+                            buildingRequest, localProject.getDependencies(), managedDependencies, filter);
 
                     for (ArtifactResult resolvedArtifact : resolvedDependencies) {
                         dependencies.add(
