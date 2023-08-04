@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 
 import net.sourceforge.pmd.renderers.Renderer;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
