@@ -18,9 +18,7 @@
  */
 package org.apache.maven.plugins.pmd;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URL;
@@ -387,26 +385,6 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         // check that pmd.xml file has the closing element
         String pmdXml = readFile(generatedXmlFile);
         assertTrue(pmdXml.contains("</pmd>"));
-    }
-
-    /**
-     * Read the contents of the specified file object into a string
-     *
-     * @param file the file to be read
-     * @return a String object that contains the contents of the file
-     * @throws java.io.IOException
-     */
-    private String readFile(File file) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            final StringBuilder str = new StringBuilder((int) file.length());
-
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                str.append(' ');
-                str.append(line);
-                str.append('\n');
-            }
-            return str.toString();
-        }
     }
 
     /**

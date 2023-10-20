@@ -18,13 +18,15 @@
  */
 package org.apache.maven.plugins.pmd;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.sourceforge.pmd.cpd.Mark;
 import net.sourceforge.pmd.cpd.Match;
@@ -102,13 +104,10 @@ public class ExcludeDuplicationsFromFile implements ExcludeFromFile<Duplication>
             return;
         }
 
-        try (LineNumberReader reader = new LineNumberReader(new FileReader(excludeFromFailureFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.startsWith("#")) {
-                    exclusionList.add(createSetFromExclusionLine(line));
-                }
-            }
+        try (Stream<String> lines = Files.lines(Paths.get(excludeFromFailureFile))) {
+            exclusionList.addAll(lines.filter(line -> !line.startsWith("#"))
+                    .map(line -> createSetFromExclusionLine(line))
+                    .collect(Collectors.toList()));
         } catch (final IOException e) {
             throw new MojoExecutionException("Cannot load file " + excludeFromFailureFile, e);
         }

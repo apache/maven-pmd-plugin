@@ -19,7 +19,8 @@
 package org.apache.maven.plugins.pmd.stubs;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,12 +44,11 @@ public class DefaultConfigurationMavenProjectStub extends PmdProjectStub {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
 
-        try (FileReader reader = new FileReader(new File(getBasedir()
+        try (InputStream is = new FileInputStream(new File(getBasedir()
                 + "/src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml"))) {
-            model = pomReader.read(reader);
+            model = pomReader.read(is);
             setModel(model);
         } catch (Exception e) {
-
         }
 
         setGroupId(model.getGroupId());

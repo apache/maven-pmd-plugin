@@ -134,8 +134,8 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     /**
      * Read the contents of the specified file object into a string
      */
-    protected String readFile(File pmdTestDir, String fileName) throws IOException {
-        return new String(Files.readAllBytes(pmdTestDir.toPath().resolve(fileName)));
+    protected String readFile(File file) throws IOException {
+        return new String(Files.readAllBytes(file.toPath()));
     }
 
     /**

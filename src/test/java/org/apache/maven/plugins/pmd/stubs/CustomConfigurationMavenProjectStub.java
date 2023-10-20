@@ -19,7 +19,8 @@
 package org.apache.maven.plugins.pmd.stubs;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,12 +44,11 @@ public class CustomConfigurationMavenProjectStub extends PmdProjectStub {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
 
-        try {
-            model = pomReader.read(new FileReader(new File(getBasedir()
-                    + "/src/test/resources/unit/custom-configuration/custom-configuration-plugin-config.xml")));
+        try (InputStream is = new FileInputStream(new File(getBasedir()
+                + "/src/test/resources/unit/custom-configuration/custom-configuration-plugin-config.xml"))) {
+            model = pomReader.read(is);
             setModel(model);
         } catch (Exception e) {
-
         }
 
         setGroupId(model.getGroupId());
