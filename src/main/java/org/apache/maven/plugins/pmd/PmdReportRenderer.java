@@ -177,7 +177,10 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
         sink.tableCell();
         addRuleName(ruleViolation);
         sink.tableCell_();
-        tableCell(ruleViolation.getText());
+        // May contain content not legit for #tableCell()
+        sink.tableCell();
+        sink.text(ruleViolation.getText());
+        sink.tableCell_();
 
         if (this.renderRuleViolationPriority) {
             tableCell(String.valueOf(
@@ -338,12 +341,17 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
             PmdFileInfo fileInfo = determineFileInfo(filename);
             filename = shortenFilename(filename, fileInfo);
 
-            tableRow(new String[] {
-                filename,
-                suppressedViolation.getRuleMessage(),
-                suppressedViolation.getSuppressionType(),
-                suppressedViolation.getUserMessage()
-            });
+            // May contain content not legit for #tableCell()
+            sink.tableRow();
+            tableCell(filename);
+            sink.tableCell();
+            sink.text(suppressedViolation.getRuleMessage());
+            sink.tableCell_();
+            tableCell(suppressedViolation.getSuppressionType());
+            sink.tableCell();
+            sink.text(suppressedViolation.getUserMessage());
+            sink.tableCell_();
+            sink.tableRow_();
         }
 
         endTable();
