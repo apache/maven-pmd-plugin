@@ -19,23 +19,40 @@ under the License.
 
 -->
 
-# Release Notes
-
-## Version ???
-
-**Release Date:** ????-??-??
-
-**JIRA:** [Release Notes - Maven PMD Plugin - Version ???](https://issues.apache.org/jira/projects/MPMD)
-
-**GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-???>
-
+<!--
+Header Templates
 ### 🚀 New features and improvements
 ### 🐛 Bug Fixes
-* [MPMD-371](https://issues.apache.org/jira/browse/MPMD-371) - Using two ruleset files with same name in different directories ([#127](https://github.com/apache/maven-pmd-plugin/pull/127)) @harbulot
 ### 👻 Maintenance
-* Move commons-lang3 to test scope ([#131](https://github.com/apache/maven-pmd-plugin/pull/131)) @elharo
 ### 📝 Documentation updates
 ### 📦 Dependency updates
+-->
+
+# Release Notes
+
+## Version 3.21.2
+
+**Release Date:** 2023-10-30
+
+**JIRA:** [Release Notes - Maven PMD Plugin - Version 3.21.2](https://issues.apache.org/jira/projects/MPMD/versions/12353789)
+
+**GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.21.2>
+
+### 🐛 Bug Fixes
+* [MPMD-370](https://issues.apache.org/jira/browse/MPMD-370) - Remove remaining uses of FileReader
+* [MPMD-371](https://issues.apache.org/jira/browse/MPMD-371) - Using two ruleset files with same name in different directories ([#127](https://github.com/apache/maven-pmd-plugin/pull/127)) @harbulot
+* [MPMD-382](https://issues.apache.org/jira/browse/MPMD-382) - Regression in report rendering
+* [MPMD-384](https://issues.apache.org/jira/browse/MPMD-384) - maven-pmd-plugin is dowloading transitive dependencies of unmanaged version ([#135](https://github.com/apache/maven-pmd-plugin/pull/135)) @caiwei-ebay
+
+### 👻 Maintenance
+* Move commons-lang3 to test scope ([#131](https://github.com/apache/maven-pmd-plugin/pull/131)) @elharo
+
+### 📝 Documentation updates
+* Typo: fill --> file ([#133](https://github.com/apache/maven-pmd-plugin/pull/133)) @elharo
+
+### 📦 Dependency updates
+* [MPMD-380](https://issues.apache.org/jira/browse/MPMD-380) - Prefer apache commons and JDK to Plexus utils ([#132](https://github.com/apache/maven-pmd-plugin/pull/132)) @elharo
+* [MPMD-387](https://issues.apache.org/jira/browse/MPMD-387) - Upgrade to Parent 40
 
 ## Version 3.21.0
 
