@@ -21,11 +21,11 @@ under the License.
 
 <!--
 Header Templates
-### 🚀 New features and improvements
-### 🐛 Bug Fixes
-### 👻 Maintenance
-### 📝 Documentation updates
-### 📦 Dependency updates
+### U+1F680 (Rocket)  New features and improvements
+### U+1F41B (Bug)     Bug Fixes
+### U+1F47B (Ghost)   Maintenance
+### U+1F4DD (Memo)    Documentation updates
+### U+1F4E6 (Package) Dependency updates
 -->
 
 # Release Notes
