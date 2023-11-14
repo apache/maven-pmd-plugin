@@ -271,7 +271,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
             File xrefLoc = test ? xrefTestLocation : xrefLocation;
 
             String relativePath =
-                    PathTool.getRelativePath(outputDirectory.getAbsolutePath(), xrefLoc.getAbsolutePath());
+                    PathTool.getRelativePath(getReportOutputDirectory().getAbsolutePath(), xrefLoc.getAbsolutePath());
             if (relativePath == null || relativePath.isEmpty()) {
                 relativePath = ".";
             }
