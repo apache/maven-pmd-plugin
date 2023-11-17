@@ -23,7 +23,7 @@ under the License.
   <parent>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-plugins</artifactId>
-    <version>40</version>
+    <version>41</version>
     <relativePath />
   </parent>
 
@@ -263,7 +263,6 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-xml</artifactId>
-      <version>3.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
