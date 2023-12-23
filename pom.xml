@@ -81,7 +81,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenVersion>3.2.5</mavenVersion>
+    <mavenVersion>3.8.1</mavenVersion>
     <javaVersion>8</javaVersion>
     <pmdVersion>6.55.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
