@@ -216,9 +216,9 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
                         .withHeader("Content-Type", "text/xml")
                         .withBody(sonarRuleset)));
 
-        URL url = getClass().getClassLoader().getResource("rulesets/java/basic.xml");
-        URL url2 = getClass().getClassLoader().getResource("rulesets/java/unusedcode.xml");
-        URL url3 = getClass().getClassLoader().getResource("rulesets/java/imports.xml");
+        URL url = getClass().getClassLoader().getResource("category/java/bestpractices.xml");
+        URL url2 = getClass().getClassLoader().getResource("category/java/codestyle.xml");
+        URL url3 = getClass().getClassLoader().getResource("category/java/errorprone.xml");
         mojo.setRulesets(new String[] {url.toString(), url2.toString(), url3.toString(), sonarExportRulesetUrl});
 
         File generatedReport = generateReport(mojo, testPom);
@@ -229,16 +229,16 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         // the resolved and extracted rulesets
-        generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/001-basic.xml");
+        generatedFile = new File(
+                getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/001-bestpractices.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/002-unusedcode.xml");
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/002-codestyle.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile =
-                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/003-imports.xml");
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/003-errorprone.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile = new File(
@@ -514,13 +514,14 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         File generatedFile = new File(getBasedir(), "target/test/unit/parse-error/target/pmd.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
         String str = readFile(generatedFile);
-        assertTrue(str.contains("Parse exception in file"));
+        assertTrue(str.contains("ParseException: Parse exception in file"));
         // The parse exception must be in the XML report
-        assertTrue(str.contains("\' at line 23, column 5: Encountered ."));
+        assertTrue(str.contains("at line 23, column 5: Encountered"));
 
         str = readFile(generatedReport);
         // The parse exception must also be in the HTML report
-        assertTrue(str.contains("\' at line 23, column 5: Encountered ."));
+        assertTrue(str.contains("ParseException:"));
+        assertTrue(str.contains("at line 23, column 5: Encountered"));
     }
 
     public void testPMDProcessingErrorWithDetailsNoReport() throws Exception {
@@ -534,13 +535,14 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         File generatedFile = new File(getBasedir(), "target/test/unit/parse-error/target/pmd.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
         String str = readFile(generatedFile);
-        assertTrue(str.contains("Parse exception in file"));
         // The parse exception must be in the XML report
-        assertTrue(str.contains("\' at line 23, column 5: Encountered ."));
+        assertTrue(str.contains("ParseException: Parse exception in file"));
+        assertTrue(str.contains("at line 23, column 5: Encountered"));
 
         str = readFile(generatedReport);
         // The parse exception must NOT be in the HTML report, since reportProcessingErrors is false
-        assertFalse(str.contains("\' at line 23, column 5: Encountered ."));
+        assertFalse(str.contains("ParseException:"));
+        assertFalse(str.contains("at line 23, column 5: Encountered"));
     }
 
     public void testPMDExcludeRootsShouldExcludeSubdirectories() throws Exception {
@@ -652,8 +654,8 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
                 getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/002-bestpractices.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
-        generatedFile = new File(
-                getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/003-java-design.xml");
+        generatedFile =
+                new File(getBasedir(), "target/test/unit/default-configuration/target/pmd/rulesets/003-design.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
 
         generatedFile = new File(

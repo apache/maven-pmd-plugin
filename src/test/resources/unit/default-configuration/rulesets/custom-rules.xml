@@ -36,7 +36,7 @@ under the License.
             <property name="xpath">
                 <value>
 <![CDATA[
-//ClassOrInterfaceDeclaration[@SimpleName = 'App']
+//ClassDeclaration[@SimpleName = 'App']
 ]]>
                 </value>
             </property>

@@ -29,8 +29,8 @@ assert buildLog.text.contains( '[INFO] You have 1 CPD duplication' )
 
 File pmdReport = new File( basedir, 'target/pmd.xml' )
 assert pmdReport.exists()
-assert pmdReport.text.contains( '<violation beginline="24" endline="24" begincolumn="29" endcolumn="34" rule="ExtendsObject"' )
-assert pmdReport.text.contains( '<violation beginline="36" endline="36" begincolumn="9" endcolumn="31" rule="DontCallThreadRun"' )
+assert pmdReport.text.contains( '<violation beginline="24" endline="24" begincolumn="29" endcolumn="35" rule="ExtendsObject"' )
+assert pmdReport.text.contains( '<violation beginline="36" endline="36" begincolumn="9" endcolumn="32" rule="DontCallThreadRun"' )
 
 File pmdSite = new File( basedir, 'target/site/pmd.html' )
 assert pmdSite.exists()
