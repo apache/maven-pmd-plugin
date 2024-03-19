@@ -27,6 +27,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +38,6 @@ import net.sourceforge.pmd.Report;
 import net.sourceforge.pmd.RulePriority;
 import net.sourceforge.pmd.RuleSetLoadException;
 import net.sourceforge.pmd.RuleSetLoader;
-import net.sourceforge.pmd.RuleViolation;
 import net.sourceforge.pmd.benchmark.TextTimingReportRenderer;
 import net.sourceforge.pmd.benchmark.TimeTracker;
 import net.sourceforge.pmd.benchmark.TimingReport;
@@ -50,7 +50,6 @@ import net.sourceforge.pmd.renderers.HTMLRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
-import net.sourceforge.pmd.util.Predicate;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeViolationsFromFile;
 import org.apache.maven.reporting.MavenReportException;
@@ -172,7 +171,7 @@ public class PmdExecutor extends Executor {
         configuration.setDefaultLanguageVersion(languageVersion);
 
         if (request.getSourceEncoding() != null) {
-            configuration.setSourceEncoding(request.getSourceEncoding());
+            configuration.setSourceEncoding(Charset.forName(request.getSourceEncoding()));
         }
 
         configuration.prependAuxClasspath(request.getAuxClasspath());
@@ -189,9 +188,6 @@ public class PmdExecutor extends Executor {
 
         configuration.setRuleSets(request.getRulesets());
         configuration.setMinimumPriority(RulePriority.valueOf(request.getMinimumPriority()));
-        if (request.getBenchmarkOutputLocation() != null) {
-            configuration.setBenchmark(true);
-        }
         List<File> files = request.getFiles();
 
         Report report = null;
@@ -262,7 +258,7 @@ public class PmdExecutor extends Executor {
     private String getErrorsAsString(List<Report.ProcessingError> errors, boolean withDetails) {
         List<String> errorsAsString = new ArrayList<>(errors.size());
         for (Report.ProcessingError error : errors) {
-            errorsAsString.add(error.getFile() + ": " + error.getMsg());
+            errorsAsString.add(error.getFileId().getAbsolutePath() + ": " + error.getMsg());
             if (withDetails) {
                 errorsAsString.add(error.getDetail());
             }
@@ -413,12 +409,8 @@ public class PmdExecutor extends Executor {
         LOG.debug("Removing excluded violations. Using {} configured exclusions.", excludeFromFile.countExclusions());
         int violationsBefore = report.getViolations().size();
 
-        Report filtered = report.filterViolations(new Predicate<RuleViolation>() {
-            @Override
-            public boolean test(RuleViolation ruleViolation) {
-                return !excludeFromFile.isExcludedFromFailure(ruleViolation);
-            }
-        });
+        Report filtered =
+                report.filterViolations(ruleViolation -> !excludeFromFile.isExcludedFromFailure(ruleViolation));
 
         int numberOfExcludedViolations =
                 violationsBefore - filtered.getViolations().size();

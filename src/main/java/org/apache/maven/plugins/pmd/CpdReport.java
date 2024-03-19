@@ -23,8 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 import java.util.Properties;
 
-import net.sourceforge.pmd.cpd.JavaTokenizer;
-import net.sourceforge.pmd.cpd.renderer.CPDRenderer;
+import net.sourceforge.pmd.cpd.CPDReportRenderer;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -179,13 +178,13 @@ public class CpdReport extends AbstractPmdReport {
 
         Properties languageProperties = new Properties();
         if (ignoreLiterals) {
-            languageProperties.setProperty(JavaTokenizer.IGNORE_LITERALS, "true");
+            languageProperties.setProperty("ignore_literals", "true");
         }
         if (ignoreIdentifiers) {
-            languageProperties.setProperty(JavaTokenizer.IGNORE_IDENTIFIERS, "true");
+            languageProperties.setProperty("ignore_identifiers", "true");
         }
         if (ignoreAnnotations) {
-            languageProperties.setProperty(JavaTokenizer.IGNORE_ANNOTATIONS, "true");
+            languageProperties.setProperty("ignore_annotations", "true");
         }
         try {
             filesToProcess = getFilesToProcess();
@@ -238,7 +237,7 @@ public class CpdReport extends AbstractPmdReport {
      * @deprecated Use {@link CpdExecutor#createRenderer(String, String)} instead.
      */
     @Deprecated
-    public CPDRenderer createRenderer() throws MavenReportException {
+    public CPDReportRenderer createRenderer() throws MavenReportException {
         return CpdExecutor.createRenderer(format, getOutputEncoding());
     }
 }

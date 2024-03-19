@@ -84,8 +84,10 @@ public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation> {
      * @return <code>true</code> if the violation should be excluded, <code>false</code> otherwise.
      */
     public boolean isExcludedFromFailure(final RuleViolation errorDetail) {
-        final String className =
-                extractClassName(errorDetail.getPackageName(), errorDetail.getClassName(), errorDetail.getFilename());
+        final String className = extractClassName(
+                errorDetail.getPackageName(),
+                errorDetail.getClassName(),
+                errorDetail.getFileId().getAbsolutePath());
         return isExcludedFromFailure(className, errorDetail.getRule().getName());
     }
 
