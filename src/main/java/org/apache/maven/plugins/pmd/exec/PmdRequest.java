@@ -56,7 +56,7 @@ public class PmdRequest implements Serializable {
     private String outputEncoding;
     private String format;
     private String benchmarkOutputLocation;
-    private boolean includeXmlInSite;
+    private boolean includeXmlInReports;
     private String reportOutputDirectory;
 
     /**
@@ -138,8 +138,8 @@ public class PmdRequest implements Serializable {
         this.skipPmdError = skipPmdError;
     }
 
-    public void setIncludeXmlInSite(boolean includeXmlInSite) {
-        this.includeXmlInSite = includeXmlInSite;
+    public void setIncludeXmlInReports(boolean includeXmlInReports) {
+        this.includeXmlInReports = includeXmlInReports;
     }
 
     public void setReportOutputDirectory(String reportOutputDirectory) {
@@ -222,8 +222,8 @@ public class PmdRequest implements Serializable {
         return skipPmdError;
     }
 
-    public boolean isIncludeXmlInSite() {
-        return includeXmlInSite;
+    public boolean isIncludeXmlInReports() {
+        return includeXmlInReports;
     }
 
     public String getReportOutputDirectory() {

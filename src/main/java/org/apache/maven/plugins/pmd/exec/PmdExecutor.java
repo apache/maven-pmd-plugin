@@ -318,11 +318,11 @@ public class PmdExecutor extends Executor {
      */
     private void writeXmlReport(Report report) throws MavenReportException {
         File targetFile = writeReport(report, new XMLRenderer(request.getOutputEncoding()));
-        if (request.isIncludeXmlInSite()) {
-            File siteDir = new File(request.getReportOutputDirectory());
-            siteDir.mkdirs();
+        if (request.isIncludeXmlInReports()) {
+            File outputDirectory = new File(request.getReportOutputDirectory());
+            outputDirectory.mkdirs();
             try {
-                FileUtils.copyFile(targetFile, new File(siteDir, "pmd.xml"));
+                FileUtils.copyFile(targetFile, new File(outputDirectory, "pmd.xml"));
             } catch (IOException e) {
                 throw new MavenReportException(e.getMessage(), e);
             }

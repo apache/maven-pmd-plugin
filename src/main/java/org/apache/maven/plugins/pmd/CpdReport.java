@@ -147,24 +147,16 @@ public class CpdReport extends AbstractPmdReport {
     }
 
     @Override
-    public boolean canGenerateReport() {
+    public boolean canGenerateReport() throws MavenReportException {
         if (skip) {
-            getLog().info("Skipping CPD execution");
             return false;
         }
 
-        boolean result = super.canGenerateReport();
+        boolean result = canGenerateReportInternal();
         if (result) {
-            try {
-                executeCpd();
-                if (skipEmptyReport) {
-                    result = cpdResult.hasDuplications();
-                    if (!result) {
-                        getLog().debug("Skipping report since skipEmptyReport is true and there are no CPD issues.");
-                    }
-                }
-            } catch (MavenReportException e) {
-                throw new RuntimeException(e);
+            executeCpd();
+            if (skipEmptyReport) {
+                result = cpdResult.hasDuplications();
             }
         }
         return result;
@@ -204,7 +196,7 @@ public class CpdReport extends AbstractPmdReport {
             request.setTargetDirectory(targetDirectory.getAbsolutePath());
             request.setOutputEncoding(getOutputEncoding());
             request.setFormat(format);
-            request.setIncludeXmlInSite(includeXmlInSite);
+            request.setIncludeXmlInReports(includeXmlInReports);
             request.setReportOutputDirectory(getReportOutputDirectory().getAbsolutePath());
 
             Toolchain tc = getToolchain();

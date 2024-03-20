@@ -313,25 +313,16 @@ public class PmdReport extends AbstractPmdReport {
     }
 
     @Override
-    public boolean canGenerateReport() {
+    public boolean canGenerateReport() throws MavenReportException {
         if (skip) {
-            getLog().info("Skipping PMD execution");
             return false;
         }
 
-        boolean result = super.canGenerateReport();
+        boolean result = canGenerateReportInternal();
         if (result) {
-            try {
-                executePmd();
-                if (skipEmptyReport) {
-                    result = pmdResult.hasViolations();
-                    if (!result) {
-                        getLog().debug("Skipping report since skipEmptyReport is true and "
-                                + "there are no PMD violations.");
-                    }
-                }
-            } catch (MavenReportException e) {
-                throw new RuntimeException(e);
+            executePmd();
+            if (skipEmptyReport) {
+                result = pmdResult.hasViolations();
             }
         }
         return result;
@@ -372,7 +363,7 @@ public class PmdReport extends AbstractPmdReport {
         request.setFormat(format);
         request.setShowPmdLog(showPmdLog);
         request.setSkipPmdError(skipPmdError);
-        request.setIncludeXmlInSite(includeXmlInSite);
+        request.setIncludeXmlInReports(includeXmlInReports);
         request.setReportOutputDirectory(getReportOutputDirectory().getAbsolutePath());
         request.setLogLevel(determineCurrentRootLogLevel());
 

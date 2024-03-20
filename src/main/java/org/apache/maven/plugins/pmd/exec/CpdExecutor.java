@@ -196,7 +196,7 @@ public class CpdExecutor extends Executor {
 
     private void writeXmlReport(CPD cpd) throws MavenReportException {
         File targetFile = writeReport(cpd, new XMLRenderer(request.getOutputEncoding()), "xml");
-        if (request.isIncludeXmlInSite()) {
+        if (request.isIncludeXmlInReports()) {
             File siteDir = new File(request.getReportOutputDirectory());
             siteDir.mkdirs();
             try {
