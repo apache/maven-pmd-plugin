@@ -188,6 +188,9 @@ public class PmdExecutor extends Executor {
 
         configuration.setRuleSets(request.getRulesets());
         configuration.setMinimumPriority(RulePriority.valueOf(request.getMinimumPriority()));
+        if (request.getBenchmarkOutputLocation() != null) {
+            TimeTracker.startGlobalTracking();
+        }
         List<File> files = request.getFiles();
 
         Report report = null;

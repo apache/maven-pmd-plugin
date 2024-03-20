@@ -22,12 +22,12 @@ File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
 // Module 1
-assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:27 Rule:UnnecessarySemicolon Priority:3 Unnecessary semicolon')
-assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:28 Rule:UnnecessaryReturn Priority:3 Avoid unnecessary return statements')
+assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:27 Rule:UnnecessarySemicolon Priority:3 Unnecessary semicolon.')
+assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:28 Rule:UnnecessaryReturn Priority:3 Unnecessary return statement.')
 assert 1 == buildLog.getText().count('[INFO] You have 2 PMD violations. For more details see:')
 
 // Module 2
-assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:24 Rule:UnusedPrivateField Priority:3 Avoid unused private fields such as \'x\'')
+assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:24 Rule:UnusedPrivateField Priority:3 Avoid unused private fields such as \'x\'..')
 assert 1 == buildLog.getText().count('[INFO] You have 1 PMD violation. For more details see:')
 
 // Module 3
