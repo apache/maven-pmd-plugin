@@ -154,6 +154,9 @@ public class CpdExecutor extends Executor {
 
         CPDConfiguration cpdConfiguration = new CPDConfiguration();
         cpdConfiguration.setMinimumTileSize(request.getMinimumTokens());
+        cpdConfiguration.setIgnoreAnnotations(request.isIgnoreAnnotations());
+        cpdConfiguration.setIgnoreLiterals(request.isIgnoreLiterals());
+        cpdConfiguration.setIgnoreIdentifiers(request.isIgnoreIdentifiers());
 
         Language cpdLanguage;
         if ("java".equals(request.getLanguage()) || null == request.getLanguage()) {
@@ -175,20 +178,23 @@ public class CpdExecutor extends Executor {
 
         // always create XML format. we need to output it even if the file list is empty or we have no duplications
         // so the "check" goals can check for violations
-        CpdAnalysis cpd = CpdAnalysis.create(cpdConfiguration);
-        cpd.performAnalysis(report -> {
-            try {
-                writeXmlReport(report);
+        try (CpdAnalysis cpd = CpdAnalysis.create(cpdConfiguration)) {
+            cpd.performAnalysis(report -> {
+                try {
+                    writeXmlReport(report);
 
-                // html format is handled by maven site report, xml format has already been rendered
-                String format = request.getFormat();
-                if (!"html".equals(format) && !"xml".equals(format)) {
-                    writeFormattedReport(report);
+                    // html format is handled by maven site report, xml format has already been rendered
+                    String format = request.getFormat();
+                    if (!"html".equals(format) && !"xml".equals(format)) {
+                        writeFormattedReport(report);
+                    }
+                } catch (MavenReportException e) {
+                    LOG.error(e.getMessage(), e);
                 }
-            } catch (MavenReportException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        });
+            });
+        } catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+        }
         LOG.debug("CPD finished.");
 
         return new CpdResult(new File(request.getTargetDirectory(), "cpd.xml"), request.getOutputEncoding());

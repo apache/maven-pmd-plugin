@@ -21,7 +21,6 @@ package org.apache.maven.plugins.pmd;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
-import java.util.Properties;
 
 import net.sourceforge.pmd.cpd.CPDReportRenderer;
 import org.apache.maven.plugins.annotations.Component;
@@ -176,23 +175,15 @@ public class CpdReport extends AbstractPmdReport {
             return;
         }
 
-        Properties languageProperties = new Properties();
-        if (ignoreLiterals) {
-            languageProperties.setProperty("ignore_literals", "true");
-        }
-        if (ignoreIdentifiers) {
-            languageProperties.setProperty("ignore_identifiers", "true");
-        }
-        if (ignoreAnnotations) {
-            languageProperties.setProperty("ignore_annotations", "true");
-        }
         try {
             filesToProcess = getFilesToProcess();
 
             CpdRequest request = new CpdRequest();
             request.setMinimumTokens(minimumTokens);
             request.setLanguage(language);
-            request.setLanguageProperties(languageProperties);
+            request.setIgnoreAnnotations(ignoreAnnotations);
+            request.setIgnoreIdentifiers(ignoreIdentifiers);
+            request.setIgnoreLiterals(ignoreLiterals);
             request.setSourceEncoding(getInputEncoding());
             request.addFiles(filesToProcess.keySet());
 

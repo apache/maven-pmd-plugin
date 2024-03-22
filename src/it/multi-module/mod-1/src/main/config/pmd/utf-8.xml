@@ -23,5 +23,5 @@ under the License.
   <description>
     This ruleset is encoded with UTF-8 to check proper encoding handling.
   </description>
-  <rule ref="category/java/errorprone.xml/EmptyStatementNotInLoop" message="UTF-8-CHARS: ÄÖÜäöüß¼½¾¤"/>
+  <rule ref="category/java/codestyle.xml/UnnecessarySemicolon" message="UTF-8-CHARS: ÄÖÜäöüß¼½¾¤"/>
 </ruleset>

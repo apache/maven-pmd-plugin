@@ -23,5 +23,5 @@ under the License.
   <description>
     This ruleset is specified via a relative filesystem path.
   </description>
-  <rule ref="category/java/errorprone.xml/EmptyStatementNotInLoop" message="TEST: RELATIVE-PATH"/>
+  <rule ref="category/java/codestyle.xml/UnnecessarySemicolon" message="TEST: RELATIVE-PATH"/>
 </ruleset>

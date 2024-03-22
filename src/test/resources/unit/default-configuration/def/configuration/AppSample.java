@@ -57,7 +57,7 @@ public class AppSample
         {
             if ( i != ( ( str.length() -1 ) ) )
             {
-                tmp = tmp + str.substring( i, (i + 1));
+                tmp = tmp + str.substring( i, i + 1);
             }
             else
             {

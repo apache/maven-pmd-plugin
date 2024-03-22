@@ -514,7 +514,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         File generatedFile = new File(getBasedir(), "target/test/unit/parse-error/target/pmd.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
         String str = readFile(generatedFile);
-        assertTrue(str.contains("ParseException: Parse exception in file"));
+        assertTrue(str.contains("ParseException:"));
         // The parse exception must be in the XML report
         assertTrue(str.contains("at line 23, column 5: Encountered"));
 
@@ -536,7 +536,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
         String str = readFile(generatedFile);
         // The parse exception must be in the XML report
-        assertTrue(str.contains("ParseException: Parse exception in file"));
+        assertTrue(str.contains("ParseException:"));
         assertTrue(str.contains("at line 23, column 5: Encountered"));
 
         str = readFile(generatedReport);

@@ -34,22 +34,21 @@ import java.util.Objects;
 
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.PmdAnalysis;
-import net.sourceforge.pmd.Report;
-import net.sourceforge.pmd.RulePriority;
-import net.sourceforge.pmd.RuleSetLoadException;
-import net.sourceforge.pmd.RuleSetLoader;
 import net.sourceforge.pmd.benchmark.TextTimingReportRenderer;
 import net.sourceforge.pmd.benchmark.TimeTracker;
 import net.sourceforge.pmd.benchmark.TimingReport;
 import net.sourceforge.pmd.benchmark.TimingReportRenderer;
 import net.sourceforge.pmd.lang.Language;
-import net.sourceforge.pmd.lang.LanguageRegistry;
 import net.sourceforge.pmd.lang.LanguageVersion;
+import net.sourceforge.pmd.lang.rule.RulePriority;
+import net.sourceforge.pmd.lang.rule.RuleSetLoadException;
+import net.sourceforge.pmd.lang.rule.RuleSetLoader;
 import net.sourceforge.pmd.renderers.CSVRenderer;
 import net.sourceforge.pmd.renderers.HTMLRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
+import net.sourceforge.pmd.reporting.Report;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeViolationsFromFile;
 import org.apache.maven.reporting.MavenReportException;
@@ -154,8 +153,9 @@ public class PmdExecutor extends Executor {
 
         PMDConfiguration configuration = new PMDConfiguration();
         LanguageVersion languageVersion = null;
-        Language language = LanguageRegistry.findLanguageByTerseName(
-                request.getLanguage() != null ? request.getLanguage() : "java");
+        Language language = configuration
+                .getLanguageRegistry()
+                .getLanguageById(request.getLanguage() != null ? request.getLanguage() : "java");
         if (language == null) {
             throw new MavenReportException("Unsupported language: " + request.getLanguage());
         }
