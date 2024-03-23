@@ -21,10 +21,8 @@ package org.apache.maven.plugins.pmd;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
-import java.util.Properties;
 
-import net.sourceforge.pmd.cpd.JavaTokenizer;
-import net.sourceforge.pmd.cpd.renderer.CPDRenderer;
+import net.sourceforge.pmd.cpd.CPDReportRenderer;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -177,23 +175,15 @@ public class CpdReport extends AbstractPmdReport {
             return;
         }
 
-        Properties languageProperties = new Properties();
-        if (ignoreLiterals) {
-            languageProperties.setProperty(JavaTokenizer.IGNORE_LITERALS, "true");
-        }
-        if (ignoreIdentifiers) {
-            languageProperties.setProperty(JavaTokenizer.IGNORE_IDENTIFIERS, "true");
-        }
-        if (ignoreAnnotations) {
-            languageProperties.setProperty(JavaTokenizer.IGNORE_ANNOTATIONS, "true");
-        }
         try {
             filesToProcess = getFilesToProcess();
 
             CpdRequest request = new CpdRequest();
             request.setMinimumTokens(minimumTokens);
             request.setLanguage(language);
-            request.setLanguageProperties(languageProperties);
+            request.setIgnoreAnnotations(ignoreAnnotations);
+            request.setIgnoreIdentifiers(ignoreIdentifiers);
+            request.setIgnoreLiterals(ignoreLiterals);
             request.setSourceEncoding(getInputEncoding());
             request.addFiles(filesToProcess.keySet());
 
@@ -238,7 +228,7 @@ public class CpdReport extends AbstractPmdReport {
      * @deprecated Use {@link CpdExecutor#createRenderer(String, String)} instead.
      */
     @Deprecated
-    public CPDRenderer createRenderer() throws MavenReportException {
+    public CPDReportRenderer createRenderer() throws MavenReportException {
         return CpdExecutor.createRenderer(format, getOutputEncoding());
     }
 }

@@ -45,7 +45,6 @@ under the License.
         <version>@project.version@</version>
         <configuration>
           <skipPmdError>true</skipPmdError>
-          <showPmdLog>true</showPmdLog>
         </configuration>
         <executions>
           <execution>

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.sourceforge.pmd.RulePriority;
+import net.sourceforge.pmd.lang.rule.RulePriority;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.pmd.model.ProcessingError;

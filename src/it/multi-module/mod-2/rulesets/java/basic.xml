@@ -23,5 +23,5 @@ under the License.
   <description>
     The relative path of this ruleset matches the built-in ruleset "basic".
   </description>
-  <rule ref="category/java/errorprone.xml/EmptyStatementNotInLoop" message="TEST: LOCAL-FILE-RULESET"/>
+  <rule ref="category/java/codestyle.xml/UnnecessarySemicolon" message="TEST: LOCAL-FILE-RULESET"/>
 </ruleset>

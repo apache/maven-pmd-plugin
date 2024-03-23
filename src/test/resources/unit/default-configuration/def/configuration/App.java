@@ -77,7 +77,7 @@ public class App
 
         for( int i = 0; i < str.length(); i++ )
         {
-            if ( i != ( str.length() -1 ) )
+            if ( i != ( ( str.length() -1 ) ) )
             {
                 tmp = tmp + str.substring( i, i + 1);
             }
