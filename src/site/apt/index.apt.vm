@@ -89,6 +89,11 @@ ${project.name}
 
 * Upgrading Notes
 
+  <<Note:>> Starting with Maven PMD Plugin 3.22.0, the plugin requires PDM version 7.0.0 or higher.
+  The PMD 7.0.0 switched to the SLF4J and since Maven 3.1.0+ the SLF4J is the default logging API,
+  because of that the <<<showPmdLog>>> makes no sense to exist. See
+  {{{}https://maven.apache.org/ref/3.9.6/maven-embedder/logging.html}}Maven Logging for more details.
+
   <<Note:>> Starting with PMD 6.0.0 and Maven PMD Plugin 3.9.0, the rules have been reorganized
   into categories, e.g. <<</category/java/bestpractices.xml>>>. So when upgrading to
   Maven PMD Plugin 3.9.0 you should review your plugin configuration and/or custom ruleset.

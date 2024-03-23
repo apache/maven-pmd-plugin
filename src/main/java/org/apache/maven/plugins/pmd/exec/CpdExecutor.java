@@ -144,8 +144,6 @@ public class CpdExecutor extends Executor {
     }
 
     private CpdResult run() throws MavenReportException {
-        setupPmdLogging(request.isShowPmdLog(), request.getLogLevel());
-
         try {
             excludeDuplicationsFromFile.loadExcludeFromFailuresData(request.getExcludeFromFailureFile());
         } catch (MojoExecutionException e) {

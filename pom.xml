@@ -187,12 +187,6 @@ under the License.
       <artifactId>slf4j-api</artifactId>
       <version>${slf4jVersion}</version>
     </dependency>
-    <!-- Support logging of PMD through slf4j. See also MPMD-244 -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jul-to-slf4j</artifactId>
-      <version>${slf4jVersion}</version>
-    </dependency>
 
     <!-- doxia -->
     <dependency>

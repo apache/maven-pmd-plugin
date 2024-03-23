@@ -36,7 +36,6 @@ under the License.
   </properties>
 
   <modules>
-    <module>logging-disabled</module>
     <module>logging-enabled</module>
   </modules>
 </project>

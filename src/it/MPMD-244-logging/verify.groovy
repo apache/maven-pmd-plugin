@@ -23,15 +23,12 @@ assert buildLog.text.contains( "PMD processing errors" )
 assert buildLog.text.contains( "ParseException: Parse exception" )
 assert buildLog.text.contains( "at line 24, column 5: Encountered" )
 
-String disabledPath = new File( basedir, 'logging-disabled/src/main/java/BrokenFile.java' ).getCanonicalPath()
 String enabledPath = new File( basedir, 'logging-enabled/src/main/java/BrokenFile.java' ).getCanonicalPath()
 
-// logging disabled: the pmd exception is only output through the processing error reporting (since MPMD-246)
-assert 1 == buildLog.text.count( "${disabledPath}: ParseException: Parse exception in" )
 // logging enabled: the pmd exception is still output only once: through the processing error reporting (since MPMD-246) - PMD 7 doesn't log the processing error additionally
 assert 1 == buildLog.text.count( "${enabledPath}: ParseException: Parse exception in" )
 
 // build.log contains the logging from the two PMD executions
 // only one execution has logging enabled, so we expect only one log output
-// TODO assert 1 == buildLog.text.count( "[DEBUG] Rules loaded from" )
-// TODO logging is always enabled and can't be disabled, because PMD 7 switched to slf4j
+assert 1 == buildLog.text.count( "[DEBUG] Rules loaded from" )
+// with --debug switch or -X the logging is always enabled and can't be disabled , because PMD 7 switched to slf4j
