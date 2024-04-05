@@ -39,9 +39,6 @@ import net.sourceforge.pmd.cpd.Match;
 import net.sourceforge.pmd.cpd.SimpleRenderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
 import net.sourceforge.pmd.lang.Language;
-import net.sourceforge.pmd.lang.ecmascript.EcmascriptLanguageModule;
-import net.sourceforge.pmd.lang.java.JavaLanguageModule;
-import net.sourceforge.pmd.lang.jsp.JspLanguageModule;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeDuplicationsFromFile;
 import org.apache.maven.reporting.MavenReportException;
@@ -156,16 +153,13 @@ public class CpdExecutor extends Executor {
         cpdConfiguration.setIgnoreLiterals(request.isIgnoreLiterals());
         cpdConfiguration.setIgnoreIdentifiers(request.isIgnoreIdentifiers());
 
-        Language cpdLanguage;
-        if ("java".equals(request.getLanguage()) || null == request.getLanguage()) {
-            cpdLanguage = new JavaLanguageModule();
-        } else if ("javascript".equals(request.getLanguage())) {
-            cpdLanguage = new EcmascriptLanguageModule();
-        } else if ("jsp".equals(request.getLanguage())) {
-            cpdLanguage = new JspLanguageModule();
-        } else {
-            cpdLanguage = cpdConfiguration.getLanguageRegistry().getLanguageById(request.getLanguage());
+        String languageId = request.getLanguage();
+        if ("javascript".equals(languageId)) {
+            languageId = "ecmascript";
+        } else if (languageId == null) {
+            languageId = "java"; // default
         }
+        Language cpdLanguage = cpdConfiguration.getLanguageRegistry().getLanguageById(languageId);
 
         cpdConfiguration.setOnlyRecognizeLanguage(cpdLanguage);
         cpdConfiguration.setSourceEncoding(Charset.forName(request.getSourceEncoding()));
@@ -191,7 +185,7 @@ public class CpdExecutor extends Executor {
                 }
             });
         } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.error("Error while executing CPD: {}", e.getMessage(), e);
         }
         LOG.debug("CPD finished.");
 
