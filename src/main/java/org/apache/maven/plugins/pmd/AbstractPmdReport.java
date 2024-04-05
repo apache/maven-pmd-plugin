@@ -202,7 +202,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
      * You'd need to start maven with <code>MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.net.sourceforge.pmd=off mvn &lt;goals&gt;</code>.
      */
     @Parameter(defaultValue = "true", property = "pmd.showPmdLog")
-    @Deprecated(since = "3.22.0", forRemoval = true)
+    @Deprecated // (since = "3.22.0", forRemoval = true)
     protected boolean showPmdLog = true;
 
     /**

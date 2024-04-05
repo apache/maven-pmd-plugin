@@ -96,7 +96,7 @@ ${project.name}
       Logs from PMD are now always shown and cannot be disabled at runtime after maven has started.
       The property <<<showPmdLog>>> makes no sense anymore and is deprecated now. See
       {{{https://maven.apache.org/maven-logging.html}Maven Logging}} for how to configure logging.
-      For disabling PMD logs, you'd need to start maven with <<<MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.net.sourceforge.pmd=off mvn <goals>>>>.
+      For disabling PMD logs, you'd need to start maven with <<<MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.net.sourceforge.pmd=off mvn <goals> >>>.
 
     * The upgrade from PMD 6 to PMD 7.0.0 is a major version change. If you use the default ruleset
       from Maven PMD Plugin, then everything should just work. But if you use a custom ruleset, you
