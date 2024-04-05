@@ -366,11 +366,9 @@ public class PmdReport extends AbstractPmdReport {
         request.setBenchmarkOutputLocation(benchmark ? benchmarkOutputFilename : null);
         request.setAnalysisCacheLocation(analysisCache ? analysisCacheLocation : null);
         request.setExcludeFromFailureFile(excludeFromFailureFile);
-
         request.setTargetDirectory(targetDirectory.getAbsolutePath());
         request.setOutputEncoding(getOutputEncoding());
         request.setFormat(format);
-        request.setShowPmdLog(showPmdLog);
         request.setSkipPmdError(skipPmdError);
         request.setIncludeXmlInSite(includeXmlInSite);
         request.setReportOutputDirectory(getReportOutputDirectory().getAbsolutePath());

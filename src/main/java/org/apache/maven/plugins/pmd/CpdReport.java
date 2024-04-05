@@ -185,10 +185,7 @@ public class CpdReport extends AbstractPmdReport {
             request.setIgnoreLiterals(ignoreLiterals);
             request.setSourceEncoding(getInputEncoding());
             request.addFiles(filesToProcess.keySet());
-
-            request.setShowPmdLog(showPmdLog);
             request.setLogLevel(determineCurrentRootLogLevel());
-
             request.setExcludeFromFailureFile(excludeFromFailureFile);
             request.setTargetDirectory(targetDirectory.getAbsolutePath());
             request.setOutputEncoding(getOutputEncoding());

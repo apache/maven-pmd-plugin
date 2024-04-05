@@ -196,9 +196,19 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
      * the PMD logger is also configured for debug.
      *
      * @since 3.9.0
+     * @deprecated With 3.22.0 and the upgrade to PMD 7, this parameter has no effect anymore. The PMD log
+     * is now always redirected into the maven log and this can't be disabled by this parameter anymore.
+     * In order to disable the logging, see <a href="https://maven.apache.org/maven-logging.html">Maven Logging</a>.
+     * You'd need to start maven with <code>MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.net.sourceforge.pmd=off mvn &lt;goals&gt;</code>.
      */
     @Parameter(defaultValue = "true", property = "pmd.showPmdLog")
+    @Deprecated(since = "3.22.0", forRemoval = true)
     protected boolean showPmdLog = true;
+
+    /**
+     * Used to avoid showing the deprecation warning for "showPmdLog" multiple times.
+     */
+    private boolean warnedAboutShowPmdLog = false;
 
     /**
      * <p>
@@ -454,6 +464,12 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
      */
     @Override
     public boolean canGenerateReport() {
+        if (!showPmdLog && !warnedAboutShowPmdLog) {
+            getLog().warn("The parameter \"showPmdLog\" has been deprecated and will be removed."
+                    + "Setting it to \"false\" has no effect.");
+            warnedAboutShowPmdLog = true;
+        }
+
         if (aggregate && !project.isExecutionRoot()) {
             return false;
         }

@@ -44,7 +44,6 @@ public class CpdRequest implements Serializable {
     private String sourceEncoding;
     private List<File> files = new ArrayList<>();
 
-    private boolean showPmdLog;
     private String logLevel;
 
     private String excludeFromFailureFile;
@@ -105,10 +104,6 @@ public class CpdRequest implements Serializable {
         this.reportOutputDirectory = reportOutputDirectory;
     }
 
-    public void setShowPmdLog(boolean showPmdLog) {
-        this.showPmdLog = showPmdLog;
-    }
-
     public void setLogLevel(String logLevel) {
         this.logLevel = logLevel;
     }
@@ -159,10 +154,6 @@ public class CpdRequest implements Serializable {
 
     public String getReportOutputDirectory() {
         return reportOutputDirectory;
-    }
-
-    public boolean isShowPmdLog() {
-        return showPmdLog;
     }
 
     public String getLogLevel() {
