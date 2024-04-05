@@ -63,15 +63,18 @@ import org.codehaus.plexus.util.StringUtils;
 @Mojo(name = "pmd", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST)
 public class PmdReport extends AbstractPmdReport {
     /**
-     * The target JDK to analyze based on. Should match the source used in the compiler plugin. Valid values
-     * with the default PMD version are
+     * The target JDK to analyze based on. Should match the source used in the compiler plugin.
+     * Valid values depend on the used PMD version. With the default PMD version valid values are
      * currently <code>1.3</code>, <code>1.4</code>, <code>1.5</code>, <code>1.6</code>, <code>1.7</code>,
      * <code>1.8</code>, <code>9</code>, <code>10</code>, <code>11</code>, <code>12</code>, <code>13</code>,
      * <code>14</code>, <code>15</code>, <code>16</code>, <code>17</code>, <code>18</code>, <code>19</code>,
-     * and <code>20</code>.
+     * <code>20</code>, <code>21</code>, and <code>22</code>.
      *
      * <p> You can override the default PMD version by specifying PMD as a dependency,
      * see <a href="examples/upgrading-PMD-at-runtime.html">Upgrading PMD at Runtime</a>.</p>
+     *
+     * <p> To see the supported Java versions for each PMD version, see
+     * <a href="https://docs.pmd-code.org/latest/pmd_languages_java.html">Java support (PMD)</a>.</p>
      *
      * <p>
      *   <b>Note:</b> this parameter is only used if the language parameter is set to <code>java</code>.
