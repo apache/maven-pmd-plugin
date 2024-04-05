@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
-import net.sourceforge.pmd.cpd.CPDReportRenderer;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -218,17 +217,5 @@ public class CpdReport extends AbstractPmdReport {
      */
     public String getOutputName() {
         return "cpd";
-    }
-
-    /**
-     * Create and return the correct renderer for the output type.
-     *
-     * @return the renderer based on the configured output
-     * @throws org.apache.maven.reporting.MavenReportException if no renderer found for the output type
-     * @deprecated Use {@link CpdExecutor#createRenderer(String, String)} instead.
-     */
-    @Deprecated
-    public CPDReportRenderer createRenderer() throws MavenReportException {
-        return CpdExecutor.createRenderer(format, getOutputEncoding());
     }
 }
