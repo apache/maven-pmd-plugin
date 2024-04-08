@@ -181,11 +181,11 @@ public class CpdExecutor extends Executor {
                         writeFormattedReport(report);
                     }
                 } catch (MavenReportException e) {
-                    LOG.error(e.getMessage(), e);
+                    LOG.error("Error while writing CPD report", e);
                 }
             });
         } catch (IOException e) {
-            LOG.error("Error while executing CPD: {}", e.getMessage(), e);
+            LOG.error("Error while executing CPD", e);
         }
         LOG.debug("CPD finished.");
 
