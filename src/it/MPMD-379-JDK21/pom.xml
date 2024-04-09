@@ -39,8 +39,7 @@ under the License.
           <artifactId>maven-compiler-plugin</artifactId>
           <version>@compilerPluginVersion@</version>
           <configuration>
-            <target>${javaVersion}</target>
-            <source>${javaVersion}</source>
+            <release>${javaVersion}</release>
           </configuration>
         </plugin>
       </plugins>
@@ -85,7 +84,6 @@ under the License.
           <toolchains>
             <jdk>
               <version>${javaVersion}</version>
-              <vendor>openjdk</vendor>
             </jdk>
           </toolchains>
         </configuration>
