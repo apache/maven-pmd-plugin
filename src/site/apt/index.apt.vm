@@ -89,10 +89,30 @@ ${project.name}
 
 * Upgrading Notes
 
-  <<Note:>> Starting with PMD 6.0.0 and Maven PMD Plugin 3.9.0, the rules have been reorganized
-  into categories, e.g. <<</category/java/bestpractices.xml>>>. So when upgrading to
-  Maven PMD Plugin 3.9.0 you should review your plugin configuration and/or custom ruleset.
-  See {{{./examples/usingRuleSets.html}Using Rule Sets}} for more information.
+** 3.22.0
+
+    * Starting with Maven PMD Plugin 3.22.0, the plugin requires PMD version 7.0.0 or higher.
+      PMD 7.0.0 switched to SLF4J and since Maven 3.1.0+ SLF4J is the default logging API.
+      Logs from PMD are now always shown and cannot be disabled at runtime after maven has started.
+      The property <<<showPmdLog>>> makes no sense anymore and is deprecated now. See
+      {{{https://maven.apache.org/maven-logging.html}Maven Logging}} for how to configure logging.
+      For disabling PMD logs, you'd need to start maven with <<<MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.net.sourceforge.pmd=off mvn <goals> >>>.
+
+    * The upgrade from PMD 6 to PMD 7.0.0 is a major version change. If you use the default ruleset
+      from Maven PMD Plugin, then everything should just work. But if you use a custom ruleset, you
+      most likely need to review your ruleset and migrate it to PMD 7. Rules might have been renamed or
+      replaced. See {{{https://docs.pmd-code.org/latest/pmd_release_notes_pmd7.html}Detailed Release Notes for PMD 7}}
+      and {{{https://docs.pmd-code.org/latest/pmd_userdocs_migrating_to_pmd7.html}Migration Guide for PMD 7}}.
+
+    * If you currently override the dependency to PMD ({{{./examples/upgrading-PMD-at-runtime.html}Upgrading PMD at Runtime}})
+      make sure to upgrade PMD as well to 7.0.0 or later when upgrading the Maven PMD Plugin.
+
+** 3.9.0
+
+    * Starting with PMD 6.0.0 and Maven PMD Plugin 3.9.0, the rules have been reorganized
+      into categories, e.g. <<</category/java/bestpractices.xml>>>. So when upgrading to
+      Maven PMD Plugin 3.9.0 you should review your plugin configuration and/or custom ruleset.
+      See {{{./examples/usingRuleSets.html}Using Rule Sets}} for more information.
 
 
 * Examples

@@ -26,5 +26,5 @@ under the License.
     MPMD-243
   </description>
 
-  <rule ref="rulesets/java/imports.xml/TooManyStaticImports"/>
+  <rule ref="category/java/codestyle.xml/TooManyStaticImports"/>
 </ruleset>

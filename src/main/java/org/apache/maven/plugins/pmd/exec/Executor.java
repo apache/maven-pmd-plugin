@@ -29,9 +29,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.SimpleFormatter;
 
 import org.apache.maven.cli.logging.Slf4jConfiguration;
 import org.apache.maven.cli.logging.Slf4jConfigurationFactory;
@@ -39,47 +36,9 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 abstract class Executor {
     private static final Logger LOG = LoggerFactory.getLogger(Executor.class);
-
-    /**
-     * This holds a strong reference in case we configured the logger to
-     * redirect to slf4j. See {@link #showPmdLog}. Without a strong reference,
-     * the logger might be garbage collected and the redirect to slf4j is gone.
-     */
-    private java.util.logging.Logger julLogger;
-
-    protected void setupPmdLogging(boolean showPmdLog, String logLevel) {
-        if (!showPmdLog) {
-            return;
-        }
-
-        java.util.logging.Logger logger = java.util.logging.Logger.getLogger("net.sourceforge.pmd");
-
-        boolean slf4jBridgeAlreadyAdded = false;
-        for (Handler handler : logger.getHandlers()) {
-            if (handler instanceof SLF4JBridgeHandler) {
-                slf4jBridgeAlreadyAdded = true;
-                break;
-            }
-        }
-
-        if (slf4jBridgeAlreadyAdded) {
-            return;
-        }
-
-        SLF4JBridgeHandler handler = new SLF4JBridgeHandler();
-        SimpleFormatter formatter = new SimpleFormatter();
-        handler.setFormatter(formatter);
-        logger.setUseParentHandlers(false);
-        logger.addHandler(handler);
-        handler.setLevel(Level.ALL);
-        logger.setLevel(Level.ALL);
-        julLogger = logger;
-        julLogger.fine("Configured jul-to-slf4j bridge for " + logger.getName());
-    }
 
     protected void setupLogLevel(String logLevel) {
         ILoggerFactory slf4jLoggerFactory = LoggerFactory.getILoggerFactory();

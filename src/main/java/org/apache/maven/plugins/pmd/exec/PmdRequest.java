@@ -47,7 +47,6 @@ public class PmdRequest implements Serializable {
     private String sourceEncoding;
     private List<File> files = new ArrayList<>();
 
-    private boolean showPmdLog;
     private String logLevel;
     private boolean skipPmdError;
 
@@ -126,10 +125,6 @@ public class PmdRequest implements Serializable {
         this.format = format;
     }
 
-    public void setShowPmdLog(boolean showPmdLog) {
-        this.showPmdLog = showPmdLog;
-    }
-
     public void setLogLevel(String logLevel) {
         this.logLevel = logLevel;
     }
@@ -204,10 +199,6 @@ public class PmdRequest implements Serializable {
 
     public String getFormat() {
         return format;
-    }
-
-    public boolean isShowPmdLog() {
-        return showPmdLog;
     }
 
     public String getLogLevel() {

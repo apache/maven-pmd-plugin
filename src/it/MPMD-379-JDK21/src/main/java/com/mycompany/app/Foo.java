@@ -1,3 +1,5 @@
+package com.mycompany.app;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,13 +19,12 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
-assert buildLog.exists()
+import java.util.ArrayList;
 
-// we have 2 modules and for each module this should be output once
-// note: this is only logged in debug mode by net.sourceforge.pmd.cache.FileAnalysisCache
-assert 2 == buildLog.text.count( "Analysis cache created" )
+public class Foo
+{
+    public Foo( final ArrayList<String> foo )
+    {
+    }
 
-// since we are running clean pmd:pmd, the cache is always created, never updated
-// note: this is only logged in debug mode by net.sourceforge.pmd.cache.FileAnalysisCache
-assert 0 == buildLog.text.count( "Analysis cache updated" )
+}

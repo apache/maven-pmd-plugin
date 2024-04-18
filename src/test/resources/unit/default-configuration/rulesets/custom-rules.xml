@@ -29,14 +29,14 @@ under the License.
     <rule name="CustomRule"
           language="java"
           message="custom rule test"
-          class="net.sourceforge.pmd.lang.rule.XPathRule">
+          class="net.sourceforge.pmd.lang.rule.xpath.XPathRule">
         <description>custom xpath rule test</description>
         <priority>1</priority>
         <properties>
             <property name="xpath">
                 <value>
 <![CDATA[
-//ClassOrInterfaceDeclaration[@SimpleName = 'App']
+//ClassDeclaration[@SimpleName = 'App']
 ]]>
                 </value>
             </property>

@@ -64,7 +64,7 @@ public class ExcludeDuplicationsFromFile implements ExcludeFromFile<Duplication>
     public boolean isExcludedFromFailure(final Match errorDetail) {
         final Set<String> uniquePaths = new HashSet<>();
         for (Mark mark : errorDetail.getMarkSet()) {
-            uniquePaths.add(mark.getFilename());
+            uniquePaths.add(mark.getLocation().getFileId().getAbsolutePath());
         }
         return isExcludedFromFailure(uniquePaths);
     }

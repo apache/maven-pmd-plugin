@@ -23,7 +23,7 @@ assert buildLog.exists()
 
 // Module 1
 assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:27 Rule:UnnecessarySemicolon Priority:3 Unnecessary semicolon')
-assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:28 Rule:UnnecessaryReturn Priority:3 Avoid unnecessary return statements')
+assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:28 Rule:UnnecessaryReturn Priority:3 Unnecessary return statement')
 assert 1 == buildLog.getText().count('[INFO] You have 2 PMD violations. For more details see:')
 
 // Module 2

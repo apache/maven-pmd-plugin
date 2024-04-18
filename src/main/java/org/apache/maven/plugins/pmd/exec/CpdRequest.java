@@ -44,7 +44,6 @@ public class CpdRequest implements Serializable {
     private String sourceEncoding;
     private List<File> files = new ArrayList<>();
 
-    private boolean showPmdLog;
     private String logLevel;
 
     private String excludeFromFailureFile;
@@ -53,6 +52,9 @@ public class CpdRequest implements Serializable {
     private String format;
     private boolean includeXmlInSite;
     private String reportOutputDirectory;
+    private boolean ignoreAnnotations;
+    private boolean ignoreIdentifiers;
+    private boolean ignoreLiterals;
 
     public void setJavaExecutable(String javaExecutable) {
         this.javaExecutable = javaExecutable;
@@ -100,10 +102,6 @@ public class CpdRequest implements Serializable {
 
     public void setReportOutputDirectory(String reportOutputDirectory) {
         this.reportOutputDirectory = reportOutputDirectory;
-    }
-
-    public void setShowPmdLog(boolean showPmdLog) {
-        this.showPmdLog = showPmdLog;
     }
 
     public void setLogLevel(String logLevel) {
@@ -158,11 +156,31 @@ public class CpdRequest implements Serializable {
         return reportOutputDirectory;
     }
 
-    public boolean isShowPmdLog() {
-        return showPmdLog;
-    }
-
     public String getLogLevel() {
         return logLevel;
+    }
+
+    public boolean isIgnoreAnnotations() {
+        return ignoreAnnotations;
+    }
+
+    public void setIgnoreAnnotations(boolean ignoreAnnotations) {
+        this.ignoreAnnotations = ignoreAnnotations;
+    }
+
+    public void setIgnoreIdentifiers(boolean ignoreIdentifiers) {
+        this.ignoreIdentifiers = ignoreIdentifiers;
+    }
+
+    public boolean isIgnoreIdentifiers() {
+        return ignoreIdentifiers;
+    }
+
+    public void setIgnoreLiterals(boolean ignoreLiterals) {
+        this.ignoreLiterals = ignoreLiterals;
+    }
+
+    public boolean isIgnoreLiterals() {
+        return ignoreLiterals;
     }
 }
