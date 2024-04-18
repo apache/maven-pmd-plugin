@@ -30,6 +30,30 @@ Header Templates
 
 # Release Notes
 
+## Version 3.22.0
+
+**Release Date:** 2024-04-18
+
+**JIRA:** [Release Notes - Maven PMD Plugin - Version 3.22.0](https://issues.apache.org/jira/projects/MPMD/versions/12353876)
+
+**GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.22.0>
+
+### 🚀 New features and improvements
+* [MPMD-379](https://issues.apache.org/jira/browse/MPMD-379) - Upgrade to use PMD 7.0.0 by default ([#144](https://github.com/apache/maven-pmd-plugin/pull/144)) @mkolesnikov
+
+## 📦 Dependency updates
+* [MPMD-394](https://issues.apache.org/jira/browse/MPMD-394) - Bump org.apache.maven.plugins:maven-plugins from 41 to 42 ([#148](https://github.com/apache/maven-pmd-plugin/pull/148)) @dependabot
+* [MPMD-393](https://issues.apache.org/jira/browse/MPMD-393) - Bump commons-io:commons-io from 2.16.0 to 2.16.1 ([#147](https://github.com/apache/maven-pmd-plugin/pull/147)) @dependabot
+* [MPMD-393](https://issues.apache.org/jira/browse/MPMD-393) - Bump commons-io:commons-io from 2.15.1 to 2.16.0 ([#146](https://github.com/apache/maven-pmd-plugin/pull/146)) @dependabot
+* Bump apache/maven-gh-actions-shared from 3 to 4 ([#143](https://github.com/apache/maven-pmd-plugin/pull/143)) @dependabot
+* Bump org.codehaus.plexus:plexus-resources from 1.2.0 to 1.3.0 ([#140](https://github.com/apache/maven-pmd-plugin/pull/140)) @dependabot
+* Bump org.apache.commons:commons-lang3 from 3.12.0 to 3.14.0 ([#137](https://github.com/apache/maven-pmd-plugin/pull/137)) @dependabot
+* Bump commons-io:commons-io from 2.11.0 to 2.15.1 ([#138](https://github.com/apache/maven-pmd-plugin/pull/138)) @dependabot
+* [MPMD-388](https://issues.apache.org/jira/browse/MPMD-388) - Upgrade to Parent 41 @michael-o
+
+## 👻 Maintenance
+* Bump release-drafter/release-drafter from 5 to 6 ([#142](https://github.com/apache/maven-pmd-plugin/pull/142)) @dependabot
+
 ## Version 3.21.2
 
 **Release Date:** 2023-10-30
