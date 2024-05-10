@@ -1,0 +1,52 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>unit.CpdReportTest</groupId>
+    <artifactId>cpd-configuration-with-pmd-errors</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <inceptionYear>2006</inceptionYear>
+    <name>Maven CPD Plugin Test for failing build when CPD errors occurred</name>
+    <url>http://maven.apache.org</url>
+    <build>
+        <finalName>with-cpd-errors</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <project implementation="org.apache.maven.plugins.pmd.stubs.DefaultConfigurationMavenProjectStub"/>
+                    <outputDirectory>${basedir}/target/test/unit/CpdReportTest/with-cpd-errors/target/site</outputDirectory>
+                    <targetDirectory>${basedir}/target/test/unit/CpdReportTest/with-cpd-errors/target</targetDirectory>
+                    <localRepository>${localRepository}</localRepository>
+                    <format>xml</format>
+                    <linkXRef>false</linkXRef>
+                    <xrefLocation>${basedir}/target/test/unit/CpdReportTest/with-cpd-errors/target/site/xref</xrefLocation>
+                    <minimumTokens>100</minimumTokens>
+                    <compileSourceRoots>
+                        <compileSourceRoot>${basedir}/src/test/resources/unit/CpdReportTest/with-cpd-errors/src/main/java</compileSourceRoot>
+                    </compileSourceRoots>
+                    <inputEncoding>UTF-8</inputEncoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

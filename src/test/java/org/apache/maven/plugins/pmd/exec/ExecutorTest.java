@@ -23,9 +23,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.apache.commons.lang3.SystemUtils;
+import org.junit.Assert;
 
 public class ExecutorTest extends TestCase {
     public void testBuildClasspath() throws MalformedURLException {

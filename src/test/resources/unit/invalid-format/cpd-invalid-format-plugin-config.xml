@@ -37,7 +37,7 @@ under the License.
           <outputDirectory>${basedir}/target/test/unit/invalid-format/target/site</outputDirectory>
           <targetDirectory>${basedir}/target/test/unit/invalid-format/target</targetDirectory>
           <localRepository>${localRepository}</localRepository>
-          <format>xhtml</format>
+          <format>xhtml</format> <!-- format "xhtml" does not exist -->
           <linkXRef>false</linkXRef>
           <xrefLocation>${basedir}/target/test/unit/invalid-format/target/site/xref</xrefLocation>
           <minimumTokens>25</minimumTokens>
