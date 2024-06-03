@@ -81,11 +81,11 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <mavenVersion>3.2.5</mavenVersion>
     <javaVersion>8</javaVersion>
+    <mavenVersion>3.6.3</mavenVersion>
     <pmdVersion>7.0.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
-    <aetherVersion>1.0.0.v20140518</aetherVersion>
+    <resolverVersion>1.4.1</resolverVersion>
     <doxiaVersion>1.12.0</doxiaVersion>
     <compilerPluginVersion>3.11.0</compilerPluginVersion>
     <sitePluginVersion>3.12.1</sitePluginVersion>
@@ -302,27 +302,27 @@ under the License.
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-api</artifactId>
-      <version>${aetherVersion}</version>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-api</artifactId>
+      <version>${resolverVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-impl</artifactId>
-      <version>${aetherVersion}</version>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-impl</artifactId>
+      <version>${resolverVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-connector-basic</artifactId>
-      <version>${aetherVersion}</version>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-connector-basic</artifactId>
+      <version>${resolverVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-transport-wagon</artifactId>
-      <version>${aetherVersion}</version>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-transport-wagon</artifactId>
+      <version>${resolverVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
