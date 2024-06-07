@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.reporting.MavenReportException;
 import org.w3c.dom.Document;
 
 /**
@@ -65,8 +66,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         assertTrue(lowerCaseContains(str, "tmp = tmp + str.substring( i, i + 1);"));
 
         // the version should be logged
-        String output = CapturingPrintStream.getOutput();
-        assertTrue(output.contains("PMD version: " + AbstractPmdReport.getPmdVersion()));
+        assertLogOutputContains("PMD version: " + AbstractPmdReport.getPmdVersion());
     }
 
     /**
@@ -130,7 +130,8 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
 
             fail("MavenReportException must be thrown");
         } catch (Exception e) {
-            assertTrue(true);
+            assertMavenReportException("There was 1 error while executing CPD", e);
+            assertLogOutputContains("Can't find CPD custom format xhtml");
         }
     }
 
@@ -239,5 +240,31 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         assertTrue(new File(generatedFile.getAbsolutePath()).exists());
         String str = readFile(generatedFile);
         assertEquals(0, StringUtils.countMatches(str, "<duplication"));
+    }
+
+    public void testWithCpdErrors() throws Exception {
+        try {
+            generateReport("cpd", "CpdReportTest/with-cpd-errors/pom.xml");
+            fail("MavenReportException must be thrown");
+        } catch (Exception e) {
+            assertMavenReportException("There was 1 error while executing CPD", e);
+            assertLogOutputContains("Lexical error in file");
+            assertLogOutputContains("BadFile.java");
+        }
+    }
+
+    private static void assertMavenReportException(String expectedMessage, Exception exception) {
+        // The maven report exception might be wrapped in a RuntimeException
+        assertTrue(
+                "Expected MavenReportException, but was: " + exception,
+                exception instanceof MavenReportException || exception.getCause() instanceof MavenReportException);
+        assertTrue(
+                "Wrong message: expected: " + expectedMessage + ", but was: " + exception.toString(),
+                exception.toString().contains(expectedMessage));
+    }
+
+    private static void assertLogOutputContains(String expectedMessage) {
+        String log = CapturingPrintStream.getOutput();
+        assertTrue("Expected '" + expectedMessage + "' in log, but was:\n" + log, log.contains(expectedMessage));
     }
 }

@@ -24,25 +24,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 import net.sourceforge.pmd.cpd.CPDConfiguration;
-import net.sourceforge.pmd.cpd.CPDReport;
 import net.sourceforge.pmd.cpd.CPDReportRenderer;
 import net.sourceforge.pmd.cpd.CSVRenderer;
 import net.sourceforge.pmd.cpd.CpdAnalysis;
-import net.sourceforge.pmd.cpd.Match;
 import net.sourceforge.pmd.cpd.SimpleRenderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
 import net.sourceforge.pmd.lang.Language;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeDuplicationsFromFile;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,6 +146,8 @@ public class CpdExecutor extends Executor {
         cpdConfiguration.setIgnoreAnnotations(request.isIgnoreAnnotations());
         cpdConfiguration.setIgnoreLiterals(request.isIgnoreLiterals());
         cpdConfiguration.setIgnoreIdentifiers(request.isIgnoreIdentifiers());
+        // we are not running CPD through CLI and deal with any errors during analysis on our own
+        cpdConfiguration.setSkipLexicalErrors(true);
 
         String languageId = request.getLanguage();
         if ("javascript".equals(languageId)) {
@@ -167,64 +163,24 @@ public class CpdExecutor extends Executor {
         request.getFiles().forEach(f -> cpdConfiguration.addInputPath(f.toPath()));
 
         LOG.debug("Executing CPD...");
-
-        // always create XML format. we need to output it even if the file list is empty or we have no duplications
-        // so the "check" goals can check for violations
         try (CpdAnalysis cpd = CpdAnalysis.create(cpdConfiguration)) {
-            cpd.performAnalysis(report -> {
-                try {
-                    writeXmlReport(report);
-
-                    // html format is handled by maven site report, xml format has already been rendered
-                    String format = request.getFormat();
-                    if (!"html".equals(format) && !"xml".equals(format)) {
-                        writeFormattedReport(report);
-                    }
-                } catch (MavenReportException e) {
-                    LOG.error("Error while writing CPD report", e);
-                }
-            });
+            CpdReportConsumer reportConsumer = new CpdReportConsumer(request, excludeDuplicationsFromFile);
+            cpd.performAnalysis(reportConsumer);
         } catch (IOException e) {
-            LOG.error("Error while executing CPD", e);
+            throw new MavenReportException("Error while executing CPD", e);
         }
         LOG.debug("CPD finished.");
 
+        // in constrast to pmd goal, we don't have a parameter for cpd like "skipPmdError" - if there
+        // are any errors during CPD analysis, the maven build fails.
+        int cpdErrors = cpdConfiguration.getReporter().numErrors();
+        if (cpdErrors == 1) {
+            throw new MavenReportException("There was 1 error while executing CPD");
+        } else if (cpdErrors > 1) {
+            throw new MavenReportException("There were " + cpdErrors + " errors while executing CPD");
+        }
+
         return new CpdResult(new File(request.getTargetDirectory(), "cpd.xml"), request.getOutputEncoding());
-    }
-
-    private void writeXmlReport(CPDReport cpd) throws MavenReportException {
-        File targetFile = writeReport(cpd, new XMLRenderer(request.getOutputEncoding()), "xml");
-        if (request.isIncludeXmlInSite()) {
-            File siteDir = new File(request.getReportOutputDirectory());
-            siteDir.mkdirs();
-            try {
-                FileUtils.copyFile(targetFile, new File(siteDir, "cpd.xml"));
-            } catch (IOException e) {
-                throw new MavenReportException(e.getMessage(), e);
-            }
-        }
-    }
-
-    private File writeReport(CPDReport cpd, CPDReportRenderer r, String extension) throws MavenReportException {
-        if (r == null) {
-            return null;
-        }
-
-        File targetDir = new File(request.getTargetDirectory());
-        targetDir.mkdirs();
-        File targetFile = new File(targetDir, "cpd." + extension);
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(targetFile), request.getOutputEncoding())) {
-            r.render(cpd.filterMatches(filterMatches()), writer);
-            writer.flush();
-        } catch (IOException ioe) {
-            throw new MavenReportException(ioe.getMessage(), ioe);
-        }
-        return targetFile;
-    }
-
-    private void writeFormattedReport(CPDReport cpd) throws MavenReportException {
-        CPDReportRenderer r = createRenderer(request.getFormat(), request.getOutputEncoding());
-        writeReport(cpd, r, request.getFormat());
     }
 
     /**
@@ -254,19 +210,5 @@ public class CpdExecutor extends Executor {
         }
 
         return renderer;
-    }
-
-    private Predicate<Match> filterMatches() {
-        return (Match match) -> {
-            LOG.debug("Filtering duplications. Using " + excludeDuplicationsFromFile.countExclusions()
-                    + " configured exclusions.");
-
-            if (excludeDuplicationsFromFile.isExcludedFromFailure(match)) {
-                LOG.debug("Excluded " + match + " duplications.");
-                return false;
-            } else {
-                return true;
-            }
-        };
     }
 }
