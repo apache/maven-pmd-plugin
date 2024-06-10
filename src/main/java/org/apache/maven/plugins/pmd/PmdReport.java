@@ -513,23 +513,11 @@ public class PmdReport extends AbstractPmdReport {
                                 resolvedArtifact.getArtifact().getFile().toString());
                     }
 
-                    List<String> projectClasspath = includeTests
-                            ? localProject.getTestClasspathElements()
-                            : localProject.getCompileClasspathElements();
-
-                    // Add the project's target folder first
-                    classpath.addAll(projectClasspath);
-                    if (!localProject.isExecutionRoot()) {
-                        for (String path : projectClasspath) {
-                            File pathFile = new File(path);
-                            String[] children = pathFile.list();
-
-                            if (!pathFile.exists() || (children != null && children.length == 0)) {
-                                getLog().warn("The project " + localProject.getArtifactId()
-                                        + " does not seem to be compiled. PMD results might be inaccurate.");
-                            }
-                        }
-                    }
+                    // Add the project's classes first
+                    classpath.addAll(
+                            includeTests
+                                    ? localProject.getTestClasspathElements()
+                                    : localProject.getCompileClasspathElements());
                 }
 
                 // Add the dependencies as last entries
