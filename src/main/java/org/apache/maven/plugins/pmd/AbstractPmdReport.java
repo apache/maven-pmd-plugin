@@ -140,7 +140,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     private File[] excludeRoots;
 
     /**
-     * Run PMD on the tests.
+     * Run PMD on the tests as well.
      *
      * @since 2.2
      */
