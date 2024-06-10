@@ -139,7 +139,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
-      <version>3.3.2</version>
+      <version>3.4.0</version>
       <exclusions>
         <exclusion>
           <groupId>org.sonatype.sisu</groupId>
