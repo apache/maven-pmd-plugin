@@ -17,7 +17,7 @@
  * under the License.
  */
 
-File pmdHtml = new File( basedir, "target/site/pmd.html" );
+File pmdHtml = new File( basedir, "target/reports/pmd.html" );
 assert pmdHtml.exists()
 
 // Groovy's getText() automatically detects the correct encoding, so that UTF-16 works out of the box
