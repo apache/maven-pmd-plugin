@@ -140,7 +140,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     private File[] excludeRoots;
 
     /**
-     * Run PMD on the tests.
+     * Run PMD on the tests as well.
      *
      * @since 2.2
      */
@@ -152,7 +152,8 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
      *
      * @since 2.2
      * @deprecated since 3.15.0 Use the goals <code>pmd:aggregate-pmd</code> and <code>pmd:aggregate-cpd</code>
-     * instead.
+     * instead. See <a href="https://maven.apache.org/plugins/maven-pmd-plugin/faq.html#typeresolution_aggregate">FAQ:
+     * Why do I get sometimes false positive and/or false negative violations?</a> for an explanation.
      */
     @Parameter(property = "aggregate", defaultValue = "false")
     @Deprecated

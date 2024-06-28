@@ -101,25 +101,24 @@ under the License.
     </faq>
     <faq id="typeresolution aggregate">
       <question>
-        What does the warning "The project xyz does not seem to be compiled. PMD results might be inaccurate." mean?
+        Why do I get sometimes false positive and/or false negative violations?
       </question>
       <answer>
         <p>
           In order to improve PMD's results, type resolution should be used. It is enabled by default
           (property <a href="pmd-mojo.html#typeResolution">typeResolution</a>) and helps to avoid false positive
-          findings by matching the exact types of method parameters or variables.
+          or false negative findings by matching the exact types of method parameters or variables.
         </p>
         <p>
-          However, this requires that the project is built first, so that not only the project's dependencies
+          However, this requires that the project is built first so that not only the project's dependencies
           can be used for type resolution, but also the project's classes as well.
         </p>
         <p>
           When using the property <a href="pmd-mojo.html#aggregate">aggregate</a>, this is problematic: With
           aggregate=true, PMD is executed at the root of a multi-module project <em>before the individual
           modules are built</em>. Then the types of the individual projects are not available, which might lead to
-          false positive findings e.g. for the rule "UnusedPrivateMethod".
-          If this might be the case, then the warning "The project xyz does not seem
-          to be compiled. PMD results might be inaccurate" is issued.
+          false positive findings e.g. for the rule "UnusedPrivateMethod". That's why this property has
+          been deprecated.
         </p>
         <p>
           In order to use type resolution and aggregate together, maven needs to be execute in two passes:
