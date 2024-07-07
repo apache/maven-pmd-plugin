@@ -43,11 +43,8 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
 
             fail("MojoFailureException should be thrown.");
         } catch (final Exception e) {
-            // the version should be logged
-            String output = CapturingPrintStream.getOutput();
-            assertTrue(output.contains("PMD version: " + AbstractPmdReport.getPmdVersion()));
-
-            assertTrue(e.getMessage().startsWith("You have 8 PMD violations."));
+            assertTrue(
+                    e.getMessage().startsWith("PMD " + AbstractPmdReport.getPmdVersion() + " has found 8 violations."));
         }
     }
 
@@ -81,13 +78,9 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             pmdViolationMojoFail.execute();
             fail("Exception Expected");
         } catch (final MojoFailureException e) {
-            String message = e.getMessage();
-            if (message.contains("You have 5 PMD violations and 3 warnings.")) {
-                System.out.println("Caught expected message: " + e.getMessage()); // expected
-            } else {
-                throw new AssertionError(
-                        "Expected: '" + message + "' to contain 'You have 5 PMD violations and 3 warnings.'");
-            }
+            assertTrue(e.getMessage()
+                    .startsWith("PMD " + AbstractPmdReport.getPmdVersion()
+                            + " has found 5 violations and issued 3 warnings."));
         }
     }
 
@@ -108,13 +101,9 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             pmdViolationMojo.execute();
             fail("Exception Expected");
         } catch (final MojoFailureException e) {
-            String message = e.getMessage();
-            if (message.contains("You have 5 PMD violations and 3 warnings.")) {
-                System.out.println("Caught expected message: " + e.getMessage()); // expected
-            } else {
-                throw new AssertionError(
-                        "Expected: '" + message + "' to contain 'You have 5 PMD violations and 3 warnings.'");
-            }
+            assertTrue(e.getMessage()
+                    .startsWith("PMD " + AbstractPmdReport.getPmdVersion()
+                            + " has found 5 violations and issued 3 warnings."));
         }
     }
 

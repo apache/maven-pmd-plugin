@@ -17,7 +17,16 @@
  * under the License.
  */
 
+import groovy.xml.XmlSlurper
+
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
-assert buildLog.text.contains( "PMD Warning: com.example.ClassWithLotsOfStaticImports" )
-assert buildLog.text.contains( "You have 1 warning. For more details see" )
+
+File pmdXml = new File( basedir, "target/pmd.xml" )
+assert pmdXml.exists()
+
+def pmd = new XmlSlurper().parse( pmdXml )
+def version = pmd.@version
+
+assert buildLog.text.contains( "[WARNING] PMD Warning: com.example.ClassWithLotsOfStaticImports" )
+assert buildLog.text.contains( "[WARNING] PMD " + version + " has issued 1 warning. For more details see:" )

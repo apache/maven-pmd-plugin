@@ -120,7 +120,7 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
     protected MavenProject project;
 
     protected void executeCheck(
-            final String filename, final String tagName, final String key, final int failurePriority)
+            final String filename, final String analyzerName, final String failureName, final int failurePriority)
             throws MojoFailureException, MojoExecutionException {
         if (aggregate && !project.isExecutionRoot()) {
             return;
@@ -134,8 +134,6 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
         final File outputFile = new File(targetDirectory, filename);
 
         if (outputFile.exists()) {
-            getLog().info("PMD version: " + AbstractPmdReport.getPmdVersion());
-
             try {
                 final ViolationDetails<D> violations = getViolations(outputFile, failurePriority);
 
@@ -149,23 +147,24 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
                 final int failureCount = failures.size();
                 final int warningCount = warnings.size();
 
-                final String message = getMessage(failureCount, warningCount, key, outputFile);
-
-                getLog().debug("PMD failureCount: " + failureCount + ", warningCount: " + warningCount);
+                final String message = getMessage(failureCount, warningCount, analyzerName, failureName, outputFile);
 
                 if (failureCount > getMaxAllowedViolations() && isFailOnViolation()) {
                     throw new MojoFailureException(message);
                 }
 
-                this.getLog().info(message);
+                if (!message.isEmpty()) {
+                    this.getLog().warn(message);
+                }
 
                 if (failureCount > 0 && isFailOnViolation() && failureCount <= getMaxAllowedViolations()) {
                     this.getLog()
-                            .info("The build is not failed, since " + getMaxAllowedViolations()
+                            .info("The build has not failed because " + getMaxAllowedViolations()
                                     + " violations are allowed (maxAllowedViolations).");
                 }
             } catch (final IOException | XmlPullParserException e) {
-                throw new MojoExecutionException("Unable to read PMD results xml: " + outputFile.getAbsolutePath(), e);
+                throw new MojoExecutionException(
+                        "Unable to read " + analyzerName + " results XML: " + outputFile.getAbsolutePath(), e);
             }
         } else {
             throw new MojoFailureException("Unable to perform check, " + "unable to find " + outputFile);
@@ -231,26 +230,38 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
      *
      * @param failureCount
      * @param warningCount
-     * @param key
+     * @param analyzerName
+     * @param failureName
      * @param outputFile
      * @return
      */
-    private String getMessage(final int failureCount, final int warningCount, final String key, final File outputFile) {
+    private String getMessage(
+            final int failureCount,
+            final int warningCount,
+            final String analyzerName,
+            final String failureName,
+            final File outputFile) {
         final StringBuilder message = new StringBuilder(256);
         if (failureCount > 0 || warningCount > 0) {
             if (failureCount > 0) {
-                message.append("You have ")
+                message.append(analyzerName)
+                        .append(" ")
+                        .append(AbstractPmdReport.getPmdVersion())
+                        .append(" has found ")
                         .append(failureCount)
                         .append(" ")
-                        .append(key)
+                        .append(failureName)
                         .append(failureCount > 1 ? "s" : "");
             }
 
             if (warningCount > 0) {
                 if (failureCount > 0) {
-                    message.append(" and ");
+                    message.append(" and issued ");
                 } else {
-                    message.append("You have ");
+                    message.append(analyzerName)
+                            .append(" ")
+                            .append(AbstractPmdReport.getPmdVersion())
+                            .append(" has issued ");
                 }
                 message.append(warningCount).append(" warning").append(warningCount > 1 ? "s" : "");
             }

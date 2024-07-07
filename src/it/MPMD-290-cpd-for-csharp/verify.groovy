@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,14 +17,19 @@
  * under the License.
  */
 
+import groovy.xml.XmlSlurper
+
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
-assert buildLog.text.contains( "[INFO] CPD Failure: Found 7 lines of duplicated code at locations" )
-assert buildLog.text.contains( "[DEBUG] PMD failureCount: 1, warningCount: 0" )
-
 File cpdXml = new File( basedir, 'target/cpd.xml' )
 assert cpdXml.exists()
+
+def cpd = new XmlSlurper().parse( cpdXml )
+def pmdVersion = cpd.@pmdVersion
+
+assert buildLog.text.contains( "[WARNING] CPD Failure: Found 7 lines of duplicated code at locations" )
+assert buildLog.text.contains( "CPD " + pmdVersion + " has found 1 duplication. For more details see:" )
 
 // no duplication for the license header - if this is reported, then CPD uses the wrong language/tokenizer
 assert !cpdXml.text.contains( '<duplication lines="20" tokens="148">' )

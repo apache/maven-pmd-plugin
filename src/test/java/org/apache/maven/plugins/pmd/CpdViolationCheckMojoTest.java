@@ -41,11 +41,8 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
 
             fail("MojoFailureException should be thrown.");
         } catch (final Exception e) {
-            // the version should be logged
-            String output = CapturingPrintStream.getOutput();
-            assertTrue(output.contains("PMD version: " + AbstractPmdReport.getPmdVersion()));
-
-            assertTrue(e.getMessage().startsWith("You have 1 CPD duplication."));
+            assertTrue(e.getMessage()
+                    .startsWith("CPD " + AbstractPmdReport.getPmdVersion() + " has found 1 duplication."));
         }
     }
 

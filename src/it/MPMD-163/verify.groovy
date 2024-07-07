@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,8 +17,16 @@
  * under the License.
  */
 
+import groovy.xml.XmlSlurper
+
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
-assert 1 == buildLog.getText().count('You have 1 warning')
-assert 1 == buildLog.getText().count("PMD Warning: Foo:23 Rule:UnusedFormalParameter Priority:3 Avoid unused constructor parameters such as 'foo'..")
+File pmdXml = new File( basedir, "target/pmd.xml" )
+assert pmdXml.exists()
+
+def pmd = new XmlSlurper().parse( pmdXml )
+def version = pmd.@version
+
+assert buildLog.getText().contains('[WARNING] PMD ' + version + ' has issued 1 warning. For more details see:')
+assert buildLog.getText().contains("[WARNING] PMD Warning: Foo:23 Rule:UnusedFormalParameter Priority:3 Avoid unused constructor parameters such as 'foo'..")

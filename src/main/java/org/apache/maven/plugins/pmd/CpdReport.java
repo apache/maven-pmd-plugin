@@ -200,7 +200,6 @@ public class CpdReport extends AbstractPmdReport {
                 request.setJavaExecutable(javaExecutable);
             }
 
-            getLog().info("PMD version: " + AbstractPmdReport.getPmdVersion());
             cpdResult = CpdExecutor.execute(request);
         } catch (UnsupportedEncodingException e) {
             throw new MavenReportException("Encoding '" + getInputEncoding() + "' is not supported.", e);

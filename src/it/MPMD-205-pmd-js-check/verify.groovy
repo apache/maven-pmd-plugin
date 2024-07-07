@@ -20,4 +20,4 @@
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
-assert buildLog.getText().contains("[INFO] PMD Failure: PmdJsCheck.js:23 Rule:GlobalVariable Priority:1 Avoid using global variables.");
+assert buildLog.getText().contains("[WARNING] PMD Failure: PmdJsCheck.js:23 Rule:GlobalVariable Priority:1 Avoid using global variables.");

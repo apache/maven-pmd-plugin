@@ -40,7 +40,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 /**
  * Fails the build if there were any PMD violations in the source code.
  *
- * @version $Id$
  * @since 2.0
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
@@ -83,7 +82,7 @@ public class PmdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Violati
             return;
         }
 
-        executeCheck("pmd.xml", "violation", "PMD violation", failurePriority);
+        executeCheck("pmd.xml", "PMD", "violation", failurePriority);
     }
 
     /**
@@ -108,7 +107,7 @@ public class PmdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Violati
         buff.append(" Priority:").append(item.getPriority());
         buff.append(" ").append(item.getText()).append(".");
 
-        this.getLog().info(buff.toString());
+        this.getLog().warn(buff.toString());
     }
 
     @Override

@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,20 +17,49 @@
  * under the License.
  */
 
+import groovy.xml.XmlSlurper
+
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
 // Module 1
-assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:27 Rule:UnnecessarySemicolon Priority:3 Unnecessary semicolon')
-assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:28 Rule:UnnecessaryReturn Priority:3 Unnecessary return statement')
-assert 1 == buildLog.getText().count('[INFO] You have 2 PMD violations. For more details see:')
+File pmdXml = new File( basedir, "mod-1/target/pmd.xml" )
+assert pmdXml.exists()
+
+def pmd = new XmlSlurper().parse( pmdXml )
+def version = pmd.@version
+
+assert buildLog.getText().contains('[WARNING] PMD Failure: test.MyClass:27 Rule:UnnecessarySemicolon Priority:3 Unnecessary semicolon')
+assert buildLog.getText().contains('[WARNING] PMD Failure: test.MyClass:28 Rule:UnnecessaryReturn Priority:3 Unnecessary return statement')
+assert buildLog.getText().contains('[WARNING] PMD ' + version + ' has found 2 violations. For more details see:')
 
 // Module 2
-assert 1 == buildLog.getText().count('[INFO] PMD Failure: test.MyClass:24 Rule:UnusedPrivateField Priority:3 Avoid unused private fields such as \'x\'')
-assert 1 == buildLog.getText().count('[INFO] You have 1 PMD violation. For more details see:')
+pmdXml = new File( basedir, "mod-2/target/pmd.xml" )
+assert pmdXml.exists()
+
+pmd = new XmlSlurper().parse( pmdXml )
+version = pmd.@version
+
+assert buildLog.getText().contains('[WARNING] PMD Failure: test.MyClass:24 Rule:UnusedPrivateField Priority:3 Avoid unused private fields such as \'x\'')
+assert buildLog.getText().contains('[WARNING] PMD ' + version + ' has found 1 violation. For more details see:')
 
 // Module 3
-assert 1 == buildLog.getText().count('[INFO] You have 1 CPD duplication. For more details see:')
+File cpdXml = new File( basedir, "mod-3/target/cpd.xml" )
+assert cpdXml.exists()
+
+def cpd = new XmlSlurper().parse( cpdXml )
+def pmdVersion = cpd.@pmdVersion
+
+assert buildLog.getText().contains('[WARNING] CPD Failure: Found 37 lines of duplicated code at locations:')
+assert buildLog.getText().contains('[WARNING] CPD ' + pmdVersion + ' has found 1 duplication. For more details see:')
 
 // Module 4
-assert 1 == buildLog.getText().count('[INFO] You have 2 CPD duplications. For more details see:')
+cpdXml = new File( basedir, "mod-4/target/cpd.xml" )
+assert cpdXml.exists()
+
+cpd = new XmlSlurper().parse( cpdXml )
+pmdVersion = cpd.@pmdVersion
+
+assert buildLog.getText().contains('[WARNING] CPD Failure: Found 35 lines of duplicated code at locations:')
+assert buildLog.getText().contains('[WARNING] CPD Failure: Found 34 lines of duplicated code at locations:')
+assert buildLog.getText().contains('[WARNING] CPD ' + pmdVersion + ' has found 2 duplications. For more details see:')

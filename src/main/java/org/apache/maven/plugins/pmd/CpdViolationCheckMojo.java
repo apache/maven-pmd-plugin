@@ -39,7 +39,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 /**
  * Fails the build if there were any CPD violations in the source code.
  *
- * @version $Id$
  * @since 2.0
  */
 @Mojo(name = "cpd-check", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
@@ -75,7 +74,7 @@ public class CpdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Duplica
             return;
         }
 
-        executeCheck("cpd.xml", "duplication", "CPD duplication", 10);
+        executeCheck("cpd.xml", "CPD", "duplication", 10);
     }
 
     /**
@@ -88,14 +87,14 @@ public class CpdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Duplica
         StringBuilder buff = new StringBuilder(100);
         buff.append("CPD ").append(severity).append(": Found ");
         buff.append(lines).append(" lines of duplicated code at locations:");
-        this.getLog().info(buff.toString());
+        this.getLog().warn(buff.toString());
 
         for (CpdFile file : item.getFiles()) {
             buff.setLength(0);
             buff.append("    ");
             buff.append(file.getPath());
             buff.append(" line ").append(file.getLine());
-            this.getLog().info(buff.toString());
+            this.getLog().warn(buff.toString());
         }
 
         this.getLog().debug("CPD " + severity + ": Code Fragment ");
