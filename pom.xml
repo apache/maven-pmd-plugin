@@ -83,7 +83,7 @@ under the License.
   <properties>
     <javaVersion>8</javaVersion>
     <mavenVersion>3.6.3</mavenVersion>
-    <pmdVersion>7.0.0</pmdVersion>
+    <pmdVersion>7.3.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
     <resolverVersion>1.4.1</resolverVersion>
     <doxiaVersion>1.12.0</doxiaVersion>
