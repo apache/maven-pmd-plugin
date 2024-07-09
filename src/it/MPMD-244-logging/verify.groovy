@@ -31,4 +31,4 @@ assert 1 == buildLog.text.count( "${enabledPath}: ParseException: Parse exceptio
 // build.log contains the logging from the two PMD executions
 // only one execution has logging enabled, so we expect only one log output
 assert 1 == buildLog.text.count( "[DEBUG] Rules loaded from" )
-// with --debug switch or -X the logging is always enabled and can't be disabled , because PMD 7 switched to slf4j
+// with --debug switch or -X the logging is always enabled and can't be disabled because PMD 7 switched to slf4j

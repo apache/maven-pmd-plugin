@@ -22,8 +22,8 @@ assert buildLog.exists()
 
 // we have 2 modules and for each module this should be output once
 // note: this is only logged in debug mode by net.sourceforge.pmd.cache.FileAnalysisCache
-assert 2 == buildLog.text.count( "Analysis cache created" )
+assert 2 == buildLog.text.count( "[DEBUG] Analysis cache created" )
 
 // since we are running clean pmd:pmd, the cache is always created, never updated
 // note: this is only logged in debug mode by net.sourceforge.pmd.cache.FileAnalysisCache
-assert 0 == buildLog.text.count( "Analysis cache updated" )
+assert 0 == buildLog.text.count( "[DEBUG] Analysis cache updated" )

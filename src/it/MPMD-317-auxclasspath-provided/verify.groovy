@@ -30,8 +30,8 @@ for ( String line : buildLog.readLines() ) {
 // convert windows path names
 auxclasspathLog = auxclasspathLog.replaceAll('\\\\', '/')
 
-assert 1 == auxclasspathLog.count( 'Using aux classpath:' )
-assert 1 == auxclasspathLog.count( 'Using aggregated aux classpath:' )
+assert 1 == auxclasspathLog.count( '[DEBUG] Using aux classpath:' )
+assert 1 == auxclasspathLog.count( '[DEBUG] Using aggregated aux classpath:' )
 
 assert 2 == auxclasspathLog.count( 'module-a/target/classes' )
 
