@@ -85,7 +85,7 @@ Finding duplicated code in C#
 
  In this example, the C# source files are located in <<<src/main/cs>>>.
 
- <<Note:>> The version for <<<net.sourceforge.pmd:pmd-cs>>> needs to match the PMD version, that is
- being used. If you {{{./upgrading-PMD-at-runtime.html}upgrade PMD at runtime}} you'll need to make
- sure, to change the version here as well.
+ <<Note:>> The version for <<<net.sourceforge.pmd:pmd-cs>>> needs to match the PMD version.
+ If you {{{./upgrading-PMD-at-runtime.html}upgrade PMD at runtime}}, you need to
+ change the version here as well.
 
