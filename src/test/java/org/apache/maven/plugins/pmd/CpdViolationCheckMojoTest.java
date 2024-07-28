@@ -36,7 +36,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml");
-            final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo("cpd-check", testPom);
+            final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
             cpdViolationMojo.execute();
 
             fail("MojoFailureException should be thrown.");
@@ -53,7 +53,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/cpd-check-notfailonviolation-plugin-config.xml");
-        final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo("cpd-check", testPom);
+        final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
         cpdViolationMojo.execute();
 
         assertTrue(true);
@@ -64,7 +64,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             final File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml");
-            final CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo("cpd-check", testPom);
+            final CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
             mojo.execute();
 
             fail("MojoFailureException should be thrown.");
@@ -79,9 +79,14 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/cpd-check-cpd-exclusions-configuration-plugin-config.xml");
-        final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo("cpd-check", testPom);
+        final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
 
         // this call shouldn't throw an exception, as the classes with duplications have been excluded
         cpdViolationMojo.execute();
+    }
+
+    @Override
+    protected String getGoal() {
+        return "cpd-check";
     }
 }

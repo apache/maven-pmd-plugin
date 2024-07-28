@@ -21,9 +21,15 @@ package org.apache.maven.plugins.pmd;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.LegacySupport;
+import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.descriptor.MojoDescriptor;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
@@ -110,8 +116,17 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
         repoSession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
                 .newInstance(repoSession, new LocalRepository(artifactStubFactory.getWorkingDir())));
 
+        List<MavenProject> reactorProjects =
+                mojo.getReactorProjects() != null ? mojo.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo, "mojoExecution", getMockMojoExecution());
         setVariableValueToObject(mojo, "session", legacySupport.getSession());
-        setVariableValueToObject(mojo, "remoteRepositories", mojo.getProject().getRemoteArtifactRepositories());
+        setVariableValueToObject(mojo, "repoSession", legacySupport.getRepositorySession());
+        setVariableValueToObject(mojo, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo, "remoteProjectRepositories", mojo.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo, "siteDirectory", new File(mojo.getProject().getBasedir(), "src/site"));
         return mojo;
     }
 
@@ -149,4 +164,22 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     public static boolean lowerCaseContains(String text, String contains) {
         return text.toLowerCase(Locale.ROOT).contains(contains.toLowerCase(Locale.ROOT));
     }
+
+    private MojoExecution getMockMojoExecution() {
+        MojoDescriptor md = new MojoDescriptor();
+        md.setGoal(getGoal());
+
+        MojoExecution me = new MojoExecution(md);
+
+        PluginDescriptor pd = new PluginDescriptor();
+        Plugin p = new Plugin();
+        p.setGroupId("org.apache.maven.plugins");
+        p.setArtifactId("maven-pmd-plugin");
+        pd.setPlugin(p);
+        md.setPluginDescriptor(pd);
+
+        return me;
+    }
+
+    protected abstract String getGoal();
 }
