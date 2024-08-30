@@ -30,6 +30,32 @@ Header Templates
 
 # Release Notes
 
+## Version 3.25.0
+
+**Release Date:** 2024-08-22
+
+**JIRA:** [Release Notes - Maven PMD Plugin - Version 3.25.0](https://issues.apache.org/jira/projects/MPMD/versions/12355005)
+
+**GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.25.0>
+
+### 🚀 New features and improvements
+* [MPMD-390](https://issues.apache.org/jira/browse/MPMD-390) - Dynamically calculate xrefLocation/xrefTestLocation ([#126](https://github.com/apache/maven-pmd-plugin/pull/126)) @michael-o
+
+### 🐛 Bug Fixes
+* [MPMD-368](https://issues.apache.org/jira/browse/MPMD-368) - Parameter 'localRepository' is deprecated
+
+### 👻 Maintenance
+* [MPMD-398](https://issues.apache.org/jira/browse/MPMD-398) - Refresh download page ([#165](https://github.com/apache/maven-pmd-plugin/pull/165)) @FredrikAnderson
+
+### 📝 Documentation updates
+* (doc) Update release notes for 3.23.0 and 3.24.0 ([#161](https://github.com/apache/maven-pmd-plugin/pull/161)) @adangel
+
+### 📦 Dependency updates
+* [MPMD-389](https://issues.apache.org/jira/browse/MPMD-389) - Upgrade to Doxia 2.0.0 Milestone Stack ([#126](https://github.com/apache/maven-pmd-plugin/pull/126)) @michael-o
+* [MPMD-401](https://issues.apache.org/jira/browse/MPMD-401) - Upgrade to Parent 43 ([#159](https://github.com/apache/maven-pmd-plugin/pull/159)) @dependabot
+* Bump org.apache.commons:commons-lang3 from 3.15.0 to 3.16.0 ([#164](https://github.com/apache/maven-pmd-plugin/pull/164)) @dependabot
+* Bump org.apache.commons:commons-lang3 from 3.14.0 to 3.15.0 ([#163](https://github.com/apache/maven-pmd-plugin/pull/163)) @dependabot
+
 ## Version 3.24.0
 
 **Release Date:** 2024-07-10
