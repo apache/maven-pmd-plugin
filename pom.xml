@@ -86,11 +86,11 @@ under the License.
     <pmdVersion>7.3.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
     <resolverVersion>1.4.1</resolverVersion>
-    <doxiaVersion>2.0.0-M12</doxiaVersion>
+    <doxiaVersion>2.0.0</doxiaVersion>
     <compilerPluginVersion>3.11.0</compilerPluginVersion>
     <sitePluginVersion>3.20.0</sitePluginVersion>
     <projectInfoReportsPluginVersion>3.7.0</projectInfoReportsPluginVersion>
-    <jxrPluginVersion>3.4.0</jxrPluginVersion>
+    <jxrPluginVersion>3.5.0</jxrPluginVersion>
     <project.build.outputTimestamp>2024-08-22T16:42:52Z</project.build.outputTimestamp>
   </properties>
 
@@ -212,7 +212,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>4.0.0-M15</version>
+      <version>4.0.0</version>
     </dependency>
 
     <!-- plexus -->
