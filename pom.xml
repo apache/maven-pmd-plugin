@@ -137,6 +137,11 @@ under the License.
       <version>0.13.1</version>
     </dependency>
     <dependency>
+      <groupId>org.eclipse.sisu</groupId>
+      <artifactId>org.eclipse.sisu.plexus</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-common-artifact-filters</artifactId>
       <version>3.4.0</version>
@@ -170,16 +175,19 @@ under the License.
       <groupId>net.sourceforge.pmd</groupId>
       <artifactId>pmd-java</artifactId>
       <version>${pmdVersion}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.pmd</groupId>
       <artifactId>pmd-javascript</artifactId>
       <version>${pmdVersion}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.pmd</groupId>
       <artifactId>pmd-jsp</artifactId>
       <version>${pmdVersion}</version>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
