@@ -35,6 +35,28 @@ Header Templates
 sent through the Maven Announcement mailing list. The archive is available here:
 <https://lists.apache.org/list.html?announce@maven.apache.org>
 
+## Version 3.26.0
+
+**Release Date:** 2024-10-25
+
+**Announcement:** [[ANN] Maven PMD Plugin 3.26.0 released-Apache Mail Archives](https://lists.apache.org/thread/97yd0vtfx2hq0fs9q8v1m8f9ypk32ymf)
+
+**JIRA:** [Release Notes - Maven PMD Plugin - Version 3.26.0](https://issues.apache.org/jira/projects/MPMD/versions/12355202)
+
+**GitHub:** <https://github.com/apache/maven-pmd-plugin/releases/tag/maven-pmd-plugin-3.26.0>
+
+### 📝 Documentation updates
+* [MPMD-405](https://issues.apache.org/jira/browse/MPMD-405) - Update release notes for 3.25.0 ([#166](https://github.com/apache/maven-pmd-plugin/pull/166)) @adangel
+
+### 📦 Dependency updates
+* [MPMD-404](https://issues.apache.org/jira/browse/MPMD-404) - Upgrade to PMD 7.7.0 ([#170](https://github.com/apache/maven-pmd-plugin/pull/170)) @pzygielo
+* [MPMD-407](https://issues.apache.org/jira/browse/MPMD-407) - Upgrade to Doxia 2.0.0 GA Stack ([#175](https://github.com/apache/maven-pmd-plugin/pull/175)) @michael-o
+* Bump commons-io:commons-io from 2.7 to 2.14.0 in /src/it/MPMD-318-auxclasspath-includeTests/module-a ([#174](https://github.com/apache/maven-pmd-plugin/pull/174)) @dependabot
+* Bump commons-io:commons-io from 2.16.1 to 2.17.0 ([#169](https://github.com/apache/maven-pmd-plugin/pull/169)) @dependabot
+* Bump org.apache.commons:commons-lang3 from 3.16.0 to 3.17.0 ([#167](https://github.com/apache/maven-pmd-plugin/pull/167)) @dependabot
+
+NOTE: Read the details on this release here: https://cwiki.apache.org/confluence/display/MAVEN/Towards+Doxia+2.0.0+Stack
+
 ## Version 3.25.0
 
 **Release Date:** 2024-08-22
