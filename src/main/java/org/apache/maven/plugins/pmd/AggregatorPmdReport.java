@@ -18,10 +18,16 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolver;
+import org.apache.maven.toolchain.ToolchainManager;
+import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.resource.ResourceManager;
 
 /**
  * Creates a PMD site report in an <b>aggregator</b> project based on the rulesets and configuration set in the plugin.
@@ -32,6 +38,16 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 @Mojo(name = "aggregate-pmd", aggregator = true, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST)
 @Execute(phase = LifecyclePhase.TEST_COMPILE)
 public class AggregatorPmdReport extends PmdReport {
+
+    @Inject
+    public AggregatorPmdReport(
+            ToolchainManager toolchainManager,
+            ResourceManager locator,
+            DependencyResolver dependencyResolver,
+            I18N i18n) {
+        super(toolchainManager, locator, dependencyResolver, i18n);
+    }
+
     @Override
     protected boolean isAggregator() {
         return true;
