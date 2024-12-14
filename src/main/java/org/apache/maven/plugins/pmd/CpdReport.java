@@ -18,11 +18,12 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import javax.inject.Inject;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.pmd.exec.CpdExecutor;
@@ -30,6 +31,7 @@ import org.apache.maven.plugins.pmd.exec.CpdRequest;
 import org.apache.maven.plugins.pmd.exec.CpdResult;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.toolchain.Toolchain;
+import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.i18n.I18N;
 
 /**
@@ -97,8 +99,7 @@ public class CpdReport extends AbstractPmdReport {
     /**
      * Internationalization component
      */
-    @Component
-    private I18N i18n;
+    private final I18N i18n;
 
     /**
      * Contains the result of the last CPD execution.
@@ -106,6 +107,12 @@ public class CpdReport extends AbstractPmdReport {
      * has not been executed yet.
      */
     private CpdResult cpdResult;
+
+    @Inject
+    public CpdReport(ToolchainManager toolchainManager, I18N i18n) {
+        super(toolchainManager);
+        this.i18n = i18n;
+    }
 
     /** {@inheritDoc} */
     public String getName(Locale locale) {
