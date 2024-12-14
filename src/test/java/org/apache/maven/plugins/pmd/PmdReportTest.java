@@ -255,11 +255,9 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         mockServer.stop();
     }
 
-    private int determineFreePort() {
+    private int determineFreePort() throws IOException {
         try (ServerSocket socket = new ServerSocket(0)) {
             return socket.getLocalPort();
-        } catch (IOException e) {
-            throw new RuntimeException("Couldn't find a free port.", e);
         }
     }
 
@@ -360,8 +358,8 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
             generateReport(getGoal(), "empty-report/invalid-format/invalid-target-jdk-plugin-config.xml");
 
             fail("Must throw MavenReportException.");
-        } catch (Exception e) {
-            assertTrue(true);
+        } catch (MavenReportException e) {
+            assertNotNull(e.getMessage());
         }
     }
 
@@ -557,7 +555,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         assertFalse(
                 "Exclusion of an exact source directory not working", str.contains("OverrideBothEqualsAndHashcode"));
         assertFalse(
-                "Exclusion of basedirectory with subdirectories not working (MPMD-178)",
+                "Exclusion of base directory with subdirectories not working (MPMD-178)",
                 str.contains("JumbledIncrementer"));
     }
 

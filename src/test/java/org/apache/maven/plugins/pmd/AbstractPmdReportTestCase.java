@@ -50,7 +50,7 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     private ArtifactStubFactory artifactStubFactory;
 
     /**
-     * The current project to be test.
+     * The project to test.
      */
     private MavenProject testMavenProject;
 
@@ -64,38 +64,10 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     }
 
     /**
-     * Get the current Maven project
+     * Generate the report and return the generated file.
      *
-     * @return the maven project
-     */
-    protected MavenProject getTestMavenProject() {
-        return testMavenProject;
-    }
-
-    /**
-     * Get the generated report as file in the test maven project.
-     *
-     * @param name the name of the report.
-     * @return the generated report as file
-     * @throws IOException if the return file doesnt exist
-     */
-    protected File getGeneratedReport(String name) throws IOException {
-        String outputDirectory =
-                getBasedir() + "/target/test/unit/" + getTestMavenProject().getArtifactId();
-
-        File report = new File(outputDirectory, name);
-        if (!report.exists()) {
-            throw new IOException("File not found. Attempted: " + report);
-        }
-
-        return report;
-    }
-
-    /**
-     * Generate the report and return the generated file
-     *
-     * @param goal the mojo goal.
-     * @param pluginXml the name of the xml file in "src/test/resources/plugin-configs/".
+     * @param goal the mojo goal
+     * @param pluginXml the name of the xml file in "src/test/resources/plugin-configs/"
      * @return the generated HTML file
      * @throws Exception if any
      */
@@ -147,38 +119,38 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     }
 
     /**
-     * Read the contents of the specified file object into a string
+     * Read the contents of the specified file object into a string.
      */
     protected String readFile(File file) throws IOException {
-        return new String(Files.readAllBytes(file.toPath()));
+        return new String(Files.readAllBytes(file.toPath()), "UTF-8");
     }
 
     /**
      * Checks, whether the string <code>contained</code> is contained in
-     * the given <code>text</code> ignoring case.
+     * the given <code>text</code>, ignoring case.
      *
      * @param text the string in which the search is executed
-     * @param contains the string, the should be searched
-     * @return <code>true</code> if the string is contained, otherwise <code>false</code>.
+     * @param contains the string to be searched for
+     * @return <code>true</code> if the text contains the string, otherwise <code>false</code>
      */
     public static boolean lowerCaseContains(String text, String contains) {
         return text.toLowerCase(Locale.ROOT).contains(contains.toLowerCase(Locale.ROOT));
     }
 
     private MojoExecution getMockMojoExecution() {
-        MojoDescriptor md = new MojoDescriptor();
-        md.setGoal(getGoal());
+        MojoDescriptor mojoDescriptor = new MojoDescriptor();
+        mojoDescriptor.setGoal(getGoal());
 
-        MojoExecution me = new MojoExecution(md);
+        MojoExecution execution = new MojoExecution(mojoDescriptor);
 
-        PluginDescriptor pd = new PluginDescriptor();
-        Plugin p = new Plugin();
-        p.setGroupId("org.apache.maven.plugins");
-        p.setArtifactId("maven-pmd-plugin");
-        pd.setPlugin(p);
-        md.setPluginDescriptor(pd);
+        PluginDescriptor pluginDescriptor = new PluginDescriptor();
+        Plugin plugin = new Plugin();
+        plugin.setGroupId("org.apache.maven.plugins");
+        plugin.setArtifactId("maven-pmd-plugin");
+        pluginDescriptor.setPlugin(plugin);
+        mojoDescriptor.setPluginDescriptor(pluginDescriptor);
 
-        return me;
+        return execution;
     }
 
     protected abstract String getGoal();

@@ -42,7 +42,7 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             mojo.execute();
 
             fail("MojoFailureException should be thrown.");
-        } catch (final Exception e) {
+        } catch (final MojoFailureException e) {
             assertTrue(
                     e.getMessage().startsWith("PMD " + AbstractPmdReport.getPmdVersion() + " has found 8 violations."));
         }
@@ -56,8 +56,6 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
                 "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml");
         final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
         pmdViolationMojo.execute();
-
-        assertTrue(true);
     }
 
     public void testMaxAllowedViolations() throws Exception {
@@ -116,7 +114,7 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             mojo.execute();
 
             fail("MojoFailureException should be thrown.");
-        } catch (final Exception e) {
+        } catch (final MojoFailureException e) {
             assertTrue(true);
         }
     }

@@ -209,7 +209,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     public void testCpdJavascriptConfiguration() throws Exception {
         generateReport(getGoal(), "default-configuration/cpd-javascript-plugin-config.xml");
 
-        // verify  the generated file to exist and violations are reported
+        // verify  the generated file exists and violations are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
         assertTrue(new File(generatedFile.getAbsolutePath()).exists());
         String str = readFile(generatedFile);
