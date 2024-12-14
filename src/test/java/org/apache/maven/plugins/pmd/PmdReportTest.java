@@ -347,9 +347,9 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
                     mojo, "compileSourceRoots", mojo.getProject().getCompileSourceRoots());
             generateReport(mojo, testPom);
 
-            fail("Must throw MavenReportException.");
-        } catch (Exception e) {
-            assertTrue(true);
+            fail("Must nest MavenReportException.");
+        } catch (MojoExecutionException e) {
+            assertTrue(e.getCause() instanceof MavenReportException);
         }
     }
 
