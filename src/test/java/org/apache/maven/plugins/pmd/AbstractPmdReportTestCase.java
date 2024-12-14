@@ -49,11 +49,6 @@ import org.eclipse.aether.repository.LocalRepository;
 public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     private ArtifactStubFactory artifactStubFactory;
 
-    /**
-     * The project to test.
-     */
-    private MavenProject testMavenProject;
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -110,8 +105,6 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
         buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
 
-        testMavenProject = builder.build(pluginXmlFile, buildingRequest).getProject();
-
         File outputDir = mojo.getReportOutputDirectory();
         String filename = mojo.getOutputName() + ".html";
 
@@ -122,7 +115,7 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
      * Read the contents of the specified file object into a string.
      */
     protected String readFile(File file) throws IOException {
-        return new String(Files.readAllBytes(file.toPath()), "UTF-8");
+        return new String(Files.readAllBytes(file.toPath()));
     }
 
     /**
