@@ -357,9 +357,9 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         try {
             generateReport(getGoal(), "invalid-format/invalid-target-jdk-plugin-config.xml");
 
-            fail("Must throw MavenReportException.");
-        } catch (MavenReportException e) {
-            assertNotNull(e.getMessage());
+            fail("Must nest MavenReportException.");
+        } catch (MojoExecutionException e) {
+            assertTrue(e.getCause() instanceof MavenReportException);
         }
     }
 
