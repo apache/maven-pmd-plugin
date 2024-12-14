@@ -355,7 +355,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
 
     public void testInvalidTargetJdk() throws Exception {
         try {
-            generateReport(getGoal(), "empty-report/invalid-format/invalid-target-jdk-plugin-config.xml");
+            generateReport(getGoal(), "invalid-format/invalid-target-jdk-plugin-config.xml");
 
             fail("Must throw MavenReportException.");
         } catch (MavenReportException e) {
@@ -364,8 +364,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
     }
 
     /**
-     * verify the pmd.xml file is included in the reports when requested.
-     * @throws Exception
+     * Verify the pmd.xml file is included in the reports when requested.
      */
     public void testIncludeXmlInReports() throws Exception {
         File generatedReport =
