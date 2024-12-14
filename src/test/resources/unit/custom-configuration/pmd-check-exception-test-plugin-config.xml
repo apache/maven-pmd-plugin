@@ -33,11 +33,8 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <configuration>
-          <sourceDirectory>${basedir}/src/test/resources/unit/custom-configuration</sourceDirectory>
           <targetDirectory>${basedir}/target/test/unit/custom-configuration/target</targetDirectory>
-          <rulesetsTargetDirectory>${basedir}/target/test/unit/custom-configuration/target/pmd/rulesets</rulesetsTargetDirectory>
           <failOnViolation>false</failOnViolation>
-          <language>java</language>
         </configuration>
       </plugin>
     </plugins>
