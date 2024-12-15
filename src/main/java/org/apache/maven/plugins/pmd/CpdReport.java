@@ -218,6 +218,6 @@ public class CpdReport extends AbstractPmdReport {
 
     @Override
     public String getOutputPath() {
-        return "pmd";
+        return "cpd";
     }
 }
