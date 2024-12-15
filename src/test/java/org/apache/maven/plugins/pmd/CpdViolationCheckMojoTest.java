@@ -35,7 +35,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         try {
             File testPom = new File(
                     getBasedir(),
-                    "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml");
+                    "src/test/resources/unit/default-configuration/cpd-check-default-configuration-plugin-config.xml");
             final CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
             cpdViolationCheckMojo.execute();
 
