@@ -29,9 +29,6 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
     public void testDefaultConfiguration() throws Exception {
         generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
-        // clear the output from previous pmd:cpd execution
-        CapturingPrintStream.init(true);
-
         try {
             File testPom = new File(
                     getBasedir(),
