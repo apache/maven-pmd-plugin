@@ -62,15 +62,15 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
 
     public void testException() throws Exception {
         try {
-            final File testPom = new File(
+            File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml");
-            final CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+            CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
             mojo.project = new MavenProject();
             mojo.execute();
 
             fail("MojoFailureException should be thrown.");
-        } catch (final MojoFailureException e) {
+        } catch (MojoFailureException e) {
             assertNotNull(e.getMessage());
         }
     }
