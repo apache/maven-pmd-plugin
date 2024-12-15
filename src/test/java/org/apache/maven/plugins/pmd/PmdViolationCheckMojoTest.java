@@ -99,7 +99,7 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
 
         try {
             pmdViolationCheckMojo.execute();
-            fail("Exception Expected");
+            fail("MojoFailureException expected");
         } catch (final MojoFailureException e) {
             assertTrue(e.getMessage()
                     .startsWith("PMD " + AbstractPmdReport.getPmdVersion()

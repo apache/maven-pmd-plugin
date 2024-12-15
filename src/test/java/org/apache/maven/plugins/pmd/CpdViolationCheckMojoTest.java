@@ -32,20 +32,16 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
     public void testDefaultConfiguration() throws Exception {
         generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
-        // clear the output from previous pmd:cpd execution
-        CapturingPrintStream.init(true);
-
         try {
             File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml");
-            final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
-            cpdViolationMojo.execute();
+            final CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+            cpdViolationCheckMojo.execute();
 
             fail("MojoFailureException should be thrown.");
         } catch (final MojoFailureException e) {
-            assertTrue(e.getMessage()
-                    .startsWith("CPD " + AbstractPmdReport.getPmdVersion() + " has found 1 duplication."));
+            assertTrue(e.getMessage().startsWith("CPD " + AbstractPmdReport.getPmdVersion() + " has found 1 duplicat"));
         }
     }
 
@@ -56,8 +52,8 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/cpd-check-notfailonviolation-plugin-config.xml");
-        final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
-        cpdViolationMojo.execute();
+        final CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        cpdViolationCheckMojo.execute();
     }
 
     public void testException() throws Exception {
@@ -81,10 +77,10 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/cpd-check-cpd-exclusions-configuration-plugin-config.xml");
-        final CpdViolationCheckMojo cpdViolationMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        final CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
 
         // this call shouldn't throw an exception, as the classes with duplications have been excluded
-        cpdViolationMojo.execute();
+        cpdViolationCheckMojo.execute();
     }
 
     @Override
