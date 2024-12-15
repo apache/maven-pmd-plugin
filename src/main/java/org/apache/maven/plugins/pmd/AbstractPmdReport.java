@@ -38,7 +38,6 @@ import java.util.TreeMap;
 import net.sourceforge.pmd.PMDVersion;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -261,11 +260,14 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     @Parameter(defaultValue = "${session}", required = true, readonly = true)
     protected MavenSession session;
 
-    @Component
-    private ToolchainManager toolchainManager;
+    private final ToolchainManager toolchainManager;
 
     /** The files that are being analyzed. */
     protected Map<File, PmdFileInfo> filesToProcess;
+
+    protected AbstractPmdReport(ToolchainManager toolchainManager) {
+        this.toolchainManager = toolchainManager;
+    }
 
     @Override
     protected MavenProject getProject() {

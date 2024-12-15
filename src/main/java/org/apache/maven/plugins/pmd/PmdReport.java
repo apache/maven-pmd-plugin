@@ -18,6 +18,8 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import javax.inject.Inject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +29,6 @@ import java.util.Locale;
 
 import net.sourceforge.pmd.renderers.Renderer;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -45,6 +46,7 @@ import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResult;
 import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolver;
 import org.apache.maven.toolchain.Toolchain;
+import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
@@ -231,17 +233,14 @@ public class PmdReport extends AbstractPmdReport {
      * Used to locate configured rulesets. The rulesets could be on the plugin
      * classpath or in the local project file system.
      */
-    @Component
-    private ResourceManager locator;
+    private final ResourceManager locator;
 
-    @Component
-    private DependencyResolver dependencyResolver;
+    private final DependencyResolver dependencyResolver;
 
     /**
      * Internationalization component
      */
-    @Component
-    private I18N i18n;
+    private final I18N i18n;
 
     /**
      * Contains the result of the last PMD execution.
@@ -249,6 +248,18 @@ public class PmdReport extends AbstractPmdReport {
      * has not been executed yet.
      */
     private PmdResult pmdResult;
+
+    @Inject
+    public PmdReport(
+            ToolchainManager toolchainManager,
+            ResourceManager locator,
+            DependencyResolver dependencyResolver,
+            I18N i18n) {
+        super(toolchainManager);
+        this.locator = locator;
+        this.dependencyResolver = dependencyResolver;
+        this.i18n = i18n;
+    }
 
     /** {@inheritDoc} */
     public String getName(Locale locale) {
@@ -532,7 +543,13 @@ public class PmdReport extends AbstractPmdReport {
      * {@inheritDoc}
      */
     @Override
+    @Deprecated
     public String getOutputName() {
+        return "pmd";
+    }
+
+    @Override
+    public String getOutputPath() {
         return "pmd";
     }
 

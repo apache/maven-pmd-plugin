@@ -106,7 +106,7 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
         buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
 
         File outputDir = mojo.getReportOutputDirectory();
-        String filename = mojo.getOutputName() + ".html";
+        String filename = mojo.getOutputPath() + ".html";
 
         return new File(outputDir, filename);
     }
