@@ -182,7 +182,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     public void testEmptyReportConfiguration() throws Exception {
         // verify the generated files do exist, even if there are no violations
         File generatedReport = generateReport(getGoal(), "empty-report/cpd-empty-report-plugin-config.xml");
-        assertTrue(new File(generatedReport.getAbsolutePath()).exists());
+        assertTrue(generatedReport.getAbsolutePath() + " does not exist", new File(generatedReport.getAbsolutePath()).exists());
 
         String str = readFile(generatedReport);
         assertFalse(lowerCaseContains(str, "Hello.java"));

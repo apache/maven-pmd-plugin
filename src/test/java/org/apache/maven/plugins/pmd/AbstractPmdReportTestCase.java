@@ -141,7 +141,7 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
         testMavenProject = builder.build(pluginXmlFile, buildingRequest).getProject();
 
         File outputDir = mojo.getReportOutputDirectory();
-        String filename = mojo.getOutputName() + ".html";
+        String filename = mojo.getOutputPath() + ".html";
 
         return new File(outputDir, filename);
     }

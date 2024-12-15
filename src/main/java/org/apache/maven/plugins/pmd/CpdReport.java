@@ -210,7 +210,14 @@ public class CpdReport extends AbstractPmdReport {
     /**
      * {@inheritDoc}
      */
+    @Override
+    @Deprecated
     public String getOutputName() {
         return "cpd";
+    }
+
+    @Override
+    public String getOutputPath() {
+        return "pmd";
     }
 }
