@@ -18,7 +18,11 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.toolchain.ToolchainManager;
+import org.codehaus.plexus.i18n.I18N;
 
 /**
  * Creates a report for PMD's Copy/Paste Detector (CPD) tool in an <b>aggregator</b> project.
@@ -31,6 +35,12 @@ import org.apache.maven.plugins.annotations.Mojo;
  */
 @Mojo(name = "aggregate-cpd", aggregator = true, threadSafe = true)
 public class AggregatorCpdReport extends CpdReport {
+
+    @Inject
+    public AggregatorCpdReport(ToolchainManager toolchainManager, I18N i18n) {
+        super(toolchainManager, i18n);
+    }
+
     @Override
     protected boolean isAggregator() {
         return true;

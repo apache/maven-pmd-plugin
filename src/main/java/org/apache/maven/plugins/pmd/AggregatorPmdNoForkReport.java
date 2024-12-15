@@ -18,10 +18,16 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolver;
+import org.apache.maven.toolchain.ToolchainManager;
+import org.codehaus.plexus.i18n.I18N;
+import org.codehaus.plexus.resource.ResourceManager;
 
 /**
  * Creates a PMD site report in an <b>aggregator</b> project without forking the <code>test-compile</code> phase again.
@@ -34,4 +40,14 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
         threadSafe = true,
         requiresDependencyResolution = ResolutionScope.TEST)
 @Execute(phase = LifecyclePhase.NONE)
-public class AggregatorPmdNoForkReport extends AggregatorPmdReport {}
+public class AggregatorPmdNoForkReport extends AggregatorPmdReport {
+
+    @Inject
+    public AggregatorPmdNoForkReport(
+            ToolchainManager toolchainManager,
+            ResourceManager locator,
+            DependencyResolver dependencyResolver,
+            I18N i18n) {
+        super(toolchainManager, locator, dependencyResolver, i18n);
+    }
+}
