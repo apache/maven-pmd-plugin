@@ -543,7 +543,13 @@ public class PmdReport extends AbstractPmdReport {
      * {@inheritDoc}
      */
     @Override
+    @Deprecated
     public String getOutputName() {
+        return "pmd";
+    }
+
+    @Override
+    public String getOutputPath() {
         return "pmd";
     }
 
