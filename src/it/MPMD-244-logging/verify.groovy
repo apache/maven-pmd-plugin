@@ -19,7 +19,7 @@
 
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
-assert buildLog.text.contains( "PMD processing errors" )
+assert buildLog.text.contains( "PMD processing error" )
 assert buildLog.text.contains( "ParseException: Parse exception" )
 assert buildLog.text.contains( "at line 24, column 5: Encountered" )
 
