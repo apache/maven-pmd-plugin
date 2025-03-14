@@ -227,16 +227,22 @@ public class PmdExecutor extends Executor {
             if (!request.isSkipPmdError()) {
                 LOG.error("PMD processing errors:");
                 LOG.error(getErrorsAsString(errors, request.isDebugEnabled()));
-                throw new MavenReportException("Found " + errors.size() + " PMD processing errors");
+                String msg = errors.size() > 1
+                        ? "Found " + errors.size() + " PMD processing errors"
+                        : "Found 1 PMD processing error";
+                throw new MavenReportException(msg);
             }
-            LOG.warn("There are {} PMD processing errors:", errors.size());
+            String message = errors.size() > 1
+                    ? "There are " + errors.size() + " PMD processing errors:"
+                    : "There is 1 PMD processing error:";
+            LOG.warn(message);
             LOG.warn(getErrorsAsString(errors, request.isDebugEnabled()));
         }
 
         report = removeExcludedViolations(report);
-        // always write XML report, as this might be needed by the check mojo
-        // we need to output it even if the file list is empty or we have no violations
-        // so the "check" goals can check for violations
+        // Always write the XML report, as this might be needed by the check mojo.
+        // We need to output it even if the file list is empty or there are no violations
+        // so the "check" goals can check for violations.
         try {
             writeXmlReport(report);
         } catch (IOException e) {

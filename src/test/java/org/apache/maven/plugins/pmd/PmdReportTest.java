@@ -497,7 +497,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
             generateReport(getGoal(), "processing-error/pmd-processing-error-plugin-config.xml");
             fail("Expected exception");
         } catch (MojoExecutionException e) {
-            assertTrue(e.getCause().getMessage().endsWith("Found 1 PMD processing errors"));
+            assertTrue(e.getCause().getMessage().endsWith("Found 1 PMD processing error"));
         }
     }
 
@@ -507,19 +507,20 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         assertTrue(FileUtils.fileExists(generatedReport.getAbsolutePath()));
 
         String output = CapturingPrintStream.getOutput();
-        assertTrue(output.contains("There are 1 PMD processing errors:"));
+        assertTrue(output, output.contains("There is 1 PMD processing error:"));
 
         File generatedFile = new File(getBasedir(), "target/test/unit/parse-error/target/pmd.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
-        String str = readFile(generatedFile);
-        assertTrue(str.contains("ParseException:"));
-        // The parse exception must be in the XML report
-        assertTrue(str.contains("at line 23, column 5: Encountered"));
 
-        str = readFile(generatedReport);
+        // The parse exception must be in the XML report
+        String xml = readFile(generatedFile);
+        assertTrue(xml.contains("ParseException:"));
+        assertTrue(xml.contains("at line 23, column 5: Encountered"));
+
         // The parse exception must also be in the HTML report
-        assertTrue(str.contains("ParseException:"));
-        assertTrue(str.contains("at line 23, column 5: Encountered"));
+        String html = readFile(generatedReport);
+        assertTrue(html.contains("ParseException:"));
+        assertTrue(html.contains("at line 23, column 5: Encountered"));
     }
 
     public void testPMDProcessingErrorWithDetailsNoReport() throws Exception {
@@ -528,19 +529,20 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         assertTrue(FileUtils.fileExists(generatedReport.getAbsolutePath()));
 
         String output = CapturingPrintStream.getOutput();
-        assertTrue(output.contains("There are 1 PMD processing errors:"));
+        assertTrue(output, output.contains("There is 1 PMD processing error:"));
 
         File generatedFile = new File(getBasedir(), "target/test/unit/parse-error/target/pmd.xml");
         assertTrue(FileUtils.fileExists(generatedFile.getAbsolutePath()));
-        String str = readFile(generatedFile);
-        // The parse exception must be in the XML report
-        assertTrue(str.contains("ParseException:"));
-        assertTrue(str.contains("at line 23, column 5: Encountered"));
 
-        str = readFile(generatedReport);
+        // The parse exception must be in the XML report
+        String xml = readFile(generatedFile);
+        assertTrue(xml.contains("ParseException:"));
+        assertTrue(xml.contains("at line 23, column 5: Encountered"));
+
         // The parse exception must NOT be in the HTML report, since reportProcessingErrors is false
-        assertFalse(str.contains("ParseException:"));
-        assertFalse(str.contains("at line 23, column 5: Encountered"));
+        String html = readFile(generatedReport);
+        assertFalse(html.contains("ParseException:"));
+        assertFalse(html.contains("at line 23, column 5: Encountered"));
     }
 
     public void testPMDExcludeRootsShouldExcludeSubdirectories() throws Exception {
