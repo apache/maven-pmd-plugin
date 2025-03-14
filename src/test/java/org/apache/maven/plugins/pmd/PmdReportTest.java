@@ -255,11 +255,9 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         mockServer.stop();
     }
 
-    private int determineFreePort() {
+    private int determineFreePort() throws IOException {
         try (ServerSocket socket = new ServerSocket(0)) {
             return socket.getLocalPort();
-        } catch (IOException e) {
-            throw new RuntimeException("Couldn't find a free port.", e);
         }
     }
 
@@ -349,25 +347,24 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
                     mojo, "compileSourceRoots", mojo.getProject().getCompileSourceRoots());
             generateReport(mojo, testPom);
 
-            fail("Must throw MavenReportException.");
-        } catch (Exception e) {
-            assertTrue(true);
+            fail("Must nest MavenReportException.");
+        } catch (MojoExecutionException e) {
+            assertTrue(e.getCause() instanceof MavenReportException);
         }
     }
 
     public void testInvalidTargetJdk() throws Exception {
         try {
-            generateReport(getGoal(), "empty-report/invalid-format/invalid-target-jdk-plugin-config.xml");
+            generateReport(getGoal(), "invalid-format/invalid-target-jdk-plugin-config.xml");
 
-            fail("Must throw MavenReportException.");
-        } catch (Exception e) {
-            assertTrue(true);
+            fail("Must nest MavenReportException.");
+        } catch (MojoExecutionException e) {
+            assertTrue(e.getCause() instanceof MavenReportException);
         }
     }
 
     /**
-     * verify the pmd.xml file is included in the reports when requested.
-     * @throws Exception
+     * Verify the pmd.xml file is included in the reports when requested.
      */
     public void testIncludeXmlInReports() throws Exception {
         File generatedReport =
@@ -559,7 +556,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         assertFalse(
                 "Exclusion of an exact source directory not working", str.contains("OverrideBothEqualsAndHashcode"));
         assertFalse(
-                "Exclusion of basedirectory with subdirectories not working (MPMD-178)",
+                "Exclusion of base directory with subdirectories not working (MPMD-178)",
                 str.contains("JumbledIncrementer"));
     }
 

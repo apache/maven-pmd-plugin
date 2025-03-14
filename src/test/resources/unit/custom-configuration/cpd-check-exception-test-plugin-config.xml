@@ -23,7 +23,7 @@ under the License.
   <artifactId>custom-configuration</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>Maven PMD Violation Check Custom Configuration Test</name>
+  <name>Maven CPD Violation Check Custom Configuration Test</name>
   <build>
     <finalName>custom-configuration</finalName>
     <plugins>
