@@ -112,14 +112,14 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     }
 
     /**
-     * Read the contents of the specified file object into a string.
+     * Read the contents of the specified file into a string.
      */
     protected String readFile(File file) throws IOException {
         return new String(Files.readAllBytes(file.toPath()));
     }
 
     /**
-     * Checks, whether the string <code>contained</code> is contained in
+     * Checks whether the string <code>contained</code> is contained in
      * the given <code>text</code>, ignoring case.
      *
      * @param text the string in which the search is executed
