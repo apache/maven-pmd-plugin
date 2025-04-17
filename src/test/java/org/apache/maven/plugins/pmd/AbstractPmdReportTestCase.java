@@ -100,8 +100,6 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     protected File generateReport(AbstractPmdReport mojo, File pluginXmlFile) throws Exception {
         mojo.execute();
 
-        ProjectBuilder builder = lookup(ProjectBuilder.class);
-
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
         buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
 
