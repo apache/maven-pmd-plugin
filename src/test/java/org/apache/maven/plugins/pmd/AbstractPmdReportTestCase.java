@@ -35,7 +35,6 @@ import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
@@ -100,8 +99,6 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     protected File generateReport(AbstractPmdReport mojo, File pluginXmlFile) throws Exception {
         mojo.execute();
 
-        ProjectBuilder builder = lookup(ProjectBuilder.class);
-
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
         buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
 
@@ -112,14 +109,14 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     }
 
     /**
-     * Read the contents of the specified file object into a string.
+     * Read the contents of the specified file into a string.
      */
     protected String readFile(File file) throws IOException {
         return new String(Files.readAllBytes(file.toPath()));
     }
 
     /**
-     * Checks, whether the string <code>contained</code> is contained in
+     * Checks whether the string <code>contained</code> is contained in
      * the given <code>text</code>, ignoring case.
      *
      * @param text the string in which the search is executed
