@@ -464,10 +464,10 @@ public class PmdReport extends AbstractPmdReport {
             loc = loc.substring(loc.lastIndexOf('\\') + 1);
         }
 
-        // MPMD-127 in the case that the rules are defined externally on a url
-        // we need to replace some special url characters that cannot be
-        // used in filenames on disk or produce ackward filenames.
-        // replace all occurrences of the following characters: ? : & = %
+        // MPMD-127 in the case that the rules are defined externally on a URL,
+        // we need to replace some special URL characters that cannot be
+        // used in filenames on disk or produce awkward filenames.
+        // Replace all occurrences of the following characters: ? : & = %
         loc = loc.replaceAll("[\\?\\:\\&\\=\\%]", "_");
 
         if (loc.endsWith(".xml")) {

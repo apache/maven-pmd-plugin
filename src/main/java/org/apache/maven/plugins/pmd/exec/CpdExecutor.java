@@ -171,7 +171,7 @@ public class CpdExecutor extends Executor {
         }
         LOG.debug("CPD finished.");
 
-        // in constrast to pmd goal, we don't have a parameter for cpd like "skipPmdError" - if there
+        // in contrast to pmd goal, we don't have a parameter for cpd like "skipPmdError" - if there
         // are any errors during CPD analysis, the maven build fails.
         int cpdErrors = cpdConfiguration.getReporter().numErrors();
         if (cpdErrors == 1) {
