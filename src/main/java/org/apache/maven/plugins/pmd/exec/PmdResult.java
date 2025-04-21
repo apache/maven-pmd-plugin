@@ -95,7 +95,7 @@ public class PmdResult {
                 return c;
             }
 
-            while (c != -1 && c == BOM) {
+            while (c == BOM) {
                 c = super.read();
             }
             return c;

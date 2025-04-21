@@ -53,7 +53,7 @@ public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation> {
             return;
         }
         final Properties props = new Properties();
-        try (FileInputStream fileInputStream = new FileInputStream(new File(excludeFromFailureFile))) {
+        try (FileInputStream fileInputStream = new FileInputStream(excludeFromFailureFile)) {
             props.load(fileInputStream);
         } catch (final IOException e) {
             throw new MojoExecutionException("Cannot load properties file " + excludeFromFailureFile, e);
