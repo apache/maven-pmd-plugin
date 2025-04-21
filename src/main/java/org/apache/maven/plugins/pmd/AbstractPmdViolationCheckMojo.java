@@ -106,7 +106,8 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
     private final ExcludeFromFile<D> excludeFromFile;
 
     /**
-     * Initialize this abstact check mojo by giving the correct ExcludeFromFile helper.
+     * Initialize this abstract check mojo by giving the correct ExcludeFromFile helper.
+     *
      * @param excludeFromFile the needed helper, for the specific violation type
      */
     protected AbstractPmdViolationCheckMojo(ExcludeFromFile<D> excludeFromFile) {
