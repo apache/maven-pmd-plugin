@@ -37,7 +37,6 @@ under the License.
           <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
           <failOnViolation>true</failOnViolation>
           <printFailingErrors>true</printFailingErrors>
-<!--           <failurePriority>5</failurePriority> -->
         </configuration>
       </plugin>
     </plugins>

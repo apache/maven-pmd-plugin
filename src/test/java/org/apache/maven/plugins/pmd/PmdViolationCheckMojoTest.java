@@ -21,6 +21,7 @@ package org.apache.maven.plugins.pmd;
 import java.io.File;
 
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -42,7 +43,7 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             mojo.execute();
 
             fail("MojoFailureException should be thrown.");
-        } catch (final Exception e) {
+        } catch (final MojoFailureException e) {
             assertTrue(
                     e.getMessage().startsWith("PMD " + AbstractPmdReport.getPmdVersion() + " has found 8 violations."));
         }
@@ -56,8 +57,6 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
                 "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml");
         final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
         pmdViolationMojo.execute();
-
-        assertTrue(true);
     }
 
     public void testMaxAllowedViolations() throws Exception {
@@ -90,16 +89,17 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-failonpriority-plugin-config.xml");
-        PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
-        pmdViolationMojo.execute();
+        PmdViolationCheckMojo pmdViolationCheckMojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        pmdViolationCheckMojo.execute();
 
         testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-failandwarnonpriority-plugin-config.xml");
-        pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        pmdViolationCheckMojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+
         try {
-            pmdViolationMojo.execute();
-            fail("Exception Expected");
+            pmdViolationCheckMojo.execute();
+            fail("MojoFailureException expected");
         } catch (final MojoFailureException e) {
             assertTrue(e.getMessage()
                     .startsWith("PMD " + AbstractPmdReport.getPmdVersion()
@@ -113,11 +113,12 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
                     getBasedir(),
                     "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml");
             final PmdViolationCheckMojo mojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+            mojo.project = new MavenProject();
             mojo.execute();
 
             fail("MojoFailureException should be thrown.");
-        } catch (final Exception e) {
-            assertTrue(true);
+        } catch (final MojoFailureException e) {
+            assertNotNull(e.getMessage());
         }
     }
 
