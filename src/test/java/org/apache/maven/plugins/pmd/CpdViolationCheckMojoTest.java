@@ -20,6 +20,7 @@ package org.apache.maven.plugins.pmd;
 
 import java.io.File;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
@@ -39,8 +40,8 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             final CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
             cpdViolationCheckMojo.execute();
 
-            fail("MojoFailureException should be thrown.");
-        } catch (final MojoFailureException e) {
+            fail("MojoExecutionException should be thrown.");
+        } catch (final MojoExecutionException e) {
             assertTrue(e.getMessage().startsWith("CPD " + AbstractPmdReport.getPmdVersion() + " has found 1 duplicat"));
         }
     }
@@ -65,8 +66,8 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             mojo.project = new MavenProject();
             mojo.execute();
 
-            fail("MojoFailureException should be thrown.");
-        } catch (MojoFailureException e) {
+            fail("MojoExecutionException should be thrown.");
+        } catch (MojoExecutionException e) {
             assertNotNull(e.getMessage());
         }
     }
