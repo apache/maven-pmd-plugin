@@ -24,7 +24,7 @@ under the License.
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <inceptionYear>2006</inceptionYear>
-  <name>Maven PMD Plugin Default Configuration Test</name>
+  <name>Maven CPD Plugin Default Configuration Test</name>
   <url>http://maven.apache.org</url>
   <build>
     <finalName>default-configuration</finalName>

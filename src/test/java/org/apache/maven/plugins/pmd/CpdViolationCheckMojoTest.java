@@ -40,14 +40,13 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             final CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
             cpdViolationCheckMojo.execute();
 
-            fail("MojoExecutionException should be thrown.");
-        } catch (final MojoExecutionException e) {
+            fail("MojoFailureException should be thrown.");
+        } catch (final MojoFailureException e) {
             assertTrue(e.getMessage().startsWith("CPD " + AbstractPmdReport.getPmdVersion() + " has found 1 duplicat"));
         }
     }
 
     public void testNotFailOnViolation() throws Exception {
-
         generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
         File testPom = new File(
@@ -58,10 +57,12 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
     }
 
     public void testException() throws Exception {
+        generateReport("cpd", "custom-configuration/cpd-custom-configuration-plugin-config.xml");
+
         try {
             File testPom = new File(
                     getBasedir(),
-                    "src/test/resources/unit/custom-configuration/cpd-check-exception-test-plugin-config.xml");
+                    "src/test/resources/unit/custom-configuration/cpd-custom-configuration-plugin-config.xml");
             CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
             mojo.project = new MavenProject();
             mojo.execute();
