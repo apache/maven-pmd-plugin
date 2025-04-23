@@ -63,6 +63,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/custom-configuration/cpd-custom-configuration-plugin-config.xml");
+            assertTrue(testPom.exists());
             CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
             mojo.project = new MavenProject();
             mojo.execute();
