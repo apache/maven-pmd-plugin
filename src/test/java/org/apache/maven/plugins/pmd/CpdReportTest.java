@@ -25,6 +25,7 @@ import java.io.File;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.reporting.MavenReportException;
 import org.w3c.dom.Document;
 
@@ -73,13 +74,13 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         generateReport(getGoal(), "custom-configuration/cpd-txt-format-configuration-plugin-config.xml");
 
         // check if the CPD files were generated
-        File generatedFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/cpd.xml");
-        assertTrue(new File(generatedFile.getAbsolutePath()).exists());
-        generatedFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/cpd.txt");
-        assertTrue(new File(generatedFile.getAbsolutePath()).exists());
+        File xmlFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/cpd.xml");
+        assertTrue(new File(xmlFile.getAbsolutePath()).exists());
+        File txtFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/cpd.txt");
+        assertTrue(new File(txtFile.getAbsolutePath()).exists());
 
         // check the contents of cpd.txt
-        String str = readFile(generatedFile);
+        String str = readFile(txtFile);
         // Contents that should NOT be in the report
         assertFalse(lowerCaseContains(str, "public static void main( String[] args )"));
         // Contents that should be in the report
@@ -125,7 +126,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
             generateReport(mojo, testPom);
 
             fail("MavenReportException must be thrown");
-        } catch (Exception e) {
+        } catch (MojoExecutionException e) {
             assertMavenReportException("There was 1 error while executing CPD", e);
             assertLogOutputContains("Can't find CPD custom format xhtml");
         }
@@ -244,8 +245,8 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         try {
             generateReport(getGoal(), "CpdReportTest/with-cpd-errors/pom.xml");
 
-            fail("MavenReportException must be thrown");
-        } catch (Exception e) {
+            fail("MojoExecutionException must be thrown");
+        } catch (MojoExecutionException e) {
             assertMavenReportException("There was 1 error while executing CPD", e);
             assertLogOutputContains("Lexical error in file");
             assertLogOutputContains("BadFile.java");
@@ -253,13 +254,10 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     }
 
     private static void assertMavenReportException(String expectedMessage, Exception exception) {
-        // The MavenReportException might be wrapped in another exception
         assertTrue(
                 "Expected MavenReportException, but was: " + exception,
-                exception instanceof MavenReportException || exception.getCause() instanceof MavenReportException);
-        if (exception.getCause() instanceof MavenReportException) {
-            exception = (Exception) exception.getCause();
-        }
+                exception.getCause() instanceof MavenReportException);
+        exception = (Exception) exception.getCause();
         assertTrue(
                 "Wrong message: expected: " + expectedMessage + ", but was: " + exception.toString(),
                 exception.toString().contains(expectedMessage));
