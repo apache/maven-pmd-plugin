@@ -23,6 +23,7 @@ import java.io.File;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -31,7 +32,8 @@ import org.apache.maven.project.MavenProject;
 public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
 
     public void testDefaultConfiguration() throws Exception {
-        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
+        File generatedReport = generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
+        assertTrue(FileUtils.fileExists(generatedReport.getAbsolutePath()));
 
         try {
             File testPom = new File(
@@ -47,7 +49,8 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
     }
 
     public void testNotFailOnViolation() throws Exception {
-        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
+        File generatedReport = generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
+        assertTrue(FileUtils.fileExists(generatedReport.getAbsolutePath()));
 
         File testPom = new File(
                 getBasedir(),
@@ -57,25 +60,23 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
     }
 
     public void testException() throws Exception {
-        generateReport("cpd", "custom-configuration/cpd-custom-configuration-plugin-config.xml");
-
         try {
             File testPom = new File(
                     getBasedir(),
-                    "src/test/resources/unit/custom-configuration/cpd-custom-configuration-plugin-config.xml");
-            assertTrue(testPom.exists());
+                "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml");
             CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
             mojo.project = new MavenProject();
             mojo.execute();
 
-            fail("MojoExecutionException should be thrown.");
-        } catch (MojoExecutionException e) {
+            fail("MojoFailureException should be thrown.");
+        } catch (MojoFailureException e) {
             assertNotNull(e.getMessage());
         }
     }
 
     public void testExclusionsConfiguration() throws Exception {
-        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
+        File generatedReport = generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
+        assertTrue(FileUtils.fileExists(generatedReport.getAbsolutePath()));
 
         File testPom = new File(
                 getBasedir(),
