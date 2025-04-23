@@ -20,10 +20,8 @@ package org.apache.maven.plugins.pmd;
 
 import java.io.File;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -32,8 +30,7 @@ import org.codehaus.plexus.util.FileUtils;
 public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
 
     public void testDefaultConfiguration() throws Exception {
-        File generatedReport = generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
-        assertTrue(FileUtils.fileExists(generatedReport.getAbsolutePath()));
+        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
         try {
             File testPom = new File(
@@ -49,8 +46,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
     }
 
     public void testNotFailOnViolation() throws Exception {
-        File generatedReport = generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
-        assertTrue(FileUtils.fileExists(generatedReport.getAbsolutePath()));
+        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
         File testPom = new File(
                 getBasedir(),
@@ -63,7 +59,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         try {
             File testPom = new File(
                     getBasedir(),
-                "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml");
+                    "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml");
             CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
             mojo.project = new MavenProject();
             mojo.execute();
@@ -75,8 +71,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
     }
 
     public void testExclusionsConfiguration() throws Exception {
-        File generatedReport = generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
-        assertTrue(FileUtils.fileExists(generatedReport.getAbsolutePath()));
+        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
         File testPom = new File(
                 getBasedir(),

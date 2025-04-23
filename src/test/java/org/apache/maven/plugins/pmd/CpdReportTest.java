@@ -88,7 +88,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     }
 
     /**
-     * Test CPDReport using custom configuration
+     * Test CpdReport using custom configuration
      *
      * @throws Exception
      */
