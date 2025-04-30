@@ -473,7 +473,7 @@ public class PmdReport extends AbstractPmdReport {
         if (loc.endsWith(".xml")) {
             loc = loc.substring(0, loc.length() - 4);
         }
-        loc = String.format("%03d-%s.xml", position, loc);
+        loc = "%03d-%s.xml".formatted(position, loc);
 
         getLog().debug("Before: " + name + " After: " + loc);
         return loc;
