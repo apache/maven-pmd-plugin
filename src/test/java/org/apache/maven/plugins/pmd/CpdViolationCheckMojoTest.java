@@ -21,7 +21,6 @@ package org.apache.maven.plugins.pmd;
 import java.io.File;
 
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -36,7 +35,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/default-configuration/cpd-check-default-configuration-plugin-config.xml");
-            final CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+            CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
             cpdViolationCheckMojo.execute();
 
             fail("MojoFailureException should be thrown.");
@@ -51,7 +50,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/cpd-check-notfailonviolation-plugin-config.xml");
-        final CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
         cpdViolationCheckMojo.execute();
     }
 
@@ -59,10 +58,9 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         try {
             File testPom = new File(
                     getBasedir(),
-                    "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml");
-            CpdViolationCheckMojo mojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
-            mojo.project = new MavenProject();
-            mojo.execute();
+                    "src/test/resources/unit/custom-configuration/cpd-check-exception-test-plugin-config.xml");
+            CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+            cpdViolationCheckMojo.execute();
 
             fail("MojoFailureException should be thrown.");
         } catch (MojoFailureException e) {
@@ -76,7 +74,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/cpd-check-cpd-exclusions-configuration-plugin-config.xml");
-        final CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
 
         // this call shouldn't throw an exception, as the classes with duplications have been excluded
         cpdViolationCheckMojo.execute();

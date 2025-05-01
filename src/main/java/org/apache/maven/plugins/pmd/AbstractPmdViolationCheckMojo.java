@@ -123,6 +123,11 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
     protected void executeCheck(
             final String filename, final String analyzerName, final String failureName, final int failurePriority)
             throws MojoFailureException, MojoExecutionException {
+
+        if (project == null) {
+            throw new MojoFailureException("Missing project");
+        }
+
         if (aggregate && !project.isExecutionRoot()) {
             return;
         }
