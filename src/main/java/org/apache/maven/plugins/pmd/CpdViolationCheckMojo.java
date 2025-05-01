@@ -44,12 +44,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 @Mojo(name = "cpd-check", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 @Execute(goal = "cpd")
 public class CpdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Duplication> {
-    /**
-     * Default constructor. Initializes with the correct {@link ExcludeDuplicationsFromFile}.
-     */
-    public CpdViolationCheckMojo() {
-        super(new ExcludeDuplicationsFromFile());
-    }
 
     /**
      * Skip the CPD violation checks. Most useful on the command line via "-Dcpd.skip=true".
@@ -64,6 +58,13 @@ public class CpdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Duplica
      */
     @Parameter(property = "cpd.failOnViolation", defaultValue = "true", required = true)
     protected boolean failOnViolation;
+
+    /**
+     * Default constructor. Initializes with the correct {@link ExcludeDuplicationsFromFile}.
+     */
+    public CpdViolationCheckMojo() {
+        super(new ExcludeDuplicationsFromFile());
+    }
 
     /**
      * {@inheritDoc}
