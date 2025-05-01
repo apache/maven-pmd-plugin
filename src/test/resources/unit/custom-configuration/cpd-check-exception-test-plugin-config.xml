@@ -31,7 +31,7 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <configuration>
-          <targetDirectory>${basedir}/target/test-classes/unit/custom-configuration/</targetDirectory>
+          <targetDirectory>${basedir}/no/such/directory/causes/exception</targetDirectory>
           <failOnViolation>false</failOnViolation>
         </configuration>
       </plugin>

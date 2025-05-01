@@ -21,6 +21,7 @@ package org.apache.maven.plugins.pmd;
 import java.io.File;
 
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -60,6 +61,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
                     getBasedir(),
                     "src/test/resources/unit/custom-configuration/cpd-check-exception-test-plugin-config.xml");
             CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+            cpdViolationCheckMojo.project = new MavenProject();
             cpdViolationCheckMojo.execute();
 
             fail("MojoFailureException should be thrown.");
