@@ -55,8 +55,8 @@ class CapturingPrintStream extends PrintStream {
     }
 
     public static CapturingPrintStream get() {
-        if (System.out instanceof CapturingPrintStream) {
-            return (CapturingPrintStream) System.out;
+        if (System.out instanceof CapturingPrintStream stream) {
+            return stream;
         }
         return null;
     }
