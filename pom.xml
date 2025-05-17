@@ -81,7 +81,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <javaVersion>21</javaVersion>
+    <javaVersion>8</javaVersion>
     <mavenVersion>3.6.3</mavenVersion>
     <pmdVersion>7.12.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
@@ -387,6 +387,27 @@ under the License.
               <goal>xpp3-reader</goal>
             </goals>
             <phase>generate-sources</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>animal-sniffer-maven-plugin</artifactId>
+        <version>1.24</version>
+        <configuration>
+          <signature>
+            <groupId>org.codehaus.mojo.signature</groupId>
+            <artifactId>java18</artifactId>
+            <version>1.0</version>
+          </signature>
+        </configuration>
+        <executions>
+          <execution>
+            <id>check-java-1.8-compat</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>process-classes</phase>
           </execution>
         </executions>
       </plugin>

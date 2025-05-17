@@ -19,7 +19,6 @@
 package org.apache.maven.plugins.pmd.exec;
 
 import java.io.File;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +34,6 @@ import java.util.Properties;
  * <p>Some properties might be optional and can be <code>null</code>.
  */
 public class CpdRequest implements Serializable {
-    @Serial
     private static final long serialVersionUID = -7585852992660240668L;
 
     private String javaExecutable;

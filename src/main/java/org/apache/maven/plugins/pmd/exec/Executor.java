@@ -67,8 +67,8 @@ abstract class Executor {
     }
 
     static void buildClasspath(StringBuilder classpath, ClassLoader cl) {
-        if (cl instanceof URLClassLoader loader) {
-            for (URL url : loader.getURLs()) {
+        if (cl instanceof URLClassLoader) {
+            for (URL url : ((URLClassLoader) cl).getURLs()) {
                 if ("file".equalsIgnoreCase(url.getProtocol())) {
                     try {
                         String filename = URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8.name());

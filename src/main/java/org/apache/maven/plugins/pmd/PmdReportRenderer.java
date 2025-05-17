@@ -173,7 +173,6 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
     }
 
     private void renderSingleRuleViolation(Violation ruleViolation, PmdFileInfo fileInfo) {
-        // add to file log
         sink.tableRow();
         sink.tableCell();
         addRuleName(ruleViolation);
@@ -300,7 +299,7 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
     private void logExcludeFromFailureFileSuppressions() {
         log.info("logExcludeFromFailureFileSuppressions");
         log.info(violations.stream()
-                .map(violation -> String.format("%s:%s", violation.getViolationClass(), violation.getText()))
+                .map(violation -> String.format("%s:%s", violation.getViolationClass(), violation.getRule()))
                 .toString());
     }
 

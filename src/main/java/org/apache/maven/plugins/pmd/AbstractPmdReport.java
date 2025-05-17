@@ -496,7 +496,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
                         (List<Toolchain>) getToolchainsMethod.invoke(toolchainManager, session, "jdk", jdkToolchain);
 
                 if (tcs != null && !tcs.isEmpty()) {
-                    tc = tcs.getFirst();
+                    tc = tcs.get(0);
                 }
             } catch (NoSuchMethodException
                     | SecurityException

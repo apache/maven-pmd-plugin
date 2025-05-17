@@ -19,7 +19,6 @@
 package org.apache.maven.plugins.pmd.exec;
 
 import java.io.File;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +33,6 @@ import java.util.List;
  * <p>Some properties might be optional and can be <code>null</code>.
  */
 public class PmdRequest implements Serializable {
-    @Serial
     private static final long serialVersionUID = -6324416880563476455L;
 
     private String javaExecutable;

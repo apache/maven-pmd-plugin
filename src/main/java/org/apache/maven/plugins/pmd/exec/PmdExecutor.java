@@ -205,7 +205,8 @@ public class PmdExecutor extends Executor {
             } finally {
                 if (request.getAuxClasspath() != null) {
                     ClassLoader classLoader = configuration.getClassLoader();
-                    if (classLoader instanceof Closeable closeable) {
+                    if (classLoader instanceof Closeable) {
+                        Closeable closeable = (Closeable) classLoader;
                         try {
                             closeable.close();
                         } catch (IOException ex) {
