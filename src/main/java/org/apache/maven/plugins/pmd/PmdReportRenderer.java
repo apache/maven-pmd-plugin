@@ -173,6 +173,7 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
     }
 
     private void renderSingleRuleViolation(Violation ruleViolation, PmdFileInfo fileInfo) {
+        // add to file log
         sink.tableRow();
         sink.tableCell();
         addRuleName(ruleViolation);
