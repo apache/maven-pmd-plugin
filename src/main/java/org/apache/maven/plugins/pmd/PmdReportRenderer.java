@@ -294,6 +294,7 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
         if (fileSectionStarted) {
             endFileSection();
         }
+        // print log file;
     }
 
     private void outputLineLink(int line, PmdFileInfo fileInfo) {
