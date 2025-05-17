@@ -294,7 +294,11 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
         if (fileSectionStarted) {
             endFileSection();
         }
-        // print log file;
+        printExcludeFromFailureFileLog();
+    }
+
+    private void printExcludeFromFailureFileLog() {
+        System.out.println("printExcludeFromFailureFileLog");
     }
 
     private void outputLineLink(int line, PmdFileInfo fileInfo) {
