@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import net.sourceforge.pmd.lang.rule.RulePriority;
 import org.apache.maven.doxia.sink.Sink;
@@ -298,9 +299,15 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
 
     private void logExcludeFromFailureFileSuppressions() {
         log.info("logExcludeFromFailureFileSuppressions");
-        log.info(violations.stream()
-                .map(violation -> String.format("%s:%s", violation.getViolationClass(), violation.getRule()))
-                .toString());
+        violations.stream()
+                .collect(Collectors.groupingBy(
+                        Violation::getViolationClass,
+                        Collectors.mapping(
+                                Violation::getRule,
+                                Collectors.joining(",")
+                        )
+                )).forEach((className, rules) ->
+                log.info(String.format("%s=%s", className, rules)));
     }
 
     private void outputLineLink(int line, PmdFileInfo fileInfo) {
