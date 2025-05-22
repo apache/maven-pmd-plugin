@@ -62,23 +62,7 @@ import org.slf4j.LoggerFactory;
 public class PmdExecutor extends Executor {
     private static final Logger LOG = LoggerFactory.getLogger(PmdExecutor.class);
 
-    public static PmdResult execute(PmdRequest request) throws MavenReportException {
-        if (request.getJavaExecutable() != null) {
-            return fork(request);
-        }
-
-        // make sure the class loaders are correct and call this in the same JVM
-        ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(PmdExecutor.class.getClassLoader());
-            PmdExecutor executor = new PmdExecutor(request);
-            return executor.run();
-        } finally {
-            Thread.currentThread().setContextClassLoader(origLoader);
-        }
-    }
-
-    private static PmdResult fork(PmdRequest request) throws MavenReportException {
+    public PmdResult fork(String javaExecutable) throws MavenReportException {
         File basePmdDir = new File(request.getTargetDirectory(), "pmd");
         basePmdDir.mkdirs();
         File pmdRequestFile = new File(basePmdDir, "pmdrequest.bin");
@@ -92,7 +76,7 @@ public class PmdExecutor extends Executor {
         ProcessBuilder pb = new ProcessBuilder();
         // note: using env variable instead of -cp cli arg to avoid length limitations under Windows
         pb.environment().put("CLASSPATH", classpath);
-        pb.command().add(request.getJavaExecutable());
+        pb.command().add(javaExecutable);
         pb.command().add(PmdExecutor.class.getName());
         pb.command().add(pmdRequestFile.getAbsolutePath());
 
@@ -148,7 +132,7 @@ public class PmdExecutor extends Executor {
         this.request = Objects.requireNonNull(request);
     }
 
-    private PmdResult run() throws MavenReportException {
+    public PmdResult run() throws MavenReportException {
         PMDConfiguration configuration = new PMDConfiguration();
         LanguageVersion languageVersion = null;
         Language language = configuration

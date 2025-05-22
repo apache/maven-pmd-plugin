@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MojoExecution;
@@ -36,6 +37,7 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.session.scope.internal.SessionScope;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
@@ -55,6 +57,15 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
 
         artifactStubFactory = new DependencyArtifactStubFactory(getTestFile("target"), true, false);
         artifactStubFactory.getWorkingDir().mkdirs();
+        SessionScope sessionScope = lookup(SessionScope.class);
+        sessionScope.enter();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        SessionScope lookup = lookup(SessionScope.class);
+        lookup.exit();
+        super.tearDown();
     }
 
     /**
@@ -75,8 +86,12 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
         AbstractPmdReport mojo = (AbstractPmdReport) lookupMojo(goal, pluginXmlFile);
         assertNotNull("Mojo not found.", mojo);
 
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
         LegacySupport legacySupport = lookup(LegacySupport.class);
-        legacySupport.setSession(newMavenSession(new MavenProjectStub()));
+        legacySupport.setSession(mavenSession);
         DefaultRepositorySystemSession repoSession =
                 (DefaultRepositorySystemSession) legacySupport.getRepositorySession();
         repoSession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()

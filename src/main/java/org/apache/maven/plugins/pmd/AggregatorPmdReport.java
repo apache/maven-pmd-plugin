@@ -24,8 +24,8 @@ import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.pmd.exec.PmdServiceExecutor;
 import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolver;
-import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.resource.ResourceManager;
 
@@ -41,11 +41,11 @@ public class AggregatorPmdReport extends PmdReport {
 
     @Inject
     public AggregatorPmdReport(
-            ToolchainManager toolchainManager,
             ResourceManager locator,
             DependencyResolver dependencyResolver,
-            I18N i18n) {
-        super(toolchainManager, locator, dependencyResolver, i18n);
+            I18N i18n,
+            PmdServiceExecutor serviceExecutor) {
+        super(locator, dependencyResolver, i18n, serviceExecutor);
     }
 
     @Override

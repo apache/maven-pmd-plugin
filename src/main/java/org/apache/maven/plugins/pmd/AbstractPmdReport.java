@@ -20,8 +20,6 @@ package org.apache.maven.plugins.pmd;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,8 +40,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.toolchain.Toolchain;
-import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -260,14 +256,8 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     @Parameter(defaultValue = "${session}", required = true, readonly = true)
     protected MavenSession session;
 
-    private final ToolchainManager toolchainManager;
-
     /** The files that are being analyzed. */
     protected Map<File, PmdFileInfo> filesToProcess;
-
-    protected AbstractPmdReport(ToolchainManager toolchainManager) {
-        this.toolchainManager = toolchainManager;
-    }
 
     @Override
     protected MavenProject getProject() {
@@ -479,39 +469,8 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
         return PMDVersion.VERSION;
     }
 
-    // TODO remove the part with ToolchainManager lookup once we depend on
-    // 3.0.9 (have it as prerequisite). Define as regular component field then.
-    protected final Toolchain getToolchain() {
-        Toolchain tc = null;
-
-        if (jdkToolchain != null) {
-            // Maven 3.3.1 has plugin execution scoped Toolchain Support
-            try {
-                Method getToolchainsMethod = toolchainManager
-                        .getClass()
-                        .getMethod("getToolchains", MavenSession.class, String.class, Map.class);
-
-                @SuppressWarnings("unchecked")
-                List<Toolchain> tcs =
-                        (List<Toolchain>) getToolchainsMethod.invoke(toolchainManager, session, "jdk", jdkToolchain);
-
-                if (tcs != null && !tcs.isEmpty()) {
-                    tc = tcs.get(0);
-                }
-            } catch (NoSuchMethodException
-                    | SecurityException
-                    | IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException e) {
-                // ignore
-            }
-        }
-
-        if (tc == null) {
-            tc = toolchainManager.getToolchainFromBuildContext("jdk", session);
-        }
-
-        return tc;
+    public Map<String, String> getJdkToolchain() {
+        return jdkToolchain;
     }
 
     protected boolean isAggregator() {
