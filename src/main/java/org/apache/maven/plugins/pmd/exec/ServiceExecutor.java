@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 abstract class ServiceExecutor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PmdExecutor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceExecutor.class);
 
     private final ToolchainManager toolchainManager;
 
