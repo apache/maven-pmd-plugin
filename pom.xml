@@ -396,6 +396,7 @@ under the License.
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <debug>false</debug>
               <showErrors>true</showErrors>
+              <showVersion>true</showVersion>
               <goals>
                 <goal>clean</goal>
                 <goal>site</goal>

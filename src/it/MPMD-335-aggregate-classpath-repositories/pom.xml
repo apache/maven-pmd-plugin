@@ -57,7 +57,12 @@ under the License.
     <repositories>
         <repository>
             <id>corp1</id>
-            <url>file://${user.dir}/private-repo</url>
+            <!-- we need a absolute path to repo -->
+            <url>@baseurl@/target/it/MPMD-335-aggregate-classpath-repositories/private-repo</url>
+            <snapshots>
+                <!-- required by Maven 4 -->
+                <checksumPolicy>ignore</checksumPolicy>
+            </snapshots>
         </repository>
     </repositories>
 </project>
