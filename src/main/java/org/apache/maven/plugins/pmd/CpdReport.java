@@ -26,12 +26,10 @@ import java.util.Locale;
 
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.pmd.exec.CpdExecutor;
 import org.apache.maven.plugins.pmd.exec.CpdRequest;
 import org.apache.maven.plugins.pmd.exec.CpdResult;
+import org.apache.maven.plugins.pmd.exec.CpdServiceExecutor;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.toolchain.Toolchain;
-import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.i18n.I18N;
 
 /**
@@ -101,6 +99,8 @@ public class CpdReport extends AbstractPmdReport {
      */
     private final I18N i18n;
 
+    private final CpdServiceExecutor serviceExecutor;
+
     /**
      * Contains the result of the last CPD execution.
      * It might be <code>null</code> which means, that CPD
@@ -109,9 +109,9 @@ public class CpdReport extends AbstractPmdReport {
     private CpdResult cpdResult;
 
     @Inject
-    public CpdReport(ToolchainManager toolchainManager, I18N i18n) {
-        super(toolchainManager);
+    public CpdReport(I18N i18n, CpdServiceExecutor serviceExecutor) {
         this.i18n = i18n;
+        this.serviceExecutor = serviceExecutor;
     }
 
     /** {@inheritDoc} */
@@ -191,15 +191,9 @@ public class CpdReport extends AbstractPmdReport {
             request.setFormat(format);
             request.setIncludeXmlInReports(includeXmlInReports);
             request.setReportOutputDirectory(getReportOutputDirectory().getAbsolutePath());
+            request.setJdkToolchain(getJdkToolchain());
 
-            Toolchain tc = getToolchain();
-            if (tc != null) {
-                getLog().info("Toolchain in maven-pmd-plugin: " + tc);
-                String javaExecutable = tc.findTool("java"); // NOI18N
-                request.setJavaExecutable(javaExecutable);
-            }
-
-            cpdResult = CpdExecutor.execute(request);
+            cpdResult = serviceExecutor.execute(request);
         } catch (UnsupportedEncodingException e) {
             throw new MavenReportException("Encoding '" + getInputEncoding() + "' is not supported.", e);
         } catch (IOException e) {

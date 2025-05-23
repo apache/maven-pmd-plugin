@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Data object to store all configuration options needed to execute PMD
@@ -35,7 +36,7 @@ import java.util.List;
 public class PmdRequest implements Serializable {
     private static final long serialVersionUID = -6324416880563476455L;
 
-    private String javaExecutable;
+    private Map<String, String> jdkToolchain;
 
     private String language;
     private String languageVersion;
@@ -77,8 +78,8 @@ public class PmdRequest implements Serializable {
         }
     }
 
-    public void setJavaExecutable(String javaExecutable) {
-        this.javaExecutable = javaExecutable;
+    public void setJdkToolchain(Map<String, String> jdkToolchain) {
+        this.jdkToolchain = jdkToolchain;
     }
 
     public void setMinimumPriority(int minimumPriority) {
@@ -145,8 +146,8 @@ public class PmdRequest implements Serializable {
         this.excludeFromFailureFile = excludeFromFailureFile;
     }
 
-    public String getJavaExecutable() {
-        return javaExecutable;
+    public Map<String, String> getJdkToolchain() {
+        return jdkToolchain;
     }
 
     public String getLanguage() {

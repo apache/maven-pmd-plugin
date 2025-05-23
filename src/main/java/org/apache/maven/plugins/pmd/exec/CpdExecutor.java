@@ -46,22 +46,7 @@ import org.slf4j.LoggerFactory;
 public class CpdExecutor extends Executor {
     private static final Logger LOG = LoggerFactory.getLogger(CpdExecutor.class);
 
-    public static CpdResult execute(CpdRequest request) throws MavenReportException {
-        if (request.getJavaExecutable() != null) {
-            return fork(request);
-        }
-
-        ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(CpdExecutor.class.getClassLoader());
-            CpdExecutor cpdExecutor = new CpdExecutor(request);
-            return cpdExecutor.run();
-        } finally {
-            Thread.currentThread().setContextClassLoader(origLoader);
-        }
-    }
-
-    private static CpdResult fork(CpdRequest request) throws MavenReportException {
+    public CpdResult fork(String javaExecutable) throws MavenReportException {
         File basePmdDir = new File(request.getTargetDirectory(), "pmd");
         basePmdDir.mkdirs();
         File cpdRequestFile = new File(basePmdDir, "cpdrequest.bin");
@@ -75,7 +60,7 @@ public class CpdExecutor extends Executor {
         ProcessBuilder pb = new ProcessBuilder();
         // note: using env variable instead of -cp cli arg to avoid length limitations under Windows
         pb.environment().put("CLASSPATH", classpath);
-        pb.command().add(request.getJavaExecutable());
+        pb.command().add(javaExecutable);
         pb.command().add(CpdExecutor.class.getName());
         pb.command().add(cpdRequestFile.getAbsolutePath());
 
@@ -134,7 +119,7 @@ public class CpdExecutor extends Executor {
         this.request = Objects.requireNonNull(request);
     }
 
-    private CpdResult run() throws MavenReportException {
+    public CpdResult run() throws MavenReportException {
         try {
             excludeDuplicationsFromFile.loadExcludeFromFailuresData(request.getExcludeFromFailureFile());
         } catch (MojoExecutionException e) {

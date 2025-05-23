@@ -35,6 +35,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.plugins.pmd.exec.PmdExecutor;
 import org.apache.maven.plugins.pmd.exec.PmdRequest;
 import org.apache.maven.plugins.pmd.exec.PmdResult;
+import org.apache.maven.plugins.pmd.exec.PmdServiceExecutor;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -45,8 +46,6 @@ import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
 import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResult;
 import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolver;
-import org.apache.maven.toolchain.Toolchain;
-import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
@@ -242,6 +241,8 @@ public class PmdReport extends AbstractPmdReport {
      */
     private final I18N i18n;
 
+    private final PmdServiceExecutor serviceExecutor;
+
     /**
      * Contains the result of the last PMD execution.
      * It might be <code>null</code> which means, that PMD
@@ -251,14 +252,14 @@ public class PmdReport extends AbstractPmdReport {
 
     @Inject
     public PmdReport(
-            ToolchainManager toolchainManager,
             ResourceManager locator,
             DependencyResolver dependencyResolver,
-            I18N i18n) {
-        super(toolchainManager);
+            I18N i18n,
+            PmdServiceExecutor serviceExecutor) {
         this.locator = locator;
         this.dependencyResolver = dependencyResolver;
         this.i18n = i18n;
+        this.serviceExecutor = serviceExecutor;
     }
 
     /** {@inheritDoc} */
@@ -375,16 +376,10 @@ public class PmdReport extends AbstractPmdReport {
         request.setIncludeXmlInReports(includeXmlInReports);
         request.setReportOutputDirectory(getReportOutputDirectory().getAbsolutePath());
         request.setLogLevel(determineCurrentRootLogLevel());
-
-        Toolchain tc = getToolchain();
-        if (tc != null) {
-            getLog().info("Toolchain in maven-pmd-plugin: " + tc);
-            String javaExecutable = tc.findTool("java"); // NOI18N
-            request.setJavaExecutable(javaExecutable);
-        }
+        request.setJdkToolchain(getJdkToolchain());
 
         getLog().info("PMD version: " + AbstractPmdReport.getPmdVersion());
-        pmdResult = PmdExecutor.execute(request);
+        pmdResult = serviceExecutor.execute(request);
     }
 
     /**

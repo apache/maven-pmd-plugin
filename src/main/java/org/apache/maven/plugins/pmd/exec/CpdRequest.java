@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -36,7 +37,7 @@ import java.util.Properties;
 public class CpdRequest implements Serializable {
     private static final long serialVersionUID = -7585852992660240668L;
 
-    private String javaExecutable;
+    private Map<String, String> jdkToolchain;
 
     private int minimumTokens;
     private String language;
@@ -56,8 +57,8 @@ public class CpdRequest implements Serializable {
     private boolean ignoreIdentifiers;
     private boolean ignoreLiterals;
 
-    public void setJavaExecutable(String javaExecutable) {
-        this.javaExecutable = javaExecutable;
+    public void setJdkToolchain(Map<String, String> jdkToolchain) {
+        this.jdkToolchain = jdkToolchain;
     }
 
     public void setMinimumTokens(int minimumTokens) {
@@ -108,8 +109,8 @@ public class CpdRequest implements Serializable {
         this.logLevel = logLevel;
     }
 
-    public String getJavaExecutable() {
-        return javaExecutable;
+    public Map<String, String> getJdkToolchain() {
+        return jdkToolchain;
     }
 
     public int getMinimumTokens() {

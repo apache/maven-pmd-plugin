@@ -21,7 +21,7 @@ package org.apache.maven.plugins.pmd;
 import javax.inject.Inject;
 
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.toolchain.ToolchainManager;
+import org.apache.maven.plugins.pmd.exec.CpdServiceExecutor;
 import org.codehaus.plexus.i18n.I18N;
 
 /**
@@ -37,8 +37,8 @@ import org.codehaus.plexus.i18n.I18N;
 public class AggregatorCpdReport extends CpdReport {
 
     @Inject
-    public AggregatorCpdReport(ToolchainManager toolchainManager, I18N i18n) {
-        super(toolchainManager, i18n);
+    public AggregatorCpdReport(I18N i18n, CpdServiceExecutor serviceExecutor) {
+        super(i18n, serviceExecutor);
     }
 
     @Override
