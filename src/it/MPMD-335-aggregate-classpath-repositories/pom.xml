@@ -57,7 +57,7 @@ under the License.
     <repositories>
         <repository>
             <id>corp1</id>
-            <url>file://${user.dir}/private-repo</url>
+            <url>file:///${basedir}/private-repo</url>
         </repository>
     </repositories>
 </project>
