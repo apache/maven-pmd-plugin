@@ -90,19 +90,17 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
         MavenSession mavenSession = newMavenSession(new MavenProjectStub());
         sessionScope.seed(MavenSession.class, mavenSession);
 
-        LegacySupport legacySupport = lookup(LegacySupport.class);
-        legacySupport.setSession(mavenSession);
-        DefaultRepositorySystemSession repoSession =
-                (DefaultRepositorySystemSession) legacySupport.getRepositorySession();
-        repoSession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
-                .newInstance(repoSession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
 
         List<MavenProject> reactorProjects =
                 mojo.getReactorProjects() != null ? mojo.getReactorProjects() : Collections.emptyList();
 
         setVariableValueToObject(mojo, "mojoExecution", getMockMojoExecution());
-        setVariableValueToObject(mojo, "session", legacySupport.getSession());
-        setVariableValueToObject(mojo, "repoSession", legacySupport.getRepositorySession());
+        setVariableValueToObject(mojo, "session", mavenSession);
+        setVariableValueToObject(mojo, "repoSession", repositorySession);
         setVariableValueToObject(mojo, "reactorProjects", reactorProjects);
         setVariableValueToObject(
                 mojo, "remoteProjectRepositories", mojo.getProject().getRemoteProjectRepositories());
