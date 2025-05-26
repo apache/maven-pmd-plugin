@@ -24,11 +24,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 import net.sourceforge.pmd.renderers.Renderer;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -36,16 +36,8 @@ import org.apache.maven.plugins.pmd.exec.PmdExecutor;
 import org.apache.maven.plugins.pmd.exec.PmdRequest;
 import org.apache.maven.plugins.pmd.exec.PmdResult;
 import org.apache.maven.plugins.pmd.exec.PmdServiceExecutor;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.shared.artifact.filter.resolve.AndFilter;
-import org.apache.maven.shared.artifact.filter.resolve.ExclusionsFilter;
-import org.apache.maven.shared.artifact.filter.resolve.ScopeFilter;
-import org.apache.maven.shared.artifact.filter.resolve.TransformableFilter;
-import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResult;
-import org.apache.maven.shared.transfer.dependencies.resolve.DependencyResolver;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
@@ -234,14 +226,14 @@ public class PmdReport extends AbstractPmdReport {
      */
     private final ResourceManager locator;
 
-    private final DependencyResolver dependencyResolver;
-
     /**
      * Internationalization component
      */
     private final I18N i18n;
 
     private final PmdServiceExecutor serviceExecutor;
+
+    private final ConfigurationService configurationService;
 
     /**
      * Contains the result of the last PMD execution.
@@ -253,11 +245,11 @@ public class PmdReport extends AbstractPmdReport {
     @Inject
     public PmdReport(
             ResourceManager locator,
-            DependencyResolver dependencyResolver,
+            ConfigurationService configurationService,
             I18N i18n,
             PmdServiceExecutor serviceExecutor) {
         this.locator = locator;
-        this.dependencyResolver = dependencyResolver;
+        this.configurationService = configurationService;
         this.i18n = i18n;
         this.serviceExecutor = serviceExecutor;
     }
@@ -479,37 +471,11 @@ public class PmdReport extends AbstractPmdReport {
             List<String> classpath = new ArrayList<>();
             if (isAggregator()) {
                 List<String> dependencies = new ArrayList<>();
-
-                // collect exclusions for projects within the reactor
-                // if module a depends on module b and both are in the reactor
-                // then we don't want to resolve the dependency as an artifact.
-                List<String> exclusionPatterns = new ArrayList<>();
-                for (MavenProject localProject : getAggregatedProjects()) {
-                    exclusionPatterns.add(localProject.getGroupId() + ":" + localProject.getArtifactId());
-                }
-                TransformableFilter filter = new AndFilter(Arrays.asList(
-                        new ExclusionsFilter(exclusionPatterns),
-                        includeTests
-                                ? ScopeFilter.including("compile", "provided", "test")
-                                : ScopeFilter.including("compile", "provided")));
-
-                for (MavenProject localProject : getAggregatedProjects()) {
-                    ProjectBuildingRequest buildingRequest =
-                            new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
-                    // use any additional configured repo as well
-                    buildingRequest.getRemoteRepositories().addAll(localProject.getRemoteArtifactRepositories());
-
-                    List<Dependency> managedDependencies = localProject.getDependencyManagement() == null
-                            ? null
-                            : localProject.getDependencyManagement().getDependencies();
-                    Iterable<ArtifactResult> resolvedDependencies = dependencyResolver.resolveDependencies(
-                            buildingRequest, localProject.getDependencies(), managedDependencies, filter);
-
-                    for (ArtifactResult resolvedArtifact : resolvedDependencies) {
-                        dependencies.add(
-                                resolvedArtifact.getArtifact().getFile().toString());
-                    }
-
+                Collection<MavenProject> aggregatedProjects = getAggregatedProjects();
+                for (MavenProject localProject : aggregatedProjects) {
+                    configurationService
+                            .resolveDependenciesAsFile(localProject, aggregatedProjects, includeTests)
+                            .forEach(file -> dependencies.add(file.getAbsolutePath()));
                     // Add the project's classes first
                     classpath.addAll(
                             includeTests
@@ -527,8 +493,7 @@ public class PmdReport extends AbstractPmdReport {
 
                 getLog().debug("Using aux classpath: " + classpath);
             }
-            String path = StringUtils.join(classpath.iterator(), File.pathSeparator);
-            return path;
+            return StringUtils.join(classpath.iterator(), File.pathSeparator);
         } catch (Exception e) {
             throw new MavenReportException(e.getMessage(), e);
         }
