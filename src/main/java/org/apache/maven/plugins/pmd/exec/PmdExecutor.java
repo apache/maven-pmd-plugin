@@ -117,7 +117,6 @@ public class PmdExecutor extends Executor {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(requestFile))) {
             PmdRequest request = (PmdRequest) in.readObject();
             PmdExecutor pmdExecutor = new PmdExecutor(request);
-            pmdExecutor.setupLogLevel(request.getLogLevel());
             pmdExecutor.run();
             System.exit(0);
         } catch (IOException | ClassNotFoundException | MavenReportException e) {

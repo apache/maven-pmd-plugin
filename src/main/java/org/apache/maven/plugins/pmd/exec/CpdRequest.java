@@ -45,8 +45,6 @@ public class CpdRequest implements Serializable {
     private String sourceEncoding;
     private List<File> files = new ArrayList<>();
 
-    private String logLevel;
-
     private String excludeFromFailureFile;
     private String targetDirectory;
     private String outputEncoding;
@@ -105,10 +103,6 @@ public class CpdRequest implements Serializable {
         this.reportOutputDirectory = reportOutputDirectory;
     }
 
-    public void setLogLevel(String logLevel) {
-        this.logLevel = logLevel;
-    }
-
     public Map<String, String> getJdkToolchain() {
         return jdkToolchain;
     }
@@ -155,10 +149,6 @@ public class CpdRequest implements Serializable {
 
     public String getReportOutputDirectory() {
         return reportOutputDirectory;
-    }
-
-    public String getLogLevel() {
-        return logLevel;
     }
 
     public boolean isIgnoreAnnotations() {

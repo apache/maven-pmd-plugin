@@ -30,28 +30,9 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.maven.cli.logging.Slf4jConfiguration;
-import org.apache.maven.cli.logging.Slf4jConfigurationFactory;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
-import org.slf4j.ILoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 abstract class Executor {
-    private static final Logger LOG = LoggerFactory.getLogger(Executor.class);
-
-    protected void setupLogLevel(String logLevel) {
-        ILoggerFactory slf4jLoggerFactory = LoggerFactory.getILoggerFactory();
-        Slf4jConfiguration slf4jConfiguration = Slf4jConfigurationFactory.getConfiguration(slf4jLoggerFactory);
-        if ("debug".equals(logLevel)) {
-            slf4jConfiguration.setRootLoggerLevel(Slf4jConfiguration.Level.DEBUG);
-        } else if ("info".equals(logLevel)) {
-            slf4jConfiguration.setRootLoggerLevel(Slf4jConfiguration.Level.INFO);
-        } else {
-            slf4jConfiguration.setRootLoggerLevel(Slf4jConfiguration.Level.ERROR);
-        }
-        slf4jConfiguration.activate();
-    }
 
     protected static String buildClasspath() {
         StringBuilder classpath = new StringBuilder();
@@ -74,7 +55,7 @@ abstract class Executor {
                         String filename = URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8.name());
                         classpath.append(new File(filename).getPath()).append(File.pathSeparatorChar);
                     } catch (UnsupportedEncodingException e) {
-                        LOG.warn("Ignoring " + url + " in classpath due to UnsupportedEncodingException", e);
+                        // skip as we provide the correct standard encoding
                     }
                 }
             }
@@ -109,7 +90,7 @@ abstract class Executor {
                 }
                 out.flush();
             } catch (IOException e) {
-                LOG.error(e.getMessage(), e);
+                e.printStackTrace();
             }
         }
     }

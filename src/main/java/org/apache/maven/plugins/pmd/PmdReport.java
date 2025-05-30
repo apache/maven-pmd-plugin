@@ -367,7 +367,6 @@ public class PmdReport extends AbstractPmdReport {
         request.setSkipPmdError(skipPmdError);
         request.setIncludeXmlInReports(includeXmlInReports);
         request.setReportOutputDirectory(getReportOutputDirectory().getAbsolutePath());
-        request.setLogLevel(determineCurrentRootLogLevel());
         request.setJdkToolchain(getJdkToolchain());
 
         getLog().info("PMD version: " + AbstractPmdReport.getPmdVersion());

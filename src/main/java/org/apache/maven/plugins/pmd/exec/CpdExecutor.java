@@ -101,7 +101,6 @@ public class CpdExecutor extends Executor {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(requestFile))) {
             CpdRequest request = (CpdRequest) in.readObject();
             CpdExecutor cpdExecutor = new CpdExecutor(request);
-            cpdExecutor.setupLogLevel(request.getLogLevel());
             cpdExecutor.run();
             System.exit(0);
         } catch (IOException | ClassNotFoundException | MavenReportException e) {

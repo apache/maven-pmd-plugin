@@ -453,18 +453,6 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
         return true;
     }
 
-    protected String determineCurrentRootLogLevel() {
-        String logLevel = System.getProperty("org.slf4j.simpleLogger.defaultLogLevel");
-        if (logLevel == null) {
-            logLevel = System.getProperty("maven.logging.root.level");
-        }
-        if (logLevel == null) {
-            // TODO: logback level
-            logLevel = "info";
-        }
-        return logLevel;
-    }
-
     static String getPmdVersion() {
         return PMDVersion.VERSION;
     }
