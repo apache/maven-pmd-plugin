@@ -30,7 +30,7 @@ under the License.
       <!-- According to https://issues.apache.org/jira/browse/MNGSITE-152 -->
       <item name="License" href="https://www.apache.org/licenses/"/>
       <item name="Download" href="download.html"/>
-      <item name="Release Notes" href="releasenotes.html"/>
+      <item name="Release Notes" href="https://github.com/apache/maven-pmd-plugin/releases"/>
     </menu>
     <menu name="Examples">
       <item name="Upgrading PMD at Runtime" href="examples/upgrading-PMD-at-runtime.html"/>
