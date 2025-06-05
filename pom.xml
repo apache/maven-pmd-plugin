@@ -141,7 +141,7 @@ under the License.
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
       <version>4.0.0</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
     </dependency>
 
     <!-- pmd -->
