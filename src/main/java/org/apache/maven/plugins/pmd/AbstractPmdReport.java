@@ -259,11 +259,6 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     /** The files that are being analyzed. */
     protected Map<File, PmdFileInfo> filesToProcess;
 
-    @Override
-    protected MavenProject getProject() {
-        return project;
-    }
-
     protected List<MavenProject> getReactorProjects() {
         return reactorProjects;
     }
