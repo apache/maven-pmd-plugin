@@ -334,7 +334,8 @@ public class PmdExecutor extends Executor {
 
         String extension = renderer.defaultFileExtension();
         File targetFile = new File(targetDir, "pmd." + extension);
-        try (Writer writer = Files.newBufferedWriter(targetFile.toPath(), Charset.forName(request.getOutputEncoding()))) {
+        try (Writer writer =
+                Files.newBufferedWriter(targetFile.toPath(), Charset.forName(request.getOutputEncoding()))) {
             renderer.setWriter(writer);
             renderer.start();
             if (report != null) {

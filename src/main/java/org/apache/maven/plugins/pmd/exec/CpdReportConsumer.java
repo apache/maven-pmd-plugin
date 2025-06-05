@@ -19,11 +19,12 @@
 package org.apache.maven.plugins.pmd.exec;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -52,7 +53,7 @@ class CpdReportConsumer implements Consumer<CPDReport> {
     @Override
     public void accept(CPDReport report) {
         try {
-            // always create XML format. we need to output it even if the file list is empty or we have no
+            // Always create XML format. We need to output it even if the file list is empty, or we have no
             // duplications so that the "check" goals can check for violations
             writeXmlReport(report);
 
@@ -68,19 +69,27 @@ class CpdReportConsumer implements Consumer<CPDReport> {
     }
 
     private void writeXmlReport(CPDReport cpd) throws IOException {
-        File targetFile = writeReport(cpd, new XMLRenderer(request.getOutputEncoding()), "xml");
-        if (request.isIncludeXmlInReports()) {
-            File outputDirectory = new File(request.getReportOutputDirectory());
-            if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
-                throw new IOException("Couldn't create report output directory: " + outputDirectory);
+        try {
+            File targetFile = writeReport(cpd, new XMLRenderer(request.getOutputEncoding()), "xml");
+            if (request.isIncludeXmlInReports()) {
+                File outputDirectory = new File(request.getReportOutputDirectory());
+                if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
+                    throw new IOException("Couldn't create report output directory: " + outputDirectory);
+                }
+                FileUtils.copyFile(targetFile, new File(outputDirectory, "cpd.xml"));
             }
-            FileUtils.copyFile(targetFile, new File(outputDirectory, "cpd.xml"));
+        } catch (UnsupportedCharsetException | IllegalCharsetNameException ex) {
+            throw new UnsupportedEncodingException(ex.getMessage());
         }
     }
 
     private void writeFormattedReport(CPDReport cpd) throws IOException, MavenReportException {
-        CPDReportRenderer r = CpdExecutor.createRenderer(request.getFormat(), request.getOutputEncoding());
-        writeReport(cpd, r, request.getFormat());
+        CPDReportRenderer renderer = CpdExecutor.createRenderer(request.getFormat(), request.getOutputEncoding());
+        try {
+            writeReport(cpd, renderer, request.getFormat());
+        } catch (UnsupportedCharsetException | IllegalCharsetNameException ex) {
+            throw new UnsupportedEncodingException(ex.getMessage());
+        }
     }
 
     private File writeReport(CPDReport cpd, CPDReportRenderer renderer, String extension) throws IOException {
@@ -94,7 +103,8 @@ class CpdReportConsumer implements Consumer<CPDReport> {
         }
 
         File targetFile = new File(targetDir, "cpd." + extension);
-        try (Writer writer = Files.newBufferedWriter(targetFile.toPath(), Charset.forName(request.getOutputEncoding())) {
+        try (Writer writer =
+                Files.newBufferedWriter(targetFile.toPath(), Charset.forName(request.getOutputEncoding()))) {
             renderer.render(cpd.filterMatches(filterMatches()), writer);
         }
         return targetFile;
