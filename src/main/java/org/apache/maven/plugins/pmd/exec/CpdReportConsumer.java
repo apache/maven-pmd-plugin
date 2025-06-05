@@ -69,27 +69,19 @@ class CpdReportConsumer implements Consumer<CPDReport> {
     }
 
     private void writeXmlReport(CPDReport cpd) throws IOException {
-        try {
-            File targetFile = writeReport(cpd, new XMLRenderer(request.getOutputEncoding()), "xml");
-            if (request.isIncludeXmlInReports()) {
-                File outputDirectory = new File(request.getReportOutputDirectory());
-                if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
-                    throw new IOException("Couldn't create report output directory: " + outputDirectory);
-                }
-                FileUtils.copyFile(targetFile, new File(outputDirectory, "cpd.xml"));
+        File targetFile = writeReport(cpd, new XMLRenderer(request.getOutputEncoding()), "xml");
+        if (request.isIncludeXmlInReports()) {
+            File outputDirectory = new File(request.getReportOutputDirectory());
+            if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
+                throw new IOException("Couldn't create report output directory: " + outputDirectory);
             }
-        } catch (UnsupportedCharsetException | IllegalCharsetNameException ex) {
-            throw new UnsupportedEncodingException(ex.getMessage());
+            FileUtils.copyFile(targetFile, new File(outputDirectory, "cpd.xml"));
         }
     }
 
     private void writeFormattedReport(CPDReport cpd) throws IOException, MavenReportException {
         CPDReportRenderer renderer = CpdExecutor.createRenderer(request.getFormat(), request.getOutputEncoding());
-        try {
-            writeReport(cpd, renderer, request.getFormat());
-        } catch (UnsupportedCharsetException | IllegalCharsetNameException ex) {
-            throw new UnsupportedEncodingException(ex.getMessage());
-        }
+        writeReport(cpd, renderer, request.getFormat());
     }
 
     private File writeReport(CPDReport cpd, CPDReportRenderer renderer, String extension) throws IOException {
@@ -106,8 +98,11 @@ class CpdReportConsumer implements Consumer<CPDReport> {
         try (Writer writer =
                 Files.newBufferedWriter(targetFile.toPath(), Charset.forName(request.getOutputEncoding()))) {
             renderer.render(cpd.filterMatches(filterMatches()), writer);
+            return targetFile;
         }
-        return targetFile;
+        catch (UnsupportedCharsetException | IllegalCharsetNameException ex) {
+            throw new UnsupportedEncodingException(ex.getMessage());
+        }
     }
 
     private Predicate<Match> filterMatches() {

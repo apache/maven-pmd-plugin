@@ -26,8 +26,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -307,9 +310,6 @@ public class PmdExecutor extends Executor {
     /**
      * Use the PMD XML renderer to create the XML report format used by the
      * check mojo later on.
-     *
-     * @param report
-     * @throws MavenReportException
      */
     private void writeXmlReport(Report report) throws IOException {
         File targetFile = writeReport(report, new XMLRenderer(request.getOutputEncoding()));
@@ -343,6 +343,8 @@ public class PmdExecutor extends Executor {
             }
             renderer.end();
             renderer.flush();
+        } catch (UnsupportedCharsetException | IllegalCharsetNameException ex) {
+            throw new UnsupportedEncodingException(ex.getMessage());
         }
 
         return targetFile;
