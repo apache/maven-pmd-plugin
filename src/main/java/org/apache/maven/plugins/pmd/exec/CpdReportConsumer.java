@@ -23,6 +23,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -92,9 +94,8 @@ class CpdReportConsumer implements Consumer<CPDReport> {
         }
 
         File targetFile = new File(targetDir, "cpd." + extension);
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(targetFile), request.getOutputEncoding())) {
+        try (Writer writer = Files.newBufferedWriter(targetFile.toPath(), Charset.forName(request.getOutputEncoding())) {
             renderer.render(cpd.filterMatches(filterMatches()), writer);
-            writer.flush();
         }
         return targetFile;
     }

@@ -28,6 +28,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -321,8 +322,8 @@ public class PmdExecutor extends Executor {
         }
     }
 
-    private File writeReport(Report report, Renderer r) throws IOException {
-        if (r == null) {
+    private File writeReport(Report report, Renderer renderer) throws IOException {
+        if (renderer == null) {
             return null;
         }
 
@@ -331,16 +332,16 @@ public class PmdExecutor extends Executor {
             throw new IOException("Couldn't create report target directory: " + targetDir);
         }
 
-        String extension = r.defaultFileExtension();
+        String extension = renderer.defaultFileExtension();
         File targetFile = new File(targetDir, "pmd." + extension);
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(targetFile), request.getOutputEncoding())) {
-            r.setWriter(writer);
-            r.start();
+        try (Writer writer = Files.newBufferedWriter(targetFile.toPath(), Charset.forName(request.getOutputEncoding()))) {
+            renderer.setWriter(writer);
+            renderer.start();
             if (report != null) {
-                r.renderFileReport(report);
+                renderer.renderFileReport(report);
             }
-            r.end();
-            r.flush();
+            renderer.end();
+            renderer.flush();
         }
 
         return targetFile;
