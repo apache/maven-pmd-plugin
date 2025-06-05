@@ -186,6 +186,7 @@ public class CpdExecutor extends Executor {
                 renderer = (CPDReportRenderer)
                         Class.forName(format).getConstructor().newInstance();
             } catch (Exception e) {
+                // TODO - report format should be checked early
                 throw new MavenReportException(
                         "Can't find CPD custom format " + format + ": "
                                 + e.getClass().getName(),

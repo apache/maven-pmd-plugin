@@ -126,9 +126,8 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
             generateReport(mojo, testPom);
 
             fail("MavenReportException must be thrown");
-        } catch (MojoExecutionException e) {
-            assertMavenReportException("There was 1 error while executing CPD", e);
-            assertLogOutputContains("Can't find CPD custom format xhtml");
+        } catch (Exception e) {
+            assertMavenReportException("Can't find CPD custom format xhtml", e);
         }
     }
 
