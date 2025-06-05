@@ -99,8 +99,7 @@ class CpdReportConsumer implements Consumer<CPDReport> {
                 Files.newBufferedWriter(targetFile.toPath(), Charset.forName(request.getOutputEncoding()))) {
             renderer.render(cpd.filterMatches(filterMatches()), writer);
             return targetFile;
-        }
-        catch (UnsupportedCharsetException | IllegalCharsetNameException ex) {
+        } catch (UnsupportedCharsetException | IllegalCharsetNameException ex) {
             throw new UnsupportedEncodingException(ex.getMessage());
         }
     }
