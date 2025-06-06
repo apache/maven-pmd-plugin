@@ -175,11 +175,7 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
     /**
      * Method for collecting the violations found by the PMD tool
      *
-     * @param analysisFile
-     * @param failurePriority
      * @return an int that specifies the number of violations found
-     * @throws XmlPullParserException
-     * @throws IOException
      */
     private ViolationDetails<D> getViolations(final File analysisFile, final int failurePriority)
             throws XmlPullParserException, IOException {
@@ -227,14 +223,7 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
     }
 
     /**
-     * Gets the output message
-     *
-     * @param failureCount
-     * @param warningCount
-     * @param analyzerName
-     * @param failureName
-     * @param outputFile
-     * @return
+     * Gets the output message.
      */
     private String getMessage(
             final int failureCount,
