@@ -381,7 +381,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
                     return true;
                 }
             } catch (IOException e) {
-                getLog().warn("Error while checking " + sourceDirectoryToCheck + " whether it should be excluded.", e);
+                getLog().warn("Error while checking whether " + sourceDirectoryToCheck + " should be excluded.", e);
             }
         }
         return false;
