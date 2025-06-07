@@ -352,9 +352,6 @@ public class PmdExecutor extends Executor {
 
     /**
      * Use the PMD renderers to render in any format aside from HTML and XML.
-     *
-     * @param report
-     * @throws MavenReportException
      */
     private void writeFormattedReport(Report report) throws IOException, MavenReportException {
         Renderer renderer = createRenderer(request.getFormat(), request.getOutputEncoding());

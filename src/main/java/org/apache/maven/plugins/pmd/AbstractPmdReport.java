@@ -481,7 +481,6 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
      *
      * @param aggregatedProject the project being aggregated
      * @param reactorProjectsMap map of (still) available reactor projects
-     * @throws MavenReportException if any
      */
     private Set<MavenProject> modulesForAggregatedProject(
             MavenProject aggregatedProject, Map<Path, MavenProject> reactorProjectsMap) {
