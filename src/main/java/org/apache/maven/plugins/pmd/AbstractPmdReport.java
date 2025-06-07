@@ -273,11 +273,11 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     }
 
     /**
-     * Convenience method to get the list of files where the PMD tool will be executed
+     * Convenience method to retrieve the files on which the PMD tool will be executed.
      *
-     * @return a List of the files where the PMD tool will be executed
-     * @throws IOException If an I/O error occurs during construction of the
-     *                     canonical pathnames of the files
+     * @return a map of the files where the PMD tool will be executed
+     * @throws IOException if an I/O error occurs during construction of the
+     *                     canonical paths of the files
      */
     protected Map<File, PmdFileInfo> getFilesToProcess() throws IOException {
         if (aggregate && !project.isExecutionRoot()) {
@@ -481,7 +481,6 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
      *
      * @param aggregatedProject the project being aggregated
      * @param reactorProjectsMap map of (still) available reactor projects
-     * @throws MavenReportException if any
      */
     private Set<MavenProject> modulesForAggregatedProject(
             MavenProject aggregatedProject, Map<Path, MavenProject> reactorProjectsMap) {
