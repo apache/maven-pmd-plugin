@@ -368,25 +368,23 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
         return files;
     }
 
-    private boolean isDirectoryExcluded(Collection<File> excludeRootFiles, File sourceDirectoryToCheck) {
-        boolean returnVal = false;
-        for (File excludeDir : excludeRootFiles) {
+    private boolean isDirectoryExcluded(Collection<File> excludedRootFiles, File sourceDirectoryToCheck) {
+        for (File excludedDirectory : excludedRootFiles) {
             try {
                 if (sourceDirectoryToCheck
                         .getCanonicalFile()
                         .toPath()
-                        .startsWith(excludeDir.getCanonicalFile().toPath())) {
+                        .startsWith(excludedDirectory.getCanonicalFile().toPath())) {
                     getLog().debug("Directory " + sourceDirectoryToCheck.getAbsolutePath()
                             + " has been excluded as it matches excludeRoot "
-                            + excludeDir.getAbsolutePath());
-                    returnVal = true;
-                    break;
+                            + excludedDirectory.getAbsolutePath());
+                    return true;
                 }
             } catch (IOException e) {
                 getLog().warn("Error while checking " + sourceDirectoryToCheck + " whether it should be excluded.", e);
             }
         }
-        return returnVal;
+        return false;
     }
 
     /**
