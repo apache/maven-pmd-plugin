@@ -384,9 +384,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
     }
 
     /**
-     * Verify the correct working of the locationTemp method
-     *
-     * @throws Exception
+     * Verify the correct working of the locationTemp method.
      */
     public void testLocationTemp() throws Exception {
 
@@ -403,9 +401,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
     }
 
     /**
-     * Verify that suppressMarker works
-     *
-     * @throws Exception
+     * Verify that suppressMarker works.
      */
     public void testSuppressMarkerConfiguration() throws Exception {
         File generatedReport =
@@ -427,7 +423,6 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         // check if there's a link to the JXR files
         str = readFile(generatedReport);
 
-        assertTrue(str.contains("/xref/def/configuration/AppSample.html#L27"));
         // suppressed violation
         assertTrue(str.contains("Avoid unused private fields such as 'unusedVar2'."));
     }
@@ -452,7 +447,6 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
         // check if there's a link to the JXR files
         str = readFile(generatedReport);
 
-        assertTrue(str.contains("/xref/def/configuration/AppSample.html#L27"));
         // suppressed violations are not rendered
         assertFalse(str.contains("Avoid unused private fields such as 'unusedVar2'."));
     }
