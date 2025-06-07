@@ -384,9 +384,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
     }
 
     /**
-     * Verify the correct working of the locationTemp method
-     *
-     * @throws Exception
+     * Verify the correct working of the locationTemp method.
      */
     public void testLocationTemp() throws Exception {
 
@@ -403,9 +401,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
     }
 
     /**
-     * Verify that suppressMarker works
-     *
-     * @throws Exception
+     * Verify that suppressMarker works.
      */
     public void testSuppressMarkerConfiguration() throws Exception {
         File generatedReport =
