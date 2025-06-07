@@ -293,7 +293,7 @@ public class PmdReport extends AbstractPmdReport {
         try {
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
-            PmdReportRenderer r = new PmdReportRenderer(
+            PmdReportRenderer renderer = new PmdReportRenderer(
                     getLog(),
                     getSink(),
                     i18n,
@@ -304,13 +304,13 @@ public class PmdReport extends AbstractPmdReport {
                     renderViolationsByPriority,
                     isAggregator());
             if (renderSuppressedViolations) {
-                r.setSuppressedViolations(pmdResult.getSuppressedViolations());
+                renderer.setSuppressedViolations(pmdResult.getSuppressedViolations());
             }
             if (renderProcessingErrors) {
-                r.setProcessingErrors(pmdResult.getErrors());
+                renderer.setProcessingErrors(pmdResult.getErrors());
             }
 
-            r.render();
+            renderer.render();
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }

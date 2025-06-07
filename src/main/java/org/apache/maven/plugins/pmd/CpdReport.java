@@ -142,9 +142,9 @@ public class CpdReport extends AbstractPmdReport {
         try {
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
-            CpdReportRenderer r = new CpdReportRenderer(
+            CpdReportRenderer renderer = new CpdReportRenderer(
                     getSink(), i18n, locale, filesToProcess, cpdResult.getDuplications(), isAggregator());
-            r.render();
+            renderer.render();
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }
