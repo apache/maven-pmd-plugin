@@ -44,23 +44,22 @@ public class CustomConfigurationMavenProjectStub extends PmdProjectStub {
     public CustomConfigurationMavenProjectStub() throws IOException, XmlPullParserException {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
 
-        try (InputStream in = new FileInputStream(getBasedir() + "/" + getPOM())) {
-            Model model = pomReader.read(in);
-            setModel(model);
+        InputStream in = new FileInputStream(getBasedir() + "/" + getPOM());
+        Model model = pomReader.read(in);
+        setModel(model);
 
-            setGroupId(model.getGroupId());
-            setArtifactId(model.getArtifactId());
-            setVersion(model.getVersion());
-            setName(model.getName());
-            setUrl(model.getUrl());
-            setPackaging(model.getPackaging());
-            setReportPlugins(model.getReporting().getPlugins());
-            Build build = new Build();
-            build.setFinalName(model.getBuild().getFinalName());
-            build.setDirectory(getBasedir() + "/target");
-            build.setSourceDirectory(getBasedir().getAbsolutePath());
-            setBuild(build);
-        }
+        setGroupId(model.getGroupId());
+        setArtifactId(model.getArtifactId());
+        setVersion(model.getVersion());
+        setName(model.getName());
+        setUrl(model.getUrl());
+        setPackaging(model.getPackaging());
+        setReportPlugins(model.getReporting().getPlugins());
+        Build build = new Build();
+        build.setFinalName(model.getBuild().getFinalName());
+        build.setDirectory(getBasedir() + "/target");
+        build.setSourceDirectory(getBasedir().getAbsolutePath());
+        setBuild(build);
 
         String basedir = getBasedir().getAbsolutePath();
         List<String> compileSourceRoots = new ArrayList<>();

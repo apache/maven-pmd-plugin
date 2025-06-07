@@ -41,22 +41,21 @@ public class InvalidFormatMavenProjectStub extends PmdProjectStub {
     public InvalidFormatMavenProjectStub() throws XmlPullParserException, IOException {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
 
-        try (InputStream is = new FileInputStream(getBasedir() + "/" + getPOM())) {
-            Model model = pomReader.read(is);
-            setModel(model);
-            setGroupId(model.getGroupId());
-            setArtifactId(model.getArtifactId());
-            setVersion(model.getVersion());
-            setName(model.getName());
-            setUrl(model.getUrl());
-            setPackaging(model.getPackaging());
+        InputStream is = new FileInputStream(getBasedir() + "/" + getPOM());
+        Model model = pomReader.read(is);
+        setModel(model);
+        setGroupId(model.getGroupId());
+        setArtifactId(model.getArtifactId());
+        setVersion(model.getVersion());
+        setName(model.getName());
+        setUrl(model.getUrl());
+        setPackaging(model.getPackaging());
 
-            Build build = new Build();
-            build.setFinalName(model.getBuild().getFinalName());
-            build.setDirectory(getBasedir() + "/target");
-            build.setSourceDirectory(getBasedir().getAbsolutePath());
-            setBuild(build);
-        }
+        Build build = new Build();
+        build.setFinalName(model.getBuild().getFinalName());
+        build.setDirectory(getBasedir() + "/target");
+        build.setSourceDirectory(getBasedir().getAbsolutePath());
+        setBuild(build);
 
         String basedir = getBasedir().getAbsolutePath();
         List<String> compileSourceRoots = new ArrayList<>();
