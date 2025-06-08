@@ -20,10 +20,7 @@ package org.apache.maven.plugins.pmd.stubs;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.maven.model.ReportPlugin;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -32,16 +29,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 public class CustomConfigurationMavenProjectStub extends PmdProjectStub {
 
-    private List<ReportPlugin> reportPlugins = new ArrayList<>();
-
     public CustomConfigurationMavenProjectStub() throws IOException, XmlPullParserException {
         super("/custom/configuration");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<ReportPlugin> getReportPlugins() {
-        return reportPlugins;
     }
 
     @Override

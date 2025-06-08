@@ -37,16 +37,6 @@ public class DefaultConfigurationMavenProjectStub extends PmdProjectStub {
         super("/def/configuration");
     }
 
-    public void setReportPlugins(List<ReportPlugin> plugins) {
-        this.reportPlugins = plugins;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<ReportPlugin> getReportPlugins() {
-        return reportPlugins;
-    }
-
     @Override
     public File getBasedir() {
         return new File(super.getBasedir() + "/default-configuration");
