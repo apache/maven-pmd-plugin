@@ -21,7 +21,6 @@ package org.apache.maven.plugins.pmd.stubs;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.maven.model.Build;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -29,22 +28,9 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @version $Id$
  */
 public class InvalidFormatMavenProjectStub extends PmdProjectStub {
-    private Build build;
 
     public InvalidFormatMavenProjectStub() throws XmlPullParserException, IOException {
         super("/invalid/format");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setBuild(Build build) {
-        this.build = build;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Build getBuild() {
-        return build;
     }
 
     @Override

@@ -40,16 +40,13 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.aether.repository.RemoteRepository;
 
 public abstract class PmdProjectStub extends MavenProjectStub {
-    /**
-     * @return the POM file name
-     */
-    protected abstract String getPOM();
+    private Build build;
 
     public PmdProjectStub(String dir) throws XmlPullParserException, IOException {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
 
-        try (InputStream is = new FileInputStream(getBasedir() + "/" + getPOM())) {
-            Model model = pomReader.read(is);
+        try (InputStream in = new FileInputStream(getBasedir() + "/" + getPOM())) {
+            Model model = pomReader.read(in);
 
             setModel(model);
             setGroupId(model.getGroupId());
@@ -76,6 +73,23 @@ public abstract class PmdProjectStub extends MavenProjectStub {
         setArtifact(artifact);
 
         setFile(new File(getBasedir().getAbsolutePath() + "/pom.xml"));
+    }
+
+    /**
+     * @return the POM file name
+     */
+    protected abstract String getPOM();
+
+    /** {@inheritDoc} */
+    @Override
+    public void setBuild(Build build) {
+        this.build = build;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Build getBuild() {
+        return build;
     }
 
     @Override

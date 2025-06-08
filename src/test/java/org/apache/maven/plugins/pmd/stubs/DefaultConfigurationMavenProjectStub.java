@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.model.Build;
 import org.apache.maven.model.ReportPlugin;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -33,8 +32,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 public class DefaultConfigurationMavenProjectStub extends PmdProjectStub {
     private List<ReportPlugin> reportPlugins = new ArrayList<>();
-
-    private Build build;
 
     public DefaultConfigurationMavenProjectStub() throws XmlPullParserException, IOException {
         super("/def/configuration");
@@ -48,18 +45,6 @@ public class DefaultConfigurationMavenProjectStub extends PmdProjectStub {
     @Override
     public List<ReportPlugin> getReportPlugins() {
         return reportPlugins;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setBuild(Build build) {
-        this.build = build;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Build getBuild() {
-        return build;
     }
 
     @Override

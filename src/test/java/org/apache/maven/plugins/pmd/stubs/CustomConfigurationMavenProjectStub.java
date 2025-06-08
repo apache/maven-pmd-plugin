@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.model.Build;
 import org.apache.maven.model.ReportPlugin;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -32,28 +31,11 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @version $Id$
  */
 public class CustomConfigurationMavenProjectStub extends PmdProjectStub {
-    private Build build;
 
     private List<ReportPlugin> reportPlugins = new ArrayList<>();
 
     public CustomConfigurationMavenProjectStub() throws IOException, XmlPullParserException {
         super("/custom/configuration");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setBuild(Build build) {
-        this.build = build;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Build getBuild() {
-        return build;
-    }
-
-    public void setReportPlugins(List<ReportPlugin> plugins) {
-        this.reportPlugins = plugins;
     }
 
     /** {@inheritDoc} */
