@@ -19,17 +19,12 @@
 package org.apache.maven.plugins.pmd.stubs;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
 import org.apache.maven.model.ReportPlugin;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -42,36 +37,7 @@ public class DefaultConfigurationMavenProjectStub extends PmdProjectStub {
     private Build build;
 
     public DefaultConfigurationMavenProjectStub() throws XmlPullParserException, IOException {
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-
-        InputStream is = new FileInputStream(getBasedir() + "/" + getPOM());
-        Model model = pomReader.read(is);
-
-        setGroupId(model.getGroupId());
-        setArtifactId(model.getArtifactId());
-        setVersion(model.getVersion());
-        setName(model.getName());
-        setUrl(model.getUrl());
-        setPackaging(model.getPackaging());
-        setReportPlugins(model.getReporting().getPlugins());
-
-        Build build = new Build();
-        build.setFinalName(model.getBuild().getFinalName());
-        build.setDirectory(getBasedir() + "/target");
-        build.setSourceDirectory(getBasedir().getAbsolutePath());
-        setBuild(build);
-
-        String basedir = getBasedir().getAbsolutePath();
-        List<String> compileSourceRoots = new ArrayList<>();
-        compileSourceRoots.add(basedir + "/def/configuration");
-        setCompileSourceRoots(compileSourceRoots);
-
-        File file = new File(getBasedir().getAbsolutePath() + "/pom.xml");
-        setFile(file);
-
-        Artifact artifact = new PmdPluginArtifactStub(getGroupId(), getArtifactId(), getVersion(), getPackaging());
-        artifact.setArtifactHandler(new DefaultArtifactHandlerStub());
-        setArtifact(artifact);
+        super("/def/configuration");
     }
 
     public void setReportPlugins(List<ReportPlugin> plugins) {
