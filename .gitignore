@@ -4,14 +4,21 @@ target/
 .settings/
 .svn/
 bin/
-# Intellij
-*.ipr
-*.iml
-.idea
 out/
-.DS_Store
 /bootstrap
 /dependencies.xml
 .java-version
 .checkstyle
 .factorypath
+
+# Intellij
+*.ipr
+*.iml
+.idea
+
+#VSCode
+.vscode
+
+#Mac
+.DS_Store
+
