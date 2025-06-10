@@ -32,14 +32,11 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
     public void testDefaultConfiguration() throws Exception {
         generateReport("pmd", "default-configuration/default-configuration-plugin-config.xml");
 
-        // clear the output from previous pmd:pmd execution
-        CapturingPrintStream.init(true);
-
         try {
             final File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml");
-            final PmdViolationCheckMojo mojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+            final PmdViolationCheckMojo mojo = lookupMojo(getGoal(), testPom);
             mojo.execute();
 
             fail("MojoFailureException should be thrown.");
@@ -55,7 +52,7 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml");
-        final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        final PmdViolationCheckMojo pmdViolationMojo = lookupMojo(getGoal(), testPom);
         pmdViolationMojo.execute();
     }
 
@@ -65,13 +62,13 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-notfailmaxviolation-plugin-config.xml");
-        final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        final PmdViolationCheckMojo pmdViolationMojo = lookupMojo(getGoal(), testPom);
         pmdViolationMojo.execute();
 
         testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-failmaxviolation-plugin-config.xml");
-        final PmdViolationCheckMojo pmdViolationMojoFail = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        final PmdViolationCheckMojo pmdViolationMojoFail = lookupMojo(getGoal(), testPom);
 
         try {
             pmdViolationMojoFail.execute();
@@ -89,13 +86,13 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-failonpriority-plugin-config.xml");
-        PmdViolationCheckMojo pmdViolationCheckMojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        PmdViolationCheckMojo pmdViolationCheckMojo = lookupMojo(getGoal(), testPom);
         pmdViolationCheckMojo.execute();
 
         testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-failandwarnonpriority-plugin-config.xml");
-        pmdViolationCheckMojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        pmdViolationCheckMojo = lookupMojo(getGoal(), testPom);
 
         try {
             pmdViolationCheckMojo.execute();
@@ -112,7 +109,7 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             final File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml");
-            final PmdViolationCheckMojo mojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+            final PmdViolationCheckMojo mojo = lookupMojo(getGoal(), testPom);
             mojo.project = new MavenProject();
             mojo.execute();
 
@@ -128,7 +125,7 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-pmd-exclusions-configuration-plugin-config.xml");
-        final PmdViolationCheckMojo pmdViolationMojo = (PmdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        final PmdViolationCheckMojo pmdViolationMojo = lookupMojo(getGoal(), testPom);
 
         // this call shouldn't throw an exception, as the classes with violations have been excluded
         pmdViolationMojo.execute();

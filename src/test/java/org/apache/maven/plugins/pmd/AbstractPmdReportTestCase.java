@@ -83,7 +83,7 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     }
 
     protected AbstractPmdReport createReportMojo(String goal, File pluginXmlFile) throws Exception {
-        AbstractPmdReport mojo = (AbstractPmdReport) lookupMojo(goal, pluginXmlFile);
+        AbstractPmdReport mojo = lookupMojo(goal, pluginXmlFile);
         assertNotNull("Mojo not found.", mojo);
 
         SessionScope sessionScope = lookup(SessionScope.class);
