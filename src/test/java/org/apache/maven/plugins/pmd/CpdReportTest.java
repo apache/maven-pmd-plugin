@@ -22,6 +22,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -151,6 +156,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
 
     /**
      * verify the cpd.xml file is included in the reports when requested.
+     *
      * @throws Exception
      */
     public void testIncludeXmlInReports() throws Exception {
@@ -247,8 +253,8 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
             fail("MojoExecutionException must be thrown");
         } catch (MojoExecutionException e) {
             assertMavenReportException("There was 1 error while executing CPD", e);
-            assertLogOutputContains("Lexical error in file");
-            assertLogOutputContains("BadFile.java");
+            assertReportContains("Lexical error in file");
+            assertReportContains("BadFile.java");
         }
     }
 
@@ -262,9 +268,12 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
                 exception.toString().contains(expectedMessage));
     }
 
-    private static void assertLogOutputContains(String expectedMessage) {
-        String log = CapturingPrintStream.getOutput();
-        assertTrue("Expected '" + expectedMessage + "' in log, but was:\n" + log, log.contains(expectedMessage));
+    private static void assertReportContains(String expectedMessage) throws IOException {
+        Path path = Paths.get(getBasedir(), "target/test/unit/CpdReportTest/with-cpd-errors/target/cpd.xml");
+        String report = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+
+        assertTrue(
+                "Expected '" + expectedMessage + "' in cpd.xml, but was:\n" + report, report.contains(expectedMessage));
     }
 
     @Override
