@@ -421,10 +421,10 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
                 str.contains("suppressiontype=\"//nopmd\" msg=\"Avoid unused private fields such as 'unusedVar2'.\""));
 
         // check if there's a link to the JXR files
-        str = readFile(generatedReport);
-
+        String report = readFile(generatedReport);
+        assertTrue(report.contains("/xref/def/configuration/AppSample.html#L27"));
         // suppressed violation
-        assertTrue(str.contains("Avoid unused private fields such as 'unusedVar2'."));
+        assertTrue(report.contains("Avoid unused private fields such as 'unusedVar2'."));
     }
 
     public void testSuppressMarkerConfigurationWithoutRendering() throws Exception {
@@ -445,10 +445,10 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
                 str.contains("suppressiontype=\"//nopmd\" msg=\"Avoid unused private fields such as 'unusedVar2'.\""));
 
         // check if there's a link to the JXR files
-        str = readFile(generatedReport);
-
+        String report = readFile(generatedReport);
+        assertTrue(report.contains("/xref/def/configuration/AppSample.html#L27"));
         // suppressed violations are not rendered
-        assertFalse(str.contains("Avoid unused private fields such as 'unusedVar2'."));
+        assertFalse(report.contains("Avoid unused private fields such as 'unusedVar2'."));
     }
 
     public void testJspConfiguration() throws Exception {
