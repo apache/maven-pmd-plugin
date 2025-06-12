@@ -19,17 +19,12 @@
 package org.apache.maven.plugins.pmd.stubs;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
 import org.apache.maven.model.ReportPlugin;
-import org.apache.maven.model.Scm;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -38,70 +33,8 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 public class DefaultConfigurationMavenProjectStub extends PmdProjectStub {
     private List<ReportPlugin> reportPlugins = new ArrayList<>();
 
-    private Build build;
-
-    public DefaultConfigurationMavenProjectStub() {
-        MavenXpp3Reader pomReader = new MavenXpp3Reader();
-        Model model = null;
-
-        try (InputStream is = new FileInputStream(new File(getBasedir() + "/" + getPOM()))) {
-            model = pomReader.read(is);
-            setModel(model);
-        } catch (Exception e) {
-        }
-
-        setGroupId(model.getGroupId());
-        setArtifactId(model.getArtifactId());
-        setVersion(model.getVersion());
-        setName(model.getName());
-        setUrl(model.getUrl());
-        setPackaging(model.getPackaging());
-
-        Scm scm = new Scm();
-        scm.setConnection("scm:svn:http://svn.apache.org/maven/sample/trunk");
-        setScm(scm);
-
-        Build build = new Build();
-        build.setFinalName(model.getBuild().getFinalName());
-        build.setDirectory(getBasedir() + "/target");
-        build.setSourceDirectory(getBasedir().getAbsolutePath());
-        setBuild(build);
-
-        setReportPlugins(model.getReporting().getPlugins());
-
-        String basedir = getBasedir().getAbsolutePath();
-        List<String> compileSourceRoots = new ArrayList<>();
-        compileSourceRoots.add(basedir + "/def/configuration");
-        setCompileSourceRoots(compileSourceRoots);
-
-        File file = new File(getBasedir().getAbsolutePath() + "/pom.xml");
-        setFile(file);
-
-        Artifact artifact = new PmdPluginArtifactStub(getGroupId(), getArtifactId(), getVersion(), getPackaging());
-        artifact.setArtifactHandler(new DefaultArtifactHandlerStub());
-        setArtifact(artifact);
-    }
-
-    public void setReportPlugins(List<ReportPlugin> plugins) {
-        this.reportPlugins = plugins;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<ReportPlugin> getReportPlugins() {
-        return reportPlugins;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setBuild(Build build) {
-        this.build = build;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Build getBuild() {
-        return build;
+    public DefaultConfigurationMavenProjectStub() throws XmlPullParserException, IOException {
+        super("/def/configuration");
     }
 
     @Override
