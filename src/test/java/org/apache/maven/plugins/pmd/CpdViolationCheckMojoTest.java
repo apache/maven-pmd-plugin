@@ -36,7 +36,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/default-configuration/cpd-check-default-configuration-plugin-config.xml");
-            CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+            CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo(getGoal(), testPom);
             cpdViolationCheckMojo.execute();
 
             fail("MojoFailureException should be thrown.");
@@ -51,7 +51,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/cpd-check-notfailonviolation-plugin-config.xml");
-        CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo(getGoal(), testPom);
         cpdViolationCheckMojo.execute();
     }
 
@@ -60,7 +60,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
             File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/custom-configuration/cpd-check-exception-test-plugin-config.xml");
-            CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+            CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo(getGoal(), testPom);
             cpdViolationCheckMojo.project = new MavenProject();
             cpdViolationCheckMojo.execute();
 
@@ -76,7 +76,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/cpd-check-cpd-exclusions-configuration-plugin-config.xml");
-        CpdViolationCheckMojo cpdViolationCheckMojo = (CpdViolationCheckMojo) lookupMojo(getGoal(), testPom);
+        CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo(getGoal(), testPom);
 
         // this call shouldn't throw an exception, as the classes with duplications have been excluded
         cpdViolationCheckMojo.execute();
