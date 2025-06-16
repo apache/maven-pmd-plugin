@@ -89,28 +89,32 @@ org.apache.maven.ClassB=UnusedPrivateField,UnusedFormalParameter,UnusedPrivateMe
     If you want more flexibility and exclude classes with a certain name, or whole packages,
     for example because of generated code, you have to do this in the <<<<configuration\>>>> section of the plugin,
     using the <<<<excludes\>>>> or <<<<excludeRoots\>>>> elements.
+    To avoid confusion, don't write those to the plugin's configuration as a <<<<build\>>>> and <<<<reporting\>>>> plugin.
+    Instead, configure the plugin in the <<<<pluginManagement\>>>> section of your POM, so executions of the build and site lifecycle pick it up.
 
 +-----+
 <project>
   ...
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <excludes>
-            <exclude>**/*Bean.java</exclude>
-            <exclude>**/generated/*.java</exclude>
-          </excludes>
-          <excludeRoots>
-            <excludeRoot>target/generated-sources/stubs</excludeRoot>
-          </excludeRoots>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>${project.version}</version>
+          <configuration>
+            <excludes>
+              <exclude>**/*Bean.java</exclude>
+              <exclude>**/generated/*.java</exclude>
+            </excludes>
+            <excludeRoots>
+              <excludeRoot>target/generated-sources/stubs</excludeRoot>
+            </excludeRoots>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
   ...
 </project>
 +-----+
