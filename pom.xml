@@ -85,7 +85,7 @@ under the License.
     <mavenVersion>3.9.10</mavenVersion>
     <pmdVersion>7.14.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
-    <resolverVersion>1.4.1</resolverVersion>
+    <resolverVersion>1.9.23</resolverVersion>
     <doxiaVersion>2.0.0</doxiaVersion>
     <compilerPluginVersion>3.11.0</compilerPluginVersion>
     <sitePluginVersion>3.20.0</sitePluginVersion>
@@ -259,6 +259,7 @@ under the License.
       <groupId>org.apache.maven.resolver</groupId>
       <artifactId>maven-resolver-api</artifactId>
       <version>${resolverVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.resolver</groupId>
