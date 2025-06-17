@@ -82,7 +82,7 @@ under the License.
 
   <properties>
     <javaVersion>8</javaVersion>
-    <mavenVersion>3.6.3</mavenVersion>
+    <mavenVersion>3.9.10</mavenVersion>
     <pmdVersion>7.14.0</pmdVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
     <resolverVersion>1.4.1</resolverVersion>
