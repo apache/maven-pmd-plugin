@@ -50,8 +50,6 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
 
     /**
      * Test CPDReport given the default configuration
-     *
-     * @throws Exception
      */
     public void testDefaultConfiguration() throws Exception {
         File generatedReport =
@@ -72,8 +70,6 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
 
     /**
      * Test CPDReport with the text renderer given as "format=txt"
-     *
-     * @throws Exception
      */
     public void testTxtFormat() throws Exception {
         generateReport(getGoal(), "custom-configuration/cpd-txt-format-configuration-plugin-config.xml");
@@ -94,8 +90,6 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
 
     /**
      * Test CpdReport using custom configuration
-     *
-     * @throws Exception
      */
     public void testCustomConfiguration() throws Exception {
         File generatedReport =
@@ -118,8 +112,6 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
 
     /**
      * Test CPDReport with invalid format
-     *
-     * @throws Exception
      */
     public void testInvalidFormat() throws Exception {
         try {
@@ -130,8 +122,9 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
                     mojo, "compileSourceRoots", mojo.getProject().getCompileSourceRoots());
             generateReport(mojo, testPom);
 
-            fail("MavenReportException must be thrown");
-        } catch (Exception e) {
+            // TODO this should be a more specific subclass
+            fail("RuntimeException must be thrown");
+        } catch (RuntimeException e) {
             assertMavenReportException("Can't find CPD custom format xhtml", e);
         }
     }
@@ -259,13 +252,11 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     }
 
     private static void assertMavenReportException(String expectedMessage, Exception exception) {
+        MavenReportException cause = (MavenReportException) exception.getCause();
+        String message = cause.getMessage();
         assertTrue(
-                "Expected MavenReportException, but was: " + exception,
-                exception.getCause() instanceof MavenReportException);
-        exception = (Exception) exception.getCause();
-        assertTrue(
-                "Wrong message: expected: " + expectedMessage + ", but was: " + exception.toString(),
-                exception.toString().contains(expectedMessage));
+                "Wrong message: expected: " + expectedMessage + ", but was: " + message,
+                message.contains(expectedMessage));
     }
 
     private static void assertReportContains(String expectedMessage) throws IOException {
