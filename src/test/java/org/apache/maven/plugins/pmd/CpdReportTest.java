@@ -125,7 +125,6 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
             // TODO this should be a more specific subclass
             fail("RuntimeException must be thrown");
         } catch (RuntimeException e) {
-            e.printStackTrace();
             assertMavenReportException("Can't find CPD custom format xhtml", e);
         }
     }
