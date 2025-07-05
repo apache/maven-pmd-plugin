@@ -165,9 +165,9 @@ public class PmdReport extends AbstractPmdReport {
     /**
      * The location of the analysis cache, if it is enabled.
      * This file contains the results of the last PMD run and must not be cleaned
-     * between consecutive PMD runs. Otherwise the cache is not in use.
+     * between consecutive PMD runs. Otherwise, the cache is not in use.
      * If the file doesn't exist, PMD executes as if there is no cache enabled and
-     * all files are analyzed. Otherwise only changed files will be analyzed again.
+     * all files are analyzed. Otherwise, only changed files will be analyzed again.
      *
      * @since 3.8
      */
@@ -292,7 +292,9 @@ public class PmdReport extends AbstractPmdReport {
         ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-
+            if (filesToProcess == null) {
+                filesToProcess = getFilesToProcess();
+            }
             PmdReportRenderer renderer = new PmdReportRenderer(
                     getLog(),
                     getSink(),
@@ -311,6 +313,8 @@ public class PmdReport extends AbstractPmdReport {
             }
 
             renderer.render();
+        } catch (IOException ex) {
+          throw new MavenReportException(ex.getMessage(), ex);
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }

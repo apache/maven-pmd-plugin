@@ -18,6 +18,8 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import java.io.File;
+import java.util.Map;
 import javax.inject.Inject;
 
 import java.io.IOException;
@@ -141,10 +143,14 @@ public class CpdReport extends AbstractPmdReport {
         ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-
+            if (filesToProcess == null) {
+                filesToProcess = getFilesToProcess();
+            }
             CpdReportRenderer renderer = new CpdReportRenderer(
                     getSink(), i18n, locale, filesToProcess, cpdResult.getDuplications(), isAggregator());
             renderer.render();
+        } catch (IOException ex) {
+          throw new MavenReportException(ex.getMessage(), ex);
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }
