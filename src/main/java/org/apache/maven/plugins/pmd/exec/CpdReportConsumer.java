@@ -64,6 +64,9 @@ class CpdReportConsumer implements Consumer<CPDReport> {
                 writeFormattedReport(report);
             }
         } catch (IOException | MavenReportException e) {
+            // TODO this should be a more specific subclass; or just have the accept method
+            // build the objects in memory and write them to a stream later after the
+            // accept method returns
             throw new RuntimeException(e);
         }
     }
