@@ -97,6 +97,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
      * exclusion patterns only operate on the path of a source file relative to its source root directory. In other
      * words, files are excluded based on their package and/or class name. If you want to exclude entire source root
      * directories, use the parameter <code>excludeRoots</code> instead.
+     * If a file matches both includes and excludes, it is excluded.
      *
      * @since 2.2
      */
@@ -105,7 +106,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
 
     /**
      * A list of files to check. Can contain Ant-style wildcards and double wildcards. Defaults to
-     * **\/*.java.
+     * **\/*.java. If a file matches both includes and excludes, it is excluded.
      *
      * @since 2.2
      */
