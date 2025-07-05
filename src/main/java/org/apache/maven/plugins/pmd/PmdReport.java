@@ -43,7 +43,6 @@ import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
 import org.codehaus.plexus.resource.loader.FileResourceLoader;
 import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Creates a PMD site report based on the rulesets and configuration set in the plugin.
@@ -492,7 +491,7 @@ public class PmdReport extends AbstractPmdReport {
 
                 getLog().debug("Using aux classpath: " + classpath);
             }
-            return StringUtils.join(classpath.iterator(), File.pathSeparator);
+            return String.join(File.pathSeparator, classpath);
         } catch (Exception e) {
             throw new MavenReportException(e.getMessage(), e);
         }

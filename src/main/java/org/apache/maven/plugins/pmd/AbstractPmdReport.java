@@ -41,7 +41,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Base class for the PMD reports.
@@ -390,7 +389,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     /**
      * Gets the comma separated list of effective include patterns.
      *
-     * @return The comma separated list of effective include patterns, never <code>null</code>.
+     * @return the comma separated list of effective include patterns, never <code>null</code>.
      */
     private String getIncludes() {
         Collection<String> patterns = new LinkedHashSet<>();
@@ -400,20 +399,20 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
         if (patterns.isEmpty()) {
             patterns.add("**/*.java");
         }
-        return StringUtils.join(patterns.iterator(), ",");
+        return String.join(",", patterns);
     }
 
     /**
      * Gets the comma separated list of effective exclude patterns.
      *
-     * @return The comma separated list of effective exclude patterns, never <code>null</code>.
+     * @return the comma separated list of effective exclude patterns, never <code>null</code>.
      */
     private String getExcludes() {
         Collection<String> patterns = new LinkedHashSet<>(FileUtils.getDefaultExcludesAsList());
         if (excludes != null) {
             patterns.addAll(excludes);
         }
-        return StringUtils.join(patterns.iterator(), ",");
+        return String.join(",", patterns);
     }
 
     protected boolean isXml() {
