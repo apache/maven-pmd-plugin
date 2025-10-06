@@ -36,6 +36,6 @@ assert 1 == auxclasspathLog.count( '[DEBUG] Using aggregated aux classpath:' )
 assert 2 == auxclasspathLog.count( 'module-a/target/classes' )
 
 // compile
-assert 2 == auxclasspathLog.count( 'org/apache/commons/commons-lang3/3.8.1/commons-lang3-3.8.1.jar' )
+assert 2 == auxclasspathLog.count( 'org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar' )
 // provided
 assert 2 == auxclasspathLog.count( 'javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar' )
