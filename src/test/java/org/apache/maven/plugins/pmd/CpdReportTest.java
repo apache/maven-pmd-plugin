@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +47,14 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         FileUtils.deleteDirectory(new File(getBasedir(), "target/test/unit"));
+    }
+
+    public void testExecute() throws Exception {
+        File pluginXmlFile = new File(
+                getBasedir(),
+                "src/test/resources/unit/default-configuration/cpd-default-configuration-plugin-config.xml");
+        CpdReport mojo = (CpdReport) createReportMojo("cpd", pluginXmlFile);
+        mojo.executeReport(Locale.ROOT);
     }
 
     /**

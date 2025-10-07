@@ -18,14 +18,14 @@
  */
 package org.apache.maven.plugins.pmd;
 
-import java.io.File;
-import java.util.Map;
 import javax.inject.Inject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.SinkFactory;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.pmd.exec.CpdRequest;
@@ -143,14 +143,19 @@ public class CpdReport extends AbstractPmdReport {
         ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-            if (filesToProcess == null) {
-                filesToProcess = getFilesToProcess();
+            if (cpdResult == null) {
+                executeCpd();
+            }
+            Sink sink = getSink();
+            if (sink == null) {
+                SinkFactory sinkFactory = getSinkFactory();
+                sink = sinkFactory.createSink(outputDirectory, "tempreport");
             }
             CpdReportRenderer renderer = new CpdReportRenderer(
-                    getSink(), i18n, locale, filesToProcess, cpdResult.getDuplications(), isAggregator());
+                    sink, i18n, locale, filesToProcess, cpdResult.getDuplications(), isAggregator());
             renderer.render();
-        } catch (IOException ex) {
-          throw new MavenReportException(ex.getMessage(), ex);
+        } catch (IOException e) {
+            throw new MavenReportException(e.getMessage(), e);
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }

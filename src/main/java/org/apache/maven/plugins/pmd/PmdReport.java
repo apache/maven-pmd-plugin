@@ -314,7 +314,7 @@ public class PmdReport extends AbstractPmdReport {
 
             renderer.render();
         } catch (IOException ex) {
-          throw new MavenReportException(ex.getMessage(), ex);
+            throw new MavenReportException(ex.getMessage(), ex);
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }
