@@ -410,7 +410,7 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
             result = StringUtils.substring(
                     result, fileInfo.getSourceDirectory().getAbsolutePath().length() + 1);
         }
-        return StringUtils.replace(result, "\\", "/");
+        return result == null || result.isEmpty() ? result : result.replace("\\", "/");
     }
 
     private String makeFileSectionName(String filename, PmdFileInfo fileInfo) {
