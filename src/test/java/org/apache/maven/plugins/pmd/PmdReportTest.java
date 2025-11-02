@@ -46,7 +46,7 @@ public class PmdReportTest extends AbstractPmdReportTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        FileUtils.deleteDirectory(new File(getBasedir(), "target/test/unit"));
+        org.apache.commons.io.FileUtils.deleteDirectory(new File(getBasedir(), "target/test/unit"));
     }
 
     public void testDefaultConfiguration() throws Exception {
