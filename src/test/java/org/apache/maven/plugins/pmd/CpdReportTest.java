@@ -32,7 +32,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.reporting.MavenReportException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -42,8 +50,8 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         super.setUp();
         FileUtils.deleteDirectory(new File(getBasedir(), "target/test/unit"));
     }
@@ -51,6 +59,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     /**
      * Test CPDReport given the default configuration
      */
+    @Test
     public void testDefaultConfiguration() throws Exception {
         File generatedReport =
                 generateReport(getGoal(), "default-configuration/cpd-default-configuration-plugin-config.xml");
@@ -71,6 +80,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     /**
      * Test CPDReport with the text renderer given as "format=txt"
      */
+    @Test
     public void testTxtFormat() throws Exception {
         generateReport(getGoal(), "custom-configuration/cpd-txt-format-configuration-plugin-config.xml");
 
@@ -91,6 +101,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     /**
      * Test CpdReport using custom configuration
      */
+    @Test
     public void testCustomConfiguration() throws Exception {
         File generatedReport =
                 generateReport(getGoal(), "custom-configuration/cpd-custom-configuration-plugin-config.xml");
@@ -113,6 +124,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     /**
      * Test CPDReport with invalid format
      */
+    @Test
     public void testInvalidFormat() throws Exception {
         try {
             File testPom = new File(
@@ -129,6 +141,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         }
     }
 
+    @Test
     public void testWriteNonHtml() throws Exception {
         generateReport(getGoal(), "default-configuration/cpd-default-configuration-plugin-config.xml");
 
@@ -152,6 +165,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
      *
      * @throws Exception
      */
+    @Test
     public void testIncludeXmlInReports() throws Exception {
         generateReport(getGoal(), "default-configuration/cpd-report-include-xml-in-reports-config.xml");
 
@@ -172,24 +186,27 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         assertEquals(str, siteReportContent);
     }
 
+    @Test
     public void testSkipEmptyReportConfiguration() throws Exception {
         // verify the generated files do not exist because PMD was skipped
         File generatedReport = generateReport(getGoal(), "empty-report/cpd-skip-empty-report-plugin-config.xml");
         assertFalse(new File(generatedReport.getAbsolutePath()).exists());
     }
 
+    @Test
     public void testEmptyReportConfiguration() throws Exception {
         // verify the generated files do exist, even if there are no violations
         File generatedReport = generateReport(getGoal(), "empty-report/cpd-empty-report-plugin-config.xml");
         assertTrue(
-                generatedReport.getAbsolutePath() + " does not exist",
-                new File(generatedReport.getAbsolutePath()).exists());
+                new File(generatedReport.getAbsolutePath()).exists(),
+                generatedReport.getAbsolutePath() + " does not exist");
 
         String str = readFile(generatedReport);
         assertFalse(lowerCaseContains(str, "Hello.java"));
         assertTrue(str.contains("CPD found no problems in your source code."));
     }
 
+    @Test
     public void testCpdEncodingConfiguration() throws Exception {
         String originalEncoding = System.getProperty("file.encoding");
         try {
@@ -207,6 +224,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         }
     }
 
+    @Test
     public void testCpdJavascriptConfiguration() throws Exception {
         generateReport(getGoal(), "default-configuration/cpd-javascript-plugin-config.xml");
 
@@ -218,6 +236,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         assertTrue(lowerCaseContains(str, "SampleDup.js"));
     }
 
+    @Test
     public void testCpdJspConfiguration() throws Exception {
         generateReport(getGoal(), "default-configuration/cpd-jsp-plugin-config.xml");
 
@@ -229,6 +248,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         assertTrue(lowerCaseContains(str, "sampleDup.jsp"));
     }
 
+    @Test
     public void testExclusionsConfiguration() throws Exception {
         generateReport(getGoal(), "default-configuration/cpd-report-cpd-exclusions-configuration-plugin-config.xml");
 
@@ -239,6 +259,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         assertEquals(0, StringUtils.countMatches(str, "<duplication"));
     }
 
+    @Test
     public void testWithCpdErrors() throws Exception {
         try {
             generateReport(getGoal(), "CpdReportTest/with-cpd-errors/pom.xml");
@@ -255,8 +276,8 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         MavenReportException cause = (MavenReportException) exception.getCause();
         String message = cause.getMessage();
         assertTrue(
-                "Wrong message: expected: " + expectedMessage + ", but was: " + message,
-                message.contains(expectedMessage));
+                message.contains(expectedMessage),
+                "Wrong message: expected: " + expectedMessage + ", but was: " + message);
     }
 
     private static void assertReportContains(String expectedMessage) throws IOException {
@@ -264,7 +285,7 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         String report = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
 
         assertTrue(
-                "Expected '" + expectedMessage + "' in cpd.xml, but was:\n" + report, report.contains(expectedMessage));
+                report.contains(expectedMessage), "Expected '" + expectedMessage + "' in cpd.xml, but was:\n" + report);
     }
 
     @Override

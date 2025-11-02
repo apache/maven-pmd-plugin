@@ -22,6 +22,11 @@ import java.io.File;
 
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -29,6 +34,7 @@ import org.apache.maven.project.MavenProject;
  */
 public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
 
+    @Test
     public void testDefaultConfiguration() throws Exception {
         generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
@@ -45,6 +51,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         }
     }
 
+    @Test
     public void testNotFailOnViolation() throws Exception {
         generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
@@ -55,6 +62,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         cpdViolationCheckMojo.execute();
     }
 
+    @Test
     public void testException() throws Exception {
         try {
             File testPom = new File(
@@ -70,6 +78,7 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         }
     }
 
+    @Test
     public void testExclusionsConfiguration() throws Exception {
         generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 

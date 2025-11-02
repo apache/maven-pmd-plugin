@@ -22,6 +22,11 @@ import java.io.File;
 
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -29,6 +34,7 @@ import org.apache.maven.project.MavenProject;
  */
 public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
 
+    @Test
     public void testDefaultConfiguration() throws Exception {
         generateReport("pmd", "default-configuration/default-configuration-plugin-config.xml");
 
@@ -46,6 +52,7 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         }
     }
 
+    @Test
     public void testNotFailOnViolation() throws Exception {
         generateReport("pmd", "default-configuration/default-configuration-plugin-config.xml");
 
@@ -56,6 +63,7 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         pmdViolationMojo.execute();
     }
 
+    @Test
     public void testMaxAllowedViolations() throws Exception {
         generateReport("pmd", "default-configuration/default-configuration-plugin-config.xml");
 
@@ -80,6 +88,7 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         }
     }
 
+    @Test
     public void testFailurePriority() throws Exception {
         generateReport("pmd", "default-configuration/default-configuration-plugin-config.xml");
 
@@ -104,6 +113,7 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         }
     }
 
+    @Test
     public void testException() throws Exception {
         try {
             final File testPom = new File(
@@ -119,6 +129,7 @@ public class PmdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         }
     }
 
+    @Test
     public void testViolationExclusion() throws Exception {
         generateReport("pmd", "default-configuration/default-configuration-plugin-config.xml");
 

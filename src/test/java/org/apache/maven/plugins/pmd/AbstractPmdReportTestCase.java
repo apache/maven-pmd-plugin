@@ -41,6 +41,10 @@ import org.apache.maven.session.scope.internal.SessionScope;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
@@ -50,8 +54,8 @@ import org.eclipse.aether.repository.LocalRepository;
 public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
     private ArtifactStubFactory artifactStubFactory;
 
-    @Override
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         super.setUp();
         CapturingPrintStream.init(true);
 
@@ -61,8 +65,8 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
         sessionScope.enter();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() throws Exception {
         SessionScope lookup = lookup(SessionScope.class);
         lookup.exit();
         super.tearDown();
@@ -84,7 +88,7 @@ public abstract class AbstractPmdReportTestCase extends AbstractMojoTestCase {
 
     protected AbstractPmdReport createReportMojo(String goal, File pluginXmlFile) throws Exception {
         AbstractPmdReport mojo = lookupMojo(goal, pluginXmlFile);
-        assertNotNull("Mojo not found.", mojo);
+        assertNotNull(mojo, "Mojo not found.");
 
         SessionScope sessionScope = lookup(SessionScope.class);
         MavenSession mavenSession = newMavenSession(new MavenProjectStub());
