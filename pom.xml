@@ -84,7 +84,7 @@ under the License.
     <javaVersion>8</javaVersion>
     <mavenVersion>3.9.11</mavenVersion>
     <pmdVersion>7.18.0</pmdVersion>
-    <slf4jVersion>1.7.36</slf4jVersion>
+    <slf4jVersion>2.0.0</slf4jVersion>
     <resolverVersion>1.9.24</resolverVersion>
     <doxiaVersion>2.0.0</doxiaVersion>
     <compilerPluginVersion>3.11.0</compilerPluginVersion>
