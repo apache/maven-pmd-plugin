@@ -92,7 +92,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
      */
     public void testDefaultConfiguration() throws Exception {
         File generatedReport =
-                generateReport(getGoal(), "default-configuration/cpd-default-configuration-plugin-config.xml");
+                generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
         assertTrue(new File(generatedReport.getAbsolutePath()).exists());
 
         // check if the CPD files were generated
@@ -111,7 +111,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
      * Test CPDReport with the text renderer given as "format=txt"
      */
     public void testTxtFormat() throws Exception {
-        generateReport(getGoal(), "custom-configuration/cpd-txt-format-configuration-plugin-config.xml");
+        generateReport("cpd", "custom-configuration/cpd-txt-format-configuration-plugin-config.xml");
 
         // check if the CPD files were generated
         File xmlFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/cpd.xml");
@@ -132,7 +132,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
      */
     public void testCustomConfiguration() throws Exception {
         File generatedReport =
-                generateReport(getGoal(), "custom-configuration/cpd-custom-configuration-plugin-config.xml");
+                generateReport("cpd", "custom-configuration/cpd-custom-configuration-plugin-config.xml");
         assertTrue(generatedReport.exists());
 
         // check if the CPD files were generated
@@ -156,7 +156,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
         try {
             File testPom = new File(
                     getBasedir(), "src/test/resources/unit/invalid-format/cpd-invalid-format-plugin-config.xml");
-            AbstractPmdReport mojo = createReportMojo(getGoal(), testPom);
+            AbstractPmdReport mojo = createReportMojo("cpd", testPom);
             setVariableValueToObject(
                     mojo, "compileSourceRoots", mojo.getProject().getCompileSourceRoots());
             generateReport(mojo, testPom);
@@ -169,7 +169,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
     }
 
     public void testWriteNonHtml() throws Exception {
-        generateReport(getGoal(), "default-configuration/cpd-default-configuration-plugin-config.xml");
+        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
         // check if the CPD files were generated
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -192,7 +192,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
      * @throws Exception
      */
     public void testIncludeXmlInReports() throws Exception {
-        generateReport(getGoal(), "default-configuration/cpd-report-include-xml-in-reports-config.xml");
+        generateReport("cpd", "default-configuration/cpd-report-include-xml-in-reports-config.xml");
 
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
         assertTrue(generatedFile.exists());
@@ -213,13 +213,13 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
     public void testSkipEmptyReportConfiguration() throws Exception {
         // verify the generated files do not exist because PMD was skipped
-        File generatedReport = generateReport(getGoal(), "empty-report/cpd-skip-empty-report-plugin-config.xml");
+        File generatedReport = generateReport("cpd", "empty-report/cpd-skip-empty-report-plugin-config.xml");
         assertFalse(new File(generatedReport.getAbsolutePath()).exists());
     }
 
     public void testEmptyReportConfiguration() throws Exception {
         // verify the generated files do exist, even if there are no violations
-        File generatedReport = generateReport(getGoal(), "empty-report/cpd-empty-report-plugin-config.xml");
+        File generatedReport = generateReport("cpd", "empty-report/cpd-empty-report-plugin-config.xml");
         assertTrue(
                 generatedReport.getAbsolutePath() + " does not exist",
                 new File(generatedReport.getAbsolutePath()).exists());
@@ -234,7 +234,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
         try {
             System.setProperty("file.encoding", "UTF-16");
 
-            generateReport(getGoal(), "default-configuration/cpd-default-configuration-plugin-config.xml");
+            generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
 
             // check if the CPD files were generated
             File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -247,7 +247,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
     }
 
     public void testCpdJavascriptConfiguration() throws Exception {
-        generateReport(getGoal(), "default-configuration/cpd-javascript-plugin-config.xml");
+        generateReport("cpd", "default-configuration/cpd-javascript-plugin-config.xml");
 
         // verify the generated file exists and violations are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -258,7 +258,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
     }
 
     public void testCpdJspConfiguration() throws Exception {
-        generateReport(getGoal(), "default-configuration/cpd-jsp-plugin-config.xml");
+        generateReport("cpd", "default-configuration/cpd-jsp-plugin-config.xml");
 
         // verify the generated file exists and violations are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -269,7 +269,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
     }
 
     public void testExclusionsConfiguration() throws Exception {
-        generateReport(getGoal(), "default-configuration/cpd-report-cpd-exclusions-configuration-plugin-config.xml");
+        generateReport("cpd", "default-configuration/cpd-report-cpd-exclusions-configuration-plugin-config.xml");
 
         // verify the generated file exists and no duplications are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -280,7 +280,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
     public void testWithCpdErrors() throws Exception {
         try {
-            generateReport(getGoal(), "CpdReportTest/with-cpd-errors/pom.xml");
+            generateReport("cpd", "CpdReportTest/with-cpd-errors/pom.xml");
 
             fail("MojoExecutionException must be thrown");
         } catch (MojoExecutionException e) {
@@ -304,10 +304,6 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
         assertTrue(
                 "Expected '" + expectedMessage + "' in cpd.xml, but was:\n" + report, report.contains(expectedMessage));
-    }
-
-    protected String getGoal() {
-        return "cpd";
     }
 
     @Override
@@ -379,7 +375,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
     private MojoExecution getMockMojoExecution() {
         MojoDescriptor mojoDescriptor = new MojoDescriptor();
-        mojoDescriptor.setGoal(getGoal());
+        mojoDescriptor.setGoal("cpd");
 
         MojoExecution execution = new MojoExecution(mojoDescriptor);
 

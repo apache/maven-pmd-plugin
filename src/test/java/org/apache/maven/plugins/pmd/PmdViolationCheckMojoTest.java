@@ -70,7 +70,7 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
             final File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml");
-            final PmdViolationCheckMojo mojo = lookupMojo(getGoal(), testPom);
+            final PmdViolationCheckMojo mojo = lookupMojo("check", testPom);
             mojo.execute();
 
             fail("MojoFailureException should be thrown.");
@@ -86,7 +86,7 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml");
-        final PmdViolationCheckMojo pmdViolationMojo = lookupMojo(getGoal(), testPom);
+        final PmdViolationCheckMojo pmdViolationMojo = lookupMojo("check", testPom);
         pmdViolationMojo.execute();
     }
 
@@ -96,13 +96,13 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-notfailmaxviolation-plugin-config.xml");
-        final PmdViolationCheckMojo pmdViolationMojo = lookupMojo(getGoal(), testPom);
+        final PmdViolationCheckMojo pmdViolationMojo = lookupMojo("check", testPom);
         pmdViolationMojo.execute();
 
         testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-failmaxviolation-plugin-config.xml");
-        final PmdViolationCheckMojo pmdViolationMojoFail = lookupMojo(getGoal(), testPom);
+        final PmdViolationCheckMojo pmdViolationMojoFail = lookupMojo("check", testPom);
 
         try {
             pmdViolationMojoFail.execute();
@@ -120,13 +120,13 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-failonpriority-plugin-config.xml");
-        PmdViolationCheckMojo pmdViolationCheckMojo = lookupMojo(getGoal(), testPom);
+        PmdViolationCheckMojo pmdViolationCheckMojo = lookupMojo("check", testPom);
         pmdViolationCheckMojo.execute();
 
         testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-failandwarnonpriority-plugin-config.xml");
-        pmdViolationCheckMojo = lookupMojo(getGoal(), testPom);
+        pmdViolationCheckMojo = lookupMojo("check", testPom);
 
         try {
             pmdViolationCheckMojo.execute();
@@ -143,7 +143,7 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
             final File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml");
-            final PmdViolationCheckMojo mojo = lookupMojo(getGoal(), testPom);
+            final PmdViolationCheckMojo mojo = lookupMojo("check", testPom);
             mojo.project = new MavenProject();
             mojo.execute();
 
@@ -159,14 +159,10 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/pmd-check-pmd-exclusions-configuration-plugin-config.xml");
-        final PmdViolationCheckMojo pmdViolationMojo = lookupMojo(getGoal(), testPom);
+        final PmdViolationCheckMojo pmdViolationMojo = lookupMojo("check", testPom);
 
         // this call shouldn't throw an exception, as the classes with violations have been excluded
         pmdViolationMojo.execute();
-    }
-
-    protected String getGoal() {
-        return "check";
     }
 
     @Override
@@ -249,7 +245,7 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
 
     private MojoExecution getMockMojoExecution() {
         MojoDescriptor mojoDescriptor = new MojoDescriptor();
-        mojoDescriptor.setGoal(getGoal());
+        mojoDescriptor.setGoal("check");
 
         MojoExecution execution = new MojoExecution(mojoDescriptor);
 

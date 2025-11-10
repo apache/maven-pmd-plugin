@@ -70,7 +70,7 @@ public class CpdViolationCheckMojoTest extends AbstractMojoTestCase {
             File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/default-configuration/cpd-check-default-configuration-plugin-config.xml");
-            CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo(getGoal(), testPom);
+            CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo("cpd-check", testPom);
             cpdViolationCheckMojo.execute();
 
             fail("MojoFailureException should be thrown.");
@@ -85,7 +85,7 @@ public class CpdViolationCheckMojoTest extends AbstractMojoTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/cpd-check-notfailonviolation-plugin-config.xml");
-        CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo(getGoal(), testPom);
+        CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo("cpd-check", testPom);
         cpdViolationCheckMojo.execute();
     }
 
@@ -94,7 +94,7 @@ public class CpdViolationCheckMojoTest extends AbstractMojoTestCase {
             File testPom = new File(
                     getBasedir(),
                     "src/test/resources/unit/custom-configuration/cpd-check-exception-test-plugin-config.xml");
-            CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo(getGoal(), testPom);
+            CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo("cpd-check", testPom);
             cpdViolationCheckMojo.project = new MavenProject();
             cpdViolationCheckMojo.execute();
 
@@ -110,14 +110,10 @@ public class CpdViolationCheckMojoTest extends AbstractMojoTestCase {
         File testPom = new File(
                 getBasedir(),
                 "src/test/resources/unit/default-configuration/cpd-check-cpd-exclusions-configuration-plugin-config.xml");
-        CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo(getGoal(), testPom);
+        CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo("cpd-check", testPom);
 
         // this call shouldn't throw an exception, as the classes with duplications have been excluded
         cpdViolationCheckMojo.execute();
-    }
-
-    protected String getGoal() {
-        return "cpd-check";
     }
 
     @Override
@@ -200,7 +196,7 @@ public class CpdViolationCheckMojoTest extends AbstractMojoTestCase {
 
     private MojoExecution getMockMojoExecution() {
         MojoDescriptor mojoDescriptor = new MojoDescriptor();
-        mojoDescriptor.setGoal(getGoal());
+        mojoDescriptor.setGoal("cpd-check");
 
         MojoExecution execution = new MojoExecution(mojoDescriptor);
 
