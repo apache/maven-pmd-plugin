@@ -144,8 +144,8 @@ public class PmdReportTest extends AbstractMojoTestCase {
                 new File(getBasedir(), "src/test/resources/unit/default-configuration/jxr-files"),
                 new File(getBasedir(), "target/test/unit/default-configuration/target/site"));
 
-        File generatedReport = generateReport(
-                "pmd", "default-configuration/pmd-report-not-render-rule-priority-plugin-config.xml");
+        File generatedReport =
+                generateReport("pmd", "default-configuration/pmd-report-not-render-rule-priority-plugin-config.xml");
         assertTrue(generatedReport.exists());
 
         String str = readFile(generatedReport);
@@ -444,9 +444,6 @@ public class PmdReportTest extends AbstractMojoTestCase {
             ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
             buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
 
-            File outputDir = mojo.getReportOutputDirectory();
-            String filename = mojo.getOutputPath() + ".html";
-
             fail("Must nest MavenReportException.");
         } catch (MojoExecutionException e) {
             assertTrue(e.getCause() instanceof MavenReportException);
@@ -504,8 +501,7 @@ public class PmdReportTest extends AbstractMojoTestCase {
      * Verify that suppressMarker works.
      */
     public void testSuppressMarkerConfiguration() throws Exception {
-        File generatedReport =
-                generateReport("pmd", "default-configuration/pmd-with-suppressMarker-plugin-config.xml");
+        File generatedReport = generateReport("pmd", "default-configuration/pmd-with-suppressMarker-plugin-config.xml");
         assertTrue(generatedReport.exists());
 
         // check if the PMD files were generated
@@ -596,8 +592,7 @@ public class PmdReportTest extends AbstractMojoTestCase {
     }
 
     public void testPMDProcessingErrorWithDetailsSkipped() throws Exception {
-        File generatedReport =
-                generateReport("pmd", "processing-error/pmd-processing-error-skip-plugin-config.xml");
+        File generatedReport = generateReport("pmd", "processing-error/pmd-processing-error-skip-plugin-config.xml");
         assertTrue(generatedReport.exists());
 
         String output = CapturingPrintStream.getOutput();
@@ -764,9 +759,6 @@ public class PmdReportTest extends AbstractMojoTestCase {
 
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
         buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
-
-        File outputDir = mojo.getReportOutputDirectory();
-        String filename = mojo.getOutputPath() + ".html";
 
         // these are the rulesets, that have been copied to target/pmd/rulesets
         File generatedFile = new File(

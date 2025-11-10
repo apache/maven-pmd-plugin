@@ -91,7 +91,9 @@ public class CpdReportTest extends AbstractMojoTestCase {
      * Test CPDReport given the default configuration
      */
     public void testDefaultConfiguration() throws Exception {
-        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-default-configuration-plugin-config.xml");
+        File pluginXmlFile = new File(
+                getBasedir(),
+                "src/test/resources/unit/" + "default-configuration/cpd-default-configuration-plugin-config.xml");
         AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
         assertNotNull("Mojo not found.", mojo1);
 
@@ -124,8 +126,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
         File outputDir = mojo.getReportOutputDirectory();
         String filename = mojo.getOutputPath() + ".html";
 
-        File generatedReport =
-                new File(outputDir, filename);
+        File generatedReport = new File(outputDir, filename);
         assertTrue(new File(generatedReport.getAbsolutePath()).exists());
 
         // check if the CPD files were generated
@@ -144,7 +145,9 @@ public class CpdReportTest extends AbstractMojoTestCase {
      * Test CPDReport with the text renderer given as "format=txt"
      */
     public void testTxtFormat() throws Exception {
-        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "custom-configuration/cpd-txt-format-configuration-plugin-config.xml");
+        File pluginXmlFile = new File(
+                getBasedir(),
+                "src/test/resources/unit/" + "custom-configuration/cpd-txt-format-configuration-plugin-config.xml");
         AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
         assertNotNull("Mojo not found.", mojo1);
 
@@ -173,9 +176,6 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
         buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
-
-        File outputDir = mojo.getReportOutputDirectory();
-        String filename = mojo.getOutputPath() + ".html";
 
         // check if the CPD files were generated
         File xmlFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/cpd.xml");
@@ -195,7 +195,9 @@ public class CpdReportTest extends AbstractMojoTestCase {
      * Test CpdReport using custom configuration
      */
     public void testCustomConfiguration() throws Exception {
-        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "custom-configuration/cpd-custom-configuration-plugin-config.xml");
+        File pluginXmlFile = new File(
+                getBasedir(),
+                "src/test/resources/unit/" + "custom-configuration/cpd-custom-configuration-plugin-config.xml");
         AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
         assertNotNull("Mojo not found.", mojo1);
 
@@ -228,8 +230,7 @@ public class CpdReportTest extends AbstractMojoTestCase {
         File outputDir = mojo.getReportOutputDirectory();
         String filename = mojo.getOutputPath() + ".html";
 
-        File generatedReport =
-                new File(outputDir, filename);
+        File generatedReport = new File(outputDir, filename);
         assertTrue(generatedReport.exists());
 
         // check if the CPD files were generated
@@ -284,9 +285,6 @@ public class CpdReportTest extends AbstractMojoTestCase {
             ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
             buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
 
-            File outputDir = mojo.getReportOutputDirectory();
-            String filename = mojo.getOutputPath() + ".html";
-
             // TODO this should be a more specific subclass
             fail("RuntimeException must be thrown");
         } catch (RuntimeException e) {
@@ -295,7 +293,9 @@ public class CpdReportTest extends AbstractMojoTestCase {
     }
 
     public void testWriteNonHtml() throws Exception {
-        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-default-configuration-plugin-config.xml");
+        File pluginXmlFile = new File(
+                getBasedir(),
+                "src/test/resources/unit/" + "default-configuration/cpd-default-configuration-plugin-config.xml");
         AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
         assertNotNull("Mojo not found.", mojo1);
 
@@ -324,9 +324,6 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
         buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
-
-        File outputDir = mojo.getReportOutputDirectory();
-        String filename = mojo.getOutputPath() + ".html";
 
         // check if the CPD files were generated
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -349,7 +346,9 @@ public class CpdReportTest extends AbstractMojoTestCase {
      * @throws Exception
      */
     public void testIncludeXmlInReports() throws Exception {
-        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-report-include-xml-in-reports-config.xml");
+        File pluginXmlFile = new File(
+                getBasedir(),
+                "src/test/resources/unit/" + "default-configuration/cpd-report-include-xml-in-reports-config.xml");
         AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
         assertNotNull("Mojo not found.", mojo1);
 
@@ -379,9 +378,6 @@ public class CpdReportTest extends AbstractMojoTestCase {
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
         buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
 
-        File outputDir = mojo.getReportOutputDirectory();
-        String filename = mojo.getOutputPath() + ".html";
-
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
         assertTrue(generatedFile.exists());
 
@@ -401,7 +397,8 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
     public void testSkipEmptyReportConfiguration() throws Exception {
         // verify the generated files do not exist because PMD was skipped
-        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "empty-report/cpd-skip-empty-report-plugin-config.xml");
+        File pluginXmlFile = new File(
+                getBasedir(), "src/test/resources/unit/" + "empty-report/cpd-skip-empty-report-plugin-config.xml");
         AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
         assertNotNull("Mojo not found.", mojo1);
 
@@ -440,7 +437,8 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
     public void testEmptyReportConfiguration() throws Exception {
         // verify the generated files do exist, even if there are no violations
-        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "empty-report/cpd-empty-report-plugin-config.xml");
+        File pluginXmlFile =
+                new File(getBasedir(), "src/test/resources/unit/" + "empty-report/cpd-empty-report-plugin-config.xml");
         AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
         assertNotNull("Mojo not found.", mojo1);
 
@@ -488,7 +486,9 @@ public class CpdReportTest extends AbstractMojoTestCase {
         try {
             System.setProperty("file.encoding", "UTF-16");
 
-            File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-default-configuration-plugin-config.xml");
+            File pluginXmlFile = new File(
+                    getBasedir(),
+                    "src/test/resources/unit/" + "default-configuration/cpd-default-configuration-plugin-config.xml");
             AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
             assertNotNull("Mojo not found.", mojo1);
 
@@ -517,9 +517,6 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
             ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
             buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
-
-            File outputDir = mojo.getReportOutputDirectory();
-            String filename = mojo.getOutputPath() + ".html";
 
             // check if the CPD files were generated
             File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -532,7 +529,8 @@ public class CpdReportTest extends AbstractMojoTestCase {
     }
 
     public void testCpdJavascriptConfiguration() throws Exception {
-        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-javascript-plugin-config.xml");
+        File pluginXmlFile = new File(
+                getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-javascript-plugin-config.xml");
         AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
         assertNotNull("Mojo not found.", mojo1);
 
@@ -561,9 +559,6 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
         buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
-
-        File outputDir = mojo.getReportOutputDirectory();
-        String filename = mojo.getOutputPath() + ".html";
 
         // verify the generated file exists and violations are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -574,7 +569,8 @@ public class CpdReportTest extends AbstractMojoTestCase {
     }
 
     public void testCpdJspConfiguration() throws Exception {
-        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-jsp-plugin-config.xml");
+        File pluginXmlFile =
+                new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-jsp-plugin-config.xml");
         AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
         assertNotNull("Mojo not found.", mojo1);
 
@@ -603,9 +599,6 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
         buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
-
-        File outputDir = mojo.getReportOutputDirectory();
-        String filename = mojo.getOutputPath() + ".html";
 
         // verify the generated file exists and violations are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -616,7 +609,10 @@ public class CpdReportTest extends AbstractMojoTestCase {
     }
 
     public void testExclusionsConfiguration() throws Exception {
-        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-report-cpd-exclusions-configuration-plugin-config.xml");
+        File pluginXmlFile = new File(
+                getBasedir(),
+                "src/test/resources/unit/"
+                        + "default-configuration/cpd-report-cpd-exclusions-configuration-plugin-config.xml");
         AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
         assertNotNull("Mojo not found.", mojo1);
 
@@ -646,9 +642,6 @@ public class CpdReportTest extends AbstractMojoTestCase {
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
         buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
 
-        File outputDir = mojo.getReportOutputDirectory();
-        String filename = mojo.getOutputPath() + ".html";
-
         // verify the generated file exists and no duplications are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
         assertTrue(generatedFile.exists());
@@ -658,7 +651,8 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
     public void testWithCpdErrors() throws Exception {
         try {
-            File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "CpdReportTest/with-cpd-errors/pom.xml");
+            File pluginXmlFile =
+                    new File(getBasedir(), "src/test/resources/unit/" + "CpdReportTest/with-cpd-errors/pom.xml");
             AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
             assertNotNull("Mojo not found.", mojo1);
 
@@ -687,9 +681,6 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
             ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
             buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
-
-            File outputDir = mojo.getReportOutputDirectory();
-            String filename = mojo.getOutputPath() + ".html";
 
             fail("MojoExecutionException must be thrown");
         } catch (MojoExecutionException e) {
