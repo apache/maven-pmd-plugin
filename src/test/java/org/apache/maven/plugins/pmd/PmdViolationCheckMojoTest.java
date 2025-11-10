@@ -19,8 +19,6 @@
 package org.apache.maven.plugins.pmd;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -194,7 +192,7 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
     protected File generateReport(String goal, String pluginXml) throws Exception {
         File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + pluginXml);
         AbstractPmdReport mojo = createReportMojo(goal, pluginXmlFile);
-        return generateReport(mojo, pluginXmlFile);
+        return generateReport(mojo);
     }
 
     protected AbstractPmdReport createReportMojo(String goal, File pluginXmlFile) throws Exception {
@@ -224,7 +222,7 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
         return mojo;
     }
 
-    protected File generateReport(AbstractPmdReport mojo, File pluginXmlFile) throws Exception {
+    protected File generateReport(AbstractPmdReport mojo) throws Exception {
         mojo.execute();
 
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
@@ -234,13 +232,6 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
         String filename = mojo.getOutputPath() + ".html";
 
         return new File(outputDir, filename);
-    }
-
-    /**
-     * Read the contents of the specified file into a string.
-     */
-    protected String readFile(File file) throws IOException {
-        return new String(Files.readAllBytes(file.toPath()));
     }
 
     private MojoExecution getMockMojoExecution() {

@@ -91,8 +91,41 @@ public class CpdReportTest extends AbstractMojoTestCase {
      * Test CPDReport given the default configuration
      */
     public void testDefaultConfiguration() throws Exception {
+        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-default-configuration-plugin-config.xml");
+        AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo1);
+
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+        List<MavenProject> reactorProjects =
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        AbstractPmdReport mojo = mojo1;
+        mojo.execute();
+
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
+
         File generatedReport =
-                generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
+                new File(outputDir, filename);
         assertTrue(new File(generatedReport.getAbsolutePath()).exists());
 
         // check if the CPD files were generated
@@ -111,7 +144,38 @@ public class CpdReportTest extends AbstractMojoTestCase {
      * Test CPDReport with the text renderer given as "format=txt"
      */
     public void testTxtFormat() throws Exception {
-        generateReport("cpd", "custom-configuration/cpd-txt-format-configuration-plugin-config.xml");
+        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "custom-configuration/cpd-txt-format-configuration-plugin-config.xml");
+        AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo1);
+
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+        List<MavenProject> reactorProjects =
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        AbstractPmdReport mojo = mojo1;
+        mojo.execute();
+
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
 
         // check if the CPD files were generated
         File xmlFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/cpd.xml");
@@ -131,8 +195,41 @@ public class CpdReportTest extends AbstractMojoTestCase {
      * Test CpdReport using custom configuration
      */
     public void testCustomConfiguration() throws Exception {
+        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "custom-configuration/cpd-custom-configuration-plugin-config.xml");
+        AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo1);
+
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+        List<MavenProject> reactorProjects =
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        AbstractPmdReport mojo = mojo1;
+        mojo.execute();
+
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
+
         File generatedReport =
-                generateReport("cpd", "custom-configuration/cpd-custom-configuration-plugin-config.xml");
+                new File(outputDir, filename);
         assertTrue(generatedReport.exists());
 
         // check if the CPD files were generated
@@ -156,10 +253,39 @@ public class CpdReportTest extends AbstractMojoTestCase {
         try {
             File testPom = new File(
                     getBasedir(), "src/test/resources/unit/invalid-format/cpd-invalid-format-plugin-config.xml");
-            AbstractPmdReport mojo = createReportMojo("cpd", testPom);
+            AbstractPmdReport mojo1 = lookupMojo("cpd", testPom);
+            assertNotNull("Mojo not found.", mojo1);
+
+            SessionScope sessionScope = lookup(SessionScope.class);
+            MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+            sessionScope.seed(MavenSession.class, mavenSession);
+
+            DefaultRepositorySystemSession repositorySession =
+                    (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+            repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                    .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+            List<MavenProject> reactorProjects =
+                    mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+            setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+            setVariableValueToObject(mojo1, "session", mavenSession);
+            setVariableValueToObject(mojo1, "repoSession", repositorySession);
+            setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+            setVariableValueToObject(
+                    mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+            setVariableValueToObject(
+                    mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+            AbstractPmdReport mojo = mojo1;
             setVariableValueToObject(
                     mojo, "compileSourceRoots", mojo.getProject().getCompileSourceRoots());
-            generateReport(mojo, testPom);
+            mojo.execute();
+
+            ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+            buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+            File outputDir = mojo.getReportOutputDirectory();
+            String filename = mojo.getOutputPath() + ".html";
 
             // TODO this should be a more specific subclass
             fail("RuntimeException must be thrown");
@@ -169,7 +295,38 @@ public class CpdReportTest extends AbstractMojoTestCase {
     }
 
     public void testWriteNonHtml() throws Exception {
-        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
+        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-default-configuration-plugin-config.xml");
+        AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo1);
+
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+        List<MavenProject> reactorProjects =
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        AbstractPmdReport mojo = mojo1;
+        mojo.execute();
+
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
 
         // check if the CPD files were generated
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -192,7 +349,38 @@ public class CpdReportTest extends AbstractMojoTestCase {
      * @throws Exception
      */
     public void testIncludeXmlInReports() throws Exception {
-        generateReport("cpd", "default-configuration/cpd-report-include-xml-in-reports-config.xml");
+        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-report-include-xml-in-reports-config.xml");
+        AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo1);
+
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+        List<MavenProject> reactorProjects =
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        AbstractPmdReport mojo = mojo1;
+        mojo.execute();
+
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
 
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
         assertTrue(generatedFile.exists());
@@ -213,13 +401,79 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
     public void testSkipEmptyReportConfiguration() throws Exception {
         // verify the generated files do not exist because PMD was skipped
-        File generatedReport = generateReport("cpd", "empty-report/cpd-skip-empty-report-plugin-config.xml");
+        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "empty-report/cpd-skip-empty-report-plugin-config.xml");
+        AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo1);
+
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+        List<MavenProject> reactorProjects =
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        AbstractPmdReport mojo = mojo1;
+        mojo.execute();
+
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
+
+        File generatedReport = new File(outputDir, filename);
         assertFalse(new File(generatedReport.getAbsolutePath()).exists());
     }
 
     public void testEmptyReportConfiguration() throws Exception {
         // verify the generated files do exist, even if there are no violations
-        File generatedReport = generateReport("cpd", "empty-report/cpd-empty-report-plugin-config.xml");
+        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "empty-report/cpd-empty-report-plugin-config.xml");
+        AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo1);
+
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+        List<MavenProject> reactorProjects =
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        AbstractPmdReport mojo = mojo1;
+        mojo.execute();
+
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
+
+        File generatedReport = new File(outputDir, filename);
         assertTrue(
                 generatedReport.getAbsolutePath() + " does not exist",
                 new File(generatedReport.getAbsolutePath()).exists());
@@ -234,7 +488,38 @@ public class CpdReportTest extends AbstractMojoTestCase {
         try {
             System.setProperty("file.encoding", "UTF-16");
 
-            generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
+            File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-default-configuration-plugin-config.xml");
+            AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
+            assertNotNull("Mojo not found.", mojo1);
+
+            SessionScope sessionScope = lookup(SessionScope.class);
+            MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+            sessionScope.seed(MavenSession.class, mavenSession);
+
+            DefaultRepositorySystemSession repositorySession =
+                    (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+            repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                    .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+            List<MavenProject> reactorProjects =
+                    mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+            setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+            setVariableValueToObject(mojo1, "session", mavenSession);
+            setVariableValueToObject(mojo1, "repoSession", repositorySession);
+            setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+            setVariableValueToObject(
+                    mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+            setVariableValueToObject(
+                    mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+            AbstractPmdReport mojo = mojo1;
+            mojo.execute();
+
+            ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+            buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+            File outputDir = mojo.getReportOutputDirectory();
+            String filename = mojo.getOutputPath() + ".html";
 
             // check if the CPD files were generated
             File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -247,7 +532,38 @@ public class CpdReportTest extends AbstractMojoTestCase {
     }
 
     public void testCpdJavascriptConfiguration() throws Exception {
-        generateReport("cpd", "default-configuration/cpd-javascript-plugin-config.xml");
+        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-javascript-plugin-config.xml");
+        AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo1);
+
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+        List<MavenProject> reactorProjects =
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        AbstractPmdReport mojo = mojo1;
+        mojo.execute();
+
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
 
         // verify the generated file exists and violations are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -258,7 +574,38 @@ public class CpdReportTest extends AbstractMojoTestCase {
     }
 
     public void testCpdJspConfiguration() throws Exception {
-        generateReport("cpd", "default-configuration/cpd-jsp-plugin-config.xml");
+        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-jsp-plugin-config.xml");
+        AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo1);
+
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+        List<MavenProject> reactorProjects =
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        AbstractPmdReport mojo = mojo1;
+        mojo.execute();
+
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
 
         // verify the generated file exists and violations are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -269,7 +616,38 @@ public class CpdReportTest extends AbstractMojoTestCase {
     }
 
     public void testExclusionsConfiguration() throws Exception {
-        generateReport("cpd", "default-configuration/cpd-report-cpd-exclusions-configuration-plugin-config.xml");
+        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "default-configuration/cpd-report-cpd-exclusions-configuration-plugin-config.xml");
+        AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo1);
+
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+        List<MavenProject> reactorProjects =
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        AbstractPmdReport mojo = mojo1;
+        mojo.execute();
+
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
 
         // verify the generated file exists and no duplications are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -280,7 +658,38 @@ public class CpdReportTest extends AbstractMojoTestCase {
 
     public void testWithCpdErrors() throws Exception {
         try {
-            generateReport("cpd", "CpdReportTest/with-cpd-errors/pom.xml");
+            File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + "CpdReportTest/with-cpd-errors/pom.xml");
+            AbstractPmdReport mojo1 = lookupMojo("cpd", pluginXmlFile);
+            assertNotNull("Mojo not found.", mojo1);
+
+            SessionScope sessionScope = lookup(SessionScope.class);
+            MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+            sessionScope.seed(MavenSession.class, mavenSession);
+
+            DefaultRepositorySystemSession repositorySession =
+                    (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+            repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                    .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+            List<MavenProject> reactorProjects =
+                    mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+            setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+            setVariableValueToObject(mojo1, "session", mavenSession);
+            setVariableValueToObject(mojo1, "repoSession", repositorySession);
+            setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+            setVariableValueToObject(
+                    mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+            setVariableValueToObject(
+                    mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+            AbstractPmdReport mojo = mojo1;
+            mojo.execute();
+
+            ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+            buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+            File outputDir = mojo.getReportOutputDirectory();
+            String filename = mojo.getOutputPath() + ".html";
 
             fail("MojoExecutionException must be thrown");
         } catch (MojoExecutionException e) {
@@ -311,59 +720,6 @@ public class CpdReportTest extends AbstractMojoTestCase {
         SessionScope lookup = lookup(SessionScope.class);
         lookup.exit();
         super.tearDown();
-    }
-
-    /**
-     * Generate the report and return the generated file.
-     *
-     * @param goal the mojo goal
-     * @param pluginXml the name of the xml file in "src/test/resources/plugin-configs/"
-     * @return the generated HTML file
-     * @throws Exception if any
-     */
-    protected File generateReport(String goal, String pluginXml) throws Exception {
-        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + pluginXml);
-        AbstractPmdReport mojo = createReportMojo(goal, pluginXmlFile);
-        return generateReport(mojo, pluginXmlFile);
-    }
-
-    protected AbstractPmdReport createReportMojo(String goal, File pluginXmlFile) throws Exception {
-        AbstractPmdReport mojo = lookupMojo(goal, pluginXmlFile);
-        assertNotNull("Mojo not found.", mojo);
-
-        SessionScope sessionScope = lookup(SessionScope.class);
-        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
-        sessionScope.seed(MavenSession.class, mavenSession);
-
-        DefaultRepositorySystemSession repositorySession =
-                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
-        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
-                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
-
-        List<MavenProject> reactorProjects =
-                mojo.getReactorProjects() != null ? mojo.getReactorProjects() : Collections.emptyList();
-
-        setVariableValueToObject(mojo, "mojoExecution", getMockMojoExecution());
-        setVariableValueToObject(mojo, "session", mavenSession);
-        setVariableValueToObject(mojo, "repoSession", repositorySession);
-        setVariableValueToObject(mojo, "reactorProjects", reactorProjects);
-        setVariableValueToObject(
-                mojo, "remoteProjectRepositories", mojo.getProject().getRemoteProjectRepositories());
-        setVariableValueToObject(
-                mojo, "siteDirectory", new File(mojo.getProject().getBasedir(), "src/site"));
-        return mojo;
-    }
-
-    protected File generateReport(AbstractPmdReport mojo, File pluginXmlFile) throws Exception {
-        mojo.execute();
-
-        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
-        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
-
-        File outputDir = mojo.getReportOutputDirectory();
-        String filename = mojo.getOutputPath() + ".html";
-
-        return new File(outputDir, filename);
     }
 
     /**

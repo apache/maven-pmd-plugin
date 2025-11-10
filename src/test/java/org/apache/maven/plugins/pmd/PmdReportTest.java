@@ -219,7 +219,30 @@ public class PmdReportTest extends AbstractMojoTestCase {
 
         File testPom = new File(
                 getBasedir(), "src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml");
-        PmdReport mojo = (PmdReport) createReportMojo("pmd", testPom);
+        AbstractPmdReport mojo1 = lookupMojo("pmd", testPom);
+        assertNotNull("Mojo not found.", mojo1);
+
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+        List<MavenProject> reactorProjects =
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        PmdReport mojo = (PmdReport) mojo1;
 
         // Additional test case for MPMD-174 (https://issues.apache.org/jira/browse/MPMD-174).
         int port = determineFreePort();
@@ -260,7 +283,15 @@ public class PmdReportTest extends AbstractMojoTestCase {
         URL url3 = getClass().getClassLoader().getResource("category/java/errorprone.xml");
         mojo.setRulesets(new String[] {url.toString(), url2.toString(), url3.toString(), sonarExportRulesetUrl});
 
-        File generatedReport = generateReport(mojo, testPom);
+        mojo.execute();
+
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
+
+        File generatedReport = new File(outputDir, filename);
         assertTrue(generatedReport.exists());
 
         // check if the PMD files were generated
@@ -382,10 +413,39 @@ public class PmdReportTest extends AbstractMojoTestCase {
         try {
             File testPom =
                     new File(getBasedir(), "src/test/resources/unit/invalid-format/invalid-format-plugin-config.xml");
-            AbstractPmdReport mojo = createReportMojo("pmd", testPom);
+            AbstractPmdReport mojo1 = lookupMojo("pmd", testPom);
+            assertNotNull("Mojo not found.", mojo1);
+
+            SessionScope sessionScope = lookup(SessionScope.class);
+            MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+            sessionScope.seed(MavenSession.class, mavenSession);
+
+            DefaultRepositorySystemSession repositorySession =
+                    (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+            repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                    .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+            List<MavenProject> reactorProjects =
+                    mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+            setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+            setVariableValueToObject(mojo1, "session", mavenSession);
+            setVariableValueToObject(mojo1, "repoSession", repositorySession);
+            setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+            setVariableValueToObject(
+                    mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+            setVariableValueToObject(
+                    mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+            AbstractPmdReport mojo = mojo1;
             setVariableValueToObject(
                     mojo, "compileSourceRoots", mojo.getProject().getCompileSourceRoots());
-            generateReport(mojo, testPom);
+            mojo.execute();
+
+            ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+            buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+            File outputDir = mojo.getReportOutputDirectory();
+            String filename = mojo.getOutputPath() + ".html";
 
             fail("Must nest MavenReportException.");
         } catch (MojoExecutionException e) {
@@ -673,11 +733,40 @@ public class PmdReportTest extends AbstractMojoTestCase {
 
         File testPom =
                 new File(getBasedir(), "src/test/resources/unit/default-configuration/pmd-report-resolve-rulesets.xml");
-        PmdReport mojo = (PmdReport) createReportMojo("pmd", testPom);
+        AbstractPmdReport mojo1 = lookupMojo("pmd", testPom);
+        assertNotNull("Mojo not found.", mojo1);
+
+        SessionScope sessionScope = lookup(SessionScope.class);
+        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
+        sessionScope.seed(MavenSession.class, mavenSession);
+
+        DefaultRepositorySystemSession repositorySession =
+                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
+        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
+                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
+
+        List<MavenProject> reactorProjects =
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
+
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
+        setVariableValueToObject(
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
+        setVariableValueToObject(
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        PmdReport mojo = (PmdReport) mojo1;
         mojo.rulesets[3] = sonarExportRulesetUrl;
         mojo.rulesets[4] = myRulesetUrl;
         mojo.rulesets[5] = notAInternalRulesetUrl;
-        generateReport(mojo, testPom);
+        mojo.execute();
+
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
 
         // these are the rulesets, that have been copied to target/pmd/rulesets
         File generatedFile = new File(
@@ -726,13 +815,8 @@ public class PmdReportTest extends AbstractMojoTestCase {
      */
     protected File generateReport(String goal, String pluginXml) throws Exception {
         File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + pluginXml);
-        AbstractPmdReport mojo = createReportMojo(goal, pluginXmlFile);
-        return generateReport(mojo, pluginXmlFile);
-    }
-
-    protected AbstractPmdReport createReportMojo(String goal, File pluginXmlFile) throws Exception {
-        AbstractPmdReport mojo = lookupMojo(goal, pluginXmlFile);
-        assertNotNull("Mojo not found.", mojo);
+        AbstractPmdReport mojo1 = lookupMojo(goal, pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo1);
 
         SessionScope sessionScope = lookup(SessionScope.class);
         MavenSession mavenSession = newMavenSession(new MavenProjectStub());
@@ -744,20 +828,17 @@ public class PmdReportTest extends AbstractMojoTestCase {
                 .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
 
         List<MavenProject> reactorProjects =
-                mojo.getReactorProjects() != null ? mojo.getReactorProjects() : Collections.emptyList();
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
 
-        setVariableValueToObject(mojo, "mojoExecution", getMockMojoExecution());
-        setVariableValueToObject(mojo, "session", mavenSession);
-        setVariableValueToObject(mojo, "repoSession", repositorySession);
-        setVariableValueToObject(mojo, "reactorProjects", reactorProjects);
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
         setVariableValueToObject(
-                mojo, "remoteProjectRepositories", mojo.getProject().getRemoteProjectRepositories());
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
         setVariableValueToObject(
-                mojo, "siteDirectory", new File(mojo.getProject().getBasedir(), "src/site"));
-        return mojo;
-    }
-
-    protected File generateReport(AbstractPmdReport mojo, File pluginXmlFile) throws Exception {
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        AbstractPmdReport mojo = mojo1;
         mojo.execute();
 
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();

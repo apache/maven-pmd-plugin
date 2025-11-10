@@ -19,11 +19,8 @@
 package org.apache.maven.plugins.pmd;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
@@ -50,18 +47,6 @@ import org.eclipse.aether.repository.LocalRepository;
 public class CpdViolationCheckMojoTest extends AbstractMojoTestCase {
 
     private ArtifactStubFactory artifactStubFactory;
-
-    /**
-     * Checks whether the string <code>contained</code> is contained in
-     * the given <code>text</code>, ignoring case.
-     *
-     * @param text the string in which the search is executed
-     * @param contains the string to be searched for
-     * @return <code>true</code> if the text contains the string, otherwise <code>false</code>
-     */
-    public static boolean lowerCaseContains(String text, String contains) {
-        return text.toLowerCase(Locale.ROOT).contains(contains.toLowerCase(Locale.ROOT));
-    }
 
     public void testDefaultConfiguration() throws Exception {
         generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
@@ -144,13 +129,8 @@ public class CpdViolationCheckMojoTest extends AbstractMojoTestCase {
      */
     protected File generateReport(String goal, String pluginXml) throws Exception {
         File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + pluginXml);
-        AbstractPmdReport mojo = createReportMojo(goal, pluginXmlFile);
-        return generateReport(mojo, pluginXmlFile);
-    }
-
-    protected AbstractPmdReport createReportMojo(String goal, File pluginXmlFile) throws Exception {
-        AbstractPmdReport mojo = lookupMojo(goal, pluginXmlFile);
-        assertNotNull("Mojo not found.", mojo);
+        AbstractPmdReport mojo1 = lookupMojo(goal, pluginXmlFile);
+        assertNotNull("Mojo not found.", mojo1);
 
         SessionScope sessionScope = lookup(SessionScope.class);
         MavenSession mavenSession = newMavenSession(new MavenProjectStub());
@@ -162,20 +142,17 @@ public class CpdViolationCheckMojoTest extends AbstractMojoTestCase {
                 .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
 
         List<MavenProject> reactorProjects =
-                mojo.getReactorProjects() != null ? mojo.getReactorProjects() : Collections.emptyList();
+                mojo1.getReactorProjects() != null ? mojo1.getReactorProjects() : Collections.emptyList();
 
-        setVariableValueToObject(mojo, "mojoExecution", getMockMojoExecution());
-        setVariableValueToObject(mojo, "session", mavenSession);
-        setVariableValueToObject(mojo, "repoSession", repositorySession);
-        setVariableValueToObject(mojo, "reactorProjects", reactorProjects);
+        setVariableValueToObject(mojo1, "mojoExecution", getMockMojoExecution());
+        setVariableValueToObject(mojo1, "session", mavenSession);
+        setVariableValueToObject(mojo1, "repoSession", repositorySession);
+        setVariableValueToObject(mojo1, "reactorProjects", reactorProjects);
         setVariableValueToObject(
-                mojo, "remoteProjectRepositories", mojo.getProject().getRemoteProjectRepositories());
+                mojo1, "remoteProjectRepositories", mojo1.getProject().getRemoteProjectRepositories());
         setVariableValueToObject(
-                mojo, "siteDirectory", new File(mojo.getProject().getBasedir(), "src/site"));
-        return mojo;
-    }
-
-    protected File generateReport(AbstractPmdReport mojo, File pluginXmlFile) throws Exception {
+                mojo1, "siteDirectory", new File(mojo1.getProject().getBasedir(), "src/site"));
+        AbstractPmdReport mojo = mojo1;
         mojo.execute();
 
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
@@ -185,13 +162,6 @@ public class CpdViolationCheckMojoTest extends AbstractMojoTestCase {
         String filename = mojo.getOutputPath() + ".html";
 
         return new File(outputDir, filename);
-    }
-
-    /**
-     * Read the contents of the specified file into a string.
-     */
-    protected String readFile(File file) throws IOException {
-        return new String(Files.readAllBytes(file.toPath()));
     }
 
     private MojoExecution getMockMojoExecution() {
