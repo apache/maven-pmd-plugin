@@ -44,7 +44,7 @@ under the License.
             <exclude>**/Sample.java</exclude>
           </excludes>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/custom-configuration/</compileSourceRoot>
+            <compileSourceRoot>${basedir}</compileSourceRoot>
           </compileSourceRoots>
           <inputEncoding>UTF-8</inputEncoding>
         </configuration>
