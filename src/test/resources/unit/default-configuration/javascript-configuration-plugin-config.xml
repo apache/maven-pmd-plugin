@@ -49,7 +49,7 @@ under the License.
             <include>**/*.js</include>
           </includes>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/js</compileSourceRoot>
+            <compileSourceRoot>${basedir}/js</compileSourceRoot>
           </compileSourceRoots>
         </configuration>
       </plugin>

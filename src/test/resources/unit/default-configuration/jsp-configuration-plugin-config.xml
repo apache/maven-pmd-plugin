@@ -51,7 +51,7 @@ under the License.
             <include>**/*.jsp</include>
           </includes>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/jsp</compileSourceRoot>
+            <compileSourceRoot>${basedir}/jsp</compileSourceRoot>
           </compileSourceRoots>
         </configuration>
       </plugin>

@@ -40,6 +40,9 @@ under the License.
           <format>xml</format>
           <inputEncoding>UTF-8</inputEncoding>
           <includeXmlInReports>true</includeXmlInReports>
+            <compileSourceRoots>
+                <compileSourceRoot>${basedir}</compileSourceRoot>
+            </compileSourceRoots>
         </configuration>
         <dependencies>
           <dependency>
