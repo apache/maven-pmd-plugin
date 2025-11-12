@@ -36,16 +36,16 @@ under the License.
           <project implementation="org.apache.maven.plugins.pmd.stubs.DefaultConfigurationMavenProjectStub"/>
           <outputDirectory>${basedir}/target/test/unit/default-configuration/target/site</outputDirectory>
           <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
-          <rulesetsTargetDirectory>${basedir}/target/test/unit/default-configuration/target/pmd/rulesets</rulesetsTargetDirectory>
+          <rulesetsTargetDirectory>${basedir}/target/pmd/rulesets</rulesetsTargetDirectory>
           <rulesets>
-            <ruleset>${basedir}/src/test/resources/unit/default-configuration/rulesets/custom-rules.xml</ruleset>
+            <ruleset>${basedir}/rulesets/custom-rules.xml</ruleset>
           </rulesets>
           <format>xml</format>
           <linkXRef>true</linkXRef>
-          <xrefLocation>${basedir}/target/test/unit/default-configuration/target/site/xref</xrefLocation>
+          <xrefLocation>${basedir}/target/site/xref</xrefLocation>
           <inputEncoding>UTF-8</inputEncoding>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/</compileSourceRoot>
+            <compileSourceRoot>${basedir}</compileSourceRoot>
           </compileSourceRoots>
         </configuration>
       </plugin>

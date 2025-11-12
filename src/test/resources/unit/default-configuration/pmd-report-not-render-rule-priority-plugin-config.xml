@@ -42,7 +42,7 @@ under the License.
           <xrefLocation>${basedir}/target/test/unit/default-configuration/target/site/xref</xrefLocation>
           <inputEncoding>UTF-8</inputEncoding>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/</compileSourceRoot>
+            <compileSourceRoot>${basedir}</compileSourceRoot>
           </compileSourceRoots>
           <renderRuleViolationPriority>false</renderRuleViolationPriority>
         </configuration>

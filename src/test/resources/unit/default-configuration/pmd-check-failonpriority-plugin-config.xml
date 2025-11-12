@@ -38,6 +38,9 @@ under the License.
           <failOnViolation>true</failOnViolation>
           <failurePriority>1</failurePriority>
           <verbose>false</verbose>
+            <compileSourceRoots>
+                <compileSourceRoot>${basedir}</compileSourceRoot>
+            </compileSourceRoots>
         </configuration>
       </plugin>
     </plugins>
