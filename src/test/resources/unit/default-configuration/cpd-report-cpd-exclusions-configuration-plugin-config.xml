@@ -41,10 +41,10 @@ under the License.
           <xrefLocation>${basedir}/target/test/unit/default-configuration/target/site/xref</xrefLocation>
           <minimumTokens>100</minimumTokens>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/</compileSourceRoot>
+            <compileSourceRoot>${basedir}</compileSourceRoot>
           </compileSourceRoots>
           <inputEncoding>UTF-8</inputEncoding>
-          <excludeFromFailureFile>${basedir}/src/test/resources/unit/excludes/my-exclude-cpd.properties</excludeFromFailureFile>
+          <excludeFromFailureFile>${basedir}/excludes/my-exclude-cpd.properties</excludeFromFailureFile>
         </configuration>
       </plugin>
     </plugins>

@@ -39,6 +39,7 @@ under the License.
           <format>xhtml</format> <!-- format "xhtml" does not exist -->
           <linkXRef>false</linkXRef>
           <xrefLocation>${basedir}/target/test/unit/invalid-format/target/site/xref</xrefLocation>
+          <compileSourceRoots>${basedir}</compileSourceRoots>
           <minimumTokens>25</minimumTokens>
         </configuration>
       </plugin>

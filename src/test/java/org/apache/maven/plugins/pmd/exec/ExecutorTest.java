@@ -23,11 +23,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import junit.framework.TestCase;
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
 
-public class ExecutorTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class ExecutorTest {
+    @Test
     public void testBuildClasspath() throws MalformedURLException {
         String basename = "home/test/dir with space/mylib.jar";
         String pathname = new File("/", basename).getPath();
@@ -39,6 +41,6 @@ public class ExecutorTest extends TestCase {
 
         StringBuilder classpath = new StringBuilder();
         Executor.buildClasspath(classpath, mockedClassLoader);
-        Assert.assertEquals(pathname + File.pathSeparator, classpath.toString());
+        assertEquals(pathname + File.pathSeparator, classpath.toString());
     }
 }
