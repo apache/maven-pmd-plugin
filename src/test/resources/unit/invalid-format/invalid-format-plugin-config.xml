@@ -41,6 +41,9 @@ under the License.
           <linkXRef>false</linkXRef>
           <xrefLocation>${basedir}/target/test/unit/invalid-format/target/site/xref</xrefLocation>
           <inputEncoding>ISO-8859-1</inputEncoding>
+            <compileSourceRoots>
+                <compileSourceRoot>${basedir}</compileSourceRoot>
+            </compileSourceRoots>
         </configuration>
       </plugin>
     </plugins>
