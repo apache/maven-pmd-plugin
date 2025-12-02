@@ -313,6 +313,19 @@ under the License.
             <suppressionsLocation>src/config/checkstyle-suppressions.xml</suppressionsLocation>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <configuration>
+            <ignoredDependencies>
+              <!-- needed for AbstractPmdReportTestCase#generateReport  -->
+              <ignoredDependency>org.apache.maven.resolver:maven-resolver-connector-basic:jar</ignoredDependency>
+              <ignoredDependency>org.apache.maven.resolver:maven-resolver-transport-http:jar</ignoredDependency>
+              <!-- Runtime scope-->
+              <ignoredDependency>net.sourceforge.pmd:*:jar</ignoredDependency>
+            </ignoredDependencies>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
