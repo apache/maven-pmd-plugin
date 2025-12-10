@@ -40,14 +40,14 @@ under the License.
           <format>xml</format>
           <inputEncoding>UTF-8</inputEncoding>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/exclude-roots/src</compileSourceRoot>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/exclude-roots/baseroot/src1</compileSourceRoot>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/exclude-roots/baseroot/src2</compileSourceRoot>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/exclude-roots/othersrc</compileSourceRoot>
+            <compileSourceRoot>${basedir}/src</compileSourceRoot>
+            <compileSourceRoot>${basedir}/baseroot/src1</compileSourceRoot>
+            <compileSourceRoot>${basedir}/baseroot/src2</compileSourceRoot>
+            <compileSourceRoot>${basedir}/othersrc</compileSourceRoot>
           </compileSourceRoots>
           <excludeRoots>
-            <excludeRoot>${basedir}/src/test/resources/unit/exclude-roots/baseroot</excludeRoot>
-            <excludeRoot>${basedir}/src/test/resources/unit/exclude-roots/othersrc</excludeRoot>
+            <excludeRoot>${basedir}/baseroot</excludeRoot>
+            <excludeRoot>${basedir}/othersrc</excludeRoot>
           </excludeRoots>
         </configuration>
         <dependencies>

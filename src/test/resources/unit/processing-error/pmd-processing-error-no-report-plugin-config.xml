@@ -42,7 +42,7 @@ under the License.
           <skipPmdError>true</skipPmdError>
           <renderProcessingErrors>false</renderProcessingErrors>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/processing-error/src</compileSourceRoot>
+            <compileSourceRoot>${basedir}/src</compileSourceRoot>
           </compileSourceRoots>
         </configuration>
       </plugin>
