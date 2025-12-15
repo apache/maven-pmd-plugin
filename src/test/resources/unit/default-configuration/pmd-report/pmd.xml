@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 https://pmd.github.io/schema/report_2_0_0.xsd" version="7.18.0" timestamp="2025-12-15T19:12:14.544">
+<file name="/home/sparsick/dev/workspace/m-pmd-plugin-master/src/test/resources/unit/default-configuration/def/configuration/App.java">
+<violation beginline="31" endline="31" begincolumn="17" endcolumn="27" rule="UnusedPrivateField" ruleset="Best Practices" package="def.configuration" class="App" variable="unusedVar2" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.18.0/pmd_rules_java_bestpractices.html#unusedprivatefield" priority="3">
+Avoid unused private fields such as 'unusedVar2'.
+</violation>
+<violation beginline="56" endline="59" begincolumn="9" endcolumn="10" rule="EmptyCatchBlock" ruleset="Error Prone" package="def.configuration" class="App" method="sampleMethod" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.18.0/pmd_rules_java_errorprone.html#emptycatchblock" priority="3">
+Avoid empty catch blocks
+</violation>
+<violation beginline="80" endline="80" begincolumn="23" endcolumn="46" rule="UselessParentheses" ruleset="Code Style" package="def.configuration" class="App" method="dup" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.18.0/pmd_rules_java_codestyle.html#uselessparentheses" priority="4">
+Duplicate parentheses around `str.length() - 1`.
+</violation>
+</file>
+<file name="/home/sparsick/dev/workspace/m-pmd-plugin-master/src/test/resources/unit/default-configuration/def/configuration/App2.java">
+<violation beginline="22" endline="22" begincolumn="1" endcolumn="21" rule="UnnecessaryImport" ruleset="Code Style" package="def.configuration" class="App2" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.18.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
+Unused import 'java.io.File'
+</violation>
+</file>
+<file name="/home/sparsick/dev/workspace/m-pmd-plugin-master/src/test/resources/unit/default-configuration/def/configuration/AppSample.java">
+<violation beginline="27" endline="27" begincolumn="20" endcolumn="29" rule="UnusedPrivateField" ruleset="Best Practices" package="def.configuration" class="AppSample" variable="unusedVar" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.18.0/pmd_rules_java_bestpractices.html#unusedprivatefield" priority="3">
+Avoid unused private fields such as 'unusedVar'.
+</violation>
+<violation beginline="45" endline="45" begincolumn="20" endcolumn="32" rule="UnusedPrivateMethod" ruleset="Best Practices" package="def.configuration" class="AppSample" method="unusedMethod" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.18.0/pmd_rules_java_bestpractices.html#unusedprivatemethod" priority="3">
+Avoid unused private methods such as 'unusedMethod(String)'.
+</violation>
+<violation beginline="45" endline="45" begincolumn="41" endcolumn="53" rule="UnusedFormalParameter" ruleset="Best Practices" package="def.configuration" class="AppSample" method="unusedMethod" variable="notUsedParam" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.18.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'notUsedParam'.
+</violation>
+<violation beginline="58" endline="58" begincolumn="23" endcolumn="46" rule="UselessParentheses" ruleset="Code Style" package="def.configuration" class="AppSample" method="dup" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.18.0/pmd_rules_java_codestyle.html#uselessparentheses" priority="4">
+Duplicate parentheses around `str.length() - 1`.
+</violation>
+</file>
+</pmd>

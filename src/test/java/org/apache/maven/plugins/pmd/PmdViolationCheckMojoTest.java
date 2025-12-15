@@ -18,42 +18,31 @@
  */
 package org.apache.maven.plugins.pmd;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoParameter;
+import org.apache.maven.api.plugin.testing.MojoTest;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+import org.junit.jupiter.api.Test;
+
 import java.util.Locale;
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.LegacySupport;
-import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.descriptor.MojoDescriptor;
-import org.apache.maven.plugin.descriptor.PluginDescriptor;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugin.testing.ArtifactStubFactory;
-import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.session.scope.internal.SessionScope;
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
-import org.eclipse.aether.repository.LocalRepository;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
  */
-public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
-
-    private ArtifactStubFactory artifactStubFactory;
+@MojoTest
+public class PmdViolationCheckMojoTest {
 
     /**
      * Checks whether the string <code>contained</code> is contained in
      * the given <code>text</code>, ignoring case.
      *
-     * @param text the string in which the search is executed
+     * @param text     the string in which the search is executed
      * @param contains the string to be searched for
      * @return <code>true</code> if the text contains the string, otherwise <code>false</code>
      */
@@ -61,14 +50,13 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
         return text.toLowerCase(Locale.ROOT).contains(contains.toLowerCase(Locale.ROOT));
     }
 
-    public void testDefaultConfiguration() throws Exception {
-        generateReport("pmd", "default-configuration/default-configuration-plugin-config.xml");
-
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @Test
+    public void testDefaultConfiguration(PmdViolationCheckMojo mojo) throws Exception {
         try {
-            final File testPom = new File(
-                    getBasedir(),
-                    "src/test/resources/unit/default-configuration/pmd-check-default-configuration-plugin-config.xml");
-            final PmdViolationCheckMojo mojo = lookupMojo("check", testPom);
             mojo.execute();
 
             fail("MojoFailureException should be thrown.");
@@ -78,32 +66,33 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
         }
     }
 
-    public void testNotFailOnViolation() throws Exception {
-        generateReport("pmd", "default-configuration/default-configuration-plugin-config.xml");
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-notfailonviolation-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @Test
+    public void testNotFailOnViolation(PmdViolationCheckMojo mojo) throws Exception {
 
-        File testPom = new File(
-                getBasedir(),
-                "src/test/resources/unit/default-configuration/pmd-check-notfailonviolation-plugin-config.xml");
-        final PmdViolationCheckMojo pmdViolationMojo = lookupMojo("check", testPom);
-        pmdViolationMojo.execute();
+        mojo.execute();
     }
 
-    public void testMaxAllowedViolations() throws Exception {
-        generateReport("pmd", "default-configuration/default-configuration-plugin-config.xml");
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-notfailmaxviolation-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @Test
+    public void testNotFailMaxAllowedViolations(PmdViolationCheckMojo mojo) throws Exception {
+        mojo.execute();
+    }
 
-        File testPom = new File(
-                getBasedir(),
-                "src/test/resources/unit/default-configuration/pmd-check-notfailmaxviolation-plugin-config.xml");
-        final PmdViolationCheckMojo pmdViolationMojo = lookupMojo("check", testPom);
-        pmdViolationMojo.execute();
-
-        testPom = new File(
-                getBasedir(),
-                "src/test/resources/unit/default-configuration/pmd-check-failmaxviolation-plugin-config.xml");
-        final PmdViolationCheckMojo pmdViolationMojoFail = lookupMojo("check", testPom);
-
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-failmaxviolation-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @Test
+    public void testFailMaxAllowedViolations(PmdViolationCheckMojo mojo) throws Exception {
         try {
-            pmdViolationMojoFail.execute();
+            mojo.execute();
             fail("Exception Expected");
         } catch (final MojoFailureException e) {
             assertTrue(e.getMessage()
@@ -112,22 +101,24 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
         }
     }
 
-    public void testFailurePriority() throws Exception {
-        generateReport("pmd", "default-configuration/default-configuration-plugin-config.xml");
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-failonpriority-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @Test
+    public void testFailurePriority(PmdViolationCheckMojo mojo) throws Exception {
+        mojo.execute();
 
-        File testPom = new File(
-                getBasedir(),
-                "src/test/resources/unit/default-configuration/pmd-check-failonpriority-plugin-config.xml");
-        PmdViolationCheckMojo pmdViolationCheckMojo = lookupMojo("check", testPom);
-        pmdViolationCheckMojo.execute();
+    }
 
-        testPom = new File(
-                getBasedir(),
-                "src/test/resources/unit/default-configuration/pmd-check-failandwarnonpriority-plugin-config.xml");
-        pmdViolationCheckMojo = lookupMojo("check", testPom);
-
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-failandwarnonpriority-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @Test
+    public void testFailureAndWarningPriority(PmdViolationCheckMojo mojo) throws Exception {
         try {
-            pmdViolationCheckMojo.execute();
+            mojo.execute();
             fail("MojoFailureException expected");
         } catch (final MojoFailureException e) {
             assertTrue(e.getMessage()
@@ -136,117 +127,30 @@ public class PmdViolationCheckMojoTest extends AbstractMojoTestCase {
         }
     }
 
-    public void testException() throws Exception {
+    @Basedir("/unit/custom-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-exception-test-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @Test
+    public void testException(PmdViolationCheckMojo mojo) throws Exception {
         try {
-            final File testPom = new File(
-                    getBasedir(),
-                    "src/test/resources/unit/custom-configuration/pmd-check-exception-test-plugin-config.xml");
-            final PmdViolationCheckMojo mojo = lookupMojo("check", testPom);
             mojo.project = new MavenProject();
             mojo.execute();
 
             fail("MojoFailureException should be thrown.");
         } catch (final MojoFailureException e) {
-            assertNotNull(e.getMessage());
+            assertTrue(e.getMessage().contains("Unable to perform check"));
         }
     }
 
-    public void testViolationExclusion() throws Exception {
-        generateReport("pmd", "default-configuration/default-configuration-plugin-config.xml");
-
-        File testPom = new File(
-                getBasedir(),
-                "src/test/resources/unit/default-configuration/pmd-check-pmd-exclusions-configuration-plugin-config.xml");
-        final PmdViolationCheckMojo pmdViolationMojo = lookupMojo("check", testPom);
-
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-pmd-exclusions-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @Test
+    public void testViolationExclusion(PmdViolationCheckMojo mojo) throws Exception {
         // this call shouldn't throw an exception, as the classes with violations have been excluded
-        pmdViolationMojo.execute();
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        CapturingPrintStream.init(true);
-
-        artifactStubFactory = new DependencyArtifactStubFactory(getTestFile("target"), true, false);
-        artifactStubFactory.getWorkingDir().mkdirs();
-        SessionScope sessionScope = lookup(SessionScope.class);
-        sessionScope.enter();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        SessionScope lookup = lookup(SessionScope.class);
-        lookup.exit();
-        super.tearDown();
-    }
-
-    /**
-     * Generate the report and return the generated file.
-     *
-     * @param goal the mojo goal
-     * @param pluginXml the name of the xml file in "src/test/resources/plugin-configs/"
-     * @return the generated HTML file
-     * @throws Exception if any
-     */
-    protected File generateReport(String goal, String pluginXml) throws Exception {
-        File pluginXmlFile = new File(getBasedir(), "src/test/resources/unit/" + pluginXml);
-        AbstractPmdReport mojo = createReportMojo(goal, pluginXmlFile);
-        return generateReport(mojo);
-    }
-
-    protected AbstractPmdReport createReportMojo(String goal, File pluginXmlFile) throws Exception {
-        AbstractPmdReport mojo = lookupMojo(goal, pluginXmlFile);
-        assertNotNull("Mojo not found.", mojo);
-
-        SessionScope sessionScope = lookup(SessionScope.class);
-        MavenSession mavenSession = newMavenSession(new MavenProjectStub());
-        sessionScope.seed(MavenSession.class, mavenSession);
-
-        DefaultRepositorySystemSession repositorySession =
-                (DefaultRepositorySystemSession) mavenSession.getRepositorySession();
-        repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManagerFactory()
-                .newInstance(repositorySession, new LocalRepository(artifactStubFactory.getWorkingDir())));
-
-        List<MavenProject> reactorProjects =
-                mojo.getReactorProjects() != null ? mojo.getReactorProjects() : Collections.emptyList();
-
-        setVariableValueToObject(mojo, "mojoExecution", getMockMojoExecution());
-        setVariableValueToObject(mojo, "session", mavenSession);
-        setVariableValueToObject(mojo, "repoSession", repositorySession);
-        setVariableValueToObject(mojo, "reactorProjects", reactorProjects);
-        setVariableValueToObject(
-                mojo, "remoteProjectRepositories", mojo.getProject().getRemoteProjectRepositories());
-        setVariableValueToObject(
-                mojo, "siteDirectory", new File(mojo.getProject().getBasedir(), "src/site"));
-        return mojo;
-    }
-
-    protected File generateReport(AbstractPmdReport mojo) throws Exception {
         mojo.execute();
-
-        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
-        buildingRequest.setRepositorySession(lookup(LegacySupport.class).getRepositorySession());
-
-        File outputDir = mojo.getReportOutputDirectory();
-        String filename = mojo.getOutputPath() + ".html";
-
-        return new File(outputDir, filename);
     }
 
-    private MojoExecution getMockMojoExecution() {
-        MojoDescriptor mojoDescriptor = new MojoDescriptor();
-        mojoDescriptor.setGoal("check");
-
-        MojoExecution execution = new MojoExecution(mojoDescriptor);
-
-        PluginDescriptor pluginDescriptor = new PluginDescriptor();
-        Plugin plugin = new Plugin();
-        plugin.setGroupId("org.apache.maven.plugins");
-        plugin.setArtifactId("maven-pmd-plugin");
-        pluginDescriptor.setPlugin(plugin);
-        mojoDescriptor.setPluginDescriptor(pluginDescriptor);
-
-        return execution;
-    }
 }
