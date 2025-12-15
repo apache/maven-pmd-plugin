@@ -18,6 +18,8 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import java.util.Locale;
+
 import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.api.plugin.testing.MojoParameter;
@@ -25,8 +27,6 @@ import org.apache.maven.api.plugin.testing.MojoTest;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
-
-import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -108,7 +108,6 @@ public class PmdViolationCheckMojoTest {
     @Test
     public void testFailurePriority(PmdViolationCheckMojo mojo) throws Exception {
         mojo.execute();
-
     }
 
     @Basedir("/unit/default-configuration")
@@ -152,5 +151,4 @@ public class PmdViolationCheckMojoTest {
         // this call shouldn't throw an exception, as the classes with violations have been excluded
         mojo.execute();
     }
-
 }
