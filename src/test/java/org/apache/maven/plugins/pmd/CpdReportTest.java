@@ -150,7 +150,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-txt-format-configuration-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testTxtFormat(AbstractPmdReport mojo) throws Exception {
+    public void testTxtFormat(CpdReport mojo) throws Exception {
         mojo.execute();
 
         // check if the CPD files were generated
@@ -174,7 +174,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-custom-configuration-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testCustomConfiguration(AbstractPmdReport mojo) throws Exception {
+    public void testCustomConfiguration(CpdReport mojo) throws Exception {
         mojo.execute();
 
         File outputDir = mojo.getReportOutputDirectory();
@@ -204,7 +204,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-invalid-format-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testInvalidFormat(AbstractPmdReport mojo) throws MojoExecutionException {
+    public void testInvalidFormat(CpdReport mojo) throws MojoExecutionException {
         try {
             mojo.execute();
 
@@ -219,7 +219,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-default-configuration-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testWriteNonHtml(AbstractPmdReport mojo) throws Exception {
+    public void testWriteNonHtml(CpdReport mojo) throws Exception {
         mojo.execute();
 
         // check if the CPD files were generated
@@ -246,7 +246,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-report-include-xml-in-reports-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testIncludeXmlInReports(AbstractPmdReport mojo) throws Exception {
+    public void testIncludeXmlInReports(CpdReport mojo) throws Exception {
         mojo.execute();
 
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -270,7 +270,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-skip-empty-report-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testSkipEmptyReportConfiguration(AbstractPmdReport mojo) throws Exception {
+    public void testSkipEmptyReportConfiguration(CpdReport mojo) throws Exception {
         mojo.execute();
 
         File outputDir = mojo.getReportOutputDirectory();
@@ -284,7 +284,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-empty-report-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testEmptyReportConfiguration(AbstractPmdReport mojo) throws Exception {
+    public void testEmptyReportConfiguration(CpdReport mojo) throws Exception {
         mojo.execute();
 
         File outputDir = mojo.getReportOutputDirectory();
@@ -304,7 +304,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-default-configuration-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testCpdEncodingConfiguration(AbstractPmdReport mojo) throws Exception {
+    public void testCpdEncodingConfiguration(CpdReport mojo) throws Exception {
         String originalEncoding = System.getProperty("file.encoding");
         try {
             System.setProperty("file.encoding", "UTF-16");
@@ -325,7 +325,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-javascript-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testCpdJavascriptConfiguration(AbstractPmdReport mojo) throws Exception {
+    public void testCpdJavascriptConfiguration(CpdReport mojo) throws Exception {
         mojo.execute();
 
         // verify the generated file exists and violations are reported
@@ -340,7 +340,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-jsp-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testCpdJspConfiguration(AbstractPmdReport mojo) throws Exception {
+    public void testCpdJspConfiguration(CpdReport mojo) throws Exception {
         mojo.execute();
 
         // verify the generated file exists and violations are reported
@@ -355,7 +355,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-report-cpd-exclusions-configuration-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testExclusionsConfiguration(AbstractPmdReport mojo) throws Exception {
+    public void testExclusionsConfiguration(CpdReport mojo) throws Exception {
         mojo.execute();
 
         // verify the generated file exists and no duplications are reported
@@ -369,7 +369,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "with-cpd-errors/pom.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testWithCpdErrors(AbstractPmdReport mojo) throws Exception {
+    public void testWithCpdErrors(CpdReport mojo) throws Exception {
         try {
             mojo.execute();
 

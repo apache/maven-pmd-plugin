@@ -279,6 +279,7 @@ under the License.
       <version>2.20.0</version>
       <scope>test</scope>
     </dependency>
+    <!-- junit-vintage is needed by MojoExtension -->
     <dependency>
       <groupId>org.junit.vintage</groupId>
       <artifactId>junit-vintage-engine</artifactId>
