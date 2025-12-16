@@ -18,7 +18,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 <pmd xmlns="http://pmd.sourceforge.net/report/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 https://pmd.github.io/schema/report_2_0_0.xsd" version="7.18.0" timestamp="2025-12-15T19:12:14.544">
-<file name="/home/user/dev/workspace/maven-pmd-plugin/src/test/resources/unit/default-configuration/def/configuration/App.java">
+<file name="C:\Users\user\dev\workspace\maven-pmd-plugin\src\test\resources\unit\default-configuration\def\configuration\App.java">
 <violation beginline="31" endline="31" begincolumn="17" endcolumn="27" rule="UnusedPrivateField" ruleset="Best Practices" package="def.configuration" class="App" variable="unusedVar2" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.18.0/pmd_rules_java_bestpractices.html#unusedprivatefield" priority="3">
 Avoid unused private fields such as 'unusedVar2'.
 </violation>
@@ -29,12 +29,12 @@ Avoid empty catch blocks
 Duplicate parentheses around `str.length() - 1`.
 </violation>
 </file>
-<file name="/home/user/dev/workspace/maven-pmd-plugin/src/test/resources/unit/default-configuration/def/configuration/App2.java">
+<file name="C:\Users\user\dev\workspace\maven-pmd-plugin\src\test\resources\unit\default-configuration\def\configuration\App2.java">
 <violation beginline="22" endline="22" begincolumn="1" endcolumn="21" rule="UnnecessaryImport" ruleset="Code Style" package="def.configuration" class="App2" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.18.0/pmd_rules_java_codestyle.html#unnecessaryimport" priority="4">
 Unused import 'java.io.File'
 </violation>
 </file>
-<file name="/home/user/dev/workspace/maven-pmd-plugin/src/test/resources/unit/default-configuration/def/configuration/AppSample.java">
+<file name="C:\Users\user\dev\workspace\maven-pmd-plugin\src\test\resources\unit\default-configuration\def\configuration\AppSample.java">
 <violation beginline="27" endline="27" begincolumn="20" endcolumn="29" rule="UnusedPrivateField" ruleset="Best Practices" package="def.configuration" class="AppSample" variable="unusedVar" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.18.0/pmd_rules_java_bestpractices.html#unusedprivatefield" priority="3">
 Avoid unused private fields such as 'unusedVar'.
 </violation>

@@ -18,8 +18,6 @@
  */
 package org.apache.maven.plugins.pmd;
 
-import java.util.Locale;
-
 import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.api.plugin.testing.MojoParameter;
@@ -27,33 +25,24 @@ import org.apache.maven.api.plugin.testing.MojoTest;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
  */
 @MojoTest
-public class PmdViolationCheckMojoTest {
-
-    /**
-     * Checks whether the string <code>contained</code> is contained in
-     * the given <code>text</code>, ignoring case.
-     *
-     * @param text     the string in which the search is executed
-     * @param contains the string to be searched for
-     * @return <code>true</code> if the text contains the string, otherwise <code>false</code>
-     */
-    public static boolean lowerCaseContains(String text, String contains) {
-        return text.toLowerCase(Locale.ROOT).contains(contains.toLowerCase(Locale.ROOT));
-    }
+@EnabledOnOs(WINDOWS)
+public class PmdViolationCheckMojoOnWindowsTest {
 
     @Basedir("/unit/default-configuration")
     @InjectMojo(goal = "check", pom = "pmd-check-default-configuration-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
-    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report-windows")
     @Test
     public void testDefaultConfiguration(PmdViolationCheckMojo mojo) throws Exception {
         try {
@@ -69,7 +58,7 @@ public class PmdViolationCheckMojoTest {
     @Basedir("/unit/default-configuration")
     @InjectMojo(goal = "check", pom = "pmd-check-notfailonviolation-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
-    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report-windows")
     @Test
     public void testNotFailOnViolation(PmdViolationCheckMojo mojo) throws Exception {
 
@@ -79,7 +68,7 @@ public class PmdViolationCheckMojoTest {
     @Basedir("/unit/default-configuration")
     @InjectMojo(goal = "check", pom = "pmd-check-notfailmaxviolation-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
-    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report-windows")
     @Test
     public void testNotFailMaxAllowedViolations(PmdViolationCheckMojo mojo) throws Exception {
         mojo.execute();
@@ -88,7 +77,7 @@ public class PmdViolationCheckMojoTest {
     @Basedir("/unit/default-configuration")
     @InjectMojo(goal = "check", pom = "pmd-check-failmaxviolation-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
-    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report-windows")
     @Test
     public void testFailMaxAllowedViolations(PmdViolationCheckMojo mojo) throws Exception {
         try {
@@ -104,7 +93,7 @@ public class PmdViolationCheckMojoTest {
     @Basedir("/unit/default-configuration")
     @InjectMojo(goal = "check", pom = "pmd-check-failonpriority-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
-    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report-windows")
     @Test
     public void testFailurePriority(PmdViolationCheckMojo mojo) throws Exception {
         mojo.execute();
@@ -113,7 +102,7 @@ public class PmdViolationCheckMojoTest {
     @Basedir("/unit/default-configuration")
     @InjectMojo(goal = "check", pom = "pmd-check-failandwarnonpriority-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
-    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report-windows")
     @Test
     public void testFailureAndWarningPriority(PmdViolationCheckMojo mojo) throws Exception {
         try {
@@ -129,7 +118,7 @@ public class PmdViolationCheckMojoTest {
     @Basedir("/unit/custom-configuration")
     @InjectMojo(goal = "check", pom = "pmd-check-exception-test-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
-    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report-windows")
     @Test
     public void testException(PmdViolationCheckMojo mojo) throws Exception {
         try {
@@ -145,7 +134,7 @@ public class PmdViolationCheckMojoTest {
     @Basedir("/unit/default-configuration")
     @InjectMojo(goal = "check", pom = "pmd-check-pmd-exclusions-configuration-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
-    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report-windows")
     @Test
     public void testViolationExclusion(PmdViolationCheckMojo mojo) throws Exception {
         // this call shouldn't throw an exception, as the classes with violations have been excluded
