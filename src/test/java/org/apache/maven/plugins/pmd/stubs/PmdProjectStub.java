@@ -81,7 +81,9 @@ public abstract class PmdProjectStub extends MavenProjectStub {
 
     @Override
     public File getBasedir() {
-        return new File(super.getBasedir() + "/src/test/resources/unit/");
+        // Workaround to get basedir, MavenProjectStub use PlexusTestCase/TestCase which is not available in Junit 5
+        String basedir = System.getProperty("basedir", new File("").getAbsolutePath());
+        return new File(basedir + "/src/test/resources/unit/");
     }
 
     @Override
