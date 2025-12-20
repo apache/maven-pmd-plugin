@@ -18,6 +18,7 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -27,33 +28,107 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.Locale;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoParameter;
+import org.apache.maven.api.plugin.testing.MojoTest;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.internal.aether.DefaultRepositorySystemSessionFactory;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.testing.PlexusExtension;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.w3c.dom.Document;
+
+import static org.apache.maven.api.plugin.testing.MojoExtension.getBasedir;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
  */
-public class CpdReportTest extends AbstractPmdReportTestCase {
+@MojoTest
+public class CpdReportTest {
+
+    @Inject
+    private MavenSession mavenSession;
+
+    @Inject
+    private DefaultRepositorySystemSessionFactory repoSessionFactory;
+
+    @Inject
+    private MavenProject testMavenProject;
+
+    @Inject
+    private MojoExecution mojoExecution;
+
+    /**
+     * Checks whether the string <code>contained</code> is contained in
+     * the given <code>text</code>, ignoring case.
+     *
+     * @param text the string in which the search is executed
+     * @param contains the string to be searched for
+     * @return <code>true</code> if the text contains the string, otherwise <code>false</code>
+     */
+    public static boolean lowerCaseContains(String text, String contains) {
+        return text.toLowerCase(Locale.ROOT).contains(contains.toLowerCase(Locale.ROOT));
+    }
+
     /**
      * {@inheritDoc}
      */
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        FileUtils.deleteDirectory(new File(getBasedir(), "target/test/unit"));
+    @BeforeEach
+    public void setUp() {
+        ArtifactRepository localRepo = Mockito.mock(ArtifactRepository.class);
+        Mockito.when(localRepo.getBasedir())
+                .thenReturn(new File(PlexusExtension.getBasedir(), "target/local-repo").getAbsolutePath());
+
+        MavenExecutionRequest request = new DefaultMavenExecutionRequest();
+        request.setLocalRepository(localRepo);
+
+        RemoteRepository centralRepo =
+                new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2").build();
+
+        DefaultRepositorySystemSession systemSession = repoSessionFactory.newRepositorySession(request);
+        Mockito.when(mavenSession.getRepositorySession()).thenReturn(systemSession);
+        Mockito.when(testMavenProject.getRemoteProjectRepositories())
+                .thenReturn(Collections.singletonList(centralRepo));
+
+        Mockito.when(mojoExecution.getPlugin()).thenReturn(new Plugin());
     }
 
     /**
      * Test CPDReport given the default configuration
      */
-    public void testDefaultConfiguration() throws Exception {
-        File generatedReport =
-                generateReport(getGoal(), "default-configuration/cpd-default-configuration-plugin-config.xml");
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testDefaultConfiguration(CpdReport mojo) throws Exception {
+        mojo.execute();
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
+
+        File generatedReport = new File(outputDir, filename);
         assertTrue(new File(generatedReport.getAbsolutePath()).exists());
 
         // check if the CPD files were generated
@@ -69,10 +144,14 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     }
 
     /**
-     * Test CPDReport with the text renderer given as "format=txt"
-     */
-    public void testTxtFormat() throws Exception {
-        generateReport(getGoal(), "custom-configuration/cpd-txt-format-configuration-plugin-config.xml");
+     * //     * Test CPDReport with the text renderer given as "format=txt"
+     * //     */
+    @Basedir("/unit/custom-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-txt-format-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testTxtFormat(CpdReport mojo) throws Exception {
+        mojo.execute();
 
         // check if the CPD files were generated
         File xmlFile = new File(getBasedir(), "target/test/unit/custom-configuration/target/cpd.xml");
@@ -91,9 +170,17 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     /**
      * Test CpdReport using custom configuration
      */
-    public void testCustomConfiguration() throws Exception {
-        File generatedReport =
-                generateReport(getGoal(), "custom-configuration/cpd-custom-configuration-plugin-config.xml");
+    @Basedir("/unit/custom-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-custom-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testCustomConfiguration(CpdReport mojo) throws Exception {
+        mojo.execute();
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
+
+        File generatedReport = new File(outputDir, filename);
         assertTrue(generatedReport.exists());
 
         // check if the CPD files were generated
@@ -113,24 +200,27 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
     /**
      * Test CPDReport with invalid format
      */
-    public void testInvalidFormat() throws Exception {
+    @Basedir("/unit/invalid-format")
+    @InjectMojo(goal = "cpd", pom = "cpd-invalid-format-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testInvalidFormat(CpdReport mojo) throws MojoExecutionException {
         try {
-            File testPom = new File(
-                    getBasedir(), "src/test/resources/unit/invalid-format/cpd-invalid-format-plugin-config.xml");
-            AbstractPmdReport mojo = createReportMojo(getGoal(), testPom);
-            setVariableValueToObject(
-                    mojo, "compileSourceRoots", mojo.getProject().getCompileSourceRoots());
-            generateReport(mojo, testPom);
+            mojo.execute();
 
-            // TODO this should be a more specific subclass
+            // TODO should have more specific exception
             fail("RuntimeException must be thrown");
         } catch (RuntimeException e) {
             assertMavenReportException("Can't find CPD custom format xhtml", e);
         }
     }
 
-    public void testWriteNonHtml() throws Exception {
-        generateReport(getGoal(), "default-configuration/cpd-default-configuration-plugin-config.xml");
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testWriteNonHtml(CpdReport mojo) throws Exception {
+        mojo.execute();
 
         // check if the CPD files were generated
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -152,8 +242,12 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
      *
      * @throws Exception
      */
-    public void testIncludeXmlInReports() throws Exception {
-        generateReport(getGoal(), "default-configuration/cpd-report-include-xml-in-reports-config.xml");
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-report-include-xml-in-reports-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testIncludeXmlInReports(CpdReport mojo) throws Exception {
+        mojo.execute();
 
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
         assertTrue(generatedFile.exists());
@@ -172,30 +266,50 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         assertEquals(str, siteReportContent);
     }
 
-    public void testSkipEmptyReportConfiguration() throws Exception {
-        // verify the generated files do not exist because PMD was skipped
-        File generatedReport = generateReport(getGoal(), "empty-report/cpd-skip-empty-report-plugin-config.xml");
+    @Basedir("/unit/empty-report")
+    @InjectMojo(goal = "cpd", pom = "cpd-skip-empty-report-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testSkipEmptyReportConfiguration(CpdReport mojo) throws Exception {
+        mojo.execute();
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
+
+        File generatedReport = new File(outputDir, filename);
         assertFalse(new File(generatedReport.getAbsolutePath()).exists());
     }
 
-    public void testEmptyReportConfiguration() throws Exception {
-        // verify the generated files do exist, even if there are no violations
-        File generatedReport = generateReport(getGoal(), "empty-report/cpd-empty-report-plugin-config.xml");
+    @Basedir("/unit/empty-report")
+    @InjectMojo(goal = "cpd", pom = "cpd-empty-report-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testEmptyReportConfiguration(CpdReport mojo) throws Exception {
+        mojo.execute();
+
+        File outputDir = mojo.getReportOutputDirectory();
+        String filename = mojo.getOutputPath() + ".html";
+
+        File generatedReport = new File(outputDir, filename);
         assertTrue(
-                generatedReport.getAbsolutePath() + " does not exist",
-                new File(generatedReport.getAbsolutePath()).exists());
+                new File(generatedReport.getAbsolutePath()).exists(),
+                generatedReport.getAbsolutePath() + " does not exist");
 
         String str = readFile(generatedReport);
         assertFalse(lowerCaseContains(str, "Hello.java"));
         assertTrue(str.contains("CPD found no problems in your source code."));
     }
 
-    public void testCpdEncodingConfiguration() throws Exception {
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testCpdEncodingConfiguration(CpdReport mojo) throws Exception {
         String originalEncoding = System.getProperty("file.encoding");
         try {
             System.setProperty("file.encoding", "UTF-16");
 
-            generateReport(getGoal(), "default-configuration/cpd-default-configuration-plugin-config.xml");
+            mojo.execute();
 
             // check if the CPD files were generated
             File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -207,8 +321,12 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         }
     }
 
-    public void testCpdJavascriptConfiguration() throws Exception {
-        generateReport(getGoal(), "default-configuration/cpd-javascript-plugin-config.xml");
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-javascript-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testCpdJavascriptConfiguration(CpdReport mojo) throws Exception {
+        mojo.execute();
 
         // verify the generated file exists and violations are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -218,8 +336,12 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         assertTrue(lowerCaseContains(str, "SampleDup.js"));
     }
 
-    public void testCpdJspConfiguration() throws Exception {
-        generateReport(getGoal(), "default-configuration/cpd-jsp-plugin-config.xml");
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-jsp-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testCpdJspConfiguration(CpdReport mojo) throws Exception {
+        mojo.execute();
 
         // verify the generated file exists and violations are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -229,8 +351,12 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         assertTrue(lowerCaseContains(str, "sampleDup.jsp"));
     }
 
-    public void testExclusionsConfiguration() throws Exception {
-        generateReport(getGoal(), "default-configuration/cpd-report-cpd-exclusions-configuration-plugin-config.xml");
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-report-cpd-exclusions-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testExclusionsConfiguration(CpdReport mojo) throws Exception {
+        mojo.execute();
 
         // verify the generated file exists and no duplications are reported
         File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
@@ -239,9 +365,13 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         assertEquals(0, StringUtils.countMatches(str, "<duplication"));
     }
 
-    public void testWithCpdErrors() throws Exception {
+    @Basedir("/unit/CpdReportTest")
+    @InjectMojo(goal = "cpd", pom = "with-cpd-errors/pom.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testWithCpdErrors(CpdReport mojo) throws Exception {
         try {
-            generateReport(getGoal(), "CpdReportTest/with-cpd-errors/pom.xml");
+            mojo.execute();
 
             fail("MojoExecutionException must be thrown");
         } catch (MojoExecutionException e) {
@@ -255,8 +385,8 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         MavenReportException cause = (MavenReportException) exception.getCause();
         String message = cause.getMessage();
         assertTrue(
-                "Wrong message: expected: " + expectedMessage + ", but was: " + message,
-                message.contains(expectedMessage));
+                message.contains(expectedMessage),
+                "Wrong message: expected: " + expectedMessage + ", but was: " + message);
     }
 
     private static void assertReportContains(String expectedMessage) throws IOException {
@@ -264,11 +394,13 @@ public class CpdReportTest extends AbstractPmdReportTestCase {
         String report = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
 
         assertTrue(
-                "Expected '" + expectedMessage + "' in cpd.xml, but was:\n" + report, report.contains(expectedMessage));
+                report.contains(expectedMessage), "Expected '" + expectedMessage + "' in cpd.xml, but was:\n" + report);
     }
 
-    @Override
-    protected String getGoal() {
-        return "cpd";
+    /**
+     * Read the contents of the specified file into a string.
+     */
+    protected String readFile(File file) throws IOException {
+        return new String(Files.readAllBytes(file.toPath()));
     }
 }

@@ -38,7 +38,7 @@ under the License.
           <failOnViolation>true</failOnViolation>
           <verbose>false</verbose>
           <printFailingErrors>true</printFailingErrors>
-          <excludeFromFailureFile>${basedir}/src/test/resources/unit/excludes/my-exclude-cpd.properties</excludeFromFailureFile>
+          <excludeFromFailureFile>${basedir}/excludes/my-exclude-cpd.properties</excludeFromFailureFile>
         </configuration>
       </plugin>
     </plugins>

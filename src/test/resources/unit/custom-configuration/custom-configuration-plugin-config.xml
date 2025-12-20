@@ -43,7 +43,7 @@ under the License.
           <inputEncoding>ISO-8859-1</inputEncoding>
           <rulesets>
             <ruleset>rulesets/java/maven-pmd-plugin-default.xml</ruleset>
-            <ruleset>${basedir}/src/test/resources/unit/custom-configuration/resources/rulesets/custom.xml</ruleset>
+            <ruleset>${basedir}/resources/rulesets/custom.xml</ruleset>
           </rulesets>
           <targetJdk>1.4</targetJdk>
           <minimumPriority>4</minimumPriority>
@@ -52,7 +52,7 @@ under the License.
             <exclude>**/AnotherSample.java</exclude>
           </excludes>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/custom-configuration/</compileSourceRoot>
+            <compileSourceRoot>${basedir}</compileSourceRoot>
           </compileSourceRoots>
         </configuration>
         <dependencies>

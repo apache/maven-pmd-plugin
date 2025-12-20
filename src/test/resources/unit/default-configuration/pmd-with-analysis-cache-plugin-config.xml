@@ -44,7 +44,7 @@ under the License.
           <analysisCache>true</analysisCache>
           <analysisCacheLocation>${basedir}/target/test/unit/pmd-with-analysis-cache-plugin-config/target/pmd/pmd.cache</analysisCacheLocation>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/default-configuration/</compileSourceRoot>
+            <compileSourceRoot>${basedir}</compileSourceRoot>
           </compileSourceRoots>
         </configuration>
         <dependencies>

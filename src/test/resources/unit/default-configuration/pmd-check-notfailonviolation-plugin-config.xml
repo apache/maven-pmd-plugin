@@ -37,6 +37,9 @@ under the License.
           <targetDirectory>${basedir}/target/test/unit/default-configuration/target</targetDirectory>
           <failOnViolation>false</failOnViolation>
           <verbose>false</verbose>
+            <compileSourceRoots>
+                <compileSourceRoot>${basedir}</compileSourceRoot>
+            </compileSourceRoots>
         </configuration>
       </plugin>
     </plugins>

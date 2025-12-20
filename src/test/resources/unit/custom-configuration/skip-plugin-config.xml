@@ -44,6 +44,9 @@ under the License.
           <targetJdk>1.4</targetJdk>
           <minimumPriority>4</minimumPriority>
           <skip>true</skip>
+            <compileSourceRoots>
+                <compileSourceRoot>${basedir}</compileSourceRoot>
+            </compileSourceRoots>
         </configuration>
         <dependencies>
           <dependency>

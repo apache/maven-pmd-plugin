@@ -41,7 +41,7 @@ under the License.
                     <xrefLocation>${basedir}/target/test/unit/CpdReportTest/with-cpd-errors/target/site/xref</xrefLocation>
                     <minimumTokens>100</minimumTokens>
                     <compileSourceRoots>
-                        <compileSourceRoot>${basedir}/src/test/resources/unit/CpdReportTest/with-cpd-errors/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${basedir}</compileSourceRoot>
                     </compileSourceRoots>
                     <inputEncoding>UTF-8</inputEncoding>
                 </configuration>

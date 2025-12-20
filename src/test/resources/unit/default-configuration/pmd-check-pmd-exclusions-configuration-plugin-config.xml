@@ -39,7 +39,10 @@ under the License.
           <failurePriority>4</failurePriority>
           <verbose>false</verbose>
           <printFailingErrors>true</printFailingErrors>
-          <excludeFromFailureFile>${basedir}/src/test/resources/unit/excludes/pmd_exclude.properties</excludeFromFailureFile>
+          <excludeFromFailureFile>${basedir}/excludes/pmd_exclude.properties</excludeFromFailureFile>
+            <compileSourceRoots>
+                <compileSourceRoot>${basedir}</compileSourceRoot>
+            </compileSourceRoots>
         </configuration>
       </plugin>
     </plugins>

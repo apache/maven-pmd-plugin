@@ -18,26 +18,32 @@
  */
 package org.apache.maven.plugins.pmd;
 
-import java.io.File;
-
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoParameter;
+import org.apache.maven.api.plugin.testing.MojoTest;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
  */
-public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
+@MojoTest
+public class CpdViolationCheckMojoTest {
 
-    public void testDefaultConfiguration() throws Exception {
-        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
-
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd-check", pom = "cpd-check-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "cpd-report")
+    @Test
+    public void testDefaultConfiguration(CpdViolationCheckMojo mojo) throws Exception {
         try {
-            File testPom = new File(
-                    getBasedir(),
-                    "src/test/resources/unit/default-configuration/cpd-check-default-configuration-plugin-config.xml");
-            CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo(getGoal(), testPom);
-            cpdViolationCheckMojo.execute();
+            mojo.execute();
 
             fail("MojoFailureException should be thrown.");
         } catch (final MojoFailureException e) {
@@ -45,45 +51,38 @@ public class CpdViolationCheckMojoTest extends AbstractPmdReportTestCase {
         }
     }
 
-    public void testNotFailOnViolation() throws Exception {
-        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
-
-        File testPom = new File(
-                getBasedir(),
-                "src/test/resources/unit/default-configuration/cpd-check-notfailonviolation-plugin-config.xml");
-        CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo(getGoal(), testPom);
-        cpdViolationCheckMojo.execute();
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd-check", pom = "cpd-check-notfailonviolation-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "cpd-report")
+    @Test
+    public void testNotFailOnViolation(CpdViolationCheckMojo mojo) throws Exception {
+        mojo.execute();
     }
 
-    public void testException() throws Exception {
+    @Basedir("/unit/custom-configuration")
+    @InjectMojo(goal = "cpd-check", pom = "cpd-check-exception-test-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "cpd-report")
+    @Test
+    public void testException(CpdViolationCheckMojo mojo) throws Exception {
         try {
-            File testPom = new File(
-                    getBasedir(),
-                    "src/test/resources/unit/custom-configuration/cpd-check-exception-test-plugin-config.xml");
-            CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo(getGoal(), testPom);
-            cpdViolationCheckMojo.project = new MavenProject();
-            cpdViolationCheckMojo.execute();
+            mojo.project = new MavenProject();
+            mojo.execute();
 
             fail("MojoFailureException should be thrown.");
         } catch (MojoFailureException e) {
-            assertNotNull(e.getMessage());
+            assertTrue(e.getMessage().contains("Unable to perform check"));
         }
     }
 
-    public void testExclusionsConfiguration() throws Exception {
-        generateReport("cpd", "default-configuration/cpd-default-configuration-plugin-config.xml");
-
-        File testPom = new File(
-                getBasedir(),
-                "src/test/resources/unit/default-configuration/cpd-check-cpd-exclusions-configuration-plugin-config.xml");
-        CpdViolationCheckMojo cpdViolationCheckMojo = lookupMojo(getGoal(), testPom);
-
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd-check", pom = "cpd-check-cpd-exclusions-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "cpd-report")
+    @Test
+    public void testExclusionsConfiguration(CpdViolationCheckMojo mojo) throws Exception {
         // this call shouldn't throw an exception, as the classes with duplications have been excluded
-        cpdViolationCheckMojo.execute();
-    }
-
-    @Override
-    protected String getGoal() {
-        return "cpd-check";
+        mojo.execute();
     }
 }

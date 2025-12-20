@@ -41,7 +41,7 @@ under the License.
           <inputEncoding>UTF-8</inputEncoding>
           <skipPmdError>true</skipPmdError>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}/src/test/resources/unit/processing-error/src</compileSourceRoot>
+            <compileSourceRoot>${basedir}/src</compileSourceRoot>
           </compileSourceRoots>
         </configuration>
       </plugin>
