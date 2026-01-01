@@ -143,7 +143,7 @@ public class PmdReport extends AbstractPmdReport {
     private String suppressMarker;
 
     /**
-     * per default pmd executions error are ignored to not break the whole
+     * Per default pmd executions error are ignored to not break the whole.
      *
      * @since 3.1
      */
@@ -226,7 +226,7 @@ public class PmdReport extends AbstractPmdReport {
     private final ResourceManager locator;
 
     /**
-     * Internationalization component
+     * Internationalization component.
      */
     private final I18N i18n;
 
@@ -253,20 +253,24 @@ public class PmdReport extends AbstractPmdReport {
         this.serviceExecutor = serviceExecutor;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getName(Locale locale) {
         return getI18nString(locale, "name");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getDescription(Locale locale) {
         return getI18nString(locale, "description");
     }
 
     /**
-     * @param locale The locale
-     * @param key The key to search for
-     * @return The text appropriate for the locale.
+     * @param locale the locale
+     * @param key the key to search for
+     * @return the text appropriate for the locale
      */
     protected String getI18nString(Locale locale, String key) {
         return i18n.getString("pmd-report", locale, "report.pmd." + key);
@@ -276,7 +280,7 @@ public class PmdReport extends AbstractPmdReport {
      * Configures the PMD rulesets to be used directly.
      * Note: Usually the rulesets are configured via the property.
      *
-     * @param rulesets the PMD rulesets to be used.
+     * @param rulesets the PMD rulesets to be used
      * @see #rulesets
      */
     public void setRulesets(String[] rulesets) {

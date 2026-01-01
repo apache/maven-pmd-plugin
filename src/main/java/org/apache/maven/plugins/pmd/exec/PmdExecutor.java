@@ -112,7 +112,7 @@ public class PmdExecutor extends Executor {
      * Single arg with the filename to the serialized {@link PmdRequest}.
      *
      * <p>
-     * Exit-code: 0 = success, 1 = failure in executing
+     * Exit-code: 0 = success, 1 = failure in executing.
      *
      * @param args
      */
@@ -254,6 +254,7 @@ public class PmdExecutor extends Executor {
 
     /**
      * Gets the errors as a single string. Each error is in its own line.
+     *
      * @param withDetails if <code>true</code> then add the error details additionally (contains e.g. the stacktrace)
      * @return the errors as string
      */

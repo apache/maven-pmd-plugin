@@ -73,8 +73,8 @@ public class CpdReportRenderer extends AbstractMavenReportRenderer {
     }
 
     /**
-     * @param key The key.
-     * @return The translated string.
+     * @param key the key
+     * @return the translated string
      */
     private String getI18nString(String key) {
         return i18n.getString("cpd-report", locale, "report.cpd." + key);

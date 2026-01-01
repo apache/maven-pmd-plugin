@@ -105,8 +105,8 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
     }
 
     /**
-     * @param key The key.
-     * @return The translated string.
+     * @param key the key
+     * @return the translated string
      */
     private String getI18nString(String key) {
         return i18n.getString("pmd-report", locale, "report.pmd." + key);
@@ -259,7 +259,9 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
     private void renderViolationsTable(Collection<Violation> violationSegment) {
         List<Violation> violationSegmentCopy = new ArrayList<>(violationSegment);
         Collections.sort(violationSegmentCopy, new Comparator<Violation>() {
-            /** {@inheritDoc} */
+            /**
+             * {@inheritDoc}
+             */
             public int compare(Violation o1, Violation o2) {
                 int filenames = o1.getFileName().compareTo(o2.getFileName());
                 if (filenames == 0) {

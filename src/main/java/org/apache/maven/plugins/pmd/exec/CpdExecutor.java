@@ -92,7 +92,7 @@ public class CpdExecutor extends Executor {
      * Single arg with the filename to the serialized {@link CpdRequest}.
      *
      * <p>
-     * Exit-code: 0 = success, 1 = failure in executing
+     * Exit-code: 0 = success, 1 = failure in executing.
      *
      * @param args
      */

@@ -33,10 +33,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 /**
  * Base class for mojos that check if there were any PMD violations.
  *
- * @param <D> type of the check, e.g. {@link org.apache.maven.plugins.pmd.model.Violation}
- * or {@link org.apache.maven.plugins.pmd.model.Duplication}.
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
+ * @param <D> type of the check, e.g. {@link org.apache.maven.plugins.pmd.model.Violation}
+ * or {@link org.apache.maven.plugins.pmd.model.Duplication}.
  */
 public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
     /**
@@ -71,7 +71,7 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
     private boolean verbose;
 
     /**
-     * Print details of errors that cause build failure
+     * Print details of errors that cause build failure.
      *
      * @since 3.0
      */
@@ -173,7 +173,7 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
     }
 
     /**
-     * Method for collecting the violations found by the PMD tool
+     * Method for collecting the violations found by the PMD tool.
      *
      * @return an int that specifies the number of violations found
      */
@@ -207,7 +207,7 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
     protected abstract ViolationDetails<D> newViolationDetailsInstance();
 
     /**
-     * Prints the warnings and failures
+     * Prints the warnings and failures.
      *
      * @param failures list of failures
      * @param warnings list of warnings
@@ -262,22 +262,22 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
     }
 
     /**
-     * Formats the failure details and prints them as an INFO message
+     * Formats the failure details and prints them as an INFO message.
      *
      * @param item either a {@link org.apache.maven.plugins.pmd.model.Violation} from PMD
      * or a {@link org.apache.maven.plugins.pmd.model.Duplication} from CPD
-     * @param severity the found issue is prefixed with the given severity, usually "Warning" or "Failure".
+     * @param severity the found issue is prefixed with the given severity, usually "Warning" or "Failure"
      */
     protected abstract void printError(D item, String severity);
 
     /**
-     * Gets the attributes and text for the violation tag and puts them in a HashMap
+     * Gets the attributes and text for the violation tag and puts them in a HashMap.
      *
      * @param analysisFile the xml output from PMD or CPD
      * @return all PMD {@link org.apache.maven.plugins.pmd.model.Violation}s
-     * or CPD {@link org.apache.maven.plugins.pmd.model.Duplication}s.
-     * @throws XmlPullParserException if the analysis file contains invalid XML
+     * or CPD {@link org.apache.maven.plugins.pmd.model.Duplication}s
      * @throws IOException if the analysis file could be read
+     * @throws XmlPullParserException if the analysis file contains invalid XML
      */
     protected abstract List<D> getErrorDetails(File analysisFile) throws XmlPullParserException, IOException;
 
