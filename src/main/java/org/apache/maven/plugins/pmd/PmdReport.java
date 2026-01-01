@@ -152,8 +152,8 @@ public class PmdReport extends AbstractPmdReport {
 
     /**
      * Enables the analysis cache, which speeds up PMD. This
-     * requires a cache file, that contains the results of the last
-     * PMD run. Thus the cache is only effective, if this file is
+     * requires a cache file that contains the results of the last
+     * PMD run. Thus, the cache is only effective if this file is
      * not cleaned between runs.
      *
      * @since 3.8
@@ -164,9 +164,9 @@ public class PmdReport extends AbstractPmdReport {
     /**
      * The location of the analysis cache, if it is enabled.
      * This file contains the results of the last PMD run and must not be cleaned
-     * between consecutive PMD runs. Otherwise the cache is not in use.
-     * If the file doesn't exist, PMD executes as if there is no cache enabled and
-     * all files are analyzed. Otherwise only changed files will be analyzed again.
+     * between consecutive PMD runs. Otherwise, the cache is not in use.
+     * If the file doesn't exist, PMD executes as if no cache is enabled and
+     * all files are analyzed. Otherwise, only changed files will be analyzed again.
      *
      * @since 3.8
      */
@@ -386,7 +386,7 @@ public class PmdReport extends AbstractPmdReport {
         // in the current project's directory
         locator.addSearchPath(FileResourceLoader.ID, project.getBasedir().getAbsolutePath());
         // in the base directory - that's the directory of the initial pom requested to build,
-        // e.g. the root of a multi module build
+        // e.g. the root of a multi-module build
         locator.addSearchPath(FileResourceLoader.ID, session.getRequest().getBaseDirectory());
         locator.setOutputDirectory(rulesetsTargetDirectory);
 
