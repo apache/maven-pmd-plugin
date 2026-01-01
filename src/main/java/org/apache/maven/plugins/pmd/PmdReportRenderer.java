@@ -201,7 +201,7 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
         sink.tableRow_();
     }
 
-    // PMD might run the analysis multi-threaded, so the violations might be reported
+    // PMD might run the analysis multithreaded, so the violations might be reported
     // out of order. We sort them here by filename and line number before writing them to
     // the report.
     private void renderViolations() {
@@ -312,7 +312,7 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
         }
     }
 
-    // PMD might run the analysis multi-threaded, so the suppressed violations might be reported
+    // PMD might run the analysis multithreaded, so the suppressed violations might be reported
     // out of order. We sort them here by filename before writing them to
     // the report.
     private void renderSuppressedViolations() {
@@ -365,8 +365,8 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
             return;
         }
 
-        // sort the problem by filename first, since PMD is executed multi-threaded
-        // and might reports the results unsorted
+        // sort the problem by filename first, since PMD is executed multithreaded
+        // and might report the results unsorted.
         List<ProcessingError> processingErrorsCopy = new ArrayList<>(processingErrors);
         Collections.sort(processingErrorsCopy, new Comparator<ProcessingError>() {
             @Override
