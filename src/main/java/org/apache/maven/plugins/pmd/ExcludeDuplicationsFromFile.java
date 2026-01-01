@@ -59,7 +59,7 @@ public class ExcludeDuplicationsFromFile implements ExcludeFromFile<Duplication>
      * Note: The exclusion must have been loaded before via {@link #loadExcludeFromFailuresData(String)}.
      *
      * @param errorDetail the duplication to check
-     * @return <code>true</code> if the given duplication should be excluded, <code>false</code> otherwise.
+     * @return <code>true</code> if the given duplication should be excluded, <code>false</code> otherwise
      */
     public boolean isExcludedFromFailure(final Match errorDetail) {
         final Set<String> uniquePaths = new HashSet<>();

@@ -81,7 +81,7 @@ public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation> {
      * loaded before via {@link #loadExcludeFromFailuresData(String)}.
      *
      * @param errorDetail the violation to check
-     * @return <code>true</code> if the violation should be excluded, <code>false</code> otherwise.
+     * @return <code>true</code> if the violation should be excluded, <code>false</code> otherwise
      */
     public boolean isExcludedFromFailure(final RuleViolation errorDetail) {
         final Map<String, String> additionalInfo = errorDetail.getAdditionalInfo();

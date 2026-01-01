@@ -115,6 +115,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     /**
      * Specifies the location of the source directories to be used for PMD.
      * Defaults to <code>project.compileSourceRoots</code>.
+     *
      * @since 3.7
      */
     @Parameter(defaultValue = "${project.compileSourceRoots}")
@@ -123,6 +124,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     /**
      * The directories containing the test-sources to be used for PMD.
      * Defaults to <code>project.testCompileSourceRoots</code>
+     *
      * @since 3.7
      */
     @Parameter(defaultValue = "${project.testCompileSourceRoots}")
@@ -238,7 +240,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
      *    }
      * </pre>
      *
-     * <strong>note:</strong> requires at least Maven 3.3.1
+     * <strong>note:</strong> requires at least Maven 3.3.1.
      *
      * @since 3.14.0
      */
@@ -390,7 +392,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     /**
      * Gets the comma separated list of effective include patterns.
      *
-     * @return the comma separated list of effective include patterns, never <code>null</code>.
+     * @return the comma separated list of effective include patterns, never <code>null</code>
      */
     private String getIncludes() {
         Collection<String> patterns = new LinkedHashSet<>();
@@ -406,7 +408,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     /**
      * Gets the comma separated list of effective exclude patterns.
      *
-     * @return the comma separated list of effective exclude patterns, never <code>null</code>.
+     * @return the comma separated list of effective exclude patterns, never <code>null</code>
      */
     private String getExcludes() {
         Collection<String> patterns = new LinkedHashSet<>(FileUtils.getDefaultExcludesAsList());

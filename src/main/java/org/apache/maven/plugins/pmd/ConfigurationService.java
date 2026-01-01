@@ -47,7 +47,7 @@ import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 
 /**
- * utils service for provide configuration needed to execute CPD/PMD.
+ * Utils service for provide configuration needed to execute CPD/PMD.
  */
 @Named
 @Singleton

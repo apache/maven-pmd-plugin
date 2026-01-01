@@ -21,9 +21,9 @@ package org.apache.maven.plugins.pmd;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
+ * @author Andreas Dangel
  * @param <D> type of violation to exclude, e.g. {@link org.apache.maven.plugins.pmd.model.Violation}
  * or {@link org.apache.maven.plugins.pmd.model.Duplication}.
- * @author Andreas Dangel
  */
 public interface ExcludeFromFile<D> {
     /**
@@ -36,6 +36,7 @@ public interface ExcludeFromFile<D> {
 
     /**
      * Determines how many exclusions are considered.
+     *
      * @return the number of active exclusions
      */
     int countExclusions();
@@ -45,7 +46,7 @@ public interface ExcludeFromFile<D> {
      * loaded before via {@link #loadExcludeFromFailuresData(String)}.
      *
      * @param errorDetail the violation to check
-     * @return <code>true</code> if the violation should be excluded, <code>false</code> otherwise.
+     * @return <code>true</code> if the violation should be excluded, <code>false</code> otherwise
      */
     boolean isExcludedFromFailure(D errorDetail);
 }

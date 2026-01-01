@@ -95,7 +95,7 @@ public class CpdReport extends AbstractPmdReport {
     private boolean ignoreAnnotations;
 
     /**
-     * Internationalization component
+     * Internationalization component.
      */
     private final I18N i18n;
 
@@ -114,20 +114,24 @@ public class CpdReport extends AbstractPmdReport {
         this.serviceExecutor = serviceExecutor;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getName(Locale locale) {
         return getI18nString(locale, "name");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String getDescription(Locale locale) {
         return getI18nString(locale, "description");
     }
 
     /**
-     * @param locale The locale
-     * @param key The key to search for
-     * @return The text appropriate for the locale.
+     * @param locale the locale
+     * @param key the key to search for
+     * @return the text appropriate for the locale
      */
     protected String getI18nString(Locale locale, String key) {
         return i18n.getString("cpd-report", locale, "report.cpd." + key);
