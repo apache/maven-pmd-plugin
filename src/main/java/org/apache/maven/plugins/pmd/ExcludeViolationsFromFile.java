@@ -112,14 +112,12 @@ public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation> {
         if (packageName != null && !packageName.isEmpty() && className != null && !className.isEmpty()) {
             return packageName + "." + className;
         } else if (packageName != null && !packageName.isEmpty()) {
-            String fileName = fullPath;
-            fileName = fileName.substring(fileName.lastIndexOf(File.separatorChar) + 1);
+            String fileName = fullPath.substring(fullPath.lastIndexOf(File.separatorChar) + 1);
             fileName = fileName.substring(0, fileName.length() - 5);
             return packageName + "." + fileName;
         } else {
-            final String fileName = fullPath;
-            final int javaIdx = fileName.indexOf(File.separator + "java" + File.separator);
-            return fileName.substring(javaIdx >= 0 ? javaIdx + 6 : 0, fileName.length() - 5)
+            final int javaIdx = fullPath.indexOf(File.separator + "java" + File.separator);
+            return fullPath.substring(javaIdx >= 0 ? javaIdx + 6 : 0, fullPath.length() - 5)
                     .replace(File.separatorChar, '.');
         }
     }
