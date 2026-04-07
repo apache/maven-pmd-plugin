@@ -173,6 +173,9 @@ public class PmdExecutor extends Executor {
 
         configuration.setRuleSets(request.getRulesets());
         configuration.setMinimumPriority(RulePriority.valueOf(request.getMinimumPriority()));
+        if (request.getExecutionThreads() != null) {
+            configuration.setThreads(request.getExecutionThreads());
+        }
         if (request.getBenchmarkOutputLocation() != null) {
             TimeTracker.startGlobalTracking();
         }
