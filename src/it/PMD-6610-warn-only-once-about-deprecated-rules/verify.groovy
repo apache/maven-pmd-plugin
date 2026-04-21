@@ -1,5 +1,3 @@
-import org.apache.commons.lang3.StringUtils
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,4 +19,4 @@ import org.apache.commons.lang3.StringUtils
 
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
-assert StringUtils.countMatches(buildLog.text, "Use Rule name category/java/codestyle.xml/ControlStatementBraces instead of the deprecated Rule name" ) == 1
+assert buildLog.text.count( "Use Rule name category/java/codestyle.xml/ControlStatementBraces instead of the deprecated Rule name" ) == 1
