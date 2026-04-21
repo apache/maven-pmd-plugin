@@ -45,8 +45,6 @@ import net.sourceforge.pmd.benchmark.TimingReportRenderer;
 import net.sourceforge.pmd.lang.Language;
 import net.sourceforge.pmd.lang.LanguageVersion;
 import net.sourceforge.pmd.lang.rule.RulePriority;
-import net.sourceforge.pmd.lang.rule.RuleSetLoadException;
-import net.sourceforge.pmd.lang.rule.RuleSetLoader;
 import net.sourceforge.pmd.renderers.CSVRenderer;
 import net.sourceforge.pmd.renderers.HTMLRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
@@ -281,14 +279,6 @@ public class PmdExecutor extends Executor {
     private Report processFilesWithPMD(PMDConfiguration pmdConfiguration, List<File> files)
             throws MavenReportException {
         Report report = null;
-        RuleSetLoader rulesetLoader =
-                RuleSetLoader.fromPmdConfig(pmdConfiguration).warnDeprecated(true);
-        try {
-            // load the ruleset once to log out any deprecated rules as warnings
-            rulesetLoader.loadFromResources(pmdConfiguration.getRuleSetPaths());
-        } catch (RuleSetLoadException e1) {
-            throw new MavenReportException("The ruleset could not be loaded", e1);
-        }
 
         try (PmdAnalysis pmdAnalysis = PmdAnalysis.create(pmdConfiguration)) {
             for (File file : files) {
