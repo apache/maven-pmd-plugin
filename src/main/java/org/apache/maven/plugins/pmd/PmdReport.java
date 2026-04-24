@@ -220,6 +220,19 @@ public class PmdReport extends AbstractPmdReport {
     private File rulesetsTargetDirectory;
 
     /**
+     * Controls the number of threads used by PMD Analysis for the given goal.
+     * This can be an integer, or a float (or int) followed by the letter `C`, eg `0.5C` or `1C`.
+     * In the latter case, the float will be multiplied by the number of cores of the host machine, and rounded down to an integer.
+     * If the specified number of threads is zero, then PMD will use the main thread for everything. If it is `n` > 0,
+     * PMD will spawn `n` separate analysis threads besides the main thread.
+     * The default behaviour is deferred to PMD and is currently 1C i.e. one thread per core on the host machine.
+     *
+     * @since 3.28.1
+     */
+    @Parameter(property = "pmd.executionThreads")
+    private String executionThreads;
+
+    /**
      * Used to locate configured rulesets. The rulesets could be on the plugin
      * classpath or in the local project file system.
      */
@@ -256,6 +269,7 @@ public class PmdReport extends AbstractPmdReport {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName(Locale locale) {
         return getI18nString(locale, "name");
     }
@@ -263,6 +277,7 @@ public class PmdReport extends AbstractPmdReport {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getDescription(Locale locale) {
         return getI18nString(locale, "description");
     }
@@ -371,9 +386,39 @@ public class PmdReport extends AbstractPmdReport {
         request.setIncludeXmlInReports(includeXmlInReports);
         request.setReportOutputDirectory(getReportOutputDirectory().getAbsolutePath());
         request.setJdkToolchain(getJdkToolchain());
+        if (executionThreads != null) {
+            request.setExecutionThreads(numThreadsConverter(executionThreads));
+        }
 
         getLog().info("PMD version: " + AbstractPmdReport.getPmdVersion());
         pmdResult = serviceExecutor.execute(request);
+    }
+
+    /**
+     * Essentially per org.apache.maven.cli.MavenCli.calculateDegreeOfConcurrency(String).
+     * @return the (integer) number of threads, where a suffix of C means that a multiple of available cores is calculated.
+     */
+    private int numThreadsConverter(String executionThreadsString) {
+        boolean isCoreMultiplied = executionThreadsString.endsWith("C");
+        if (isCoreMultiplied) {
+            executionThreadsString =
+                    executionThreadsString.substring(0, executionThreadsString.length() - 1); // remove the C
+            try {
+                float f = Float.parseFloat(executionThreadsString);
+                if (f <= 0.0f) {
+                    throw new IllegalArgumentException(
+                            "Invalid threads core multiplier value: '" + f + "C'. Value must be positive.");
+                }
+                return (int) (f * Runtime.getRuntime().availableProcessors());
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("'" + executionThreadsString + "' is not a float or integer");
+            }
+        }
+        try {
+            return Integer.parseInt(executionThreadsString);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("'" + executionThreadsString + "' is not an integer");
+        }
     }
 
     /**
