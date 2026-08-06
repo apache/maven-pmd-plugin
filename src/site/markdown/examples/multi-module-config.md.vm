@@ -1,42 +1,31 @@
- ------
- Multimodule Configuration
- ------
- ------
- 2017-11-11
- ------
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~   http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.
+http://www.apache.org/licenses/LICENSE-2.0
 
-~~ NOTE: For help with the syntax of this file, see:
-~~ http://maven.apache.org/doxia/references/apt-format.html
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-Multimodule Configuration
+# Multimodule Configuration
 
-  If you have a multimodule project with many modules and you want to share the PMD ruleset configuration,
-  so that each module uses the same PMD rules, this is possible, but requires a little setup.
-  
-  The setup is very similar to the one described for Checkstyle, see
-  {{{https://maven.apache.org/plugins/maven-checkstyle-plugin/examples/multi-module-config.html}Multimodule Configuration for Checkstyle}}.
+If you have a multimodule project with many modules and you want to share the PMD ruleset configuration, so that each module uses the same PMD rules, this is possible, but requires a little setup.
 
-  This example will use the same mysterious project called <whizbang>. This is what
-  the structure of that project looks like:
+The setup is very similar to the one described for Checkstyle, see [Multimodule Configuration for Checkstyle](https://maven.apache.org/plugins/maven-checkstyle-plugin/examples/multi-module-config.html).
 
-+-----+
+This example will use the same mysterious project called _whizbang_. This is what the structure of that project looks like:
+
+```unknown
 whizbang
 |-- pom.xml
 |-- core
@@ -46,17 +35,14 @@ whizbang
 |-- jmx
 |   `-- pom.xml
 `-- src
-+-----+
+```
 
-* Create a subproject for the PMD rulesets
+Create a subproject for the PMD rulesets
+----------------------------------------
 
-  We'll start by adding another sub project that will house our common
-  configuration for PMD. Let's call it <build-tools>.
-  In it we put the resources that we want to share between our whizbang modules.
-  In this example, we will add our custom PMD ruleset to be used by the PMD Plugin.
-  The same subproject can be used to house shared configurations for Checkstyle.
+We'll start by adding another sub project that will house our common configuration for PMD. Let's call it _build-tools_. In it we put the resources that we want to share between our whizbang modules. In this example, we will add our custom PMD ruleset to be used by the PMD Plugin. The same subproject can be used to house shared configurations for Checkstyle.
 
-+-----+
+```unknown
 whizbang
 |-- pom.xml
 |-- build-tools
@@ -70,14 +56,13 @@ whizbang
 |-- gui
 |-- jmx
 `-- src
-+-----+
+```
 
-  <<Tip:>> put the resources into a subdirectory that you can ensure will be
-  unique and not conflict with anyone else.
+**Tip:** put the resources into a subdirectory that you can ensure will be unique and not conflict with anyone else.
 
-  The <<<pom.xml>>> file for <build-tools> should look like this:
+The `pom.xml` file for _build-tools_ should look like this:
 
-+-----+
+```xml
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.example.whizbang</groupId>
@@ -85,11 +70,11 @@ whizbang
   <version>1.0</version>
   <name>Build Tools</name>
 </project>
-+-----+
+```
 
-  A sample <<<pmd-ruleset.xml>>> could look like this:
+A sample `pmd-ruleset.xml` could look like this:
 
-+-----+
+```xml
 <?xml version="1.0"?>
 <ruleset name="whizbang PMD ruleset"
     xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
@@ -117,24 +102,18 @@ whizbang
 
     <!-- many more rules are available at https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_java.html -->
 </ruleset>
-+-----+
+```
 
-  The ruleset references some built-in rules. For more information about rulesets, see
-  {{{https://pmd.github.io/pmd-${pmdVersion}/pmd_userdocs_making_rulesets.html}Making Rulesets}}
-  and {{{./usingRuleSets.html}Using Rule Sets}}.
+The ruleset references some built-in rules. For more information about rulesets, see [Making Rulesets](https://pmd.github.io/pmd-${pmdVersion}/pmd_userdocs_making_rulesets.html) and [Using Rule Sets](./usingRuleSets.html).
 
-* Configure the other projects to use it
+Configure the other projects to use it
+--------------------------------------
 
-  Now we can include the PMD configuration in the top level
-  <<<pom.xml>>>.
+Now we can include the PMD configuration in the top level `pom.xml`.
 
-  <<Note:>> You have to specify a plugin dependency on <<<build-tools>>> in the
-  <<<\<build\>>>> element of your <<<pom.xml>>>. It will not work inside the
-  <<<\<reporting\>>>> element, because <<<\<reporting\>>>> does not support
-  plugin dependencies. The rest of the configuration is done in the normal way
-  in the <<<\<reporting\>>>> element.
+**Note:** You have to specify a plugin dependency on `build-tools` in the `<build>` element of your `pom.xml`. It will not work inside the `<reporting>` element, because `<reporting>` does not support plugin dependencies. The rest of the configuration is done in the normal way in the `<reporting>` element.
 
-+-----+
+```xml
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.example.whizbang</groupId>
@@ -199,27 +178,22 @@ whizbang
     <module>gui</module>
   </modules>
 </project>
-+-----+
+```
 
-  Once you are done with that, ensure that you do not include
-  the Maven PMD Plugin in your sub modules, as their definition and
-  configuration, will override the top level parent pom's definition.
+Once you are done with that, ensure that you do not include the Maven PMD Plugin in your sub modules, as their definition and configuration, will override the top level parent pom's definition.
 
-  Based on the PMD Plugin configuration above, the values of
-  <<<rulesets>>> will be resolved from the classpath.
-  The <build-tools> JAR was included in the classpath when it was
-  declared as a dependency to the plugin.
+Based on the PMD Plugin configuration above, the values of `rulesets` will be resolved from the classpath. The _build-tools_ JAR was included in the classpath when it was declared as a dependency to the plugin.
 
-  Lastly, kick off a build of the site.
+Lastly, kick off a build of the site.
 
-+-----+
+```shell
 mvn site
-+-----+
+```
 
-  Or run the check goal of the PMD plugin via verify:
+Or run the check goal of the PMD plugin via verify:
 
-+-----+
+```shell
 mvn verify
-+-----+
+```
 
-  Every sub project will now use the same PMD setup and configuration.
+Every sub project will now use the same PMD setup and configuration.

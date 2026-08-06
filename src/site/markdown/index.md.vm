@@ -1,145 +1,79 @@
- ------
- Introduction
- ------
- Dennis Lundberg
- ------
- 2017-11-11
- ------
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
- ~~ Licensed to the Apache Software Foundation (ASF) under one
- ~~ or more contributor license agreements.  See the NOTICE file
- ~~ distributed with this work for additional information
- ~~ regarding copyright ownership.  The ASF licenses this file
- ~~ to you under the Apache License, Version 2.0 (the
- ~~ "License"); you may not use this file except in compliance
- ~~ with the License.  You may obtain a copy of the License at
- ~~
- ~~   http://www.apache.org/licenses/LICENSE-2.0
- ~~
- ~~ Unless required by applicable law or agreed to in writing,
- ~~ software distributed under the License is distributed on an
- ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- ~~ KIND, either express or implied.  See the License for the
- ~~ specific language governing permissions and limitations
- ~~ under the License.
+http://www.apache.org/licenses/LICENSE-2.0
 
-${project.name}
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-  The PMD Plugin allows you to automatically run the {{{https://pmd.github.io/}PMD}} code analysis tool
-  on your project's source code and generate a site report with its results. It also supports the separate
-  Copy/Paste Detector tool (or CPD) distributed with PMD.
+# ${project.name}
 
-  This version of Maven PMD Plugin uses PMD ${pmdVersion} and requires Java ${javaVersion}.
-  See {{{./examples/upgrading-PMD-at-runtime.html}Upgrading PMD at Runtime}} for more information.
+The PMD Plugin allows you to automatically run the [PMD](https://pmd.github.io/) code analysis tool on your project's source code and generate a site report with its results. It also supports the separate Copy/Paste Detector tool (or CPD) distributed with PMD.
 
-  The plugin accepts configuration parameters that can be used to customize the execution of the PMD tool.
+This version of Maven PMD Plugin uses PMD ${pmdVersion} and requires Java ${javaVersion}. See [Upgrading PMD at Runtime](./examples/upgrading-PMD-at-runtime.html) for more information.
 
+The plugin accepts configuration parameters that can be used to customize the execution of the PMD tool.
 
-* Goals Overview
+Goals Overview
+--------------
 
-  This plugin has the following goals:
+This plugin has the following goals:
 
-  * {{{./pmd-mojo.html}pmd:pmd}} creates a PMD site report based on the rulesets and configuration set in the plugin.
-    It can also generate a pmd output file aside from the site report in any of the following formats: xml, csv or txt.
+- [pmd:pmd](./pmd-mojo.html) creates a PMD site report based on the rulesets and configuration set in the plugin. It can also generate a pmd output file aside from the site report in any of the following formats: xml, csv or txt.
+- [pmd:aggregate-pmd](./aggregate-pmd-mojo.html) creates a PMD site report in an **aggregator** project based on the rulesets and configuration set in the plugin. It can also generate a pmd output file aside from the site report in any of the following formats: xml, csv or txt.
+- [pmd:aggregate-pmd-no-fork](./aggregate-pmd-no-fork-mojo.html) creates a PMD site report in an **aggregator** project without forking the `test-compile` phase again.
+- [pmd:cpd](./cpd-mojo.html) creates a report for PMD's Copy/Paste Detector (CPD) tool. It can also generate a cpd results file in any of these formats: xml, csv or txt.
+- [pmd:aggregate-cpd](./aggregate-cpd-mojo) creates a report for PMD's Copy/Paste Detector (CPD) tool in an **aggregator** project. It can also generate a cpd results file in any of these formats: xml, csv or txt.
+- [pmd:check](./check-mojo.html) fails the build if there were any PMD violations in the source code. This goal invokes automatically `pmd:pmd` prior to executing itself.
+- [pmd:aggregate-pmd-check](./aggregate-pmd-check-mojo.html) fails the build in an **aggregator** project if there were any PMD violations in the source code. This goal invokes automatically `pmd:aggregate-pmd` prior to executing itself.
+- [pmd:cpd-check](./cpd-check-mojo.html) fails the build if there were any CPD violations in the source code. This goal invokes automatically `pmd:cpd` prior to executing itself.
+- [pmd:aggregate-cpd-check](./aggregate-cpd-check-mojo.html) fails the build in an **aggregator** project if there were any CPD violations in the source code. This goal invokes automatically `pmd:aggregate-cpd` prior to executing itself.
 
-  * {{{./aggregate-pmd-mojo.html}pmd:aggregate-pmd}} creates a PMD site report in an <<aggregator>> project
-    based on the rulesets and configuration set in the plugin. It can also generate a pmd output file aside from
-    the site report in any of the following formats: xml, csv or txt.
+Usage
+-----
 
-  * {{{./aggregate-pmd-no-fork-mojo.html}pmd:aggregate-pmd-no-fork}} creates a PMD site report in an <<aggregator>>
-    project without forking the <<<test-compile>>> phase again.
+General instructions on how to use the PMD Plugin can be found on the [usage page](./usage.html). Some more specific use cases are described in the examples given below.
 
-  * {{{./cpd-mojo.html}pmd:cpd}} creates a report for PMD's Copy/Paste Detector (CPD) tool. It can also
-    generate a cpd results file in any of these formats: xml, csv or txt.
+In case you still have questions regarding the plugin's usage, please have a look at the [FAQ](./faq.html) and feel free to contact the [user mailing list](./mailing-lists.html). The posts to the mailing list are archived and could already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching the [mail archive](./mailing-lists.html).
 
-  * {{{./aggregate-cpd-mojo}pmd:aggregate-cpd}} creates a report for PMD's Copy/Paste Detector (CPD) tool
-    in an <<aggregator>> project. It can also generate a cpd results file in any of these formats: xml, csv or txt.
+If you feel like the plugin is missing a feature or has a defect, you can file a feature request or bug report in our [issue tracker](./issue-management.html). When creating a new issue, please provide a comprehensive description of your concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason, entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated. Of course, patches are welcome, too. Contributors can check out the project from our [source repository](./scm.html) and will find supplementary information in the [guide to helping with Maven](http://maven.apache.org/guides/development/guide-helping.html).
 
-  * {{{./check-mojo.html}pmd:check}} fails the build if there were any PMD violations in the source code.
-    This goal invokes automatically <<<pmd:pmd>>> prior to executing itself.
+Upgrading Notes
+---------------
 
-  * {{{./aggregate-pmd-check-mojo.html}pmd:aggregate-pmd-check}} fails the build in an <<aggregator>> project if there
-    were any PMD violations in the source code.
-    This goal invokes automatically <<<pmd:aggregate-pmd>>> prior to executing itself.
+#[[### 3.22.0]]#
 
-  * {{{./cpd-check-mojo.html}pmd:cpd-check}} fails the build if there were any CPD violations in the source code.
-    This goal invokes automatically <<<pmd:cpd>>> prior to executing itself.
+- Starting with Maven PMD Plugin 3.22.0, the plugin requires PMD version 7.0.0 or higher. PMD 7.0.0 switched to SLF4J and since Maven 3.1.0+ SLF4J is the default logging API. Logs from PMD are now always shown and cannot be disabled at runtime after maven has started. The property `showPmdLog` makes no sense anymore and is deprecated now. See [Maven Logging](https://maven.apache.org/maven-logging.html) for how to configure logging. For disabling PMD logs, you'd need to start maven with `MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.net.sourceforge.pmd=off mvn <goals> `.
+- The upgrade from PMD 6 to PMD 7.0.0 is a major version change. If you use the default ruleset from Maven PMD Plugin, then everything should just work. But if you use a custom ruleset, you most likely need to review your ruleset and migrate it to PMD 7. Rules might have been renamed or replaced. See [Detailed Release Notes for PMD 7](https://docs.pmd-code.org/latest/pmd_release_notes_pmd7.html) and [Migration Guide for PMD 7](https://docs.pmd-code.org/latest/pmd_userdocs_migrating_to_pmd7.html).
+- If you currently override the dependency to PMD ([Upgrading PMD at Runtime](./examples/upgrading-PMD-at-runtime.html)) make sure to upgrade PMD as well to 7.0.0 or later when upgrading the Maven PMD Plugin.
+#[[### 3.9.0]]#
 
-  * {{{./aggregate-cpd-check-mojo.html}pmd:aggregate-cpd-check}} fails the build in an <<aggregator>> project
-    if there were any CPD violations in the source code.
-    This goal invokes automatically <<<pmd:aggregate-cpd>>> prior to executing itself.
+- Starting with PMD 6.0.0 and Maven PMD Plugin 3.9.0, the rules have been reorganized into categories, e.g. `/category/java/bestpractices.xml`. So when upgrading to Maven PMD Plugin 3.9.0 you should review your plugin configuration and/or custom ruleset. See [Using Rule Sets](./examples/usingRuleSets.html) for more information.
 
-* Usage
+Examples
+--------
 
-  General instructions on how to use the PMD Plugin can be found on the {{{./usage.html}usage page}}. Some more
-  specific use cases are described in the examples given below.
+To provide you with better understanding of some usages of the Maven PMD Plugin, you can take a look into the following examples:
 
-  In case you still have questions regarding the plugin's usage, please have a look at the {{{./faq.html}FAQ}} and feel
-  free to contact the {{{./mailing-lists.html}user mailing list}}. The posts to the mailing list are archived and could
-  already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching
-  the {{{./mailing-lists.html}mail archive}}.
-
-  If you feel like the plugin is missing a feature or has a defect, you can file a feature request or bug report in our
-  {{{./issue-management.html}issue tracker}}. When creating a new issue, please provide a comprehensive description of your
-  concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason,
-  entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
-  Of course, patches are welcome, too. Contributors can check out the project from our
-  {{{./scm.html}source repository}} and will find supplementary information in the
-  {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
-
-* Upgrading Notes
-
-** 3.22.0
-
-    * Starting with Maven PMD Plugin 3.22.0, the plugin requires PMD version 7.0.0 or higher.
-      PMD 7.0.0 switched to SLF4J and since Maven 3.1.0+ SLF4J is the default logging API.
-      Logs from PMD are now always shown and cannot be disabled at runtime after maven has started.
-      The property <<<showPmdLog>>> makes no sense anymore and is deprecated now. See
-      {{{https://maven.apache.org/maven-logging.html}Maven Logging}} for how to configure logging.
-      For disabling PMD logs, you'd need to start maven with <<<MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.net.sourceforge.pmd=off mvn <goals> >>>.
-
-    * The upgrade from PMD 6 to PMD 7.0.0 is a major version change. If you use the default ruleset
-      from Maven PMD Plugin, then everything should just work. But if you use a custom ruleset, you
-      most likely need to review your ruleset and migrate it to PMD 7. Rules might have been renamed or
-      replaced. See {{{https://docs.pmd-code.org/latest/pmd_release_notes_pmd7.html}Detailed Release Notes for PMD 7}}
-      and {{{https://docs.pmd-code.org/latest/pmd_userdocs_migrating_to_pmd7.html}Migration Guide for PMD 7}}.
-
-    * If you currently override the dependency to PMD ({{{./examples/upgrading-PMD-at-runtime.html}Upgrading PMD at Runtime}})
-      make sure to upgrade PMD as well to 7.0.0 or later when upgrading the Maven PMD Plugin.
-
-** 3.9.0
-
-    * Starting with PMD 6.0.0 and Maven PMD Plugin 3.9.0, the rules have been reorganized
-      into categories, e.g. <<</category/java/bestpractices.xml>>>. So when upgrading to
-      Maven PMD Plugin 3.9.0 you should review your plugin configuration and/or custom ruleset.
-      See {{{./examples/usingRuleSets.html}Using Rule Sets}} for more information.
-
-
-* Examples
-
-  To provide you with better understanding of some usages of the Maven PMD Plugin, you can take a look into the
-  following examples:
-
-  * {{{./examples/upgrading-PMD-at-runtime.html}Upgrading PMD at Runtime}}
-
-  * {{{./examples/multi-module-config.html}Multimodule Configuration}}
-
-  * {{{./examples/aggregate.html}Aggregating PMD reports for Multi-Module-Projects}}
-
-  * {{{./examples/removeReport.html}Remove Report}}
-
-  * {{{./examples/targetJdk.html}Target JDK and Toolchains}}
-
-  * {{{./examples/usingRuleSets.html}Using Rule Sets}}
-
-  * {{{./examples/violationChecking.html}Violation Checking}}
-
-  * {{{./examples/javascriptReport.html}Analyzing JavaScript Code}}
-
-  * {{{./examples/jspReport.html}Analyzing Java Server Pages Code}}
-
-  * {{{./examples/cpdCsharp.html}Finding duplicated code in C#}}
-
-  * {{{./examples/differentRulesetForTests.html}Different ruleset for tests}}
-
-  []
+- [Upgrading PMD at Runtime](./examples/upgrading-PMD-at-runtime.html)
+- [Multimodule Configuration](./examples/multi-module-config.html)
+- [Aggregating PMD reports for Multi-Module-Projects](./examples/aggregate.html)
+- [Remove Report](./examples/removeReport.html)
+- [Target JDK and Toolchains](./examples/targetJdk.html)
+- [Using Rule Sets](./examples/usingRuleSets.html)
+- [Violation Checking](./examples/violationChecking.html)
+- [Analyzing JavaScript Code](./examples/javascriptReport.html)
+- [Analyzing Java Server Pages Code](./examples/jspReport.html)
+- [Finding duplicated code in C#](./examples/cpdCsharp.html)
+- [Different ruleset for tests](./examples/differentRulesetForTests.html)

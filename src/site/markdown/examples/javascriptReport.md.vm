@@ -1,45 +1,33 @@
- ------
- Analyzing JavaScript Code
- ------
- Andreas Dangel
- ------
- 2017-11-11
- ------
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
- ~~ Licensed to the Apache Software Foundation (ASF) under one
- ~~ or more contributor license agreements.  See the NOTICE file
- ~~ distributed with this work for additional information
- ~~ regarding copyright ownership.  The ASF licenses this file
- ~~ to you under the Apache License, Version 2.0 (the
- ~~ "License"); you may not use this file except in compliance
- ~~ with the License.  You may obtain a copy of the License at
- ~~
- ~~   http://www.apache.org/licenses/LICENSE-2.0
- ~~
- ~~ Unless required by applicable law or agreed to in writing,
- ~~ software distributed under the License is distributed on an
- ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- ~~ KIND, either express or implied.  See the License for the
- ~~ specific language governing permissions and limitations
- ~~ under the License.
+http://www.apache.org/licenses/LICENSE-2.0
 
-~~ NOTE: For help with the syntax of this file, see:
-~~ http://maven.apache.org/doxia/references/apt-format.html
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-Analyzing JavaScript Code
+# Analyzing JavaScript Code
 
- The PMD plugin analyzes Java by default. You can configure it to analyze JavaScript files instead as shown below.
+The PMD plugin analyzes Java by default. You can configure it to analyze JavaScript files instead as shown below.
 
- The example assumes that the JavaScript source code is stored in the subdirectory <<<src/main/javascript>>> and
- enables all rules from the "Best Practices", "Codestyle", and "Error Prone" categories.
+The example assumes that the JavaScript source code is stored in the subdirectory `src/main/javascript` and enables all rules from the "Best Practices", "Codestyle", and "Error Prone" categories.
 
- Note that you have to make sure that you configure <<<compileSourceRoots>>> and <<<includes>>>, so that
- PMD finds the JavaScript files.
- 
- See {{{https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_ecmascript.html}JavaScript Rule Index}} for the list
- of available rules.
+Note that you have to make sure that you configure `compileSourceRoots` and `includes`, so that PMD finds the JavaScript files.
 
-+-----+
+See [JavaScript Rule Index](https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_ecmascript.html) for the list of available rules.
+
+```xml
 <project>
   ...
   <reporting>
@@ -74,8 +62,6 @@ Analyzing JavaScript Code
   </reporting>
   ...
 </project>
-+-----+
+```
 
- <<Note:>> Configuring <<<compileSourceRoots>>> only works with Maven 3.3.9 and later. For older versions,
- you'll need to use <build-helper-maven-plugin> with the <<<add-source>>> goal in order to add
- the additional source directories, so that PMD finds the JavaScript files.
+**Note:** Configuring `compileSourceRoots` only works with Maven 3.3.9 and later. For older versions, you'll need to use _build-helper-maven-plugin_ with the `add-source` goal in order to add the additional source directories, so that PMD finds the JavaScript files.
