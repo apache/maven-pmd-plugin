@@ -72,7 +72,7 @@ See [Making Rulesets](https://pmd.github.io/pmd-${pmdVersion}/pmd_userdocs_makin
 
 This is an excerpt of the ruleset `/rulesets/java/maven-pmd-plugin-default.xml`. It contains only rules for Java. If you use a different language, you'll need to specify your own custom ruleset.
 
-The current version of the ruleset can be found in version control: [https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=blob\_plain;f=src/main/resources/rulesets/java/maven-pmd-plugin-default.xml;hb=HEAD](https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=blob_plain;f=src/main/resources/rulesets/java/maven-pmd-plugin-default.xml;hb=HEAD)
+The current version of the ruleset can be found in version control: [https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=blob_plain;f=src/main/resources/rulesets/java/maven-pmd-plugin-default.xml;hb=HEAD](https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=blob_plain;f=src/main/resources/rulesets/java/maven-pmd-plugin-default.xml;hb=HEAD)
 
 ```xml
     <rule ref="category/java/bestpractices.xml/AvoidUsingHardCodedIP" />
