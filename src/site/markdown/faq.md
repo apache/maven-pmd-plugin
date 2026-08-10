@@ -68,10 +68,10 @@ ruleset (see property [rulesets](pmd-mojo.html#rulesets)). Each rule has a assig
 2 - medium-high, 3 - medium, 4 - medium-low, 5 - low). This priority is also used for the violation.
 
 Violations with a high enough priority can fail the build when using the [check](check-mojo.html) goal. These
-violations are called "failures". The exact priority, when to fail the build, is configured via the property
+violations are called &quot;failures&quot;. The exact priority, when to fail the build, is configured via the property
 [failurePriority](check-mojo.html#failurePriority).
 
-Violations, that have a priority too low to fail the build, are called "warnings". These warnings appear in
+Violations, that have a priority too low to fail the build, are called &quot;warnings&quot;. These warnings appear in
 the report and are displayed in the build output, if the property [verbose](check-mojo.html#verbose) is
 enabled.
 
@@ -95,7 +95,7 @@ for type resolution, but also the project's classes as well.
 When using the property [aggregate](pmd-mojo.html#aggregate), this is problematic: With aggregate=true, PMD is
 executed at the root of a multi-module project *before the individual modules are built*. Then the types of
 the individual projects are not available, which might lead to false positive findings e.g. for the rule
-"UnusedPrivateMethod". That's why this property has been deprecated.
+&quot;UnusedPrivateMethod&quot;. That's why this property has been deprecated.
 
 In order to use type resolution and aggregate together, maven needs to be execute in two passes: First pass
 will compile the projects (e.g. `mvn clean package`) and the second pass will execute PMD without clean via
