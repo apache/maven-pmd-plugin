@@ -92,6 +92,16 @@ by matching the exact types of method parameters or variables.
 However, this requires that the project is built first so that not only the project's dependencies can be used
 for type resolution, but also the project's classes as well.
 
+It is sometimes also necessary that PMD is aware of the correct Java version, since the Java API itself
+changes between versions. For example, `java.util.concurrent.ExecutorService` has been made `AutoCloseable`
+since Java 19 - the rule [CloseResource](https://docs.pmd-code.org/latest/pmd_rules_java_errorprone.html#closeresource)
+can only detect this correctly if PMD resolves types against that Java version or later.
+Since version 3.29.0, the plugin automatically adds the Java platform classes to the auxclasspath,
+so that they are also available for type resolution.. The property [`targetJdk`](pmd-mojo.html#targetJdk)
+determines the Java version to use, and a corresponding toolchain is selected. If none is available,
+a warning is issued and the current Java runtime is used instead, which may lead to false positive or
+false negative findings. See also [Target JDK and Toolchains](examples/targetJdk.html).
+
 When using the property [aggregate](pmd-mojo.html#aggregate), this is problematic: With aggregate=true, PMD is
 executed at the root of a multi-module project *before the individual modules are built*. Then the types of
 the individual projects are not available, which might lead to false positive findings e.g. for the rule
