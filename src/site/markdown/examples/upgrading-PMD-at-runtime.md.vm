@@ -80,27 +80,28 @@ Every maven-pmd-plugin version ships with a default PMD version. The default PMD
 
 Here's a historical overview about the default PMD version used:
 
-|maven-pmd-plugin|PMD|
-|:---:|:---:|
-|[3.28.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.28.0/)|[7.17.0](https://docs.pmd-code.org/pmd-doc-7.17.0/)|
-|[3.27.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.27.0/)|[7.14.0](https://docs.pmd-code.org/pmd-doc-7.14.0/)|
-|[3.26.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.26.0/)|[7.7.0](https://docs.pmd-code.org/pmd-doc-7.7.0/)|
-|[3.24.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.24.0/)|[7.3.0](https://docs.pmd-code.org/pmd-doc-7.3.0/)|
-|[3.22.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.22.0/)|[7.0.0](https://docs.pmd-code.org/pmd-doc-7.0.0/)|
-|[3.21.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.21.0/)|[6.55.0](https://pmd.github.io/pmd-6.55.0/)|
-|[3.20.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.20.0/)|[6.53.0](https://pmd.github.io/pmd-6.53.0/)|
-|[3.19.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.19.0/)|[6.49.0](https://pmd.github.io/pmd-6.49.0/)|
-|[3.18.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.18.0/)|[6.48.0](https://pmd.github.io/pmd-6.48.0/)|
-|[3.17.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.17.0/)|[6.46.0](https://pmd.github.io/pmd-6.46.0/)|
-|[3.16.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.16.0/)|[6.42.0](https://pmd.github.io/pmd-6.42.0/)|
-|[3.15.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.15.0/)|[6.38.0](https://pmd.github.io/pmd-6.38.0/)|
-|[3.14.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.14.0/)|[6.29.0](https://pmd.github.io/pmd-6.29.0/)|
-|[3.13.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.13.0/)|[6.21.0](https://pmd.github.io/pmd-6.21.0/)|
-|[3.12.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.12.0/)|[6.13.0](https://pmd.github.io/pmd-6.13.0/)|
-|[3.11.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.11.0/)|[6.8.0](https://pmd.sourceforge.io/pmd-6.8.0/)|
-|[3.10.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.10.0/)|[6.4.0](https://pmd.sourceforge.io/pmd-6.4.0/)|
-|[3.9.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.9.0/)|[6.0.1](https://pmd.sourceforge.io/pmd-6.0.1/)|
-|[3.8](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.8/)|[5.6.1](https://pmd.sourceforge.io/pmd-5.6.1/)|
-|[3.7](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.7/)|[5.5.1](https://pmd.sourceforge.io/pmd-5.5.1/)|
-|[3.6](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.6/)|[5.3.5](https://pmd.sourceforge.io/pmd-5.3.5/)|
-|[3.5](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.5/)|[5.3.2](https://pmd.sourceforge.io/pmd-5.3.2/)|
+|                               maven-pmd-plugin                               |                         PMD                         |
+|:----------------------------------------------------------------------------:|:---------------------------------------------------:|
+| [3.29.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.29.0/) | [7.27.0](https://docs.pmd-code.org/pmd-doc-7.27.0/) |
+| [3.28.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.28.0/) | [7.17.0](https://docs.pmd-code.org/pmd-doc-7.17.0/) |
+| [3.27.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.27.0/) | [7.14.0](https://docs.pmd-code.org/pmd-doc-7.14.0/) |
+| [3.26.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.26.0/) |  [7.7.0](https://docs.pmd-code.org/pmd-doc-7.7.0/)  |
+| [3.24.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.24.0/) |  [7.3.0](https://docs.pmd-code.org/pmd-doc-7.3.0/)  |
+| [3.22.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.22.0/) |  [7.0.0](https://docs.pmd-code.org/pmd-doc-7.0.0/)  |
+| [3.21.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.21.0/) |     [6.55.0](https://pmd.github.io/pmd-6.55.0/)     |
+| [3.20.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.20.0/) |     [6.53.0](https://pmd.github.io/pmd-6.53.0/)     |
+| [3.19.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.19.0/) |     [6.49.0](https://pmd.github.io/pmd-6.49.0/)     |
+| [3.18.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.18.0/) |     [6.48.0](https://pmd.github.io/pmd-6.48.0/)     |
+| [3.17.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.17.0/) |     [6.46.0](https://pmd.github.io/pmd-6.46.0/)     |
+| [3.16.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.16.0/) |     [6.42.0](https://pmd.github.io/pmd-6.42.0/)     |
+| [3.15.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.15.0/) |     [6.38.0](https://pmd.github.io/pmd-6.38.0/)     |
+| [3.14.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.14.0/) |     [6.29.0](https://pmd.github.io/pmd-6.29.0/)     |
+| [3.13.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.13.0/) |     [6.21.0](https://pmd.github.io/pmd-6.21.0/)     |
+| [3.12.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.12.0/) |     [6.13.0](https://pmd.github.io/pmd-6.13.0/)     |
+| [3.11.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.11.0/) |   [6.8.0](https://pmd.sourceforge.io/pmd-6.8.0/)    |
+| [3.10.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.10.0/) |   [6.4.0](https://pmd.sourceforge.io/pmd-6.4.0/)    |
+|  [3.9.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.9.0/)  |   [6.0.1](https://pmd.sourceforge.io/pmd-6.0.1/)    |
+|    [3.8](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.8/)    |   [5.6.1](https://pmd.sourceforge.io/pmd-5.6.1/)    |
+|    [3.7](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.7/)    |   [5.5.1](https://pmd.sourceforge.io/pmd-5.5.1/)    |
+|    [3.6](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.6/)    |   [5.3.5](https://pmd.sourceforge.io/pmd-5.3.5/)    |
+|    [3.5](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.5/)    |   [5.3.2](https://pmd.sourceforge.io/pmd-5.3.2/)    |
