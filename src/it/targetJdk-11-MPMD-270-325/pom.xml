@@ -23,7 +23,7 @@ under the License.
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugins.pmd.it</groupId>
-  <artifactId>MPMD-304-toolchain-support</artifactId>
+  <artifactId>targetJdk-11-MPMD-270-325</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <properties>
@@ -51,10 +51,14 @@ under the License.
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <failOnViolation>false</failOnViolation>
+          <linkXRef>false</linkXRef>
+          <skipPmdError>false</skipPmdError>
+          <skip>false</skip>
+          <failOnViolation>true</failOnViolation>
+          <failurePriority>4</failurePriority>
           <printFailingErrors>true</printFailingErrors>
           <targetJdk>${javaVersion}</targetJdk>
-          <minimumTokens>10</minimumTokens>
+          <minimumTokens>100</minimumTokens>
         </configuration>
         <executions>
           <execution>
@@ -62,29 +66,9 @@ under the License.
             <phase>verify</phase>
             <goals>
               <goal>check</goal>
-              <goal>cpd-check</goal>
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-toolchains-plugin</artifactId>
-        <version>3.3.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>toolchain</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <toolchains>
-            <jdk>
-              <version>${javaVersion}</version>
-            </jdk>
-          </toolchains>
-        </configuration>
       </plugin>
     </plugins>
   </build>

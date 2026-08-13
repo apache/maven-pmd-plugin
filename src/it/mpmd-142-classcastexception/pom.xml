@@ -20,72 +20,50 @@ under the License.
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugins.pmd.it</groupId>
-  <artifactId>MPMD-304-toolchain-support</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <artifactId>mpmd-142-classcastexception</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javaVersion>11</javaVersion>
-  </properties>
+  <description>PMD Report for maven site fails with ClassCastException</description>
 
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>@compilerPluginVersion@</version>
-          <configuration>
-            <target>${javaVersion}</target>
-            <source>${javaVersion}</source>
-          </configuration>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>@sitePluginVersion@</version>
         </plugin>
       </plugins>
     </pluginManagement>
+  </build>
+  <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <failOnViolation>false</failOnViolation>
-          <printFailingErrors>true</printFailingErrors>
-          <targetJdk>${javaVersion}</targetJdk>
-          <minimumTokens>10</minimumTokens>
+          <excludeRoots>
+            <excludeRoots>target/generated-sources</excludeRoots>
+          </excludeRoots>
+          <skipPmdError>false</skipPmdError>
         </configuration>
-        <executions>
-          <execution>
-            <id>default</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-              <goal>cpd-check</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-toolchains-plugin</artifactId>
-        <version>3.3.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>toolchain</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <toolchains>
-            <jdk>
-              <version>${javaVersion}</version>
-            </jdk>
-          </toolchains>
-        </configuration>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>@projectInfoReportsPluginVersion@</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>index</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
-  </build>
+  </reporting>
 </project>
