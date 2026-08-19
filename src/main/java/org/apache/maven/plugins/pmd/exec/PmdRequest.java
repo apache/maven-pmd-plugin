@@ -58,6 +58,7 @@ public class PmdRequest implements Serializable {
     private String benchmarkOutputLocation;
     private boolean includeXmlInReports;
     private String reportOutputDirectory;
+    private Integer executionThreads;
 
     /**
      * Configure language and language version.
@@ -224,5 +225,13 @@ public class PmdRequest implements Serializable {
 
     public String getExcludeFromFailureFile() {
         return excludeFromFailureFile;
+    }
+
+    public Integer getExecutionThreads() {
+        return executionThreads;
+    }
+
+    public void setExecutionThreads(Integer executionThreads) {
+        this.executionThreads = executionThreads;
     }
 }
