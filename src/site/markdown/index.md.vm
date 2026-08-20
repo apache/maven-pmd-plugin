@@ -59,6 +59,10 @@ If you feel like the plugin is missing a feature or has a defect, you can file a
 Upgrading Notes
 ---------------
 
+#[[### 3.29.0]]#
+
+- Starting with Maven PMD Plugin 3.29.0, the plugin automatically uses the value of `targetJdk` to resolve the Java platform classes via a matching toolchain. For [type resolution](pmd-mojo.html#typeResolution), PMD reads the class files of both dependencies and the Java platform. If the wrong Java platform is selected, this might result in false positive and/or false negative violations. It is therefore important to have a toolchain configured with a version matching targetJdk. See [Target JDK and Toolchains](./examples/targetJdk.html).
+
 #[[### 3.22.0]]#
 
 - Starting with Maven PMD Plugin 3.22.0, the plugin requires PMD version 7.0.0 or higher. PMD 7.0.0 switched to SLF4J and since Maven 3.1.0+ SLF4J is the default logging API. Logs from PMD are now always shown and cannot be disabled at runtime after maven has started. The property `showPmdLog` makes no sense anymore and is deprecated now. See [Maven Logging](https://maven.apache.org/maven-logging.html) for how to configure logging. For disabling PMD logs, you'd need to start maven with `MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.net.sourceforge.pmd=off mvn <goals> `.
