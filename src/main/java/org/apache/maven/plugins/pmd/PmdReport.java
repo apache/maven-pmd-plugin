@@ -22,11 +22,17 @@ import javax.inject.Inject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import net.sourceforge.pmd.renderers.Renderer;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -38,6 +44,8 @@ import org.apache.maven.plugins.pmd.exec.PmdResult;
 import org.apache.maven.plugins.pmd.exec.PmdServiceExecutor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.toolchain.Toolchain;
+import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.i18n.I18N;
 import org.codehaus.plexus.resource.ResourceManager;
 import org.codehaus.plexus.resource.loader.FileResourceCreationException;
@@ -64,6 +72,11 @@ public class PmdReport extends AbstractPmdReport {
      *
      * <p>You can override the default PMD version by specifying PMD as a dependency,
      * see <a href="examples/upgrading-PMD-at-runtime.html">Upgrading PMD at Runtime</a>.</p>
+     *
+     * <p>The {@code targetJdk} version is used to resolve java platform classes from a configured
+     * toolchain for type resolution, see <a href="examples/targetJdk.html">Target JDK and Toolchains</a>
+     * and <a href="faq.html#typeresolution_aggregate">Why do I get sometimes false positive and/or false negative
+     * violations?</a>.</p>
      *
      * <p>
      *   <b>Note:</b> this parameter is only used if the language parameter is set to <code>java</code>.
@@ -112,6 +125,7 @@ public class PmdReport extends AbstractPmdReport {
      * feature.
      *
      * @since 3.0
+     * @see #targetJdk
      */
     @Parameter(property = "pmd.typeResolution", defaultValue = "true")
     private boolean typeResolution;
@@ -234,6 +248,8 @@ public class PmdReport extends AbstractPmdReport {
 
     private final ConfigurationService configurationService;
 
+    private final ToolchainManager toolchainManager;
+
     /**
      * Contains the result of the last PMD execution.
      * It might be <code>null</code> which means, that PMD
@@ -246,11 +262,13 @@ public class PmdReport extends AbstractPmdReport {
             ResourceManager locator,
             ConfigurationService configurationService,
             I18N i18n,
-            PmdServiceExecutor serviceExecutor) {
+            PmdServiceExecutor serviceExecutor,
+            ToolchainManager toolchainManager) {
         this.locator = locator;
         this.configurationService = configurationService;
         this.i18n = i18n;
         this.serviceExecutor = serviceExecutor;
+        this.toolchainManager = toolchainManager;
     }
 
     /**
@@ -269,7 +287,7 @@ public class PmdReport extends AbstractPmdReport {
 
     /**
      * @param locale the locale
-     * @param key the key to search for
+     * @param key    the key to search for
      * @return the text appropriate for the locale
      */
     protected String getI18nString(Locale locale, String key) {
@@ -440,7 +458,7 @@ public class PmdReport extends AbstractPmdReport {
     /**
      * Convenience method to get the location of the specified file name.
      *
-     * @param name the name of the file whose location is to be resolved
+     * @param name     the name of the file whose location is to be resolved
      * @param position position in the list of rulesets (1-based)
      * @return a String that contains the absolute file name of the file
      */
@@ -487,18 +505,112 @@ public class PmdReport extends AbstractPmdReport {
 
                 // Add the dependencies as last entries
                 classpath.addAll(dependencies);
+                classpath.removeIf(this::emptyOrNotExisting);
 
                 getLog().debug("Using aggregated aux classpath: " + classpath);
             } else {
                 classpath.addAll(
                         includeTests ? project.getTestClasspathElements() : project.getCompileClasspathElements());
+                classpath.removeIf(this::emptyOrNotExisting);
 
                 getLog().debug("Using aux classpath: " + classpath);
             }
+
+            classpath.addAll(determineJavaRuntimeClasses());
+
             return String.join(File.pathSeparator, classpath);
         } catch (Exception e) {
             throw new MavenReportException(e.getMessage(), e);
         }
+    }
+
+    private boolean emptyOrNotExisting(String entry) {
+        Path path = Paths.get(entry);
+        if (Files.isDirectory(path)) {
+            boolean emptyDirectory = false;
+            try (Stream<Path> stream = Files.list(path)) {
+                emptyDirectory = !stream.findAny().isPresent();
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+            if (emptyDirectory) {
+                getLog().debug("Ignoring empty directory for aux classpath: " + path);
+                return true;
+            }
+        } else if (!Files.exists(path)) {
+            getLog().debug("Ignoring non-existing entry for aux classpath: " + path);
+            return true;
+        }
+        return false;
+    }
+
+    private List<String> determineJavaRuntimeClasses() {
+        if (!"java".equals(language) && null != language) {
+            return Collections.emptyList();
+        }
+        if (targetJdk == null) {
+            return Collections.emptyList();
+        }
+
+        List<Toolchain> toolchains =
+                toolchainManager.getToolchains(session, "jdk", Collections.singletonMap("version", targetJdk));
+        if (toolchains != null && !toolchains.isEmpty()) {
+            Toolchain toolchain = toolchains.get(0);
+            String javaPath = toolchain.findTool("java");
+
+            if (javaPath != null) {
+                Path javaHome = Paths.get(javaPath).resolve("../..").normalize();
+                Path runtimeJar = findJavaRuntimeJar(javaHome);
+                if (runtimeJar != null) {
+                    getLog().debug("Adding " + runtimeJar + " to aux classpath");
+                    return Collections.singletonList(runtimeJar.toString());
+                }
+
+                getLog().warn("Couldn't find java runtime classes in " + javaHome
+                        + ". Please make sure the java installation exists.");
+            } else {
+                getLog().warn("Could't find java executable for " + toolchain
+                        + ". Please double check your toolchains.xml for outdated entries.");
+            }
+        }
+
+        // Always apply fallback (in case of no or invalid toolchain) to avoid an additional warning
+        // from PMD itself.
+        //
+        // The fallback is to use to current runtime - this might be the wrong java version for targetJdk,
+        // but preserves old (pre 3.29.0) behavior.
+        Path javaHome = Paths.get(System.getProperty("java.home"));
+        Path runtimeJar = findJavaRuntimeJar(javaHome);
+        if (runtimeJar != null) {
+            getLog().warn(
+                            "Adding current java runtime classes from " + runtimeJar + " to aux classpath."
+                                    + " Please make sure to configure a toolchain for java version " + targetJdk
+                                    + " in your toolchains.xml. See also <https://maven.apache.org/plugins/maven-pmd-plugin/examples/targetJdk.html>.");
+            return Collections.singletonList(runtimeJar.toString());
+        }
+        return Collections.emptyList();
+    }
+
+    private static Path findJavaRuntimeJar(Path javaHome) {
+        // Java 11+
+        Path jrtFsJar = javaHome.resolve("lib/jrt-fs.jar");
+        if (Files.isRegularFile(jrtFsJar)) {
+            return jrtFsJar;
+        }
+
+        // Java 8 (javaHome is jre subdirectory)
+        Path rtJar = javaHome.resolve("lib/rt.jar"); // Java 8
+        if (Files.isRegularFile(rtJar)) {
+            return rtJar;
+        }
+
+        // Java 8 (javaHome is top-level directory)
+        Path rtJar2 = javaHome.resolve("jre/lib/rt.jar"); // Java 8
+        if (Files.isRegularFile(rtJar2)) {
+            return rtJar2;
+        }
+
+        return null;
     }
 
     /**

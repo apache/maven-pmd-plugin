@@ -38,7 +38,7 @@ There is a configuration element in the PMD plugin that lets you set which [targ
         <artifactId>maven-pmd-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
-          <targetJdk>1.6</targetJdk>
+          <targetJdk>11</targetJdk>
         </configuration>
       </plugin>
     </plugins>
@@ -47,9 +47,34 @@ There is a configuration element in the PMD plugin that lets you set which [targ
 </project>
 ```
 
+Since version 3.29.0, the plugin automatically uses the value of `targetJdk` to resolve the Java platform classes via a matching toolchain. For [type resolution](../pmd-mojo.html#typeResolution), PMD reads the class files of both dependencies and the Java platform. If the wrong Java platform is selected, this might result in false positive and/or false negative violations. It is therefore important to have a toolchain configured with a version matching targetJdk.
+
+Example `${user.home}/.m2/toolchains.xml`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<toolchains>
+  <!-- JDK toolchains -->
+  <toolchain>
+    <type>jdk</type>
+    <provides>
+      <version>11</version>
+      <vendor>openjdk</vendor>
+    </provides>
+    <configuration>
+      <jdkHome>/path/to/jdk/11</jdkHome>
+    </configuration>
+  </toolchain>
+</toolchains>
+```
+
+See also [Guide to Using Toolchains](/guides/mini/guide-using-toolchains.html).
+
 # Using Maven Toolchains
 
-Since version 3.14.0 of the PMD plugin, toolchains are supported. This helps if the build system is running a different JDK than being used for compiling. PMD reads the class files for [type resolution](../pmd-mojo.html#typeResolution) and this fails with ClassFormatErrors if the JDK version is incorrect.
+Since version 3.14.0 of the PMD plugin, toolchains are supported for executing PMD. This helps if the build system is running a different JDK than being used for compiling.
+
+Since version 3.29.0 of the PMD plugin, `targetJdk` is used to resolve the JDK for PMD, so that it doesn't matter anymore, which JDK version is used to run Maven and PMD.
 
 To set this up, refer to the [Guide to Using Toolchains](/guides/mini/guide-using-toolchains.html), which makes use of the [Maven Toolchains Plugin](/plugins/maven-toolchains-plugin/).
 
