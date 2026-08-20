@@ -22,9 +22,13 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -39,8 +43,19 @@ public class ExecutorTest {
         URL[] urls = new URL[] {new File(pathname).toURI().toURL()};
         URLClassLoader mockedClassLoader = new URLClassLoader(urls);
 
-        StringBuilder classpath = new StringBuilder();
-        Executor.buildClasspath(classpath, mockedClassLoader);
-        assertEquals(pathname + File.pathSeparator, classpath.toString());
+        List<String> classpath = Executor.buildClasspath(mockedClassLoader);
+        assertEquals(Collections.singletonList(pathname), classpath);
+    }
+
+    @ParameterizedTest
+    @CsvSource({" 8, '1.8'", "11, '11'", "17, '17-ea'", "25, '25'"})
+    public void parseMajorJavaVersion(int expectedVersion, String value) {
+        assertEquals(
+                expectedVersion, Executor.parseJavaVersion("xx\njava.specification.version = " + value + "\nyy\n"));
+    }
+
+    @Test
+    public void parseUnknownMajorJavaVersion() {
+        assertEquals(-1, Executor.parseJavaVersion("xx\nyy\n"));
     }
 }

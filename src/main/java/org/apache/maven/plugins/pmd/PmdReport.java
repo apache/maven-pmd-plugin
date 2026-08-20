@@ -32,6 +32,7 @@ import net.sourceforge.pmd.renderers.Renderer;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.pmd.exec.PmdException;
 import org.apache.maven.plugins.pmd.exec.PmdExecutor;
 import org.apache.maven.plugins.pmd.exec.PmdRequest;
 import org.apache.maven.plugins.pmd.exec.PmdResult;
@@ -524,6 +525,10 @@ public class PmdReport extends AbstractPmdReport {
      */
     @Deprecated
     public final Renderer createRenderer() throws MavenReportException {
-        return PmdExecutor.createRenderer(format, getOutputEncoding());
+        try {
+            return PmdExecutor.createRenderer(format, getOutputEncoding());
+        } catch (PmdException e) {
+            throw new MavenReportException("Couldn't create renderer for " + format, e);
+        }
     }
 }

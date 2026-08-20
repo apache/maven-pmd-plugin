@@ -34,9 +34,7 @@ import net.sourceforge.pmd.cpd.CpdAnalysis;
 import net.sourceforge.pmd.cpd.SimpleRenderer;
 import net.sourceforge.pmd.cpd.XMLRenderer;
 import net.sourceforge.pmd.lang.Language;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeDuplicationsFromFile;
-import org.apache.maven.reporting.MavenReportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,17 +44,17 @@ import org.slf4j.LoggerFactory;
 public class CpdExecutor extends Executor {
     private static final Logger LOG = LoggerFactory.getLogger(CpdExecutor.class);
 
-    public CpdResult fork(String javaExecutable) throws MavenReportException {
+    public CpdResult fork(String javaExecutable) throws PmdException {
         File basePmdDir = new File(request.getTargetDirectory(), "pmd");
         basePmdDir.mkdirs();
         File cpdRequestFile = new File(basePmdDir, "cpdrequest.bin");
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(cpdRequestFile))) {
             out.writeObject(request);
         } catch (IOException e) {
-            throw new MavenReportException(e.getMessage(), e);
+            throw new PmdException(e.getMessage(), e);
         }
 
-        String classpath = buildClasspath();
+        String classpath = buildClasspath(javaExecutable);
         ProcessBuilder pb = new ProcessBuilder();
         // note: using env variable instead of -cp cli arg to avoid length limitations under Windows
         pb.environment().put("CLASSPATH", classpath);
@@ -74,14 +72,14 @@ public class CpdExecutor extends Executor {
             int exit = p.waitFor();
             LOG.debug("CpdExecutor exit code: {}", exit);
             if (exit != 0) {
-                throw new MavenReportException("CpdExecutor exited with exit code " + exit);
+                throw new PmdException("CpdExecutor exited with exit code " + exit);
             }
             return new CpdResult(new File(request.getTargetDirectory(), "cpd.xml"), request.getOutputEncoding());
         } catch (IOException e) {
-            throw new MavenReportException(e.getMessage(), e);
+            throw new PmdException(e.getMessage(), e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new MavenReportException(e.getMessage(), e);
+            throw new PmdException(e.getMessage(), e);
         }
     }
 
@@ -103,7 +101,7 @@ public class CpdExecutor extends Executor {
             CpdExecutor cpdExecutor = new CpdExecutor(request);
             cpdExecutor.run();
             System.exit(0);
-        } catch (IOException | ClassNotFoundException | MavenReportException e) {
+        } catch (IOException | ClassNotFoundException | PmdException e) {
             LOG.error(e.getMessage(), e);
         }
         System.exit(1);
@@ -118,11 +116,11 @@ public class CpdExecutor extends Executor {
         this.request = Objects.requireNonNull(request);
     }
 
-    public CpdResult run() throws MavenReportException {
+    public CpdResult run() throws PmdException {
         try {
             excludeDuplicationsFromFile.loadExcludeFromFailuresData(request.getExcludeFromFailureFile());
-        } catch (MojoExecutionException e) {
-            throw new MavenReportException("Error loading exclusions", e);
+        } catch (IOException e) {
+            throw new PmdException("Cannot load properties file " + request.getExcludeFromFailureFile(), e);
         }
 
         CPDConfiguration cpdConfiguration = new CPDConfiguration();
@@ -151,7 +149,7 @@ public class CpdExecutor extends Executor {
             CpdReportConsumer reportConsumer = new CpdReportConsumer(request, excludeDuplicationsFromFile);
             cpd.performAnalysis(reportConsumer);
         } catch (IOException e) {
-            throw new MavenReportException("Error while executing CPD", e);
+            throw new PmdException("Error while executing CPD", e);
         }
         LOG.debug("CPD finished.");
 
@@ -159,9 +157,9 @@ public class CpdExecutor extends Executor {
         // are any errors during CPD analysis, the maven build fails.
         int cpdErrors = cpdConfiguration.getReporter().numErrors();
         if (cpdErrors == 1) {
-            throw new MavenReportException("There was 1 error while executing CPD");
+            throw new PmdException("There was 1 error while executing CPD");
         } else if (cpdErrors > 1) {
-            throw new MavenReportException("There were " + cpdErrors + " errors while executing CPD");
+            throw new PmdException("There were " + cpdErrors + " errors while executing CPD");
         }
 
         return new CpdResult(new File(request.getTargetDirectory(), "cpd.xml"), request.getOutputEncoding());
@@ -171,9 +169,9 @@ public class CpdExecutor extends Executor {
      * Create and return the correct renderer for the output type.
      *
      * @return the renderer based on the configured output
-     * @throws org.apache.maven.reporting.MavenReportException if no renderer found for the output type
+     * @throws PmdException if no renderer found for the output type
      */
-    public static CPDReportRenderer createRenderer(String format, String outputEncoding) throws MavenReportException {
+    public static CPDReportRenderer createRenderer(String format, String outputEncoding) throws PmdException {
         CPDReportRenderer renderer = null;
         if ("xml".equals(format)) {
             renderer = new XMLRenderer(outputEncoding);
@@ -187,7 +185,7 @@ public class CpdExecutor extends Executor {
                         Class.forName(format).getConstructor().newInstance();
             } catch (Exception e) {
                 // TODO - report format should be checked early
-                throw new MavenReportException(
+                throw new PmdException(
                         "Can't find CPD custom format " + format + ": "
                                 + e.getClass().getName(),
                         e);

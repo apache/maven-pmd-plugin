@@ -29,7 +29,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import net.sourceforge.pmd.reporting.RuleViolation;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.model.Violation;
 
 /**
@@ -43,7 +42,7 @@ public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation> {
     private Map<String, Set<String>> excludeFromFailureClasses = new HashMap<>();
 
     @Override
-    public void loadExcludeFromFailuresData(final String excludeFromFailureFile) throws MojoExecutionException {
+    public void loadExcludeFromFailuresData(final String excludeFromFailureFile) throws IOException {
         if (excludeFromFailureFile == null || excludeFromFailureFile.isEmpty()) {
             return;
         }
@@ -55,8 +54,6 @@ public class ExcludeViolationsFromFile implements ExcludeFromFile<Violation> {
         final Properties props = new Properties();
         try (FileInputStream fileInputStream = new FileInputStream(excludeFromFailureFile)) {
             props.load(fileInputStream);
-        } catch (final IOException e) {
-            throw new MojoExecutionException("Cannot load properties file " + excludeFromFailureFile, e);
         }
         for (final Entry<Object, Object> propEntry : props.entrySet()) {
             final Set<String> excludedRuleSet = new HashSet<>();

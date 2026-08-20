@@ -34,7 +34,6 @@ import org.apache.maven.plugins.pmd.model.ProcessingError;
 import org.apache.maven.plugins.pmd.model.SuppressedViolation;
 import org.apache.maven.plugins.pmd.model.Violation;
 import org.apache.maven.plugins.pmd.model.io.xpp3.PmdXpp3Reader;
-import org.apache.maven.reporting.MavenReportException;
 
 /**
  * Provides access to the result of the pmd analysis.
@@ -48,7 +47,7 @@ public class PmdResult {
 
     private PmdResult() {}
 
-    public PmdResult(File pmdFile, String encoding) throws MavenReportException {
+    public PmdResult(File pmdFile, String encoding) throws PmdException {
         loadResult(pmdFile, encoding);
     }
 
@@ -56,7 +55,7 @@ public class PmdResult {
         return !violations.isEmpty();
     }
 
-    private void loadResult(File pmdFile, String encoding) throws MavenReportException {
+    private void loadResult(File pmdFile, String encoding) throws PmdException {
         try (Reader reader1 = new BomFilter(encoding, new InputStreamReader(new FileInputStream(pmdFile), encoding))) {
             PmdXpp3Reader reader = new PmdXpp3Reader();
             PmdErrorDetail details = reader.read(reader1, false);
@@ -71,7 +70,7 @@ public class PmdResult {
                 }
             }
         } catch (Exception e) {
-            throw new MavenReportException(e.getMessage(), e);
+            throw new PmdException(e.getMessage(), e);
         }
     }
 
