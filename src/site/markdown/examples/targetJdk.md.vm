@@ -49,7 +49,7 @@ There is a configuration element in the PMD plugin that lets you set which [targ
 
 Since version 3.29.0, the plugin automatically uses the value of `targetJdk` to resolve the Java platform classes via a matching toolchain. For [type resolution](../pmd-mojo.html#typeResolution), PMD reads the class files of both dependencies and the Java platform. If the wrong Java platform is selected, this might result in false positive and/or false negative violations. It is therefore important to have a toolchain configured with a version matching targetJdk.
 
-Example `\${user.home}/.m2/toolchains.xml`:
+Example `${user.home}/.m2/toolchains.xml`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
