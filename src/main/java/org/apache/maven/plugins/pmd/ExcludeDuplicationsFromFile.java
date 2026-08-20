@@ -30,7 +30,6 @@ import java.util.stream.Stream;
 
 import net.sourceforge.pmd.cpd.Mark;
 import net.sourceforge.pmd.cpd.Match;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.model.CpdFile;
 import org.apache.maven.plugins.pmd.model.Duplication;
 
@@ -99,7 +98,7 @@ public class ExcludeDuplicationsFromFile implements ExcludeFromFile<Duplication>
     }
 
     @Override
-    public void loadExcludeFromFailuresData(final String excludeFromFailureFile) throws MojoExecutionException {
+    public void loadExcludeFromFailuresData(final String excludeFromFailureFile) throws IOException {
         if (excludeFromFailureFile == null || excludeFromFailureFile.isEmpty()) {
             return;
         }
@@ -108,8 +107,6 @@ public class ExcludeDuplicationsFromFile implements ExcludeFromFile<Duplication>
             exclusionList.addAll(lines.filter(line -> !line.startsWith("#"))
                     .map(line -> createSetFromExclusionLine(line))
                     .collect(Collectors.toList()));
-        } catch (final IOException e) {
-            throw new MojoExecutionException("Cannot load file " + excludeFromFailureFile, e);
         }
     }
 

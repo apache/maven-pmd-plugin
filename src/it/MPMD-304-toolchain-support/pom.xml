@@ -82,7 +82,6 @@ under the License.
           <toolchains>
             <jdk>
               <version>${javaVersion}</version>
-              <vendor>oracle</vendor>
             </jdk>
           </toolchains>
         </configuration>

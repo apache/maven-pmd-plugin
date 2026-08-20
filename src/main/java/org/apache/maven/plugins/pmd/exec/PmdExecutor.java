@@ -51,9 +51,7 @@ import net.sourceforge.pmd.renderers.Renderer;
 import net.sourceforge.pmd.renderers.TextRenderer;
 import net.sourceforge.pmd.renderers.XMLRenderer;
 import net.sourceforge.pmd.reporting.Report;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.ExcludeViolationsFromFile;
-import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,17 +62,17 @@ import org.slf4j.LoggerFactory;
 public class PmdExecutor extends Executor {
     private static final Logger LOG = LoggerFactory.getLogger(PmdExecutor.class);
 
-    public PmdResult fork(String javaExecutable) throws MavenReportException {
+    public PmdResult fork(String javaExecutable) throws PmdException {
         File basePmdDir = new File(request.getTargetDirectory(), "pmd");
         basePmdDir.mkdirs();
         File pmdRequestFile = new File(basePmdDir, "pmdrequest.bin");
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(pmdRequestFile))) {
             out.writeObject(request);
         } catch (IOException e) {
-            throw new MavenReportException(e.getMessage(), e);
+            throw new PmdException(e.getMessage(), e);
         }
 
-        String classpath = buildClasspath();
+        String classpath = buildClasspath(javaExecutable);
         ProcessBuilder pb = new ProcessBuilder();
         // note: using env variable instead of -cp cli arg to avoid length limitations under Windows
         pb.environment().put("CLASSPATH", classpath);
@@ -92,14 +90,14 @@ public class PmdExecutor extends Executor {
             int exit = p.waitFor();
             LOG.debug("PmdExecutor exit code: {}", exit);
             if (exit != 0) {
-                throw new MavenReportException("PmdExecutor exited with exit code " + exit);
+                throw new PmdException("PmdExecutor exited with exit code " + exit);
             }
             return new PmdResult(new File(request.getTargetDirectory(), "pmd.xml"), request.getOutputEncoding());
         } catch (IOException e) {
-            throw new MavenReportException(e.getMessage(), e);
+            throw new PmdException(e.getMessage(), e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new MavenReportException(e.getMessage(), e);
+            throw new PmdException(e.getMessage(), e);
         }
     }
 
@@ -121,7 +119,7 @@ public class PmdExecutor extends Executor {
             PmdExecutor pmdExecutor = new PmdExecutor(request);
             pmdExecutor.run();
             System.exit(0);
-        } catch (IOException | ClassNotFoundException | MavenReportException e) {
+        } catch (IOException | ClassNotFoundException | PmdException e) {
             LOG.error(e.getMessage(), e);
         }
         System.exit(1);
@@ -133,19 +131,19 @@ public class PmdExecutor extends Executor {
         this.request = Objects.requireNonNull(request);
     }
 
-    public PmdResult run() throws MavenReportException {
+    public PmdResult run() throws PmdException {
         PMDConfiguration configuration = new PMDConfiguration();
         LanguageVersion languageVersion = null;
         Language language = configuration
                 .getLanguageRegistry()
                 .getLanguageById(request.getLanguage() != null ? request.getLanguage() : "java");
         if (language == null) {
-            throw new MavenReportException("Unsupported language: " + request.getLanguage());
+            throw new PmdException("Unsupported language: " + request.getLanguage());
         }
         if (request.getLanguageVersion() != null) {
             languageVersion = language.getVersion(request.getLanguageVersion());
             if (languageVersion == null) {
-                throw new MavenReportException("Unsupported targetJdk value '" + request.getLanguageVersion() + "'.");
+                throw new PmdException("Unsupported targetJdk value '" + request.getLanguageVersion() + "'.");
             }
         } else {
             languageVersion = language.getDefaultVersion();
@@ -215,7 +213,7 @@ public class PmdExecutor extends Executor {
                 String msg = errors.size() > 1
                         ? "Found " + errors.size() + " PMD processing errors"
                         : "Found 1 PMD processing error";
-                throw new MavenReportException(msg);
+                throw new PmdException(msg);
             }
             String message = errors.size() > 1
                     ? "There are " + errors.size() + " PMD processing errors:"
@@ -231,7 +229,7 @@ public class PmdExecutor extends Executor {
         try {
             writeXmlReport(report);
         } catch (IOException e) {
-            throw new MavenReportException("Failed to write XML report", e);
+            throw new PmdException("Failed to write XML report", e);
         }
 
         // write any other format except for xml and html. xml has just been produced.
@@ -243,7 +241,7 @@ public class PmdExecutor extends Executor {
             try {
                 writeFormattedReport(report);
             } catch (IOException e) {
-                throw new MavenReportException("Failed to write formatted " + format + " report", e);
+                throw new PmdException("Failed to write formatted " + format + " report", e);
             }
         }
 
@@ -276,8 +274,7 @@ public class PmdExecutor extends Executor {
         }
     }
 
-    private Report processFilesWithPMD(PMDConfiguration pmdConfiguration, List<File> files)
-            throws MavenReportException {
+    private Report processFilesWithPMD(PMDConfiguration pmdConfiguration, List<File> files) throws PmdException {
         Report report = null;
 
         try (PmdAnalysis pmdAnalysis = PmdAnalysis.create(pmdConfiguration)) {
@@ -291,7 +288,7 @@ public class PmdExecutor extends Executor {
         } catch (Exception e) {
             String message = "Failure executing PMD: " + e.getLocalizedMessage();
             if (!request.isSkipPmdError()) {
-                throw new MavenReportException(message, e);
+                throw new PmdException(message, e);
             }
             LOG.warn(message, e);
         }
@@ -344,7 +341,7 @@ public class PmdExecutor extends Executor {
     /**
      * Use the PMD renderers to render in any format aside from HTML and XML.
      */
-    private void writeFormattedReport(Report report) throws IOException, MavenReportException {
+    private void writeFormattedReport(Report report) throws IOException, PmdException {
         Renderer renderer = createRenderer(request.getFormat(), request.getOutputEncoding());
         writeReport(report, renderer);
     }
@@ -353,10 +350,9 @@ public class PmdExecutor extends Executor {
      * Create and return the correct renderer for the output type.
      *
      * @return the renderer based on the configured output
-     * @throws org.apache.maven.reporting.MavenReportException
-     *             if no renderer found for the output type
+     * @throws PmdException if no renderer found for the output type
      */
-    public static Renderer createRenderer(String format, String outputEncoding) throws MavenReportException {
+    public static Renderer createRenderer(String format, String outputEncoding) throws PmdException {
         LOG.debug("Renderer requested: {}", format);
         Renderer result = null;
         if ("xml".equals(format)) {
@@ -371,7 +367,8 @@ public class PmdExecutor extends Executor {
             try {
                 result = (Renderer) Class.forName(format).getConstructor().newInstance();
             } catch (Exception e) {
-                throw new MavenReportException(
+                // TODO - report format should be checked early
+                throw new PmdException(
                         "Can't find PMD custom format " + format + ": "
                                 + e.getClass().getName(),
                         e);
@@ -381,7 +378,7 @@ public class PmdExecutor extends Executor {
         return result;
     }
 
-    private Report removeExcludedViolations(Report report) throws MavenReportException {
+    private Report removeExcludedViolations(Report report) throws PmdException {
         if (report == null) {
             return null;
         }
@@ -390,8 +387,8 @@ public class PmdExecutor extends Executor {
 
         try {
             excludeFromFile.loadExcludeFromFailuresData(request.getExcludeFromFailureFile());
-        } catch (MojoExecutionException e) {
-            throw new MavenReportException("Unable to load exclusions", e);
+        } catch (IOException e) {
+            throw new PmdException("Cannot load properties file " + request.getExcludeFromFailureFile(), e);
         }
 
         LOG.debug("Removing excluded violations. Using {} configured exclusions.", excludeFromFile.countExclusions());

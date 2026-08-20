@@ -131,7 +131,11 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
             return;
         }
 
-        excludeFromFile.loadExcludeFromFailuresData(excludeFromFailureFile);
+        try {
+            excludeFromFile.loadExcludeFromFailuresData(excludeFromFailureFile);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Cannot load properties file " + excludeFromFailureFile, e);
+        }
         final File outputFile = new File(targetDirectory, filename);
 
         if (outputFile.exists()) {

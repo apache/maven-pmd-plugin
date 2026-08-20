@@ -52,6 +52,8 @@ public class PmdServiceExecutor extends ServiceExecutor {
                 return executor.fork(javaExecutable);
             }
             return executor.run();
+        } catch (PmdException e) {
+            throw new MavenReportException(e.getMessage(), e);
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }

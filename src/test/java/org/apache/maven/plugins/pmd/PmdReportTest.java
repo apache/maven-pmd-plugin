@@ -46,6 +46,7 @@ import org.apache.maven.internal.aether.DefaultRepositorySystemSessionFactory;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.pmd.exec.PmdException;
 import org.apache.maven.plugins.pmd.exec.PmdExecutor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
@@ -762,13 +763,13 @@ public class PmdReportTest {
     }
 
     @Test
-    public void testCustomRenderer() throws MavenReportException {
+    public void testCustomRenderer() throws PmdException {
         final Renderer renderer = PmdExecutor.createRenderer("net.sourceforge.pmd.renderers.TextRenderer", "UTF-8");
         assertNotNull(renderer);
     }
 
     @Test
-    public void testCodeClimateRenderer() throws MavenReportException {
+    public void testCodeClimateRenderer() throws PmdException {
         final Renderer renderer =
                 PmdExecutor.createRenderer("net.sourceforge.pmd.renderers.CodeClimateRenderer", "UTF-8");
         assertNotNull(renderer);

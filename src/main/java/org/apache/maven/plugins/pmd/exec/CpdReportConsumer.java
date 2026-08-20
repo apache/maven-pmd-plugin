@@ -83,7 +83,12 @@ class CpdReportConsumer implements Consumer<CPDReport> {
     }
 
     private void writeFormattedReport(CPDReport cpd) throws IOException, MavenReportException {
-        CPDReportRenderer renderer = CpdExecutor.createRenderer(request.getFormat(), request.getOutputEncoding());
+        CPDReportRenderer renderer = null;
+        try {
+            renderer = CpdExecutor.createRenderer(request.getFormat(), request.getOutputEncoding());
+        } catch (PmdException e) {
+            throw new MavenReportException(e.getMessage(), e);
+        }
         writeReport(cpd, renderer, request.getFormat());
     }
 

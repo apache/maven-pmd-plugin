@@ -29,37 +29,83 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.codehaus.plexus.util.IOUtil;
 
 abstract class Executor {
 
-    protected static String buildClasspath() {
-        StringBuilder classpath = new StringBuilder();
+    protected static String buildClasspath(String javaExecutable) {
+        List<String> classpath = new ArrayList<>();
 
         // plugin classpath needs to come first
         ClassLoader pluginClassloader = Executor.class.getClassLoader();
-        buildClasspath(classpath, pluginClassloader);
+        classpath.addAll(buildClasspath(pluginClassloader));
 
         ClassLoader coreClassloader = ConsoleLogger.class.getClassLoader();
-        buildClasspath(classpath, coreClassloader);
+        classpath.addAll(buildClasspath(coreClassloader));
 
-        return classpath.toString();
+        // Determine Java version: When running under maven4 and a toolchain
+        // selects a jdk < 17, then we need to exclude "maven-logging-x.jar" from the
+        // classpath. Otherwise slf4j's Logging Factory will try to initiale Maven4's
+        // service provider (org.apache.maven.slf4j.MavenServiceProvider) which will
+        // lead to a UnsupportedClassVersionError.
+        int majorJavaVersion = determineJavaVersion(javaExecutable);
+        if (majorJavaVersion < 17) {
+            classpath.removeIf(s -> s.contains("maven-logging"));
+        }
+
+        return classpath.stream().collect(Collectors.joining(File.pathSeparator));
     }
 
-    static void buildClasspath(StringBuilder classpath, ClassLoader cl) {
+    private static int determineJavaVersion(String javaExecutable) {
+        ProcessBuilder pb = new ProcessBuilder(javaExecutable, "-XshowSettings:properties", "-version");
+        pb.redirectErrorStream(true);
+        Process java = null;
+        try {
+            java = pb.start();
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't run java to determine java version", e);
+        }
+
+        try (InputStream in = java.getInputStream()) {
+            String properties = IOUtil.toString(in);
+            return parseJavaVersion(properties);
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't determine java version", e);
+        }
+    }
+
+    static int parseJavaVersion(String properties) {
+        Pattern versionPattern = Pattern.compile("java\\.specification\\.version\\s*=\\s*(?:1\\.)?(\\d+)");
+        Matcher versionMatcher = versionPattern.matcher(properties);
+        if (versionMatcher.find()) {
+            String major = versionMatcher.group(1); // e.g. "8", "11, "17", ...
+            return Integer.parseInt(major);
+        }
+        return -1;
+    }
+
+    static List<String> buildClasspath(ClassLoader cl) {
+        List<String> classpath = new ArrayList<>();
         if (cl instanceof URLClassLoader) {
             for (URL url : ((URLClassLoader) cl).getURLs()) {
                 if ("file".equalsIgnoreCase(url.getProtocol())) {
                     try {
                         String filename = URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8.name());
-                        classpath.append(new File(filename).getPath()).append(File.pathSeparatorChar);
+                        classpath.add(new File(filename).getPath());
                     } catch (UnsupportedEncodingException e) {
                         // skip as we provide the correct standard encoding
                     }
                 }
             }
         }
+        return classpath;
     }
 
     protected static class ProcessStreamHandler implements Runnable {

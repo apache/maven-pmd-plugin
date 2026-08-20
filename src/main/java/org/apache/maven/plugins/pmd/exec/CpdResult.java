@@ -28,7 +28,6 @@ import java.util.List;
 import org.apache.maven.plugins.pmd.model.CpdErrorDetail;
 import org.apache.maven.plugins.pmd.model.Duplication;
 import org.apache.maven.plugins.pmd.model.io.xpp3.CpdXpp3Reader;
-import org.apache.maven.reporting.MavenReportException;
 
 /**
  * Provides access to the result of the CPD analysis.
@@ -36,7 +35,7 @@ import org.apache.maven.reporting.MavenReportException;
 public class CpdResult {
     private final List<Duplication> duplications = new ArrayList<>();
 
-    public CpdResult(File report, String encoding) throws MavenReportException {
+    public CpdResult(File report, String encoding) throws PmdException {
         loadResult(report, encoding);
     }
 
@@ -48,13 +47,13 @@ public class CpdResult {
         return !duplications.isEmpty();
     }
 
-    private void loadResult(File report, String encoding) throws MavenReportException {
+    private void loadResult(File report, String encoding) throws PmdException {
         try (Reader reader1 = new InputStreamReader(new FileInputStream(report), encoding)) {
             CpdXpp3Reader reader = new CpdXpp3Reader();
             CpdErrorDetail details = reader.read(reader1, false);
             duplications.addAll(details.getDuplications());
         } catch (Exception e) {
-            throw new MavenReportException(e.getMessage(), e);
+            throw new PmdException(e.getMessage(), e);
         }
     }
 }
