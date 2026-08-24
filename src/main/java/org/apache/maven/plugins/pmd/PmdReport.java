@@ -386,7 +386,8 @@ public class PmdReport extends AbstractPmdReport {
         request.setIncludeXmlInReports(includeXmlInReports);
         request.setReportOutputDirectory(getReportOutputDirectory().getAbsolutePath());
         request.setJdkToolchain(getJdkToolchain());
-        request.setExecutionThreads(numThreadsConverter(executionThreads, Runtime.getRuntime().availableProcessors()));
+        request.setExecutionThreads(
+                numThreadsConverter(executionThreads, Runtime.getRuntime().availableProcessors()));
 
         getLog().info("PMD version: " + AbstractPmdReport.getPmdVersion());
         pmdResult = serviceExecutor.execute(request);
@@ -402,7 +403,7 @@ public class PmdReport extends AbstractPmdReport {
      */
     static Integer numThreadsConverter(String executionThreadsString, int numberOfProcessors) {
         if (executionThreadsString == null) {
-          return null;
+            return null;
         }
         boolean isCoreMultiplied = executionThreadsString.endsWith("C");
         if (isCoreMultiplied) {
@@ -422,7 +423,8 @@ public class PmdReport extends AbstractPmdReport {
         try {
             int numberOfThreads = Integer.parseInt(executionThreadsString);
             if (numberOfThreads < 0) {
-              throw new IllegalArgumentException("Invalid threads '" + numberOfThreads + "'. Value must not be negative.");
+                throw new IllegalArgumentException(
+                        "Invalid threads '" + numberOfThreads + "'. Value must not be negative.");
             }
             return numberOfThreads;
         } catch (NumberFormatException e) {
