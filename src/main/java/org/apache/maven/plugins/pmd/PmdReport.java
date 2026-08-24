@@ -386,9 +386,7 @@ public class PmdReport extends AbstractPmdReport {
         request.setIncludeXmlInReports(includeXmlInReports);
         request.setReportOutputDirectory(getReportOutputDirectory().getAbsolutePath());
         request.setJdkToolchain(getJdkToolchain());
-        if (executionThreads != null) {
-            request.setExecutionThreads(numThreadsConverter(executionThreads));
-        }
+        request.setExecutionThreads(numThreadsConverter(executionThreads, Runtime.getRuntime().availableProcessors()));
 
         getLog().info("PMD version: " + AbstractPmdReport.getPmdVersion());
         pmdResult = serviceExecutor.execute(request);
@@ -396,9 +394,16 @@ public class PmdReport extends AbstractPmdReport {
 
     /**
      * Essentially per org.apache.maven.cli.MavenCli.calculateDegreeOfConcurrency(String).
+     *
+     * @param executionThreadsString the thread request for this report
+     * @param numberOfProcessors the number of processors available (for testability)
      * @return the (integer) number of threads, where a suffix of C means that a multiple of available cores is calculated.
+     *         {@code 0} threads disables multi-threaded processing.
      */
-    private int numThreadsConverter(String executionThreadsString) {
+    static Integer numThreadsConverter(String executionThreadsString, int numberOfProcessors) {
+        if (executionThreadsString == null) {
+          return null;
+        }
         boolean isCoreMultiplied = executionThreadsString.endsWith("C");
         if (isCoreMultiplied) {
             executionThreadsString =
@@ -409,13 +414,17 @@ public class PmdReport extends AbstractPmdReport {
                     throw new IllegalArgumentException(
                             "Invalid threads core multiplier value: '" + f + "C'. Value must be positive.");
                 }
-                return (int) (f * Runtime.getRuntime().availableProcessors());
+                return (int) (f * numberOfProcessors);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("'" + executionThreadsString + "' is not a float or integer");
             }
         }
         try {
-            return Integer.parseInt(executionThreadsString);
+            int numberOfThreads = Integer.parseInt(executionThreadsString);
+            if (numberOfThreads < 0) {
+              throw new IllegalArgumentException("Invalid threads '" + numberOfThreads + "'. Value must not be negative.");
+            }
+            return numberOfThreads;
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("'" + executionThreadsString + "' is not an integer");
         }
