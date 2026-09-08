@@ -608,14 +608,14 @@ public class PmdReport extends AbstractPmdReport {
             return Collections.emptyList();
         }
 
-        Toolchain toolchain = toolchainManager.getToolchainFromBuildContext("jdk", session);
+        Toolchain toolchain = serviceExecutor.getToolchain(getJdkToolchain());
         if (toolchain == null) {
             List<Toolchain> toolchains =
                     toolchainManager.getToolchains(session, "jdk", Collections.singletonMap("version", targetJdk));
             if (toolchains != null && !toolchains.isEmpty()) {
                 if (toolchains.size() > 1) {
                     getLog().warn("More than one toolchain found for jdk " + targetJdk + ": " + toolchains
-                            + " - Using the first toolchain.");
+                            + " - Using the first toolchain. Consider using <jdkToolchain> configuration parameter.");
                 }
                 toolchain = toolchains.get(0);
             }

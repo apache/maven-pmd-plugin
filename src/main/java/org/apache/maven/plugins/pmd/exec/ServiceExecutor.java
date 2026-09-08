@@ -45,7 +45,7 @@ abstract class ServiceExecutor {
         this.sessionProvider = sessionProvider;
     }
 
-    protected final Toolchain getToolchain(Map<String, String> jdkToolchain) {
+    public final Toolchain getToolchain(Map<String, String> jdkToolchain) {
         Toolchain tc = null;
 
         if (jdkToolchain != null) {
