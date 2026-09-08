@@ -608,10 +608,15 @@ public class PmdReport extends AbstractPmdReport {
             return Collections.emptyList();
         }
 
-        List<Toolchain> toolchains =
-                toolchainManager.getToolchains(session, "jdk", Collections.singletonMap("version", targetJdk));
-        if (toolchains != null && !toolchains.isEmpty()) {
-            Toolchain toolchain = toolchains.get(0);
+        Toolchain toolchain = toolchainManager.getToolchainFromBuildContext("jdk", session);
+        if (toolchain == null) {
+            List<Toolchain> toolchains =
+                    toolchainManager.getToolchains(session, "jdk", Collections.singletonMap("version", targetJdk));
+            if (toolchains != null && !toolchains.isEmpty()) {
+                toolchain = toolchains.get(0);
+            }
+        }
+        if (toolchain != null) {
             String javaPath = toolchain.findTool("java");
 
             if (javaPath != null) {
