@@ -52,6 +52,9 @@ abstract class ServiceExecutor {
             List<Toolchain> tcs = toolchainManager.getToolchains(sessionProvider.get(), "jdk", jdkToolchain);
             if (tcs != null && !tcs.isEmpty()) {
                 tc = tcs.get(0);
+                if (tcs.size() > 1) {
+                    LOG.warn("More than one toolchain found: {} - Using the first toolchain.", tcs);
+                }
             }
         }
 

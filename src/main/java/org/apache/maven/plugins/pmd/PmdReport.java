@@ -613,6 +613,10 @@ public class PmdReport extends AbstractPmdReport {
             List<Toolchain> toolchains =
                     toolchainManager.getToolchains(session, "jdk", Collections.singletonMap("version", targetJdk));
             if (toolchains != null && !toolchains.isEmpty()) {
+                if (toolchains.size() > 1) {
+                    getLog().warn("More than one toolchain found for jdk " + targetJdk + ": " + toolchains
+                            + " - Using the first toolchain.");
+                }
                 toolchain = toolchains.get(0);
             }
         }
