@@ -28,7 +28,7 @@ under the License.
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javaVersion>11</javaVersion>
+    <javaVersion>17</javaVersion>
   </properties>
 
   <build>
