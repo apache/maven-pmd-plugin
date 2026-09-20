@@ -17,19 +17,20 @@
  * under the License.
  */
 
+import groovy.transform.Field
+
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.*;
 import java.util.*;
 
-String[] modules = { "mod-1", "mod-2", "mod-3" };
-String[] paths =
-{
+String[] modules = [ "mod-1", "mod-2", "mod-3" ] as String[];
+@Field String[] paths = [
     "target/site/pmd.html",
     "target/site/cpd.html",
     "target/pmd.xml",
     "target/cpd.xml",
-};
+] as String[];
 
 // files must exist in every module
 for ( String module : modules )
@@ -83,7 +84,7 @@ void checkEncoding( String module, String encoding )
             continue;
         }
         File file = new File( basedir, module + '/' + path );
-        content = FileUtils.fileRead( file, encoding );
+        String content = FileUtils.fileRead( file, encoding );
         if ( !content.startsWith( "<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>" ) )
         {
             throw new IOException( "wrong XML encoding declaration for " + file );
