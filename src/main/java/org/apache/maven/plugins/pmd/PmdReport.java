@@ -64,8 +64,8 @@ import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 public class PmdReport extends AbstractPmdReport {
     /**
      * The target JDK to analyze based on. Should match the source used in the compiler plugin.
-     * Valid values depend on the used PMD version. Most common values are
-     * <code>8</code>, <code>11</code>, <code>17</code>, <code>21</code>, and <code>25</code>.
+     * Valid values depend on the used PMD version.
+     * Most common values are numbers which are equal to JDKs vendors offer LTS for.
      *
      * <p>The full list of supported Java versions for each PMD version is available at
      * <a href="https://docs.pmd-code.org/latest/pmd_languages_java.html">Java support (PMD)</a>.</p>
