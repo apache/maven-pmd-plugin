@@ -379,8 +379,10 @@ public class PmdReport extends AbstractPmdReport {
             filesToProcess = getFilesToProcess();
 
             if (filesToProcess.isEmpty() && !"java".equals(language)) {
-                getLog().warn("No files found to process. Did you forget to add additional source directories?"
+                getLog().info("No files found to process. Did you forget to add additional source directories?"
                         + " (see also build-helper-maven-plugin)");
+                // When there are no files found to process, we do not need to process
+                return;
             }
         } catch (IOException e) {
             throw new MavenReportException("Can't get file list", e);
