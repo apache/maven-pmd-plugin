@@ -184,10 +184,6 @@ public class PmdExecutor extends Executor {
         if (request.getRulesets().isEmpty()) {
             LOG.debug("Skipping PMD execution as no rulesets are defined.");
         } else {
-            if (request.getBenchmarkOutputLocation() != null) {
-                TimeTracker.startGlobalTracking();
-            }
-
             try {
                 report = processFilesWithPMD(configuration, files);
             } finally {
@@ -270,7 +266,11 @@ public class PmdExecutor extends Executor {
         return String.join(System.lineSeparator(), errorsAsString);
     }
 
-    private void writeBenchmarkReport(TimingReport timingReport, String benchmarkOutputLocation, String encoding) {
+    void writeBenchmarkReport(TimingReport timingReport, String benchmarkOutputLocation, String encoding) {
+        if (timingReport == null) {
+            LOG.warn("Unable to generate benchmark file: no timing report was produced");
+            return;
+        }
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(benchmarkOutputLocation), encoding)) {
             final TimingReportRenderer renderer = new TextTimingReportRenderer();
             renderer.render(timingReport, writer);
