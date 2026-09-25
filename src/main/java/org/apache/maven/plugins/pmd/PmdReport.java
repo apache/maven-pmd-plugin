@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import net.sourceforge.pmd.renderers.Renderer;
@@ -329,6 +330,8 @@ public class PmdReport extends AbstractPmdReport {
         try {
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
+            Map<File, PmdFileInfo> filesToProcess = getFilesToProcess();
+
             PmdReportRenderer renderer = new PmdReportRenderer(
                     getLog(),
                     getSink(),
@@ -347,6 +350,8 @@ public class PmdReport extends AbstractPmdReport {
             }
 
             renderer.render();
+        } catch (IOException e) {
+            throw new MavenReportException("Failed to determine files to process for PMD", e);
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }
@@ -375,6 +380,7 @@ public class PmdReport extends AbstractPmdReport {
             return;
         }
 
+        Map<File, PmdFileInfo> filesToProcess;
         try {
             filesToProcess = getFilesToProcess();
 
