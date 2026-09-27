@@ -82,7 +82,7 @@ Here's a historical overview about the default PMD version used:
 
 |                               maven-pmd-plugin                               |                         PMD                         |
 |:----------------------------------------------------------------------------:|:---------------------------------------------------:|
-| [3.29.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.29.0/) | [7.27.0](https://docs.pmd-code.org/pmd-doc-7.27.0/) |
+| [3.29.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.29.0/) | [7.28.0](https://docs.pmd-code.org/pmd-doc-7.28.0/) |
 | [3.28.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.28.0/) | [7.17.0](https://docs.pmd-code.org/pmd-doc-7.17.0/) |
 | [3.27.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.27.0/) | [7.14.0](https://docs.pmd-code.org/pmd-doc-7.14.0/) |
 | [3.26.0](https://maven.apache.org/plugins-archives/maven-pmd-plugin-3.26.0/) |  [7.7.0](https://docs.pmd-code.org/pmd-doc-7.7.0/)  |
