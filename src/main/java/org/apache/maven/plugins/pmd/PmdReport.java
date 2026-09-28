@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -377,13 +378,6 @@ public class PmdReport extends AbstractPmdReport {
 
         try {
             filesToProcess = getFilesToProcess();
-
-            if (filesToProcess.isEmpty() && !"java".equals(language)) {
-                getLog().info("No files found to process. Did you forget to add additional source directories?"
-                        + " (see also build-helper-maven-plugin)");
-                // When there are no files found to process, we do not need to process
-                return;
-            }
         } catch (IOException e) {
             throw new MavenReportException("Can't get file list", e);
         }
@@ -409,8 +403,32 @@ public class PmdReport extends AbstractPmdReport {
         request.setExecutionThreads(
                 numThreadsConverter(executionThreads, Runtime.getRuntime().availableProcessors()));
 
+        if (filesToProcess.isEmpty()) {
+            // When there are no files found to process, we do not need to execute PMD
+            getLog().info("No files found to process. Skipping PMD execution.");
+            // create an empty report for the check mojo
+            createEmptyPmdResult();
+            return;
+        }
+
         getLog().info("PMD version: " + AbstractPmdReport.getPmdVersion());
         pmdResult = serviceExecutor.execute(request);
+    }
+
+    private void createEmptyPmdResult() throws MavenReportException {
+        try {
+            Path pmdXml = targetDirectory.toPath().resolve("pmd.xml");
+            Files.createDirectories(pmdXml.getParent());
+            Files.write(pmdXml, Collections.singletonList("<pmd></pmd>"), Charset.forName(getOutputEncoding()));
+            if (includeXmlInReports) {
+                Path reportPmdXml = getReportOutputDirectory().toPath().resolve("pmd.xml");
+                Files.createDirectories(reportPmdXml.getParent());
+                Files.copy(pmdXml, reportPmdXml);
+            }
+            pmdResult = new PmdResult(pmdXml.toFile(), getOutputEncoding());
+        } catch (IOException e) {
+            throw new MavenReportException("Couldn't create empty pmd.xml file", e);
+        }
     }
 
     /**

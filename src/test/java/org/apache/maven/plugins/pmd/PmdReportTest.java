@@ -445,6 +445,10 @@ public class PmdReportTest {
 
         File generatedReport = new File(outputDir, filename);
         assertFalse(generatedReport.exists());
+
+        // the fact, the PMD execution has been skipped, should be logged
+        String output = CapturingPrintStream.getOutput();
+        assertTrue(output.contains("Skipping org.apache.maven.plugins:maven-pmd-plugin"));
     }
 
     @Basedir("/unit/empty-report")

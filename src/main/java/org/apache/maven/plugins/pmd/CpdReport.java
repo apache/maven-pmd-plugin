@@ -22,6 +22,10 @@ import javax.inject.Inject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Locale;
 
 import org.apache.maven.plugins.annotations.Mojo;
@@ -196,11 +200,35 @@ public class CpdReport extends AbstractPmdReport {
             request.setReportOutputDirectory(getReportOutputDirectory().getAbsolutePath());
             request.setJdkToolchain(getJdkToolchain());
 
+            if (filesToProcess.isEmpty()) {
+                // When there are no files found to process, we do not need to execute CPD
+                getLog().info("No files found to process. Skipping CPD execution.");
+                // create an empty report for the check mojo
+                createEmptyCpdResult();
+                return;
+            }
+
             cpdResult = serviceExecutor.execute(request);
         } catch (UnsupportedEncodingException e) {
             throw new MavenReportException("Encoding '" + getInputEncoding() + "' is not supported.", e);
         } catch (IOException e) {
             throw new MavenReportException(e.getMessage(), e);
+        }
+    }
+
+    private void createEmptyCpdResult() throws MavenReportException {
+        try {
+            Path cpdXml = targetDirectory.toPath().resolve("cpd.xml");
+            Files.createDirectories(cpdXml.getParent());
+            Files.write(cpdXml, Collections.singletonList("<pmd-cpd></pmd-cpd>"), Charset.forName(getOutputEncoding()));
+            if (includeXmlInReports) {
+                Path reportCpdXml = getReportOutputDirectory().toPath().resolve("cpd.xml");
+                Files.createDirectories(reportCpdXml.getParent());
+                Files.copy(cpdXml, reportCpdXml);
+            }
+            cpdResult = new CpdResult(cpdXml.toFile(), getOutputEncoding());
+        } catch (IOException e) {
+            throw new MavenReportException("Couldn't create empty cpd.xml file", e);
         }
     }
 
