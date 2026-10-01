@@ -62,6 +62,7 @@ import org.slf4j.LoggerFactory;
  * Executes PMD with the configuration provided via {@link PmdRequest}.
  */
 public class PmdExecutor extends Executor {
+    private static final Object BENCHMARK_LOCK = new Object();
     private static final Logger LOG = LoggerFactory.getLogger(PmdExecutor.class);
 
     public PmdResult fork(String javaExecutable) throws MavenReportException {
@@ -174,9 +175,6 @@ public class PmdExecutor extends Executor {
         if (request.getExecutionThreads() != null) {
             configuration.setThreads(request.getExecutionThreads());
         }
-        if (request.getBenchmarkOutputLocation() != null) {
-            TimeTracker.startGlobalTracking();
-        }
         List<File> files = request.getFiles();
 
         Report report = null;
@@ -184,28 +182,32 @@ public class PmdExecutor extends Executor {
         if (request.getRulesets().isEmpty()) {
             LOG.debug("Skipping PMD execution as no rulesets are defined.");
         } else {
-            if (request.getBenchmarkOutputLocation() != null) {
-                TimeTracker.startGlobalTracking();
-            }
+            boolean benchmark = request.getBenchmarkOutputLocation() != null;
+            Object executionLock = benchmark ? BENCHMARK_LOCK : request;
+            synchronized (executionLock) {
+                if (benchmark) {
+                    TimeTracker.startGlobalTracking();
+                }
 
-            try {
-                report = processFilesWithPMD(configuration, files);
-            } finally {
-                if (request.getAuxClasspath() != null) {
-                    ClassLoader classLoader = configuration.getClassLoader();
-                    if (classLoader instanceof Closeable) {
-                        Closeable closeable = (Closeable) classLoader;
-                        try {
-                            closeable.close();
-                        } catch (IOException ex) {
-                            // ignore
+                try {
+                    report = processFilesWithPMD(configuration, files);
+                } finally {
+                    if (request.getAuxClasspath() != null) {
+                        ClassLoader classLoader = configuration.getClassLoader();
+                        if (classLoader instanceof Closeable) {
+                            Closeable closeable = (Closeable) classLoader;
+                            try {
+                                closeable.close();
+                            } catch (IOException ex) {
+                                // ignore
+                            }
                         }
                     }
-                }
-                if (request.getBenchmarkOutputLocation() != null) {
-                    TimingReport timingReport = TimeTracker.stopGlobalTracking();
-                    writeBenchmarkReport(
-                            timingReport, request.getBenchmarkOutputLocation(), request.getOutputEncoding());
+                    if (benchmark) {
+                        TimingReport timingReport = TimeTracker.stopGlobalTracking();
+                        writeBenchmarkReport(
+                                timingReport, request.getBenchmarkOutputLocation(), request.getOutputEncoding());
+                    }
                 }
             }
         }
