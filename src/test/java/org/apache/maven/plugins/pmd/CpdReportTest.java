@@ -18,7 +18,6 @@
  */
 package org.apache.maven.plugins.pmd;
 
-import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -28,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,22 +34,10 @@ import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.api.plugin.testing.MojoTest;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.execution.DefaultMavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.internal.aether.DefaultRepositorySystemSessionFactory;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.testing.PlexusExtension;
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.repository.RemoteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.w3c.dom.Document;
 
 import static org.apache.maven.api.plugin.testing.MojoExtension.getBasedir;
@@ -65,21 +51,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
  */
-@MojoTest
+@MojoTest(realRepositorySession = true)
 public class CpdReportTest {
-
-    @Inject
-    private MavenSession mavenSession;
-
-    @Inject
-    private DefaultRepositorySystemSessionFactory repoSessionFactory;
-
-    @Inject
-    private MavenProject testMavenProject;
-
-    @Inject
-    private MojoExecution mojoExecution;
-
     /**
      * Checks whether the string <code>contained</code> is contained in
      * the given <code>text</code>, ignoring case.
@@ -92,27 +65,9 @@ public class CpdReportTest {
         return text.toLowerCase(Locale.ROOT).contains(contains.toLowerCase(Locale.ROOT));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @BeforeEach
-    public void setUp() {
-        ArtifactRepository localRepo = Mockito.mock(ArtifactRepository.class);
-        Mockito.when(localRepo.getBasedir())
-                .thenReturn(new File(PlexusExtension.getBasedir(), "target/local-repo").getAbsolutePath());
-
-        MavenExecutionRequest request = new DefaultMavenExecutionRequest();
-        request.setLocalRepository(localRepo);
-
-        RemoteRepository centralRepo =
-                new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2").build();
-
-        DefaultRepositorySystemSession systemSession = repoSessionFactory.newRepositorySession(request);
-        Mockito.when(mavenSession.getRepositorySession()).thenReturn(systemSession);
-        Mockito.when(testMavenProject.getRemoteProjectRepositories())
-                .thenReturn(Collections.singletonList(centralRepo));
-
-        Mockito.when(mojoExecution.getPlugin()).thenReturn(new Plugin());
+    public void setUp() throws Exception {
+        CapturingPrintStream.init(true);
     }
 
     /**
