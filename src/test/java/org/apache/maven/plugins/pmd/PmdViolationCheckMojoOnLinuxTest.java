@@ -179,8 +179,16 @@ public class PmdViolationCheckMojoOnLinuxTest {
             List<CharSequence> violationMessages = messages.getAllValues().stream()
                     .filter(message -> message.toString().startsWith("PMD "))
                     .collect(Collectors.toList());
-            assertEquals(5, violationMessages.stream().filter(message -> message.toString().startsWith("PMD Failure:")).count());
-            assertEquals(3, violationMessages.stream().filter(message -> message.toString().startsWith("PMD Warning:")).count());
+            assertEquals(
+                    5,
+                    violationMessages.stream()
+                            .filter(message -> message.toString().startsWith("PMD Failure:"))
+                            .count());
+            assertEquals(
+                    3,
+                    violationMessages.stream()
+                            .filter(message -> message.toString().startsWith("PMD Warning:"))
+                            .count());
         }
     }
 }

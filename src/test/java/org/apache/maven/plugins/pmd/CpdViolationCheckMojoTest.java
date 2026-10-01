@@ -115,7 +115,11 @@ public class CpdViolationCheckMojoTest {
             List<CharSequence> violationMessages = messages.getAllValues().stream()
                     .filter(message -> message.toString().startsWith("CPD "))
                     .collect(Collectors.toList());
-            assertEquals(1, violationMessages.stream().filter(message -> message.toString().startsWith("CPD Failure:")).count());
+            assertEquals(
+                    1,
+                    violationMessages.stream()
+                            .filter(message -> message.toString().startsWith("CPD Failure:"))
+                            .count());
         }
     }
 }
