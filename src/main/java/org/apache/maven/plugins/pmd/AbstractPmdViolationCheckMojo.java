@@ -66,15 +66,16 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
     protected boolean aggregate;
 
     /**
-     * Print details of all violations to build output. When enabled, this takes
-     * precedence over {@code printFailingErrors}.
+     * Print details of all violations (warnings and failures) to the build output.
+     * When enabled, this takes precedence over {@code printFailingErrors}.
+     * For PMD, use {@code failurePriority} to configure which priority level counts as a failure.
      */
     @Parameter(property = "pmd.verbose", defaultValue = "false")
     private boolean verbose;
 
     /**
-     * Print details of errors that cause build failure when {@code verbose} is
-     * disabled. This option is ignored when {@code verbose} is enabled.
+     * Print details of errors that cause build failure. This option is ignored when {@code verbose} is enabled.
+     * For PMD, use {@code failurePriority} to configure which priority level counts as a failure.
      *
      * @since 3.0
      */
