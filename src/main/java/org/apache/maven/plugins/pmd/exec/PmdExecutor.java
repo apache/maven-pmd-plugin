@@ -270,7 +270,7 @@ public class PmdExecutor extends Executor {
         return String.join(System.lineSeparator(), errorsAsString);
     }
 
-    private void writeBenchmarkReport(TimingReport timingReport, String benchmarkOutputLocation, String encoding) {
+    void writeBenchmarkReport(TimingReport timingReport, String benchmarkOutputLocation, String encoding) {
         if (timingReport == null) {
             LOG.warn("Skipping benchmark report because no timing report was produced.");
             return;

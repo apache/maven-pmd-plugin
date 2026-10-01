@@ -18,7 +18,6 @@
  */
 package org.apache.maven.plugins.pmd.exec;
 
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -33,10 +32,7 @@ class PmdExecutorTest {
         Path output = Files.createTempFile("pmd-benchmark", ".txt");
         Files.delete(output);
 
-        Method writeBenchmarkReport = PmdExecutor.class.getDeclaredMethod(
-                "writeBenchmarkReport", net.sourceforge.pmd.benchmark.TimingReport.class, String.class, String.class);
-        writeBenchmarkReport.setAccessible(true);
-        writeBenchmarkReport.invoke(new PmdExecutor(new PmdRequest()), null, output.toString(), "UTF-8");
+        new PmdExecutor(new PmdRequest()).writeBenchmarkReport(null, output.toString(), "UTF-8");
 
         assertFalse(Files.exists(output));
     }
