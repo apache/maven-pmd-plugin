@@ -18,31 +18,16 @@
  */
 package org.apache.maven.plugins.pmd;
 
-import javax.inject.Inject;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Collections;
 
 import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.api.plugin.testing.MojoTest;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.execution.DefaultMavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.internal.aether.DefaultRepositorySystemSessionFactory;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.testing.PlexusExtension;
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.repository.RemoteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import static org.apache.maven.api.plugin.testing.MojoExtension.getBasedir;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -51,41 +36,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests behavior when there are no files to process.
  */
-@MojoTest
+@MojoTest(realRepositorySession = true)
 @Basedir("/unit/default-configuration-no-files")
 public class CpdReportNoFilesTest {
-
-    @Inject
-    private MavenSession mavenSession;
-
-    @Inject
-    private DefaultRepositorySystemSessionFactory repoSessionFactory;
-
-    @Inject
-    private MavenProject testMavenProject;
-
-    @Inject
-    private MojoExecution mojoExecution;
-
     @BeforeEach
     public void setUp() {
         CapturingPrintStream.init(true);
-        ArtifactRepository localRepo = Mockito.mock(ArtifactRepository.class);
-        Mockito.when(localRepo.getBasedir())
-                .thenReturn(new File(PlexusExtension.getBasedir(), "target/local-repo").getAbsolutePath());
-
-        MavenExecutionRequest request = new DefaultMavenExecutionRequest();
-        request.setLocalRepository(localRepo);
-
-        RemoteRepository centralRepo =
-                new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2").build();
-
-        DefaultRepositorySystemSession systemSession = repoSessionFactory.newRepositorySession(request);
-        Mockito.when(mavenSession.getRepositorySession()).thenReturn(systemSession);
-        Mockito.when(testMavenProject.getRemoteProjectRepositories())
-                .thenReturn(Collections.singletonList(centralRepo));
-
-        Mockito.when(mojoExecution.getPlugin()).thenReturn(new Plugin());
     }
 
     @InjectMojo(goal = "cpd", pom = "cpd-default-configuration-plugin-config.xml")
