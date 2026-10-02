@@ -20,6 +20,7 @@ package org.apache.maven.plugins.pmd;
 
 import javax.inject.Inject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -27,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -150,9 +152,13 @@ public class CpdReport extends AbstractPmdReport {
         try {
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
+            Map<File, PmdFileInfo> filesToProcess = getFilesToProcess();
+
             CpdReportRenderer renderer = new CpdReportRenderer(
                     getSink(), i18n, locale, filesToProcess, cpdResult.getDuplications(), isAggregator());
             renderer.render();
+        } catch (IOException e) {
+            throw new MavenReportException("Failed to determine files to process for CPD", e);
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }
@@ -182,7 +188,7 @@ public class CpdReport extends AbstractPmdReport {
         }
 
         try {
-            filesToProcess = getFilesToProcess();
+            Map<File, PmdFileInfo> filesToProcess = getFilesToProcess();
 
             CpdRequest request = new CpdRequest();
             request.setMinimumTokens(minimumTokens);
