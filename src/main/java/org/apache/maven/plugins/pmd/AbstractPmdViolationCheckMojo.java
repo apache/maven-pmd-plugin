@@ -21,6 +21,7 @@ package org.apache.maven.plugins.pmd;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -65,13 +66,16 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
     protected boolean aggregate;
 
     /**
-     * Print details of check failures to build output.
+     * Print details of all violations (warnings and failures) to the build output.
+     * When enabled, this takes precedence over {@code printFailingErrors}.
+     * For PMD, use {@code failurePriority} to configure which priority level counts as a failure.
      */
     @Parameter(property = "pmd.verbose", defaultValue = "false")
     private boolean verbose;
 
     /**
-     * Print details of errors that cause build failure.
+     * Print details of errors that cause build failure. This option is ignored when {@code verbose} is enabled.
+     * For PMD, use {@code failurePriority} to configure which priority level counts as a failure.
      *
      * @since 3.0
      */
@@ -143,6 +147,8 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
 
                 if (verbose) {
                     printErrors(failures, warnings);
+                } else if (printFailingErrors) {
+                    printErrors(failures, Collections.emptyList());
                 }
 
                 final int failureCount = failures.size();
@@ -188,9 +194,6 @@ public abstract class AbstractPmdViolationCheckMojo<D> extends AbstractMojo {
             final int priority = getPriority(violation);
             if (priority <= failurePriority && !excludeFromFile.isExcludedFromFailure(violation)) {
                 failures.add(violation);
-                if (printFailingErrors) {
-                    printError(violation, "Failure");
-                }
             } else {
                 warnings.add(violation);
             }

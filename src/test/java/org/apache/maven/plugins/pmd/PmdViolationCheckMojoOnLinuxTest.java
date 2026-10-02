@@ -18,19 +18,28 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.api.plugin.testing.MojoTest;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.mockito.ArgumentCaptor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.condition.OS.LINUX;
 import static org.junit.jupiter.api.condition.OS.MAC;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -46,6 +55,8 @@ public class PmdViolationCheckMojoOnLinuxTest {
     @MojoParameter(name = "targetDirectory", value = "pmd-report")
     @Test
     public void testDefaultConfiguration(PmdViolationCheckMojo mojo) throws Exception {
+        Log log = mock(Log.class);
+        mojo.setLog(log);
         try {
             mojo.execute();
 
@@ -53,6 +64,13 @@ public class PmdViolationCheckMojoOnLinuxTest {
         } catch (final MojoFailureException e) {
             assertTrue(
                     e.getMessage().startsWith("PMD " + AbstractPmdReport.getPmdVersion() + " has found 8 violations."));
+            ArgumentCaptor<CharSequence> messages = ArgumentCaptor.forClass(CharSequence.class);
+            verify(log, atLeastOnce()).warn(messages.capture());
+            assertEquals(
+                    8,
+                    messages.getAllValues().stream()
+                            .filter(message -> message.toString().startsWith("PMD Failure:"))
+                            .count());
         }
     }
 
@@ -140,5 +158,37 @@ public class PmdViolationCheckMojoOnLinuxTest {
     public void testViolationExclusion(PmdViolationCheckMojo mojo) throws Exception {
         // this call shouldn't throw an exception, as the classes with violations have been excluded
         mojo.execute();
+    }
+
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-failandwarnonpriority-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "printFailingErrors", value = "true")
+    @Test
+    public void testVerboseTakesPrecedenceOverPrintFailingErrors(PmdViolationCheckMojo mojo) throws Exception {
+        Log log = mock(Log.class);
+        mojo.setLog(log);
+
+        try {
+            mojo.execute();
+            fail("MojoFailureException expected");
+        } catch (MojoFailureException expected) {
+            ArgumentCaptor<CharSequence> messages = ArgumentCaptor.forClass(CharSequence.class);
+            verify(log, atLeastOnce()).warn(messages.capture());
+            List<CharSequence> violationMessages = messages.getAllValues().stream()
+                    .filter(message -> message.toString().startsWith("PMD "))
+                    .collect(Collectors.toList());
+            assertEquals(
+                    5,
+                    violationMessages.stream()
+                            .filter(message -> message.toString().startsWith("PMD Failure:"))
+                            .count());
+            assertEquals(
+                    3,
+                    violationMessages.stream()
+                            .filter(message -> message.toString().startsWith("PMD Warning:"))
+                            .count());
+        }
     }
 }
