@@ -274,7 +274,7 @@ public class PmdExecutor extends Executor {
 
     void writeBenchmarkReport(TimingReport timingReport, String benchmarkOutputLocation, String encoding) {
         if (timingReport == null) {
-            LOG.warn("Skipping benchmark report because no timing report was produced.");
+            LOG.debug("Skipping benchmark report because no timing report was produced.");
             return;
         }
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(benchmarkOutputLocation), encoding)) {
