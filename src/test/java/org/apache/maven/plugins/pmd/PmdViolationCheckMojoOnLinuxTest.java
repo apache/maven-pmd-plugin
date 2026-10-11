@@ -165,6 +165,7 @@ public class PmdViolationCheckMojoOnLinuxTest {
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @MojoParameter(name = "targetDirectory", value = "pmd-report")
     @MojoParameter(name = "printFailingErrors", value = "true")
+    // note: verbose=true is set in pmd-check-failandwarnonpriority-plugin-config.xml already
     @Test
     public void testVerboseTakesPrecedenceOverPrintFailingErrors(PmdViolationCheckMojo mojo) throws Exception {
         Log log = mock(Log.class);
