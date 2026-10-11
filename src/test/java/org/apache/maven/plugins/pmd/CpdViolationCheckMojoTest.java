@@ -18,16 +18,25 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.api.plugin.testing.MojoTest;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -84,5 +93,33 @@ public class CpdViolationCheckMojoTest {
     public void testExclusionsConfiguration(CpdViolationCheckMojo mojo) throws Exception {
         // this call shouldn't throw an exception, as the classes with duplications have been excluded
         mojo.execute();
+    }
+
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd-check", pom = "cpd-check-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "cpd-report")
+    @MojoParameter(name = "verbose", value = "true")
+    @MojoParameter(name = "printFailingErrors", value = "true")
+    @Test
+    public void testVerboseTakesPrecedenceOverPrintFailingErrors(CpdViolationCheckMojo mojo) throws Exception {
+        Log log = mock(Log.class);
+        mojo.setLog(log);
+
+        try {
+            mojo.execute();
+            fail("MojoFailureException expected");
+        } catch (MojoFailureException expected) {
+            ArgumentCaptor<CharSequence> messages = ArgumentCaptor.forClass(CharSequence.class);
+            verify(log, atLeastOnce()).warn(messages.capture());
+            List<CharSequence> violationMessages = messages.getAllValues().stream()
+                    .filter(message -> message.toString().startsWith("CPD "))
+                    .collect(Collectors.toList());
+            assertEquals(
+                    1,
+                    violationMessages.stream()
+                            .filter(message -> message.toString().startsWith("CPD Failure:"))
+                            .count());
+        }
     }
 }
