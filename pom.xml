@@ -82,15 +82,15 @@ under the License.
 
   <properties>
     <javaVersion>8</javaVersion>
-    <mavenVersion>3.9.16</mavenVersion>
+    <mavenVersion>3.10.0</mavenVersion>
     <pmdVersion>7.28.0</pmdVersion>
-    <slf4jVersion>1.7.36</slf4jVersion>
+    <slf4jVersion>2.0.19</slf4jVersion>
     <doxiaVersion>2.1.0</doxiaVersion>
     <sitePluginVersion>${version.maven-site-plugin}</sitePluginVersion>
     <project.build.outputTimestamp>2025-10-07T05:57:06Z</project.build.outputTimestamp>
 
     <!-- test -->
-    <it.resolverVersion>1.9.27</it.resolverVersion>
+    <it.resolverVersion>2.0.24</it.resolverVersion>
     <it.projectInfoReportsPluginVersion>3.9.0</it.projectInfoReportsPluginVersion>
     <it.jxrPluginVersion>3.6.0</it.jxrPluginVersion>
   </properties>
@@ -270,7 +270,7 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.apache.maven.resolver</groupId>
-      <artifactId>maven-resolver-transport-http</artifactId>
+      <artifactId>maven-resolver-transport-apache</artifactId>
       <version>${it.resolverVersion}</version>
       <scope>test</scope>
     </dependency>
@@ -320,7 +320,7 @@ under the License.
             <ignoredDependencies>
               <!-- needed for AbstractPmdReportTestCase#generateReport  -->
               <ignoredDependency>org.apache.maven.resolver:maven-resolver-connector-basic:jar</ignoredDependency>
-              <ignoredDependency>org.apache.maven.resolver:maven-resolver-transport-http:jar</ignoredDependency>
+              <ignoredDependency>org.apache.maven.resolver:maven-resolver-transport-apache:jar</ignoredDependency>
               <!-- Runtime scope-->
               <ignoredDependency>net.sourceforge.pmd:*:jar</ignoredDependency>
             </ignoredDependencies>
