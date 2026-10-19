@@ -85,7 +85,7 @@ under the License.
     <mavenVersion>3.10.0</mavenVersion>
     <pmdVersion>7.28.0</pmdVersion>
     <slf4jVersion>2.0.19</slf4jVersion>
-    <doxiaVersion>2.1.0</doxiaVersion>
+    <doxiaVersion>2.2.0</doxiaVersion>
     <sitePluginVersion>${version.maven-site-plugin}</sitePluginVersion>
     <project.build.outputTimestamp>2025-10-07T05:57:06Z</project.build.outputTimestamp>
 
