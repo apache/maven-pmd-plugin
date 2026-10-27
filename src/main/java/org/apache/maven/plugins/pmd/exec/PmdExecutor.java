@@ -183,30 +183,24 @@ public class PmdExecutor extends Executor {
             LOG.debug("Skipping PMD execution as no rulesets are defined.");
         } else {
             boolean benchmark = request.getBenchmarkOutputLocation() != null;
-            Object executionLock = benchmark ? BENCHMARK_LOCK : request;
-            synchronized (executionLock) {
-                if (benchmark) {
+            if (benchmark) {
+                report = withBenchmarkLock(() -> {
                     TimeTracker.startGlobalTracking();
-                }
-
-                try {
-                    report = processFilesWithPMD(configuration, files);
-                } finally {
-                    if (request.getAuxClasspath() != null) {
-                        ClassLoader classLoader = configuration.getClassLoader();
-                        if (classLoader instanceof Closeable) {
-                            Closeable closeable = (Closeable) classLoader;
-                            try {
-                                closeable.close();
-                            } catch (IOException ex) {
-                                // ignore
-                            }
-                        }
-                    }
-                    if (benchmark) {
+                    try {
+                        return processFilesWithPMD(configuration, files);
+                    } finally {
+                        closeAuxiliaryClassLoader(configuration);
                         TimingReport timingReport = TimeTracker.stopGlobalTracking();
                         writeBenchmarkReport(
                                 timingReport, request.getBenchmarkOutputLocation(), request.getOutputEncoding());
+                    }
+                });
+            } else {
+                synchronized (request) {
+                    try {
+                        report = processFilesWithPMD(configuration, files);
+                    } finally {
+                        closeAuxiliaryClassLoader(configuration);
                     }
                 }
             }
@@ -253,6 +247,30 @@ public class PmdExecutor extends Executor {
         }
 
         return new PmdResult(new File(request.getTargetDirectory(), "pmd.xml"), request.getOutputEncoding());
+    }
+
+    private void closeAuxiliaryClassLoader(PMDConfiguration configuration) {
+        if (request.getAuxClasspath() != null) {
+            ClassLoader classLoader = configuration.getClassLoader();
+            if (classLoader instanceof Closeable) {
+                try {
+                    ((Closeable) classLoader).close();
+                } catch (IOException ex) {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    static <T> T withBenchmarkLock(BenchmarkExecution<T> execution) throws MavenReportException {
+        synchronized (BENCHMARK_LOCK) {
+            return execution.execute();
+        }
+    }
+
+    @FunctionalInterface
+    interface BenchmarkExecution<T> {
+        T execute() throws MavenReportException;
     }
 
     /**
