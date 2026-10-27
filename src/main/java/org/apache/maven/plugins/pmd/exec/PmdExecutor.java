@@ -35,6 +35,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.PmdAnalysis;
@@ -62,7 +64,8 @@ import org.slf4j.LoggerFactory;
  * Executes PMD with the configuration provided via {@link PmdRequest}.
  */
 public class PmdExecutor extends Executor {
-    private static final Object BENCHMARK_LOCK = new Object();
+    // TimeTracker is process-global; ordinary runs may share time, but benchmark runs need isolation.
+    private static final ReentrantReadWriteLock TIME_TRACKER_LOCK = new ReentrantReadWriteLock(true);
     private static final Logger LOG = LoggerFactory.getLogger(PmdExecutor.class);
 
     public PmdResult fork(String javaExecutable) throws MavenReportException {
@@ -183,8 +186,8 @@ public class PmdExecutor extends Executor {
             LOG.debug("Skipping PMD execution as no rulesets are defined.");
         } else {
             boolean benchmark = request.getBenchmarkOutputLocation() != null;
-            if (benchmark) {
-                report = withBenchmarkLock(() -> {
+            report = withTimeTrackerLock(benchmark, () -> {
+                if (benchmark) {
                     TimeTracker.startGlobalTracking();
                     try {
                         return processFilesWithPMD(configuration, files);
@@ -194,16 +197,15 @@ public class PmdExecutor extends Executor {
                         writeBenchmarkReport(
                                 timingReport, request.getBenchmarkOutputLocation(), request.getOutputEncoding());
                     }
-                });
-            } else {
+                }
                 synchronized (request) {
                     try {
-                        report = processFilesWithPMD(configuration, files);
+                        return processFilesWithPMD(configuration, files);
                     } finally {
                         closeAuxiliaryClassLoader(configuration);
                     }
                 }
-            }
+            });
         }
 
         if (report != null && !report.getProcessingErrors().isEmpty()) {
@@ -262,9 +264,13 @@ public class PmdExecutor extends Executor {
         }
     }
 
-    static <T> T withBenchmarkLock(BenchmarkExecution<T> execution) throws MavenReportException {
-        synchronized (BENCHMARK_LOCK) {
+    static <T> T withTimeTrackerLock(boolean benchmark, BenchmarkExecution<T> execution) throws MavenReportException {
+        Lock lock = benchmark ? TIME_TRACKER_LOCK.writeLock() : TIME_TRACKER_LOCK.readLock();
+        lock.lock();
+        try {
             return execution.execute();
+        } finally {
+            lock.unlock();
         }
     }
 

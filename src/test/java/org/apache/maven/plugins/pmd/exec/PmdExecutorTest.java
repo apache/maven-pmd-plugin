@@ -58,7 +58,7 @@ class PmdExecutorTest {
 
         Thread first = new Thread(() -> {
             try {
-                PmdExecutor.withBenchmarkLock(() -> {
+                PmdExecutor.withTimeTrackerLock(true, () -> {
                     TimeTracker.startGlobalTracking();
                     recordExecution(activeExecutions, maximumActiveExecutions);
                     firstEntered.countDown();
@@ -77,7 +77,7 @@ class PmdExecutorTest {
         Thread second = new Thread(() -> {
             secondAttempting.countDown();
             try {
-                PmdExecutor.withBenchmarkLock(() -> {
+                PmdExecutor.withTimeTrackerLock(true, () -> {
                     TimeTracker.startGlobalTracking();
                     secondEntered.countDown();
                     recordExecution(activeExecutions, maximumActiveExecutions);
@@ -119,6 +119,141 @@ class PmdExecutorTest {
         }
     }
 
+    @RepeatedTest(5)
+    void benchmarkExecutionExcludesNonBenchmarkExecutions() throws Exception {
+        CountDownLatch benchmarkEntered = new CountDownLatch(1);
+        CountDownLatch releaseBenchmark = new CountDownLatch(1);
+        CountDownLatch normalAttempting = new CountDownLatch(1);
+        CountDownLatch normalEntered = new CountDownLatch(1);
+        CountDownLatch benchmarkStopped = new CountDownLatch(1);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+
+        Thread benchmark = new Thread(() -> {
+            try {
+                PmdExecutor.withTimeTrackerLock(true, () -> {
+                    TimeTracker.startGlobalTracking();
+                    benchmarkEntered.countDown();
+                    try {
+                        await(releaseBenchmark);
+                    } finally {
+                        TimeTracker.stopGlobalTracking();
+                        benchmarkStopped.countDown();
+                    }
+                    return null;
+                });
+            } catch (Throwable throwable) {
+                failure.compareAndSet(null, throwable);
+            }
+        });
+        Thread normal = new Thread(() -> {
+            normalAttempting.countDown();
+            try {
+                PmdExecutor.withTimeTrackerLock(false, () -> {
+                    assertEquals(
+                            0, benchmarkStopped.getCount(), "A non-benchmark run overlapped global benchmark tracking");
+                    normalEntered.countDown();
+                    return null;
+                });
+            } catch (Throwable throwable) {
+                failure.compareAndSet(null, throwable);
+            }
+        });
+
+        benchmark.start();
+        try {
+            assertTrue(benchmarkEntered.await(5, TimeUnit.SECONDS), "Benchmark execution did not start");
+            normal.start();
+            assertTrue(normalAttempting.await(5, TimeUnit.SECONDS), "Normal execution did not start");
+
+            boolean normalBlockedUntilTrackingStopped = awaitBlockedOrEntered(normal, normalEntered);
+
+            releaseBenchmark.countDown();
+            benchmark.join(TimeUnit.SECONDS.toMillis(5));
+            normal.join(TimeUnit.SECONDS.toMillis(5));
+
+            assertFalse(benchmark.isAlive(), "Benchmark execution did not finish");
+            assertFalse(normal.isAlive(), "Normal execution did not finish");
+            assertTrue(
+                    normalBlockedUntilTrackingStopped,
+                    "Normal execution entered while global benchmark tracking was active");
+            assertNull(failure.get());
+        } finally {
+            releaseBenchmark.countDown();
+            benchmark.join(TimeUnit.SECONDS.toMillis(5));
+            if (normal.getState() != Thread.State.NEW) {
+                normal.join(TimeUnit.SECONDS.toMillis(5));
+            }
+        }
+    }
+
+    @Test
+    void nonBenchmarkExecutionsCanOverlap() throws Exception {
+        CountDownLatch firstEntered = new CountDownLatch(1);
+        CountDownLatch releaseFirst = new CountDownLatch(1);
+        CountDownLatch secondEntered = new CountDownLatch(1);
+        AtomicInteger activeExecutions = new AtomicInteger();
+        AtomicInteger maximumActiveExecutions = new AtomicInteger();
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+
+        Thread first = new Thread(() ->
+                runNormalExecution(firstEntered, releaseFirst, activeExecutions, maximumActiveExecutions, failure));
+        Thread second = new Thread(() -> {
+            try {
+                PmdExecutor.withTimeTrackerLock(false, () -> {
+                    recordExecution(activeExecutions, maximumActiveExecutions);
+                    secondEntered.countDown();
+                    activeExecutions.decrementAndGet();
+                    return null;
+                });
+            } catch (Throwable throwable) {
+                failure.compareAndSet(null, throwable);
+            }
+        });
+
+        first.start();
+        try {
+            assertTrue(firstEntered.await(5, TimeUnit.SECONDS), "First normal execution did not start");
+            second.start();
+            assertTrue(secondEntered.await(5, TimeUnit.SECONDS), "Normal executions were unnecessarily serialized");
+            releaseFirst.countDown();
+            first.join(TimeUnit.SECONDS.toMillis(5));
+            second.join(TimeUnit.SECONDS.toMillis(5));
+
+            assertFalse(first.isAlive(), "First normal execution did not finish");
+            assertFalse(second.isAlive(), "Second normal execution did not finish");
+            assertEquals(2, maximumActiveExecutions.get());
+            assertNull(failure.get());
+        } finally {
+            releaseFirst.countDown();
+            first.join(TimeUnit.SECONDS.toMillis(5));
+            if (second.getState() != Thread.State.NEW) {
+                second.join(TimeUnit.SECONDS.toMillis(5));
+            }
+        }
+    }
+
+    private static void runNormalExecution(
+            CountDownLatch entered,
+            CountDownLatch release,
+            AtomicInteger active,
+            AtomicInteger maximum,
+            AtomicReference<Throwable> failure) {
+        try {
+            PmdExecutor.withTimeTrackerLock(false, () -> {
+                recordExecution(active, maximum);
+                entered.countDown();
+                try {
+                    await(release);
+                } finally {
+                    active.decrementAndGet();
+                }
+                return null;
+            });
+        } catch (Throwable throwable) {
+            failure.compareAndSet(null, throwable);
+        }
+    }
+
     private static void recordExecution(AtomicInteger active, AtomicInteger maximum) {
         int concurrent = active.incrementAndGet();
         maximum.accumulateAndGet(concurrent, Math::max);
@@ -136,10 +271,11 @@ class PmdExecutorTest {
     private static boolean awaitBlockedOrEntered(Thread thread, CountDownLatch entered) {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
         while (System.nanoTime() < deadline) {
-            if (thread.getState() == Thread.State.BLOCKED) {
+            Thread.State state = thread.getState();
+            if (state == Thread.State.BLOCKED || state == Thread.State.WAITING || state == Thread.State.TIMED_WAITING) {
                 return true;
             }
-            if (entered.getCount() == 0 || thread.getState() == Thread.State.TERMINATED) {
+            if (entered.getCount() == 0 || state == Thread.State.TERMINATED) {
                 return false;
             }
             Thread.yield();
