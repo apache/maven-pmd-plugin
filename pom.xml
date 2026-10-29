@@ -94,6 +94,52 @@ under the License.
     <it.jxrPluginVersion>3.6.0</it.jxrPluginVersion>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <!-- commons-beanutils 1.9.4 comes in through velocity-tools-generic (maven-reporting-impl) and is on the plugin runtime classpath -->
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.11.0</version>
+      </dependency>
+      <!-- wiremock-jre8 2.35.2 (test only) brings in jetty 9.4.49, jackson 2.13.x, handlebars, json-smart and commons-fileupload with known vulnerabilities -->
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>2.21.8</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-bom</artifactId>
+        <version>9.4.58.v20250814</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.github.jknack</groupId>
+        <artifactId>handlebars</artifactId>
+        <version>4.5.8</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.jknack</groupId>
+        <artifactId>handlebars-helpers</artifactId>
+        <version>4.5.8</version>
+      </dependency>
+      <dependency>
+        <groupId>net.minidev</groupId>
+        <artifactId>json-smart</artifactId>
+        <version>2.4.11</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>1.6.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <!-- maven -->
     <dependency>
@@ -234,8 +280,8 @@ under the License.
     </dependency>
     <dependency>
       <groupId>com.github.tomakehurst</groupId>
-      <artifactId>wiremock</artifactId>
-      <version>2.27.2</version>
+      <artifactId>wiremock-jre8</artifactId>
+      <version>2.35.2</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
