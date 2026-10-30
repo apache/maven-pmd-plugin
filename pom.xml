@@ -82,7 +82,7 @@ under the License.
 
   <properties>
     <mavenVersion>3.10.0</mavenVersion>
-    <pmdVersion>7.28.0</pmdVersion>
+    <pmdVersion>7.29.0</pmdVersion>
     <slf4jVersion>2.0.19</slf4jVersion>
     <doxiaVersion>2.2.0</doxiaVersion>
     <sitePluginVersion>${version.maven-site-plugin}</sitePluginVersion>
