@@ -42,7 +42,7 @@ under the License.
           <skip>false</skip>
           <failOnViolation>true</failOnViolation>
           <failurePriority>4</failurePriority>
-          <targetJdk>1.7</targetJdk>
+          <targetJdk>1.8</targetJdk>
           <minimumTokens>100</minimumTokens>
           <excludes>
             <exclude>**/*Bean.java</exclude>
