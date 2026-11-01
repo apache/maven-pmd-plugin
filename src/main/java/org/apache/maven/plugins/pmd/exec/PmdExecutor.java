@@ -64,6 +64,17 @@ import org.slf4j.LoggerFactory;
 public class PmdExecutor extends Executor {
     private static final Logger LOG = LoggerFactory.getLogger(PmdExecutor.class);
 
+    /**
+     * {@code net.sourceforge.pmd.benchmark.TimeTracker} tracks a single global, non-reentrant timer shared by the
+     * whole JVM, not one per caller. In a multi-module reactor build run without forking (e.g. with
+     * {@code -T}/parallel builds), each module's non-forked {@link #run()} shares this JVM, so their
+     * {@code startGlobalTracking()}/{@code stopGlobalTracking()} calls race: one module's call can reset or stop
+     * tracking that another module's run is relying on, and {@code stopGlobalTracking()} then returns
+     * {@code null} for whichever call loses the race. Serializing the benchmarked section on this lock keeps each
+     * module's use of that shared tracker from overlapping with another's.
+     */
+    private static final Object BENCHMARK_LOCK = new Object();
+
     public PmdResult fork(String javaExecutable) throws MavenReportException {
         File basePmdDir = new File(request.getTargetDirectory(), "pmd");
         basePmdDir.mkdirs();
@@ -174,38 +185,44 @@ public class PmdExecutor extends Executor {
         if (request.getExecutionThreads() != null) {
             configuration.setThreads(request.getExecutionThreads());
         }
-        if (request.getBenchmarkOutputLocation() != null) {
-            TimeTracker.startGlobalTracking();
-        }
         List<File> files = request.getFiles();
 
         Report report = null;
 
-        if (request.getRulesets().isEmpty()) {
-            LOG.debug("Skipping PMD execution as no rulesets are defined.");
-        } else {
+        // Only contends with another module's run when benchmarking is requested; otherwise each thread
+        // synchronizes on a private object of its own, so non-benchmarked runs stay fully parallel.
+        Object benchmarkLock = request.getBenchmarkOutputLocation() != null ? BENCHMARK_LOCK : new Object();
+        synchronized (benchmarkLock) {
             if (request.getBenchmarkOutputLocation() != null) {
                 TimeTracker.startGlobalTracking();
             }
 
-            try {
-                report = processFilesWithPMD(configuration, files);
-            } finally {
-                if (request.getAuxClasspath() != null) {
-                    ClassLoader classLoader = configuration.getClassLoader();
-                    if (classLoader instanceof Closeable) {
-                        Closeable closeable = (Closeable) classLoader;
-                        try {
-                            closeable.close();
-                        } catch (IOException ex) {
-                            // ignore
+            if (request.getRulesets().isEmpty()) {
+                LOG.debug("Skipping PMD execution as no rulesets are defined.");
+            } else {
+                if (request.getBenchmarkOutputLocation() != null) {
+                    TimeTracker.startGlobalTracking();
+                }
+
+                try {
+                    report = processFilesWithPMD(configuration, files);
+                } finally {
+                    if (request.getAuxClasspath() != null) {
+                        ClassLoader classLoader = configuration.getClassLoader();
+                        if (classLoader instanceof Closeable) {
+                            Closeable closeable = (Closeable) classLoader;
+                            try {
+                                closeable.close();
+                            } catch (IOException ex) {
+                                // ignore
+                            }
                         }
                     }
-                }
-                if (request.getBenchmarkOutputLocation() != null) {
-                    TimingReport timingReport = TimeTracker.stopGlobalTracking();
-                    writeBenchmarkReport(
-                            timingReport, request.getBenchmarkOutputLocation(), request.getOutputEncoding());
+                    if (request.getBenchmarkOutputLocation() != null) {
+                        TimingReport timingReport = TimeTracker.stopGlobalTracking();
+                        writeBenchmarkReport(
+                                timingReport, request.getBenchmarkOutputLocation(), request.getOutputEncoding());
+                    }
                 }
             }
         }
