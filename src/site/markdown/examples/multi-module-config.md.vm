@@ -30,7 +30,7 @@ The setup is very similar to the one described for Checkstyle, see [Multimodule 
 
 This example will use the same mysterious project called _whizbang_. This is what the structure of that project looks like:
 
-```unknown
+```text
 whizbang
 |-- pom.xml
 |-- core
@@ -47,7 +47,7 @@ Create a subproject for the PMD rulesets
 
 We'll start by adding another sub project that will house our common configuration for PMD. Let's call it _build-tools_. In it we put the resources that we want to share between our whizbang modules. In this example, we will add our custom PMD ruleset to be used by the PMD Plugin. The same subproject can be used to house shared configurations for Checkstyle.
 
-```unknown
+```text
 whizbang
 |-- pom.xml
 |-- build-tools

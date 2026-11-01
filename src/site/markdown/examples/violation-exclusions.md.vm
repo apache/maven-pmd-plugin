@@ -68,7 +68,7 @@ For cpd check, you can exclude classes to not verify. Classes can be specified i
 
 The properties file for cpd must have the following format:
 
-```unknown
+```text
 org.apache.maven.ClassA,org.apache.maven.ClassB
 org.apache.maven.ClassC
 org.apache.maven.ClassD
