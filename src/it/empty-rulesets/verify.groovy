@@ -20,3 +20,9 @@
 
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
+
+// <rulesets/> configures no rule at all: Foo.java has an unused constructor parameter, which the default ruleset reports
+File pmdXml = new File( basedir, 'target/pmd.xml' )
+assert pmdXml.exists()
+assert pmdXml.getText( 'UTF-8' ).contains( '</pmd>' )
+assert !pmdXml.getText( 'UTF-8' ).contains( '<violation' )
