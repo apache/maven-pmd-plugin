@@ -23,7 +23,7 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugins.pmd.it</groupId>
-  <artifactId>MPMD-317-auxclasspath-provided</artifactId>
+  <artifactId>MPMD-317-318-auxclasspath</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -57,4 +57,22 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>includeTests</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>@project.groupId@</groupId>
+            <artifactId>@project.artifactId@</artifactId>
+            <version>@project.version@</version>
+            <configuration>
+              <includeTests>true</includeTests>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
