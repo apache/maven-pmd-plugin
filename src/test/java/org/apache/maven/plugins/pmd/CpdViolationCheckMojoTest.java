@@ -120,6 +120,10 @@ public class CpdViolationCheckMojoTest {
                     violationMessages.stream()
                             .filter(message -> message.toString().startsWith("CPD Failure:"))
                             .count());
+            // the duplication is reported with its size (MPMD-290)
+            assertTrue(violationMessages.stream()
+                    .anyMatch(message ->
+                            message.toString().equals("CPD Failure: Found 29 lines of duplicated code at locations:")));
         }
     }
 }

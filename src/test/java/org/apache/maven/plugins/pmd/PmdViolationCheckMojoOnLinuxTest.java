@@ -192,4 +192,93 @@ public class PmdViolationCheckMojoOnLinuxTest {
                             .count());
         }
     }
+
+    /**
+     * MPMD-163: with a failure priority that nothing reaches, every violation is reported once, as a warning.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "verbose", value = "true")
+    @MojoParameter(name = "printFailingErrors", value = "true")
+    @MojoParameter(name = "failurePriority", value = "0")
+    @Test
+    public void testWarningsAreNotDuplicated(PmdViolationCheckMojo mojo) throws Exception {
+        Log log = mock(Log.class);
+        mojo.setLog(log);
+
+        mojo.execute();
+
+        List<String> messages = warnings(log);
+        assertEquals(
+                0, messages.stream().filter(m -> m.startsWith("PMD Failure:")).count());
+        assertEquals(
+                8, messages.stream().filter(m -> m.startsWith("PMD Warning:")).count());
+        assertTrue(messages.contains("PMD Warning: def.configuration.AppSample:45 Rule:UnusedFormalParameter"
+                + " Priority:3 Avoid unused method parameters such as 'notUsedParam'.."));
+        assertEquals(
+                1,
+                messages.stream()
+                        .filter(m ->
+                                m.startsWith("PMD " + AbstractPmdReport.getPmdVersion() + " has issued 8 warnings."))
+                        .count());
+    }
+
+    /**
+     * MPMD-205: a violation in a file without a java class, like javascript, is reported by its file name and fails
+     * the build.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report-js")
+    @Test
+    public void testJavascriptViolationFailsTheBuild(PmdViolationCheckMojo mojo) throws Exception {
+        Log log = mock(Log.class);
+        mojo.setLog(log);
+
+        try {
+            mojo.execute();
+
+            fail("MojoFailureException should be thrown.");
+        } catch (MojoFailureException e) {
+            assertTrue(
+                    e.getMessage().startsWith("PMD " + AbstractPmdReport.getPmdVersion() + " has found 1 violation."));
+        }
+        assertTrue(warnings(log)
+                .contains(
+                        "PMD Failure: PmdJsCheck.js:23 Rule:GlobalVariable Priority:1 Avoid using global variables."));
+    }
+
+    /**
+     * MPMD-243: violations listed in excludeFromFailureFile do not fail the build, but are still reported as warnings.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-pmd-exclusions-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "verbose", value = "true")
+    @Test
+    public void testExcludedViolationsAreReportedAsWarnings(PmdViolationCheckMojo mojo) throws Exception {
+        Log log = mock(Log.class);
+        mojo.setLog(log);
+
+        mojo.execute();
+
+        List<String> messages = warnings(log);
+        assertEquals(
+                0, messages.stream().filter(m -> m.startsWith("PMD Failure:")).count());
+        assertEquals(
+                8, messages.stream().filter(m -> m.startsWith("PMD Warning:")).count());
+        assertTrue(messages.stream().anyMatch(m -> m.startsWith("PMD Warning: def.configuration.App2:22 ")));
+        assertTrue(messages.stream()
+                .anyMatch(m -> m.startsWith("PMD " + AbstractPmdReport.getPmdVersion() + " has issued 8 warnings.")));
+    }
+
+    private static List<String> warnings(Log log) {
+        ArgumentCaptor<CharSequence> messages = ArgumentCaptor.forClass(CharSequence.class);
+        verify(log, atLeastOnce()).warn(messages.capture());
+        return messages.getAllValues().stream().map(CharSequence::toString).collect(Collectors.toList());
+    }
 }

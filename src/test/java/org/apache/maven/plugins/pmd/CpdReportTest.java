@@ -23,12 +23,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
@@ -150,6 +152,9 @@ public class CpdReportTest {
         assertTrue(lowerCaseContains(str, "AnotherSample.java"));
         assertTrue(lowerCaseContains(str, "public static void main( String[] args )"));
         assertTrue(lowerCaseContains(str, "private String unusedMethod("));
+
+        // cpd.xml is only copied into the site when includeXmlInReports is set (MPMD-80)
+        assertFalse(new File(outputDir, "cpd.xml").exists());
     }
 
     /**
@@ -291,6 +296,75 @@ public class CpdReportTest {
         assertTrue(lowerCaseContains(str, "SampleDup.js"));
     }
 
+    /**
+     * MPMD-187: nothing is generated when CPD is skipped.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "skip", value = "true")
+    @Test
+    public void testSkipConfiguration(CpdReport mojo) throws Exception {
+        File cpdXml = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
+        File generatedReport = new File(mojo.getReportOutputDirectory(), mojo.getOutputPath() + ".html");
+        FileUtils.deleteQuietly(cpdXml);
+        FileUtils.deleteQuietly(generatedReport);
+
+        mojo.execute();
+
+        assertFalse(cpdXml.exists());
+        assertFalse(generatedReport.exists());
+
+        // the fact, the CPD execution has been skipped, should be logged
+        String output = CapturingPrintStream.getOutput();
+        assertTrue(output.contains("Skipping org.apache.maven.plugins:maven-pmd-plugin"), output);
+    }
+
+    /**
+     * MPMD-289: the xml report is written even if only the html report is requested, since the cpd-check goal reads it.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "format", value = "html")
+    @Test
+    public void testFormatHtmlStillWritesXml(CpdReport mojo) throws Exception {
+        File cpdXml = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
+        FileUtils.deleteQuietly(cpdXml);
+
+        mojo.execute();
+
+        assertTrue(new File(mojo.getReportOutputDirectory(), mojo.getOutputPath() + ".html").exists());
+        assertTrue(cpdXml.exists());
+        assertTrue(readFile(cpdXml, StandardCharsets.UTF_8).contains("</pmd-cpd>"));
+    }
+
+    /**
+     * MPMD-290: CPD tokenizes C# sources, so the license header comment is not reported as duplication.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-cs-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testCpdCSharpConfiguration(CpdReport mojo) throws Exception {
+        File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
+        FileUtils.deleteQuietly(generatedFile);
+
+        mojo.execute();
+
+        assertTrue(generatedFile.exists());
+        String str = readFile(generatedFile, StandardCharsets.UTF_8);
+        assertEquals(1, StringUtils.countMatches(str, "<duplication"));
+
+        // no duplication for the license header - if this is reported, then CPD uses the wrong language/tokenizer
+        assertFalse(str.contains("<duplication lines=\"20\" tokens=\"148\">"));
+        assertFalse(str.contains("line=\"1\""));
+
+        // the only valid duplication
+        assertTrue(str.contains("<duplication lines=\"7\" tokens=\"26\">"));
+        assertTrue(str.contains("line=\"20\""));
+    }
+
     @Basedir("/unit/default-configuration")
     @InjectMojo(goal = "cpd", pom = "cpd-jsp-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
@@ -357,5 +431,9 @@ public class CpdReportTest {
      */
     protected String readFile(File file) throws IOException {
         return new String(Files.readAllBytes(file.toPath()));
+    }
+
+    private static String readFile(File file, Charset charset) throws IOException {
+        return new String(Files.readAllBytes(file.toPath()), charset);
     }
 }
