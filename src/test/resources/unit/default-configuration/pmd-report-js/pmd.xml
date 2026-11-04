@@ -8,7 +8,7 @@ to you under the Apache License, Version 2.0 (the
 "License"); you may not use this file except in compliance
 with the License.  You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing,
 software distributed under the License is distributed on an
@@ -17,14 +17,11 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-<ruleset name="Ruleset for MPMD-243"
-    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
-
-  <description>
-    MPMD-243
-  </description>
-
-  <rule ref="category/java/codestyle.xml/TooManyStaticImports"/>
-</ruleset>
+<!-- The file name has no directory, so that the check goal reports the same name on every operating system. -->
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 https://pmd.github.io/schema/report_2_0_0.xsd" version="7.18.0" timestamp="2025-12-15T19:12:14.544">
+<file name="PmdJsCheck.js">
+<violation beginline="23" endline="23" begincolumn="5" endcolumn="23" rule="GlobalVariable" ruleset="Best Practices" externalInfoUrl="https://docs.pmd-code.org/pmd-doc-7.18.0/pmd_rules_ecmascript_bestpractices.html#globalvariable" priority="1">
+Avoid using global variables
+</violation>
+</file>
+</pmd>
