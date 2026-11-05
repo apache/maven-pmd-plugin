@@ -44,7 +44,7 @@ under the License.
             <include>**/*.cs</include>
           </includes>
           <compileSourceRoots>
-            <compileSourceRoot>${basedir}</compileSourceRoot>
+            <compileSourceRoot>${basedir}/cs</compileSourceRoot>
           </compileSourceRoots>
           <inputEncoding>UTF-8</inputEncoding>
         </configuration>
