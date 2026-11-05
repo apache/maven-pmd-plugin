@@ -18,6 +18,9 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,8 +33,10 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 
+import static org.apache.maven.api.plugin.testing.MojoExtension.setVariableValueToObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -226,15 +231,33 @@ public class PmdViolationCheckMojoOnLinuxTest {
     }
 
     /**
-     * MPMD-205: a violation in a file without a java class, like javascript, is reported by its file name and fails
-     * the build.
+     * MPMD-205: a violation in a file without a java class, like javascript, is reported by its file name, without
+     * the directory of the absolute path in pmd.xml, and fails the build.
      */
     @Basedir("/unit/default-configuration")
     @InjectMojo(goal = "check", pom = "pmd-check-default-configuration-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
-    @MojoParameter(name = "targetDirectory", value = "pmd-report-js")
     @Test
-    public void testJavascriptViolationFailsTheBuild(PmdViolationCheckMojo mojo) throws Exception {
+    public void testJavascriptViolationFailsTheBuild(PmdViolationCheckMojo mojo, @TempDir Path targetDirectory)
+            throws Exception {
+        String file = targetDirectory
+                .resolve("src")
+                .resolve("js")
+                .resolve("PmdJsCheck.js")
+                .toString();
+        Files.write(
+                targetDirectory.resolve("pmd.xml"),
+                ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                                + "<pmd xmlns=\"http://pmd.sourceforge.net/report/2.0.0\" version=\"7.18.0\">\n"
+                                + "<file name=\"" + file + "\">\n"
+                                + "<violation beginline=\"23\" endline=\"23\" begincolumn=\"5\" endcolumn=\"23\""
+                                + " rule=\"GlobalVariable\" ruleset=\"Best Practices\" priority=\"1\">\n"
+                                + "Avoid using global variables\n"
+                                + "</violation>\n"
+                                + "</file>\n"
+                                + "</pmd>\n")
+                        .getBytes(StandardCharsets.UTF_8));
+        setVariableValueToObject(mojo, "targetDirectory", targetDirectory.toFile());
         Log log = mock(Log.class);
         mojo.setLog(log);
 
