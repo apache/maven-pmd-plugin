@@ -42,6 +42,7 @@ public class PmdRequest implements Serializable {
     private String languageVersion;
     private int minimumPriority;
     private String auxClasspath;
+    private boolean disableAuxClasspathWarnings;
     private String suppressMarker;
     private String analysisCacheLocation;
     private List<String> rulesets;
@@ -89,6 +90,10 @@ public class PmdRequest implements Serializable {
 
     public void setAuxClasspath(String auxClasspath) {
         this.auxClasspath = auxClasspath;
+    }
+
+    public void setDisableAuxClasspathWarnings(boolean disableAuxClasspathWarnings) {
+        this.disableAuxClasspathWarnings = disableAuxClasspathWarnings;
     }
 
     public void setSuppressMarker(String suppressMarker) {
@@ -165,6 +170,10 @@ public class PmdRequest implements Serializable {
 
     public String getAuxClasspath() {
         return auxClasspath;
+    }
+
+    public boolean isDisableAuxClasspathWarnings() {
+        return disableAuxClasspathWarnings;
     }
 
     public String getSuppressMarker() {

@@ -43,8 +43,10 @@ import net.sourceforge.pmd.benchmark.TimeTracker;
 import net.sourceforge.pmd.benchmark.TimingReport;
 import net.sourceforge.pmd.benchmark.TimingReportRenderer;
 import net.sourceforge.pmd.lang.Language;
+import net.sourceforge.pmd.lang.LanguagePropertyBundle;
 import net.sourceforge.pmd.lang.LanguageVersion;
 import net.sourceforge.pmd.lang.rule.RulePriority;
+import net.sourceforge.pmd.properties.PropertyDescriptor;
 import net.sourceforge.pmd.renderers.CSVRenderer;
 import net.sourceforge.pmd.renderers.HTMLRenderer;
 import net.sourceforge.pmd.renderers.Renderer;
@@ -153,6 +155,10 @@ public class PmdExecutor extends Executor {
         LOG.debug("Using language " + languageVersion);
         configuration.setDefaultLanguageVersion(languageVersion);
 
+        if (request.isDisableAuxClasspathWarnings()) {
+            configureAuxClasspathWarnings(configuration, language);
+        }
+
         if (request.getSourceEncoding() != null) {
             configuration.setSourceEncoding(Charset.forName(request.getSourceEncoding()));
         }
@@ -251,6 +257,26 @@ public class PmdExecutor extends Executor {
         }
 
         return new PmdResult(new File(request.getTargetDirectory(), "pmd.xml"), request.getOutputEncoding());
+    }
+
+    /**
+     * Disables the aux classpath warnings of PMD's Java language module.
+     *
+     * <p>The property name mirrors {@code JavaLanguageProperties.DISABLE_AUX_CLASSPATH_WARNINGS}.
+     * That class cannot be referenced directly, because pmd-java is a runtime dependency of this plugin.</p>
+     */
+    private void configureAuxClasspathWarnings(PMDConfiguration configuration, Language language) {
+        if (!"java".equals(language.getId())) {
+            return;
+        }
+
+        LanguagePropertyBundle languageProperties = configuration.getLanguageProperties(language);
+        @SuppressWarnings("unchecked")
+        PropertyDescriptor<Boolean> propertyDescriptor =
+                (PropertyDescriptor<Boolean>) languageProperties.getPropertyDescriptor("disableAuxClasspathWarnings");
+        if (propertyDescriptor != null) {
+            languageProperties.setProperty(propertyDescriptor, Boolean.TRUE);
+        }
     }
 
     /**
