@@ -89,7 +89,7 @@ under the License.
     <project.build.outputTimestamp>2025-10-07T05:57:06Z</project.build.outputTimestamp>
 
     <!-- test -->
-    <it.resolverVersion>2.0.24</it.resolverVersion>
+    <it.resolverVersion>2.0.25</it.resolverVersion>
     <it.projectInfoReportsPluginVersion>3.9.0</it.projectInfoReportsPluginVersion>
     <it.jxrPluginVersion>3.6.0</it.jxrPluginVersion>
   </properties>
