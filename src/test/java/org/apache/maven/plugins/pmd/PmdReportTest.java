@@ -130,6 +130,36 @@ public class PmdReportTest {
         assertTrue(output.contains("PMD version: " + AbstractPmdReport.getPmdVersion()));
     }
 
+    /**
+     * The PMD aux classpath warnings are enabled by default, if no Java platform classes are provided explicitly.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "pmd", pom = "default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testAuxClasspathWarningsEnabledByDefault(PmdReport mojo) throws Exception {
+        mojo.execute();
+
+        String output = CapturingPrintStream.getOutput();
+        assertTrue(output.contains("Adding current platform"), output);
+        assertTrue(output.contains("PMD_JAVA_DISABLE_AUX_CLASSPATH_WARNINGS"), output);
+    }
+
+    /**
+     * The PMD aux classpath warnings can be disabled via the plugin configuration.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "pmd", pom = "pmd-disable-aux-classpath-warnings-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testDisableAuxClasspathWarnings(PmdReport mojo) throws Exception {
+        mojo.execute();
+
+        String output = CapturingPrintStream.getOutput();
+        assertFalse(output.contains("Adding current platform"), output);
+        assertFalse(output.contains("PMD_JAVA_DISABLE_AUX_CLASSPATH_WARNINGS"), output);
+    }
+
     @Basedir("/unit/default-configuration")
     @InjectMojo(goal = "pmd", pom = "pmd-report-not-render-rule-priority-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
