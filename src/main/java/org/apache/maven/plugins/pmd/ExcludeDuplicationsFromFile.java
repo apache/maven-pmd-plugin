@@ -106,7 +106,7 @@ public class ExcludeDuplicationsFromFile implements ExcludeFromFile<Duplication>
 
         try (Stream<String> lines = Files.lines(Paths.get(excludeFromFailureFile))) {
             exclusionList.addAll(lines.filter(line -> !line.startsWith("#"))
-                    .map(line -> createSetFromExclusionLine(line))
+                    .map(this::createSetFromExclusionLine)
                     .collect(Collectors.toList()));
         } catch (final IOException e) {
             throw new MojoExecutionException("Cannot load file " + excludeFromFailureFile, e);

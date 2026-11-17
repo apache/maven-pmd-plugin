@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -258,7 +257,7 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
 
     private void renderViolationsTable(Collection<Violation> violationSegment) {
         List<Violation> violationSegmentCopy = new ArrayList<>(violationSegment);
-        Collections.sort(violationSegmentCopy, new Comparator<Violation>() {
+        violationSegmentCopy.sort(new Comparator<Violation>() {
             /**
              * {@inheritDoc}
              */
@@ -323,7 +322,7 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
         startSection(getI18nString("suppressedViolations.title"));
 
         List<SuppressedViolation> suppressedViolationsCopy = new ArrayList<>(suppressedViolations);
-        Collections.sort(suppressedViolationsCopy, new Comparator<SuppressedViolation>() {
+        suppressedViolationsCopy.sort(new Comparator<SuppressedViolation>() {
             @Override
             public int compare(SuppressedViolation o1, SuppressedViolation o2) {
                 return o1.getFilename().compareTo(o2.getFilename());
@@ -368,7 +367,7 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
         // sort the problem by filename first, since PMD is executed multithreaded
         // and might report the results unsorted.
         List<ProcessingError> processingErrorsCopy = new ArrayList<>(processingErrors);
-        Collections.sort(processingErrorsCopy, new Comparator<ProcessingError>() {
+        processingErrorsCopy.sort(new Comparator<ProcessingError>() {
             @Override
             public int compare(ProcessingError e1, ProcessingError e2) {
                 return e1.getFilename().compareTo(e2.getFilename());

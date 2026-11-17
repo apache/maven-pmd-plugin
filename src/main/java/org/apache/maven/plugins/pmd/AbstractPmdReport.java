@@ -490,7 +490,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
             return Collections.singleton(aggregatedProject);
         }
 
-        List<Path> modulePaths = new LinkedList<Path>();
+        List<Path> modulePaths = new LinkedList<>();
         for (String module : aggregatedProject.getModules()) {
             modulePaths.add(new File(aggregatedProject.getBasedir(), module).toPath());
         }
