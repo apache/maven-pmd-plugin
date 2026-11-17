@@ -164,7 +164,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-invalid-format-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testInvalidFormat(CpdReport mojo) throws MojoExecutionException {
+    public void testInvalidFormat(CpdReport mojo) throws Exception {
         try {
             mojo.execute();
 

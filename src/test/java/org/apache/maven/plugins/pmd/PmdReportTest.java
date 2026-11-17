@@ -47,6 +47,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.maven.api.plugin.testing.MojoExtension.getBasedir;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -445,7 +446,7 @@ public class PmdReportTest {
 
             fail("Must nested MavenReportException.");
         } catch (MojoExecutionException e) {
-            assertTrue(e.getCause() instanceof MavenReportException);
+            assertInstanceOf(MavenReportException.class, e.getCause());
         }
     }
 
@@ -459,7 +460,7 @@ public class PmdReportTest {
 
             fail("Must nested MavenReportException.");
         } catch (MojoExecutionException e) {
-            assertTrue(e.getCause() instanceof MavenReportException);
+            assertInstanceOf(MavenReportException.class, e.getCause());
         }
     }
 
@@ -893,13 +894,13 @@ public class PmdReportTest {
     }
 
     @Test
-    public void testCustomRenderer() throws MavenReportException {
+    public void testCustomRenderer() throws Exception {
         final Renderer renderer = PmdExecutor.createRenderer("net.sourceforge.pmd.renderers.TextRenderer", "UTF-8");
         assertNotNull(renderer);
     }
 
     @Test
-    public void testCodeClimateRenderer() throws MavenReportException {
+    public void testCodeClimateRenderer() throws Exception {
         final Renderer renderer =
                 PmdExecutor.createRenderer("net.sourceforge.pmd.renderers.CodeClimateRenderer", "UTF-8");
         assertNotNull(renderer);
