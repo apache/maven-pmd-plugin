@@ -86,7 +86,7 @@ public class CpdReportRenderer extends AbstractMavenReportRenderer {
 
         sink.paragraph();
         sink.text(getI18nString("cpdlink") + " ");
-        link("https://pmd.github.io/latest/pmd_userdocs_cpd.html", "CPD");
+        link("https://docs.pmd-code.org/latest/pmd_userdocs_cpd.html", "CPD");
         sink.text(" " + AbstractPmdReport.getPmdVersion() + ".");
         sink.paragraph_();
 

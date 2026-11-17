@@ -258,6 +258,7 @@ public class CpdReportTest {
         String str = readFile(generatedReport);
         assertFalse(lowerCaseContains(str, "Hello.java"));
         assertTrue(str.contains("CPD found no problems in your source code."));
+        assertTrue(str.contains("href=\"https://docs.pmd-code.org/latest/pmd_userdocs_cpd.html\""), str);
     }
 
     @Basedir("/unit/default-configuration")

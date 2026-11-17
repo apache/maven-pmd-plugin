@@ -114,7 +114,7 @@ public class PmdReport extends AbstractPmdReport {
 
     /**
      * The PMD rulesets to use. See the
-     * <a href="https://pmd.github.io/latest/pmd_rules_java.html">Stock Java Rulesets</a> for a
+     * <a href="https://docs.pmd-code.org/latest/pmd_rules_java.html">Stock Java Rulesets</a> for a
      * list of available rules.
      * Defaults to a custom ruleset provided by this maven plugin
      * (<code>/rulesets/java/maven-pmd-plugin-default.xml</code>).
@@ -151,7 +151,7 @@ public class PmdReport extends AbstractPmdReport {
     /**
      * Source level marker used to indicate whether a RuleViolation should be suppressed. If it is not set, PMD's
      * default will be used, which is <code>NOPMD</code>. See also <a
-     * href="https://pmd.github.io/latest/pmd_userdocs_suppressing_warnings.html">PMD &#x2013; Suppressing warnings</a>.
+     * href="https://docs.pmd-code.org/latest/pmd_userdocs_suppressing_warnings.html">PMD &#x2013; Suppressing warnings</a>.
      *
      * @since 3.4
      */

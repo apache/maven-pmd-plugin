@@ -42,7 +42,7 @@ import org.codehaus.plexus.i18n.I18N;
  * Creates a report for PMD's Copy/Paste Detector (CPD) tool.
  * It can also generate a cpd results file in any of these formats: xml, csv or txt.
  *
- * <p>See <a href="https://pmd.github.io/latest/pmd_userdocs_cpd.html">Finding duplicated code</a>
+ * <p>See <a href="https://docs.pmd-code.org/latest/pmd_userdocs_cpd.html">Finding duplicated code</a>
  * for more details.
  *
  * @author Mike Perham
