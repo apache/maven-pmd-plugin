@@ -19,7 +19,6 @@
 package org.apache.maven.plugins.pmd.exec;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -30,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExecutorTest {
     @Test
-    public void testBuildClasspath() throws MalformedURLException {
+    public void testBuildClasspath() throws Exception {
         String basename = "home/test/dir with space/mylib.jar";
         String pathname = new File("/", basename).getPath();
         if (SystemUtils.IS_OS_WINDOWS) {
