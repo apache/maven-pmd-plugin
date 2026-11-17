@@ -243,7 +243,7 @@ public class PmdReport extends AbstractPmdReport {
      * PMD will spawn `n` separate analysis threads besides the main thread.
      * The default behaviour is deferred to PMD and is currently 1C i.e. one thread per core on the host machine.
      *
-     * @since 3.28.1
+     * @since 3.29.0
      */
     @Parameter(property = "pmd.executionThreads")
     private String executionThreads;
