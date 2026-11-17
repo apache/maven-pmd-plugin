@@ -377,7 +377,6 @@ under the License.
     <plugins>
       <!-- Override the Java version inherited from maven-parent -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
