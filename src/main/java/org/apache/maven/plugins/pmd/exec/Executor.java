@@ -62,7 +62,7 @@ abstract class Executor {
         }
     }
 
-    protected static class ProcessStreamHandler implements Runnable {
+    protected static final class ProcessStreamHandler implements Runnable {
         private static final int BUFFER_SIZE = 8192;
 
         private final BufferedInputStream in;
