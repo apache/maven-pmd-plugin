@@ -123,6 +123,7 @@ public class CpdReport extends AbstractPmdReport {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName(Locale locale) {
         return getI18nString(locale, "name");
     }
@@ -130,6 +131,7 @@ public class CpdReport extends AbstractPmdReport {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getDescription(Locale locale) {
         return getI18nString(locale, "description");
     }

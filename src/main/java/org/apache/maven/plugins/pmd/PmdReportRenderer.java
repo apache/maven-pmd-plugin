@@ -261,6 +261,7 @@ public class PmdReportRenderer extends AbstractMavenReportRenderer {
             /**
              * {@inheritDoc}
              */
+            @Override
             public int compare(Violation o1, Violation o2) {
                 int filenames = o1.getFileName().compareTo(o2.getFileName());
                 if (filenames == 0) {
