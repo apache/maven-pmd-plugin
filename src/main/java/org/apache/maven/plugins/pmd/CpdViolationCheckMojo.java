@@ -69,6 +69,7 @@ public class CpdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Duplica
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
             getLog().info("Skipping CPD execution");

@@ -37,6 +37,7 @@ public class DefaultArtifactHandlerStub extends DefaultArtifactHandler {
         return language;
     }
 
+    @Override
     public void setLanguage(String language) {
         this.language = language;
     }
