@@ -83,9 +83,24 @@ public class PmdReport extends AbstractPmdReport {
      * <p>
      *   <b>Note:</b> this parameter is only used if the language parameter is set to <code>java</code>.
      * </p>
+     * <p>If not set, the value of {@code maven.compiler.release} is used, or {@code maven.compiler.source} when no
+     * release is set, as the Maven Compiler Plugin does.</p>
      */
-    @Parameter(property = "targetJdk", defaultValue = "${maven.compiler.source}")
+    @Parameter(property = "targetJdk")
     private String targetJdk;
+
+    /**
+     * The {@code maven.compiler.release} property, used when {@link #targetJdk} is not set.
+     */
+    @Parameter(defaultValue = "${maven.compiler.release}", readonly = true)
+    private String compilerRelease;
+
+    /**
+     * The {@code maven.compiler.source} property, used when neither {@link #targetJdk} nor
+     * {@code maven.compiler.release} is set.
+     */
+    @Parameter(defaultValue = "${maven.compiler.source}", readonly = true)
+    private String compilerSource;
 
     /**
      * The programming language to be analyzed by PMD. Valid values are currently <code>java</code>,
@@ -389,7 +404,7 @@ public class PmdReport extends AbstractPmdReport {
         }
 
         PmdRequest request = new PmdRequest();
-        request.setLanguageAndVersion(language, targetJdk);
+        request.setLanguageAndVersion(language, getTargetJdk());
         request.setRulesets(resolveRulesets());
         request.setAuxClasspath(typeResolution ? determineAuxClasspath() : null);
         request.setSourceEncoding(getInputEncoding());
@@ -626,10 +641,32 @@ public class PmdReport extends AbstractPmdReport {
         return false;
     }
 
+    /**
+     * @return the explicit {@code targetJdk}, else {@code maven.compiler.release}, else {@code maven.compiler.source}
+     */
+    String getTargetJdk() {
+        return resolveTargetJdk(targetJdk, compilerRelease, compilerSource);
+    }
+
+    static String resolveTargetJdk(String targetJdk, String release, String source) {
+        if (isNotBlank(targetJdk)) {
+            return targetJdk;
+        }
+        if (isNotBlank(release)) {
+            return release;
+        }
+        return isNotBlank(source) ? source : null;
+    }
+
+    private static boolean isNotBlank(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
     private List<String> determineJavaRuntimeClasses() {
         if (!"java".equals(language) && null != language) {
             return Collections.emptyList();
         }
+        String targetJdk = getTargetJdk();
         if (targetJdk == null) {
             return Collections.emptyList();
         }
