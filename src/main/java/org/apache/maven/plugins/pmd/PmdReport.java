@@ -697,7 +697,7 @@ public class PmdReport extends AbstractPmdReport {
                 getLog().warn("Couldn't find java runtime classes in " + javaHome
                         + ". Please make sure the java installation exists.");
             } else {
-                getLog().warn("Could't find java executable for " + toolchain
+                getLog().warn("Couldn't find java executable for " + toolchain
                         + ". Please double check your toolchains.xml for outdated entries.");
             }
         }
