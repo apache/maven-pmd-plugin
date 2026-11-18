@@ -27,7 +27,7 @@ under the License.
 
 # Target JDK
 
-There is a configuration element in the PMD plugin that lets you set which [target JDK](../pmd-mojo.html#targetJdk) your Java code will be compiled for. Often you want this to be in sync with the configuration for maven-compiler-plugin. `targetJdk` defaults to the property `maven.compiler.source`, so a project that sets that property needs no further configuration. A project that sets only `maven.compiler.release` must pass it on explicitly, for example `<targetJdk>${esc.d}{maven.compiler.release}</targetJdk>`. Alternatively, you can set the version manually:
+There is a configuration element in the PMD plugin that lets you set which [target JDK](../pmd-mojo.html#targetJdk) your Java code will be compiled for. Often you want this to be in sync with the configuration for maven-compiler-plugin. `targetJdk` defaults to the property `maven.compiler.release`, or to `maven.compiler.source` when no release is set, as the Maven Compiler Plugin does, so a project that sets either property needs no further configuration. Alternatively, you can set the version manually:
 
 ```xml
 <project>
