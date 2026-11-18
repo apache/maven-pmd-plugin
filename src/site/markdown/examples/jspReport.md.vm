@@ -32,7 +32,7 @@ The example assumes that the JSP source code is stored in various subdirectories
 
 Note that you have to make sure that you configure `compileSourceRoots` and `includes`, so that PMD finds the JSP files.
 
-See [JSP Rule Index](https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_jsp.html) for a complete list of available rules.
+See [JSP Rule Index](https://docs.pmd-code.org/pmd-doc-${pmdVersion}/pmd_rules_jsp.html) for a complete list of available rules.
 
 ```xml
 <project>
@@ -72,5 +72,3 @@ See [JSP Rule Index](https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_jsp.html)
   ...
 </project>
 ```
-
-**Note:** Configuring `compileSourceRoots` only works with Maven 3.3.9 and later. For older versions, you'll need to use _build-helper-maven-plugin_ with the `add-source` goal in order to add the additional source directories, so that PMD finds the JSP files.

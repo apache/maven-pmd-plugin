@@ -84,7 +84,7 @@ A sample `pmd-ruleset.xml` could look like this:
 <ruleset name="whizbang PMD ruleset"
     xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
 
     <description>
         This ruleset defines the PMD rules for project "whizbang".
@@ -105,11 +105,11 @@ A sample `pmd-ruleset.xml` could look like this:
     <rule ref="category/java/errorprone.xml/AvoidUsingOctalValues" />
     <rule ref="category/java/errorprone.xml/BrokenNullCheck" />
 
-    <!-- many more rules are available at https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_java.html -->
+    <!-- many more rules are available at https://docs.pmd-code.org/pmd-doc-${pmdVersion}/pmd_rules_java.html -->
 </ruleset>
 ```
 
-The ruleset references some built-in rules. For more information about rulesets, see [Making Rulesets](https://pmd.github.io/pmd-${pmdVersion}/pmd_userdocs_making_rulesets.html) and [Using Rule Sets](./usingRuleSets.html).
+The ruleset references some built-in rules. For more information about rulesets, see [Making Rulesets](https://docs.pmd-code.org/pmd-doc-${pmdVersion}/pmd_userdocs_making_rulesets.html) and [Using Rule Sets](./usingRuleSets.html).
 
 Configure the other projects to use it
 --------------------------------------

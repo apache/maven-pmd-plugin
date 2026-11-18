@@ -30,17 +30,15 @@ The PMD plugin ships a default rule set, that has various rules enabled. The rul
 
 There are many more rules available and bundled in the PMD code analysis tool:
 
-- [Java Rule Index](https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_java.html)
-- [JavaScript Rule Index](https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_ecmascript.html)
-- [JSP Rule Index](https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_jsp.html)
+- [Java Rule Index](https://docs.pmd-code.org/pmd-doc-${pmdVersion}/pmd_rules_java.html)
+- [JavaScript Rule Index](https://docs.pmd-code.org/pmd-doc-${pmdVersion}/pmd_rules_ecmascript.html)
+- [JSP Rule Index](https://docs.pmd-code.org/pmd-doc-${pmdVersion}/pmd_rules_jsp.html)
 
-To use other rule sets, you can configure it in the plugin as shown below. The rule sets may reside in the classpath, filesystem or at a URL. For rule sets that are bundled with the PMD tool, you do not need to specify the absolute path of the file. It will be resolved by the plugin. But if the rule set is a custom rule set, you need to specify its absolute path.
+To use other rule sets, you can configure it in the plugin as shown below. The rule sets may reside in the classpath, filesystem or at a URL. Rule sets bundled with PMD are found on the classpath. A relative file path is resolved against the directory of the project's POM, then against the directory where the build was started.
 
-See [Making Rulesets](https://pmd.github.io/pmd-${pmdVersion}/pmd_userdocs_making_rulesets.html) if you want to create your own custom ruleset.
+See [Making Rulesets](https://docs.pmd-code.org/pmd-doc-${pmdVersion}/pmd_userdocs_making_rulesets.html) if you want to create your own custom ruleset.
 
-**Note:** Starting with PMD 5.0 and Maven PMD Plugin 3.0 the paths to the bundled rule sets for the Java language were changed from `/rulesets/xyz.xml` to `/rulesets/java/xyz.xml`. So when upgrading to Maven PMD Plugin 3.0 you may need to alter your plugin configuration.
-
-**Note:** Starting with PMD 6.0.0 and Maven PMD Plugin 3.9.0, the rules have been reorganized into categories, e.g. `/category/java/bestpractices.xml`. So when upgrading to Maven PMD Plugin 3.9.0 you should review your plugin configuration and/or custom ruleset.
+**Note:** Since PMD 6.0.0, the bundled rules are organized into categories, for example `/category/java/bestpractices.xml`. PMD 7 renamed, merged or removed a number of rules; when you upgrade from PMD 6, check custom rulesets against the [Migration Guide for PMD 7](https://docs.pmd-code.org/latest/pmd_userdocs_migrating_to_pmd7.html).
 
 ```xml
 <project>
@@ -55,10 +53,10 @@ See [Making Rulesets](https://pmd.github.io/pmd-${pmdVersion}/pmd_userdocs_makin
           <rulesets>
             <!-- A rule set, that comes bundled with PMD -->
             <ruleset>/category/java/bestpractices.xml</ruleset>
-            <!-- Custom local file system rule set -->
-            <ruleset>d:\rulesets\strings.xml</ruleset>
+            <!-- Custom rule set in the project directory -->
+            <ruleset>config/pmd/strings.xml</ruleset>
             <!-- Custom remote rule set accessed via a URL -->
-            <ruleset>http://localhost/design.xml</ruleset>
+            <ruleset>https://raw.githubusercontent.com/apache/maven-pmd-plugin/master/src/main/resources/rulesets/java/maven-pmd-plugin-default.xml</ruleset>
           </rulesets>
         </configuration>
       </plugin>
@@ -72,7 +70,7 @@ See [Making Rulesets](https://pmd.github.io/pmd-${pmdVersion}/pmd_userdocs_makin
 
 This is an excerpt of the ruleset `/rulesets/java/maven-pmd-plugin-default.xml`. It contains only rules for Java. If you use a different language, you'll need to specify your own custom ruleset.
 
-The current version of the ruleset can be found in version control: [https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=blob_plain;f=src/main/resources/rulesets/java/maven-pmd-plugin-default.xml;hb=HEAD](https://gitbox.apache.org/repos/asf?p=maven-pmd-plugin.git;a=blob_plain;f=src/main/resources/rulesets/java/maven-pmd-plugin-default.xml;hb=HEAD)
+The current version of the ruleset is in the source repository: [maven-pmd-plugin-default.xml](https://github.com/apache/maven-pmd-plugin/blob/master/src/main/resources/rulesets/java/maven-pmd-plugin-default.xml).
 
 ```xml
     <rule ref="category/java/bestpractices.xml/AvoidUsingHardCodedIP" />

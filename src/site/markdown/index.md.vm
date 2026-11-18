@@ -26,11 +26,26 @@ under the License.
 
 # ${project.name}
 
-The PMD Plugin allows you to automatically run the [PMD](https://pmd.github.io/) code analysis tool on your project's source code and generate a site report with its results. It also supports the separate Copy/Paste Detector tool (or CPD) distributed with PMD.
+The PMD Plugin runs the [PMD](https://pmd.github.io/) static code analyzer and its Copy/Paste Detector (CPD) on your project's source code. It can fail the build on violations or duplicated code, and it can publish both results as reports on your project site.
 
-This version of Maven PMD Plugin uses PMD ${pmdVersion} and requires Java ${javaVersion}. See [Upgrading PMD at Runtime](./examples/upgrading-PMD-at-runtime.html) for more information.
+This version uses PMD ${pmdVersion} and needs Maven ${project.prerequisites.maven} or later running on Java ${javaVersion} or later. To use a newer PMD release, see [Upgrading PMD at Runtime](./examples/upgrading-PMD-at-runtime.html).
 
-The plugin accepts configuration parameters that can be used to customize the execution of the PMD tool.
+The most common tasks are:
+
+- Check the code against the default PMD rules and fail the build on violations. Bind the goal into your build as shown in [Violation Checking](./examples/violationChecking.html), or run it directly:
+
+    ```shell
+    mvn compile pmd:check
+    ```
+
+- Find duplicated code and fail the build when CPD reports any:
+
+    ```shell
+    mvn pmd:cpd-check
+    ```
+
+- Add the PMD and CPD reports to the project site by declaring the plugin in the `<reporting>` section (see [Usage](./usage.html)), then run `mvn site`.
+- Use your own rules instead of the default ruleset, as described in [Using Rule Sets](./examples/usingRuleSets.html).
 
 Goals Overview
 --------------
@@ -41,7 +56,7 @@ This plugin has the following goals:
 - [pmd:aggregate-pmd](./aggregate-pmd-mojo.html) creates a PMD site report in an **aggregator** project based on the rulesets and configuration set in the plugin. It can also generate a pmd output file aside from the site report in any of the following formats: xml, csv or txt.
 - [pmd:aggregate-pmd-no-fork](./aggregate-pmd-no-fork-mojo.html) creates a PMD site report in an **aggregator** project without forking the `test-compile` phase again.
 - [pmd:cpd](./cpd-mojo.html) creates a report for PMD's Copy/Paste Detector (CPD) tool. It can also generate a cpd results file in any of these formats: xml, csv or txt.
-- [pmd:aggregate-cpd](./aggregate-cpd-mojo) creates a report for PMD's Copy/Paste Detector (CPD) tool in an **aggregator** project. It can also generate a cpd results file in any of these formats: xml, csv or txt.
+- [pmd:aggregate-cpd](./aggregate-cpd-mojo.html) creates a report for PMD's Copy/Paste Detector (CPD) tool in an **aggregator** project. It can also generate a cpd results file in any of these formats: xml, csv or txt.
 - [pmd:check](./check-mojo.html) fails the build if there were any PMD violations in the source code. This goal invokes automatically `pmd:pmd` prior to executing itself.
 - [pmd:aggregate-pmd-check](./aggregate-pmd-check-mojo.html) fails the build in an **aggregator** project if there were any PMD violations in the source code. This goal invokes automatically `pmd:aggregate-pmd` prior to executing itself.
 - [pmd:cpd-check](./cpd-check-mojo.html) fails the build if there were any CPD violations in the source code. This goal invokes automatically `pmd:cpd` prior to executing itself.
@@ -50,11 +65,9 @@ This plugin has the following goals:
 Usage
 -----
 
-General instructions on how to use the PMD Plugin can be found on the [usage page](./usage.html). Some more specific use cases are described in the examples given below.
+General instructions on how to use the PMD Plugin can be found on the [usage page](./usage.html). Some more specific use cases are described in the examples given below. If you still have questions, see the [FAQ](./faq.html) or ask on the [user mailing list](./mailing-lists.html).
 
-In case you still have questions regarding the plugin's usage, please have a look at the [FAQ](./faq.html) and feel free to contact the [user mailing list](./mailing-lists.html). The posts to the mailing list are archived and could already contain the answer to your question as part of an older thread. Hence, it is also worth browsing/searching the [mail archive](./mailing-lists.html).
-
-If you feel like the plugin is missing a feature or has a defect, you can file a feature request or bug report in our [issue tracker](./issue-management.html). When creating a new issue, please provide a comprehensive description of your concern. Especially for fixing bugs it is crucial that the developers can reproduce your problem. For this reason, entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated. Of course, patches are welcome, too. Contributors can check out the project from our [source repository](./scm.html) and will find supplementary information in the [guide to helping with Maven](http://maven.apache.org/guides/development/guide-helping.html).
+To report a defect or request a feature, open an issue in the [issue tracker](./issue-management.html) with steps to reproduce, ideally a small demo project. To contribute a fix, see the [source repository](./scm.html) and the [guide to helping with Maven](https://maven.apache.org/guides/development/guide-helping.html).
 
 Upgrading Notes
 ---------------
@@ -65,12 +78,11 @@ Upgrading Notes
 
 #[[### 3.22.0]]#
 
-- Starting with Maven PMD Plugin 3.22.0, the plugin requires PMD version 7.0.0 or higher. PMD 7.0.0 switched to SLF4J and since Maven 3.1.0+ SLF4J is the default logging API. Logs from PMD are now always shown and cannot be disabled at runtime after maven has started. The property `showPmdLog` makes no sense anymore and is deprecated now. See [Maven Logging](https://maven.apache.org/maven-logging.html) for how to configure logging. For disabling PMD logs, you'd need to start maven with `MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.net.sourceforge.pmd=off mvn <goals> `.
-- The upgrade from PMD 6 to PMD 7.0.0 is a major version change. If you use the default ruleset from Maven PMD Plugin, then everything should just work. But if you use a custom ruleset, you most likely need to review your ruleset and migrate it to PMD 7. Rules might have been renamed or replaced. See [Detailed Release Notes for PMD 7](https://docs.pmd-code.org/latest/pmd_release_notes_pmd7.html) and [Migration Guide for PMD 7](https://docs.pmd-code.org/latest/pmd_userdocs_migrating_to_pmd7.html).
+- Starting with Maven PMD Plugin 3.22.0, the plugin requires PMD version 7.0.0 or higher. PMD 7 logs through SLF4J, which Maven uses for its own logging. Logs from PMD are now always shown and cannot be disabled at runtime after maven has started. The property `showPmdLog` makes no sense anymore and is deprecated now. See [Maven Logging](https://maven.apache.org/maven-logging.html) for how to configure logging. For disabling PMD logs, you'd need to start maven with `MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.net.sourceforge.pmd=off mvn <goals> `.
+- The upgrade from PMD 6 to PMD 7.0.0 is a major version change. If you use the default ruleset from Maven PMD Plugin, then everything should just work. But if you use a custom ruleset, you most likely need to review your ruleset and migrate it to PMD 7. Rules might have been renamed or replaced. See [Detailed Release Notes for PMD 7](https://docs.pmd-code.org/pmd-doc-7.0.0/pmd_release_notes_pmd7.html) and [Migration Guide for PMD 7](https://docs.pmd-code.org/latest/pmd_userdocs_migrating_to_pmd7.html).
 - If you currently override the dependency to PMD ([Upgrading PMD at Runtime](./examples/upgrading-PMD-at-runtime.html)) make sure to upgrade PMD as well to 7.0.0 or later when upgrading the Maven PMD Plugin.
-#[[### 3.9.0]]#
 
-- Starting with PMD 6.0.0 and Maven PMD Plugin 3.9.0, the rules have been reorganized into categories, e.g. `/category/java/bestpractices.xml`. So when upgrading to Maven PMD Plugin 3.9.0 you should review your plugin configuration and/or custom ruleset. See [Using Rule Sets](./examples/usingRuleSets.html) for more information.
+<a id="a3.9.0"></a>
 
 Examples
 --------
