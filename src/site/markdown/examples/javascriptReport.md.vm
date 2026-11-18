@@ -32,7 +32,7 @@ The example assumes that the JavaScript source code is stored in the subdirector
 
 Note that you have to make sure that you configure `compileSourceRoots` and `includes`, so that PMD finds the JavaScript files.
 
-See [JavaScript Rule Index](https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_ecmascript.html) for the list of available rules.
+See [JavaScript Rule Index](https://docs.pmd-code.org/pmd-doc-${pmdVersion}/pmd_rules_ecmascript.html) for the list of available rules.
 
 ```xml
 <project>
@@ -70,5 +70,3 @@ See [JavaScript Rule Index](https://pmd.github.io/pmd-${pmdVersion}/pmd_rules_ec
   ...
 </project>
 ```
-
-**Note:** Configuring `compileSourceRoots` only works with Maven 3.3.9 and later. For older versions, you'll need to use _build-helper-maven-plugin_ with the `add-source` goal in order to add the additional source directories, so that PMD finds the JavaScript files.
