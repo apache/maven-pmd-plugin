@@ -133,6 +133,23 @@ public class PmdReport extends AbstractPmdReport {
     private boolean typeResolution;
 
     /**
+     * Set to {@code true} to disable PMD's warnings about potential problems with the auxiliary classpath
+     * (auxClasspath) used for type resolution. Such warnings are logged since PMD 7.28.0, for
+     * example when the Java platform classes are not provided explicitly.
+     *
+     * <p>This parameter is equivalent to setting the environment variable
+     * {@code PMD_JAVA_DISABLE_AUX_CLASSPATH_WARNINGS=true}. It requires PMD 7.28.0 or later
+     * and only applies to the Java language.</p>
+     *
+     * <p><b>Note:</b> An invalid auxiliary classpath can lead to false positive or false negative
+     * violations. Only disable the warnings if you are sure that the classpath is correct.</p>
+     *
+     * @since 3.29.0
+     */
+    @Parameter(property = "pmd.disableAuxClasspathWarnings", defaultValue = "false")
+    private boolean disableAuxClasspathWarnings;
+
+    /**
      * Controls whether PMD will track benchmark information.
      *
      * @since 3.1
@@ -392,6 +409,7 @@ public class PmdReport extends AbstractPmdReport {
         request.setLanguageAndVersion(language, targetJdk);
         request.setRulesets(resolveRulesets());
         request.setAuxClasspath(typeResolution ? determineAuxClasspath() : null);
+        request.setDisableAuxClasspathWarnings(disableAuxClasspathWarnings);
         request.setSourceEncoding(getInputEncoding());
         request.addFiles(filesToProcess.keySet());
         request.setMinimumPriority(minimumPriority);
