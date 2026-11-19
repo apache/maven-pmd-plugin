@@ -644,7 +644,7 @@ public class PmdReport extends AbstractPmdReport {
     /**
      * @return the explicit {@code targetJdk}, else {@code maven.compiler.release}, else {@code maven.compiler.source}
      */
-    String getTargetJdk() {
+    private String getTargetJdk() {
         return resolveTargetJdk(targetJdk, compilerRelease, compilerSource);
     }
 
