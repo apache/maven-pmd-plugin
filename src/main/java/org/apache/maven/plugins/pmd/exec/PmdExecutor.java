@@ -35,6 +35,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.PmdAnalysis;
@@ -62,6 +64,8 @@ import org.slf4j.LoggerFactory;
  * Executes PMD with the configuration provided via {@link PmdRequest}.
  */
 public class PmdExecutor extends Executor {
+    // TimeTracker is process-global; ordinary runs may share time, but benchmark runs need isolation.
+    private static final ReentrantReadWriteLock TIME_TRACKER_LOCK = new ReentrantReadWriteLock(true);
     private static final Logger LOG = LoggerFactory.getLogger(PmdExecutor.class);
 
     public PmdResult fork(String javaExecutable) throws MavenReportException {
@@ -174,9 +178,6 @@ public class PmdExecutor extends Executor {
         if (request.getExecutionThreads() != null) {
             configuration.setThreads(request.getExecutionThreads());
         }
-        if (request.getBenchmarkOutputLocation() != null) {
-            TimeTracker.startGlobalTracking();
-        }
         List<File> files = request.getFiles();
 
         Report report = null;
@@ -184,30 +185,27 @@ public class PmdExecutor extends Executor {
         if (request.getRulesets().isEmpty()) {
             LOG.debug("Skipping PMD execution as no rulesets are defined.");
         } else {
-            if (request.getBenchmarkOutputLocation() != null) {
-                TimeTracker.startGlobalTracking();
-            }
-
-            try {
-                report = processFilesWithPMD(configuration, files);
-            } finally {
-                if (request.getAuxClasspath() != null) {
-                    ClassLoader classLoader = configuration.getClassLoader();
-                    if (classLoader instanceof Closeable) {
-                        Closeable closeable = (Closeable) classLoader;
-                        try {
-                            closeable.close();
-                        } catch (IOException ex) {
-                            // ignore
-                        }
+            boolean benchmark = request.getBenchmarkOutputLocation() != null;
+            report = withTimeTrackerLock(benchmark, () -> {
+                if (benchmark) {
+                    TimeTracker.startGlobalTracking();
+                    try {
+                        return processFilesWithPMD(configuration, files);
+                    } finally {
+                        closeAuxiliaryClassLoader(configuration);
+                        TimingReport timingReport = TimeTracker.stopGlobalTracking();
+                        writeBenchmarkReport(
+                                timingReport, request.getBenchmarkOutputLocation(), request.getOutputEncoding());
                     }
                 }
-                if (request.getBenchmarkOutputLocation() != null) {
-                    TimingReport timingReport = TimeTracker.stopGlobalTracking();
-                    writeBenchmarkReport(
-                            timingReport, request.getBenchmarkOutputLocation(), request.getOutputEncoding());
+                synchronized (request) {
+                    try {
+                        return processFilesWithPMD(configuration, files);
+                    } finally {
+                        closeAuxiliaryClassLoader(configuration);
+                    }
                 }
-            }
+            });
         }
 
         if (report != null && !report.getProcessingErrors().isEmpty()) {
@@ -253,6 +251,34 @@ public class PmdExecutor extends Executor {
         return new PmdResult(new File(request.getTargetDirectory(), "pmd.xml"), request.getOutputEncoding());
     }
 
+    private void closeAuxiliaryClassLoader(PMDConfiguration configuration) {
+        if (request.getAuxClasspath() != null) {
+            ClassLoader classLoader = configuration.getClassLoader();
+            if (classLoader instanceof Closeable) {
+                try {
+                    ((Closeable) classLoader).close();
+                } catch (IOException ex) {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    static <T> T withTimeTrackerLock(boolean benchmark, BenchmarkExecution<T> execution) throws MavenReportException {
+        Lock lock = benchmark ? TIME_TRACKER_LOCK.writeLock() : TIME_TRACKER_LOCK.readLock();
+        lock.lock();
+        try {
+            return execution.execute();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @FunctionalInterface
+    interface BenchmarkExecution<T> {
+        T execute() throws MavenReportException;
+    }
+
     /**
      * Gets the errors as a single string. Each error is in its own line.
      *
@@ -270,7 +296,11 @@ public class PmdExecutor extends Executor {
         return String.join(System.lineSeparator(), errorsAsString);
     }
 
-    private void writeBenchmarkReport(TimingReport timingReport, String benchmarkOutputLocation, String encoding) {
+    void writeBenchmarkReport(TimingReport timingReport, String benchmarkOutputLocation, String encoding) {
+        if (timingReport == null) {
+            LOG.debug("Skipping benchmark report because no timing report was produced.");
+            return;
+        }
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(benchmarkOutputLocation), encoding)) {
             final TimingReportRenderer renderer = new TextTimingReportRenderer();
             renderer.render(timingReport, writer);
