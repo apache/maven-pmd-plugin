@@ -19,11 +19,6 @@
 
 import groovy.transform.Field
 
-import org.codehaus.plexus.util.FileUtils;
-
-import java.io.*;
-import java.util.*;
-
 String[] modules = [ "mod-1", "mod-2", "mod-3" ] as String[];
 @Field String[] paths = [
     "target/site/pmd.html",
@@ -62,17 +57,11 @@ for ( String path : paths )
 // check PMD rulesets target copy
 File rule = new File( basedir, "mod-1/target/pmd/rulesets/002-latin-1.xml" );
 String nonascii = "-CHARS: \u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF\u00BC\u00BD\u00BE\u00A4";
-String content = FileUtils.fileRead( rule, "ISO-8859-1" );
-if ( content.indexOf( nonascii ) < 0 )
-{
-    throw new IOException( "non-ascii content corrupted in Latin1." );
-}
+String content = rule.getText( "ISO-8859-1" );
+assert content.contains( nonascii ) : "non-ascii content corrupted in Latin1."
 rule = new File( basedir, "mod-1/target/pmd/rulesets/001-utf-8.xml" );
-content = FileUtils.fileRead( rule, "UTF-8" );
-if ( content.indexOf( nonascii ) < 0 )
-{
-    throw new IOException( "non-ascii content corrupted in UTF-8." );
-}
+content = rule.getText( "UTF-8" );
+assert content.contains( nonascii ) : "non-ascii content corrupted in UTF-8."
 
 // check xml files encoding
 void checkEncoding( String module, String encoding )
@@ -84,7 +73,7 @@ void checkEncoding( String module, String encoding )
             continue;
         }
         File file = new File( basedir, module + '/' + path );
-        String content = FileUtils.fileRead( file, encoding );
+        String content = file.getText( encoding );
         if ( !content.startsWith( "<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>" ) )
         {
             throw new IOException( "wrong XML encoding declaration for " + file );
