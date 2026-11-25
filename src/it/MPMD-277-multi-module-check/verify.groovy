@@ -17,7 +17,7 @@
  * under the License.
  */
 
-File pmdXml = new File( basedir, "target/pmd.xml" )
+File pmdXml = new File(basedir, "target/pmd.xml")
 assert pmdXml.exists()
-assert !pmdXml.text.contains( "Avoid unused private methods such as 'doSomething(IModuleA)'." )
-assert !pmdXml.text.contains( "Avoid unused private methods such as 'aPrivateMethod(FieldElement)'." )
+assert !pmdXml.text.contains("Avoid unused private methods such as 'doSomething(IModuleA)'.")
+assert !pmdXml.text.contains("Avoid unused private methods such as 'aPrivateMethod(FieldElement)'.")

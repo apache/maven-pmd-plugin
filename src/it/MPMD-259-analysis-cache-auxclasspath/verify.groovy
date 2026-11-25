@@ -17,8 +17,8 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
-assert !buildLog.text.contains( '[ERROR] Incremental analysis can\'t check auxclasspath contents' )
-assert !buildLog.text.contains( '[WARNING] Failure executing PMD: java.io.FileNotFoundException' )
+assert !buildLog.text.contains('[ERROR] Incremental analysis can\'t check auxclasspath contents')
+assert !buildLog.text.contains('[WARNING] Failure executing PMD: java.io.FileNotFoundException')

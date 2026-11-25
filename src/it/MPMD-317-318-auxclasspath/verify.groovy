@@ -17,15 +17,15 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 // build.log holds all four invocations, in order
 def auxclasspathLines = []
-for ( String line : buildLog.readLines() ) {
-    if ( line.contains( 'aux classpath:' ) ) {
-      // convert windows path names
-      auxclasspathLines << line.replaceAll( '\\\\', '/' )
+for (String line : buildLog.readLines()) {
+    if (line.contains('aux classpath:')) {
+        // convert windows path names
+        auxclasspathLines << line.replaceAll('\\\\', '/')
     }
 }
 
@@ -35,28 +35,28 @@ def auxAggregated = auxclasspathLines[1]
 def auxIncludeTests = auxclasspathLines[2]
 def auxAggregatedIncludeTests = auxclasspathLines[3]
 
-assert aux.contains( '[DEBUG] Using aux classpath:' )
-assert auxAggregated.contains( '[DEBUG] Using aggregated aux classpath:' )
-assert auxIncludeTests.contains( '[DEBUG] Using aux classpath:' )
-assert auxAggregatedIncludeTests.contains( '[DEBUG] Using aggregated aux classpath:' )
+assert aux.contains('[DEBUG] Using aux classpath:')
+assert auxAggregated.contains('[DEBUG] Using aggregated aux classpath:')
+assert auxIncludeTests.contains('[DEBUG] Using aux classpath:')
+assert auxAggregatedIncludeTests.contains('[DEBUG] Using aggregated aux classpath:')
 
-for ( String line : auxclasspathLines ) {
-    assert line.contains( 'module-a/target/classes' )
+for (String line : auxclasspathLines) {
+    assert line.contains('module-a/target/classes')
     // compile
-    assert line.contains( 'org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar' )
+    assert line.contains('org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar')
     // provided
-    assert line.contains( 'javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar' )
+    assert line.contains('javax/servlet/javax.servlet-api/4.0.1/javax.servlet-api-4.0.1.jar')
 }
 
 // includeTests is off
-for ( String line : [ aux, auxAggregated ] ) {
-    assert !line.contains( 'module-a/target/test-classes' )
-    assert !line.contains( 'commons-io/commons-io/2.14.0/commons-io-2.14.0.jar' )
+for (String line : [aux, auxAggregated]) {
+    assert !line.contains('module-a/target/test-classes')
+    assert !line.contains('commons-io/commons-io/2.14.0/commons-io-2.14.0.jar')
 }
 
 // includeTests is on
-for ( String line : [ auxIncludeTests, auxAggregatedIncludeTests ] ) {
-    assert line.contains( 'module-a/target/test-classes' )
+for (String line : [auxIncludeTests, auxAggregatedIncludeTests]) {
+    assert line.contains('module-a/target/test-classes')
     // test
-    assert line.contains( 'commons-io/commons-io/2.14.0/commons-io-2.14.0.jar' )
+    assert line.contains('commons-io/commons-io/2.14.0/commons-io-2.14.0.jar')
 }

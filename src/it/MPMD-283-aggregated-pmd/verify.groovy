@@ -17,45 +17,35 @@
  * under the License.
  */
 
-def paths = [
-    "target/site/pmd.html",
-    "target/site/cpd.html",
-    "target/pmd.xml",
-    "target/cpd.xml",
-]
+def paths = ["target/site/pmd.html", "target/site/cpd.html", "target/pmd.xml", "target/cpd.xml",]
 
 // aggregated reports must exist
-for ( String path : paths )
-{
-    File file = new File( basedir, path )
-    System.out.println( "Checking for existence of " + file )
-    if ( !file.isFile() )
-    {
-        throw new RuntimeException( "Missing: " + file )
+for (String path : paths) {
+    File file = new File(basedir, path)
+    System.out.println("Checking for existence of " + file)
+    if (!file.isFile()) {
+        throw new RuntimeException("Missing: " + file)
     }
 }
 
 // double check violations: these violations only appear, if type resolution didn't work
 // in case the modules have not been compiled before
-File pmdXml = new File( basedir, "target/pmd.xml" )
-assert !pmdXml.text.contains( "Avoid unused private methods such as 'doSomething(IModuleA)'." )
-assert !pmdXml.text.contains( "Avoid unused private methods such as 'aPrivateMethod(FieldElement)'." )
+File pmdXml = new File(basedir, "target/pmd.xml")
+assert !pmdXml.text.contains("Avoid unused private methods such as 'doSomething(IModuleA)'.")
+assert !pmdXml.text.contains("Avoid unused private methods such as 'aPrivateMethod(FieldElement)'.")
 
-File pmdHtml = new File( basedir, "target/site/pmd.html" )
-assert !pmdHtml.text.contains( "Avoid unused private methods such as 'doSomething(IModuleA)'." )
-assert !pmdHtml.text.contains( "Avoid unused private methods such as 'aPrivateMethod(FieldElement)'." )
+File pmdHtml = new File(basedir, "target/site/pmd.html")
+assert !pmdHtml.text.contains("Avoid unused private methods such as 'doSomething(IModuleA)'.")
+assert !pmdHtml.text.contains("Avoid unused private methods such as 'aPrivateMethod(FieldElement)'.")
 
 // no individual module reports
-def modules = [ "module-a", "module-b" ]
-for ( String module : modules )
-{
-  for ( String path : paths )
-  {
-    File file = new File( basedir, "${module}/${path}" )
-    System.out.println( "Checking for absence of " + file )
-    if ( file.exists() )
-    {
-        throw new RuntimeException( "Banned: " + file )
+def modules = ["module-a", "module-b"]
+for (String module : modules) {
+    for (String path : paths) {
+        File file = new File(basedir, "${module}/${path}")
+        System.out.println("Checking for absence of " + file)
+        if (file.exists()) {
+            throw new RuntimeException("Banned: " + file)
+        }
     }
-  }
 }
