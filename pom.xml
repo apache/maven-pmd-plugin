@@ -453,7 +453,6 @@ under the License.
             <artifactId>maven-invoker-plugin</artifactId>
             <version>3.9.1</version>
             <configuration>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <debug>false</debug>
               <showErrors>true</showErrors>
               <showVersion>true</showVersion>
