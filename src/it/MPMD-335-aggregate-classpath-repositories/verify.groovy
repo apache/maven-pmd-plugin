@@ -17,8 +17,8 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
-assert !buildLog.text.contains( 'pmd failed: org.apache.maven.reporting.MavenReportException' )
-assert !buildLog.text.contains( 'org.eclipse.aether.resolution.DependencyResolutionException' )
-assert !buildLog.text.contains( 'Could not find artifact org.apache.maven.plugins.pmd.it:mpmd335-dependency1:pom:1.0.0-SNAPSHOT' )
+assert !buildLog.text.contains('pmd failed: org.apache.maven.reporting.MavenReportException')
+assert !buildLog.text.contains('org.eclipse.aether.resolution.DependencyResolutionException')
+assert !buildLog.text.contains('Could not find artifact org.apache.maven.plugins.pmd.it:mpmd335-dependency1:pom:1.0.0-SNAPSHOT')

@@ -17,19 +17,19 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 def auxclasspathLog = ''
-for ( String line : buildLog.readLines() ) {
-    if ( line.contains( 'aux classpath' ) ) {
-      auxclasspathLog += line + '\n';
+for (String line : buildLog.readLines()) {
+    if (line.contains('aux classpath')) {
+        auxclasspathLog += line + '\n'
     }
 }
 
 // convert windows path names
 auxclasspathLog = auxclasspathLog.replaceAll('\\\\', '/')
 
-assert 1 == auxclasspathLog.count( '[DEBUG] Using aux classpath:' )
-assert 1 == auxclasspathLog.count( '[WARNING] Adding current java runtime' )
-assert 1 == auxclasspathLog.count( 'lib/jrt-fs.jar to aux classpath' )
+assert 1 == auxclasspathLog.count('[DEBUG] Using aux classpath:')
+assert 1 == auxclasspathLog.count('[WARNING] Adding current java runtime')
+assert 1 == auxclasspathLog.count('lib/jrt-fs.jar to aux classpath')
