@@ -17,12 +17,15 @@
  * under the License.
  */
 
-String[] files = [ "module-a/target/pmd.xml", "module-a/target/pmd/rulesets/001-ruleset.xml",
-                   "module-b/target/pmd.xml", "module-b/target/pmd/rulesets/001-ruleset.xml" ]
+String[] files = [
+    "module-a/target/pmd.xml",
+    "module-a/target/pmd/rulesets/001-ruleset.xml",
+    "module-b/target/pmd.xml",
+    "module-b/target/pmd/rulesets/001-ruleset.xml"
+]
 
-files.each
-{
-    File f = new File( basedir, it )
+files.each {
+    File f = new File(basedir, it)
     assert f.exists()
 }
 

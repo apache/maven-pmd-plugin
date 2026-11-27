@@ -76,6 +76,7 @@ public class PmdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Violati
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
             getLog().info("Skipping PMD execution");
@@ -88,6 +89,7 @@ public class PmdViolationCheckMojo extends AbstractPmdViolationCheckMojo<Violati
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void printError(Violation item, String severity) {
 
         StringBuilder buff = new StringBuilder(100);

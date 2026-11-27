@@ -17,21 +17,21 @@
  * under the License.
  */
 
-File targetDir = new File( basedir, "target" );
-File siteDir = new File( targetDir, "site" );
+File targetDir = new File(basedir, "target")
+File siteDir = new File(targetDir, "site")
 
-File projectReports = new File( siteDir, "project-reports.html" )
-assert !projectReports.getText( "UTF-8" ).contains( "pmd.html" )
-assert !projectReports.getText( "UTF-8" ).contains( "cpd.html" )
+File projectReports = new File(siteDir, "project-reports.html")
+assert !projectReports.getText("UTF-8").contains("pmd.html")
+assert !projectReports.getText("UTF-8").contains("cpd.html")
 
-File pmdReportInSite = new File( siteDir, "pmd.html" )
+File pmdReportInSite = new File(siteDir, "pmd.html")
 assert !pmdReportInSite.exists()
 
-File pmdXmlInTarget = new File( targetDir, "pmd.xml" )
+File pmdXmlInTarget = new File(targetDir, "pmd.xml")
 assert pmdXmlInTarget.exists()
 
-File cpdReportInSite = new File( siteDir, "cpd.html" )
+File cpdReportInSite = new File(siteDir, "cpd.html")
 assert !cpdReportInSite.exists()
 
-File cpdXmlInTarget = new File( targetDir, "cpd.xml" )
+File cpdXmlInTarget = new File(targetDir, "cpd.xml")
 assert cpdXmlInTarget.exists()

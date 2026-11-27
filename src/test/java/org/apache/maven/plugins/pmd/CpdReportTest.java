@@ -18,40 +18,28 @@
  */
 package org.apache.maven.plugins.pmd;
 
-import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Locale;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.api.plugin.testing.MojoTest;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.execution.DefaultMavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.internal.aether.DefaultRepositorySystemSessionFactory;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.testing.PlexusExtension;
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.repository.RemoteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.w3c.dom.Document;
 
 import static org.apache.maven.api.plugin.testing.MojoExtension.getBasedir;
@@ -65,21 +53,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
  */
-@MojoTest
+@MojoTest(realRepositorySession = true)
 public class CpdReportTest {
-
-    @Inject
-    private MavenSession mavenSession;
-
-    @Inject
-    private DefaultRepositorySystemSessionFactory repoSessionFactory;
-
-    @Inject
-    private MavenProject testMavenProject;
-
-    @Inject
-    private MojoExecution mojoExecution;
-
     /**
      * Checks whether the string <code>contained</code> is contained in
      * the given <code>text</code>, ignoring case.
@@ -92,27 +67,9 @@ public class CpdReportTest {
         return text.toLowerCase(Locale.ROOT).contains(contains.toLowerCase(Locale.ROOT));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @BeforeEach
-    public void setUp() {
-        ArtifactRepository localRepo = Mockito.mock(ArtifactRepository.class);
-        Mockito.when(localRepo.getBasedir())
-                .thenReturn(new File(PlexusExtension.getBasedir(), "target/local-repo").getAbsolutePath());
-
-        MavenExecutionRequest request = new DefaultMavenExecutionRequest();
-        request.setLocalRepository(localRepo);
-
-        RemoteRepository centralRepo =
-                new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2").build();
-
-        DefaultRepositorySystemSession systemSession = repoSessionFactory.newRepositorySession(request);
-        Mockito.when(mavenSession.getRepositorySession()).thenReturn(systemSession);
-        Mockito.when(testMavenProject.getRemoteProjectRepositories())
-                .thenReturn(Collections.singletonList(centralRepo));
-
-        Mockito.when(mojoExecution.getPlugin()).thenReturn(new Plugin());
+    public void setUp() throws Exception {
+        CapturingPrintStream.init(true);
     }
 
     /**
@@ -195,6 +152,9 @@ public class CpdReportTest {
         assertTrue(lowerCaseContains(str, "AnotherSample.java"));
         assertTrue(lowerCaseContains(str, "public static void main( String[] args )"));
         assertTrue(lowerCaseContains(str, "private String unusedMethod("));
+
+        // cpd.xml is only copied into the site when includeXmlInReports is set (MPMD-80)
+        assertFalse(new File(outputDir, "cpd.xml").exists());
     }
 
     /**
@@ -204,7 +164,7 @@ public class CpdReportTest {
     @InjectMojo(goal = "cpd", pom = "cpd-invalid-format-plugin-config.xml")
     @MojoParameter(name = "siteDirectory", value = "src/site")
     @Test
-    public void testInvalidFormat(CpdReport mojo) throws MojoExecutionException {
+    public void testInvalidFormat(CpdReport mojo) throws Exception {
         try {
             mojo.execute();
 
@@ -298,6 +258,7 @@ public class CpdReportTest {
         String str = readFile(generatedReport);
         assertFalse(lowerCaseContains(str, "Hello.java"));
         assertTrue(str.contains("CPD found no problems in your source code."));
+        assertTrue(str.contains("href=\"https://docs.pmd-code.org/latest/pmd_userdocs_cpd.html\""), str);
     }
 
     @Basedir("/unit/default-configuration")
@@ -334,6 +295,75 @@ public class CpdReportTest {
         String str = readFile(generatedFile);
         assertTrue(lowerCaseContains(str, "Sample.js"));
         assertTrue(lowerCaseContains(str, "SampleDup.js"));
+    }
+
+    /**
+     * MPMD-187: nothing is generated when CPD is skipped.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "skip", value = "true")
+    @Test
+    public void testSkipConfiguration(CpdReport mojo) throws Exception {
+        File cpdXml = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
+        File generatedReport = new File(mojo.getReportOutputDirectory(), mojo.getOutputPath() + ".html");
+        FileUtils.deleteQuietly(cpdXml);
+        FileUtils.deleteQuietly(generatedReport);
+
+        mojo.execute();
+
+        assertFalse(cpdXml.exists());
+        assertFalse(generatedReport.exists());
+
+        // the fact, the CPD execution has been skipped, should be logged
+        String output = CapturingPrintStream.getOutput();
+        assertTrue(output.contains("Skipping org.apache.maven.plugins:maven-pmd-plugin"), output);
+    }
+
+    /**
+     * MPMD-289: the xml report is written even if only the html report is requested, since the cpd-check goal reads it.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "format", value = "html")
+    @Test
+    public void testFormatHtmlStillWritesXml(CpdReport mojo) throws Exception {
+        File cpdXml = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
+        FileUtils.deleteQuietly(cpdXml);
+
+        mojo.execute();
+
+        assertTrue(new File(mojo.getReportOutputDirectory(), mojo.getOutputPath() + ".html").exists());
+        assertTrue(cpdXml.exists());
+        assertTrue(readFile(cpdXml, StandardCharsets.UTF_8).contains("</pmd-cpd>"));
+    }
+
+    /**
+     * MPMD-290: CPD tokenizes C# sources, so the license header comment is not reported as duplication.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "cpd", pom = "cpd-cs-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testCpdCSharpConfiguration(CpdReport mojo) throws Exception {
+        File generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/cpd.xml");
+        FileUtils.deleteQuietly(generatedFile);
+
+        mojo.execute();
+
+        assertTrue(generatedFile.exists());
+        String str = readFile(generatedFile, StandardCharsets.UTF_8);
+        assertEquals(1, StringUtils.countMatches(str, "<duplication"));
+
+        // no duplication for the license header - if this is reported, then CPD uses the wrong language/tokenizer
+        assertFalse(str.contains("<duplication lines=\"20\" tokens=\"148\">"));
+        assertFalse(str.contains("line=\"1\""));
+
+        // the only valid duplication
+        assertTrue(str.contains("<duplication lines=\"7\" tokens=\"26\">"));
+        assertTrue(str.contains("line=\"20\""));
     }
 
     @Basedir("/unit/default-configuration")
@@ -402,5 +432,9 @@ public class CpdReportTest {
      */
     protected String readFile(File file) throws IOException {
         return new String(Files.readAllBytes(file.toPath()));
+    }
+
+    private static String readFile(File file, Charset charset) throws IOException {
+        return new String(Files.readAllBytes(file.toPath()), charset);
     }
 }

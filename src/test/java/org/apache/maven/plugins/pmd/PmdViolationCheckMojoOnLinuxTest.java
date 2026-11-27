@@ -18,19 +18,33 @@
  */
 package org.apache.maven.plugins.pmd;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
 import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.api.plugin.testing.MojoTest;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.ArgumentCaptor;
 
+import static org.apache.maven.api.plugin.testing.MojoExtension.setVariableValueToObject;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.condition.OS.LINUX;
 import static org.junit.jupiter.api.condition.OS.MAC;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
@@ -46,6 +60,8 @@ public class PmdViolationCheckMojoOnLinuxTest {
     @MojoParameter(name = "targetDirectory", value = "pmd-report")
     @Test
     public void testDefaultConfiguration(PmdViolationCheckMojo mojo) throws Exception {
+        Log log = mock(Log.class);
+        mojo.setLog(log);
         try {
             mojo.execute();
 
@@ -53,6 +69,13 @@ public class PmdViolationCheckMojoOnLinuxTest {
         } catch (final MojoFailureException e) {
             assertTrue(
                     e.getMessage().startsWith("PMD " + AbstractPmdReport.getPmdVersion() + " has found 8 violations."));
+            ArgumentCaptor<CharSequence> messages = ArgumentCaptor.forClass(CharSequence.class);
+            verify(log, atLeastOnce()).warn(messages.capture());
+            assertEquals(
+                    8,
+                    messages.getAllValues().stream()
+                            .filter(message -> message.toString().startsWith("PMD Failure:"))
+                            .count());
         }
     }
 
@@ -140,5 +163,145 @@ public class PmdViolationCheckMojoOnLinuxTest {
     public void testViolationExclusion(PmdViolationCheckMojo mojo) throws Exception {
         // this call shouldn't throw an exception, as the classes with violations have been excluded
         mojo.execute();
+    }
+
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-failandwarnonpriority-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "printFailingErrors", value = "true")
+    // note: verbose=true is set in pmd-check-failandwarnonpriority-plugin-config.xml already
+    @Test
+    public void testVerboseTakesPrecedenceOverPrintFailingErrors(PmdViolationCheckMojo mojo) throws Exception {
+        Log log = mock(Log.class);
+        mojo.setLog(log);
+
+        try {
+            mojo.execute();
+            fail("MojoFailureException expected");
+        } catch (MojoFailureException expected) {
+            ArgumentCaptor<CharSequence> messages = ArgumentCaptor.forClass(CharSequence.class);
+            verify(log, atLeastOnce()).warn(messages.capture());
+            List<CharSequence> violationMessages = messages.getAllValues().stream()
+                    .filter(message -> message.toString().startsWith("PMD "))
+                    .collect(Collectors.toList());
+            assertEquals(
+                    5,
+                    violationMessages.stream()
+                            .filter(message -> message.toString().startsWith("PMD Failure:"))
+                            .count());
+            assertEquals(
+                    3,
+                    violationMessages.stream()
+                            .filter(message -> message.toString().startsWith("PMD Warning:"))
+                            .count());
+        }
+    }
+
+    /**
+     * MPMD-163: with a failure priority that nothing reaches, every violation is reported once, as a warning.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "verbose", value = "true")
+    @MojoParameter(name = "printFailingErrors", value = "true")
+    @MojoParameter(name = "failurePriority", value = "0")
+    @Test
+    public void testWarningsAreNotDuplicated(PmdViolationCheckMojo mojo) throws Exception {
+        Log log = mock(Log.class);
+        mojo.setLog(log);
+
+        mojo.execute();
+
+        List<String> messages = warnings(log);
+        assertEquals(
+                0, messages.stream().filter(m -> m.startsWith("PMD Failure:")).count());
+        assertEquals(
+                8, messages.stream().filter(m -> m.startsWith("PMD Warning:")).count());
+        assertTrue(messages.contains("PMD Warning: def.configuration.AppSample:45 Rule:UnusedFormalParameter"
+                + " Priority:3 Avoid unused method parameters such as 'notUsedParam'.."));
+        assertEquals(
+                1,
+                messages.stream()
+                        .filter(m ->
+                                m.startsWith("PMD " + AbstractPmdReport.getPmdVersion() + " has issued 8 warnings."))
+                        .count());
+    }
+
+    /**
+     * MPMD-205: a violation in a file without a java class, like javascript, is reported by its file name, without
+     * the directory of the absolute path in pmd.xml, and fails the build.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testJavascriptViolationFailsTheBuild(PmdViolationCheckMojo mojo, @TempDir Path targetDirectory)
+            throws Exception {
+        String file = targetDirectory
+                .resolve("src")
+                .resolve("js")
+                .resolve("PmdJsCheck.js")
+                .toString();
+        Files.write(
+                targetDirectory.resolve("pmd.xml"),
+                ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                                + "<pmd xmlns=\"http://pmd.sourceforge.net/report/2.0.0\" version=\"7.18.0\">\n"
+                                + "<file name=\"" + file + "\">\n"
+                                + "<violation beginline=\"23\" endline=\"23\" begincolumn=\"5\" endcolumn=\"23\""
+                                + " rule=\"GlobalVariable\" ruleset=\"Best Practices\" priority=\"1\">\n"
+                                + "Avoid using global variables\n"
+                                + "</violation>\n"
+                                + "</file>\n"
+                                + "</pmd>\n")
+                        .getBytes(StandardCharsets.UTF_8));
+        setVariableValueToObject(mojo, "targetDirectory", targetDirectory.toFile());
+        Log log = mock(Log.class);
+        mojo.setLog(log);
+
+        try {
+            mojo.execute();
+
+            fail("MojoFailureException should be thrown.");
+        } catch (MojoFailureException e) {
+            assertTrue(
+                    e.getMessage().startsWith("PMD " + AbstractPmdReport.getPmdVersion() + " has found 1 violation."));
+        }
+        assertTrue(warnings(log)
+                .contains(
+                        "PMD Failure: PmdJsCheck.js:23 Rule:GlobalVariable Priority:1 Avoid using global variables."));
+    }
+
+    /**
+     * MPMD-243: violations listed in excludeFromFailureFile do not fail the build, but are still reported as warnings.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "check", pom = "pmd-check-pmd-exclusions-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "targetDirectory", value = "pmd-report")
+    @MojoParameter(name = "verbose", value = "true")
+    @Test
+    public void testExcludedViolationsAreReportedAsWarnings(PmdViolationCheckMojo mojo) throws Exception {
+        Log log = mock(Log.class);
+        mojo.setLog(log);
+
+        mojo.execute();
+
+        List<String> messages = warnings(log);
+        assertEquals(
+                0, messages.stream().filter(m -> m.startsWith("PMD Failure:")).count());
+        assertEquals(
+                8, messages.stream().filter(m -> m.startsWith("PMD Warning:")).count());
+        assertTrue(messages.stream().anyMatch(m -> m.startsWith("PMD Warning: def.configuration.App2:22 ")));
+        assertTrue(messages.stream()
+                .anyMatch(m -> m.startsWith("PMD " + AbstractPmdReport.getPmdVersion() + " has issued 8 warnings.")));
+    }
+
+    private static List<String> warnings(Log log) {
+        ArgumentCaptor<CharSequence> messages = ArgumentCaptor.forClass(CharSequence.class);
+        verify(log, atLeastOnce()).warn(messages.capture());
+        return messages.getAllValues().stream().map(CharSequence::toString).collect(Collectors.toList());
     }
 }

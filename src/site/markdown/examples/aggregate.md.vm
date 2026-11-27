@@ -28,7 +28,7 @@ under the License.
 
 For example, consider the following directory structure:
 
-```unknown
+```text
 
 Project
   |-- pom.xml

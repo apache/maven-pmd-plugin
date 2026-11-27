@@ -19,80 +19,55 @@
 
 import groovy.transform.Field
 
-import org.codehaus.plexus.util.FileUtils;
-
-import java.io.*;
-import java.util.*;
-
-String[] modules = [ "mod-1", "mod-2", "mod-3" ] as String[];
-@Field String[] paths = [
-    "target/site/pmd.html",
-    "target/site/cpd.html",
-    "target/pmd.xml",
-    "target/cpd.xml",
-] as String[];
+String[] modules = ["mod-1", "mod-2", "mod-3"] as String[]
+@Field String[] paths = ["target/site/pmd.html", "target/site/cpd.html", "target/pmd.xml", "target/cpd.xml",] as String[]
 
 // files must exist in every module
-for ( String module : modules )
-{
+for (String module : modules) {
     // PMD and CPD reports
-    for ( String path : paths )
-    {
-        File file = new File( basedir, module + '/' + path );
-        System.out.println( "Checking for existence of " + file );
-        if ( !file.isFile() )
-        {
-            throw new FileNotFoundException( "Missing: " + file.getAbsolutePath() );
+    for (String path : paths) {
+        File file = new File(basedir, module + '/' + path)
+        System.out.println("Checking for existence of " + file)
+        if (!file.isFile()) {
+            throw new FileNotFoundException("Missing: " + file.getAbsolutePath())
         }
     }
 }
 
 // files must not exist in parent
-for ( String path : paths )
-{
-    File file = new File( basedir, path );
-    System.out.println( "Checking for absence of " + file );
-    if ( file.exists() )
-    {
-        throw new IOException( "Banned: " + file.getAbsolutePath() );
+for (String path : paths) {
+    File file = new File(basedir, path)
+    System.out.println("Checking for absence of " + file)
+    if (file.exists()) {
+        throw new IOException("Banned: " + file.getAbsolutePath())
     }
 }
 
 
 // check PMD rulesets target copy
-File rule = new File( basedir, "mod-1/target/pmd/rulesets/002-latin-1.xml" );
-String nonascii = "-CHARS: \u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF\u00BC\u00BD\u00BE\u00A4";
-String content = FileUtils.fileRead( rule, "ISO-8859-1" );
-if ( content.indexOf( nonascii ) < 0 )
-{
-    throw new IOException( "non-ascii content corrupted in Latin1." );
-}
-rule = new File( basedir, "mod-1/target/pmd/rulesets/001-utf-8.xml" );
-content = FileUtils.fileRead( rule, "UTF-8" );
-if ( content.indexOf( nonascii ) < 0 )
-{
-    throw new IOException( "non-ascii content corrupted in UTF-8." );
-}
+File rule = new File(basedir, "mod-1/target/pmd/rulesets/002-latin-1.xml")
+String nonascii = "-CHARS: \u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF\u00BC\u00BD\u00BE\u00A4"
+String content = rule.getText("ISO-8859-1")
+assert content.contains(nonascii) : "non-ascii content corrupted in Latin1."
+rule = new File( basedir, "mod-1/target/pmd/rulesets/001-utf-8.xml" )
+content = rule.getText( "UTF-8" )
+assert content.contains( nonascii ) : "non-ascii content corrupted in UTF-8."
 
 // check xml files encoding
-void checkEncoding( String module, String encoding )
-{
-    for ( String path : paths )
-    {
-        if ( !path.endsWith( ".xml" ) )
-        {
-            continue;
+void checkEncoding( String module, String encoding ) {
+    for ( String path : paths ) {
+        if ( !path.endsWith( ".xml" ) ) {
+            continue
         }
-        File file = new File( basedir, module + '/' + path );
-        String content = FileUtils.fileRead( file, encoding );
-        if ( !content.startsWith( "<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>" ) )
-        {
-            throw new IOException( "wrong XML encoding declaration for " + file );
+        File file = new File( basedir, module + '/' + path )
+        String content = file.getText( encoding )
+        if ( !content.startsWith( "<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>" ) ) {
+            throw new IOException( "wrong XML encoding declaration for " + file )
         }
     }
 }
-checkEncoding( "mod-1", "ISO-8859-1" );
-checkEncoding( "mod-2", "UTF-8" );
-checkEncoding( "mod-3", "UTF-8" );
+checkEncoding( "mod-1", "ISO-8859-1" )
+checkEncoding( "mod-2", "UTF-8" )
+checkEncoding( "mod-3", "UTF-8" )
 
-return true;
+return true

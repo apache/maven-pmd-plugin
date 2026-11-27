@@ -17,5 +17,5 @@
  * under the License.
  */
 
-File pmdXml = new File( basedir, "target/pmd.xml" );
+File pmdXml = new File(basedir, "target/pmd.xml")
 assert pmdXml.exists()

@@ -56,7 +56,7 @@ under the License.
   </contributors>
 
   <prerequisites>
-    <maven>3.6.3</maven>
+    <maven>3.9.0</maven>
   </prerequisites>
 
   <scm>
@@ -70,8 +70,8 @@ under the License.
     <url>https://github.com/apache/maven-pmd-plugin/issues/</url>
   </issueManagement>
   <ciManagement>
-    <system>Jenkins</system>
-    <url>https://ci-maven.apache.org/job/Maven/job/maven-box/job/maven-pmd-plugin/</url>
+    <system>GitHub</system>
+    <url>https://github.com/apache/maven-pmd-plugin/actions</url>
   </ciManagement>
   <distributionManagement>
     <site>
@@ -81,11 +81,10 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <javaVersion>8</javaVersion>
     <mavenVersion>3.9.16</mavenVersion>
-    <pmdVersion>7.27.0</pmdVersion>
-    <slf4jVersion>1.7.36</slf4jVersion>
-    <doxiaVersion>2.1.0</doxiaVersion>
+    <pmdVersion>7.29.0</pmdVersion>
+    <slf4jVersion>2.0.19</slf4jVersion>
+    <doxiaVersion>2.2.0</doxiaVersion>
     <sitePluginVersion>${version.maven-site-plugin}</sitePluginVersion>
     <project.build.outputTimestamp>2025-10-07T05:57:06Z</project.build.outputTimestamp>
 
@@ -94,6 +93,52 @@ under the License.
     <it.projectInfoReportsPluginVersion>3.9.0</it.projectInfoReportsPluginVersion>
     <it.jxrPluginVersion>3.6.0</it.jxrPluginVersion>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- commons-beanutils 1.9.4 comes in through velocity-tools-generic (maven-reporting-impl) and is on the plugin runtime classpath -->
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.11.0</version>
+      </dependency>
+      <!-- wiremock-jre8 2.35.2 (test only) brings in jetty 9.4.49, jackson 2.13.x, handlebars, json-smart and commons-fileupload with known vulnerabilities -->
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>2.23.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-bom</artifactId>
+        <version>9.4.58.v20250814</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.github.jknack</groupId>
+        <artifactId>handlebars</artifactId>
+        <version>4.5.8</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.jknack</groupId>
+        <artifactId>handlebars-helpers</artifactId>
+        <version>4.5.8</version>
+      </dependency>
+      <dependency>
+        <groupId>net.minidev</groupId>
+        <artifactId>json-smart</artifactId>
+        <version>2.6.1</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>1.6.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <!-- maven -->
@@ -143,7 +188,7 @@ under the License.
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.20.0</version>
+      <version>3.22.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -169,6 +214,12 @@ under the License.
       <version>${pmdVersion}</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>net.sourceforge.pmd</groupId>
+      <artifactId>pmd-cs</artifactId>
+      <version>${pmdVersion}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -187,17 +238,12 @@ under the License.
       <artifactId>doxia-sink-api</artifactId>
       <version>${doxiaVersion}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-core</artifactId>
-      <version>${doxiaVersion}</version>
-    </dependency>
 
     <!-- shared -->
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-api</artifactId>
-      <version>4.0.0</version>
+      <version>4.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
@@ -209,7 +255,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-resources</artifactId>
-      <version>1.4.0</version>
+      <version>1.4.1</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -240,15 +286,9 @@ under the License.
     </dependency>
     <dependency>
       <groupId>com.github.tomakehurst</groupId>
-      <artifactId>wiremock</artifactId>
-      <version>2.27.2</version>
+      <artifactId>wiremock-jre8</artifactId>
+      <version>2.35.2</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpclient</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.resolver</groupId>
@@ -300,10 +340,10 @@ under the License.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
-            <excludes combine.children="append">
+            <inputExcludes>
               <exclude>.pmd</exclude>
               <exclude>.checkstyle</exclude>
-            </excludes>
+            </inputExcludes>
           </configuration>
         </plugin>
         <plugin>
@@ -382,7 +422,7 @@ under the License.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.28</version>
+        <version>1.29.2</version>
         <configuration>
           <signature>
             <groupId>org.codehaus.mojo.signature</groupId>
@@ -413,7 +453,6 @@ under the License.
             <artifactId>maven-invoker-plugin</artifactId>
             <version>3.9.1</version>
             <configuration>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <debug>false</debug>
               <showErrors>true</showErrors>
               <showVersion>true</showVersion>

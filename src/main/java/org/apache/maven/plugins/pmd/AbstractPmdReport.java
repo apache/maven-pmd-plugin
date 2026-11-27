@@ -258,9 +258,6 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
     @Parameter(defaultValue = "${session}", required = true, readonly = true)
     protected MavenSession session;
 
-    /** The files that are being analyzed. */
-    protected Map<File, PmdFileInfo> filesToProcess;
-
     @Override
     protected MavenProject getProject() {
         return project;
@@ -443,7 +440,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
             return true;
         }
         try {
-            filesToProcess = getFilesToProcess();
+            Map<File, PmdFileInfo> filesToProcess = getFilesToProcess();
             if (filesToProcess.isEmpty()) {
                 return false;
             }
@@ -493,7 +490,7 @@ public abstract class AbstractPmdReport extends AbstractMavenReport {
             return Collections.singleton(aggregatedProject);
         }
 
-        List<Path> modulePaths = new LinkedList<Path>();
+        List<Path> modulePaths = new LinkedList<>();
         for (String module : aggregatedProject.getModules()) {
             modulePaths.add(new File(aggregatedProject.getBasedir(), module).toPath());
         }

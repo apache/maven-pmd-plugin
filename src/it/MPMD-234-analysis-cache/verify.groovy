@@ -17,16 +17,16 @@
  * under the License.
  */
 
-File cacheFile = new File( basedir, 'no-analysis-cache/target/pmd/pmd.cache' )
+File cacheFile = new File(basedir, 'no-analysis-cache/target/pmd/pmd.cache')
 assert !cacheFile.exists()
 
-File defaultAnalysisCacheLocation = new File( basedir, 'default-analysis-cache/target/pmd/pmd.cache' )
+File defaultAnalysisCacheLocation = new File(basedir, 'default-analysis-cache/target/pmd/pmd.cache')
 assert defaultAnalysisCacheLocation.exists()
 
-File customCacheLocation = new File( basedir, 'custom-analysis-cache/target/custom-analysis-pmd.cache' )
+File customCacheLocation = new File(basedir, 'custom-analysis-cache/target/custom-analysis-pmd.cache')
 assert customCacheLocation.exists()
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
-assert !buildLog.text.contains( 'This analysis could be faster, please consider using Incremental Analysis' )
+assert !buildLog.text.contains('This analysis could be faster, please consider using Incremental Analysis')

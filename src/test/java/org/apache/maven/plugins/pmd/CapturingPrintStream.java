@@ -20,12 +20,12 @@ package org.apache.maven.plugins.pmd;
 
 import java.io.PrintStream;
 
-import org.slf4j.impl.MavenSlf4jSimpleFriend;
+import org.slf4j.simple.MavenSlf4jSimpleFriend;
 
 /**
  * Captures log output from simple slf4j for asserting in unit tests.
  */
-class CapturingPrintStream extends PrintStream {
+final class CapturingPrintStream extends PrintStream {
     private boolean quiet;
     private StringBuilder buffer = new StringBuilder();
 

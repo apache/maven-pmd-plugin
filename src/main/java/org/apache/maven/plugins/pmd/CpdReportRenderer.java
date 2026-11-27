@@ -26,8 +26,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.sink.SinkEventAttributeSet;
 import org.apache.maven.doxia.sink.SinkEventAttributes;
-import org.apache.maven.doxia.sink.impl.SinkEventAttributeSet;
 import org.apache.maven.plugins.pmd.model.CpdFile;
 import org.apache.maven.plugins.pmd.model.Duplication;
 import org.apache.maven.project.MavenProject;
@@ -86,7 +86,7 @@ public class CpdReportRenderer extends AbstractMavenReportRenderer {
 
         sink.paragraph();
         sink.text(getI18nString("cpdlink") + " ");
-        link("https://pmd.github.io/latest/pmd_userdocs_cpd.html", "CPD");
+        link("https://docs.pmd-code.org/latest/pmd_userdocs_cpd.html", "CPD");
         sink.text(" " + AbstractPmdReport.getPmdVersion() + ".");
         sink.paragraph_();
 

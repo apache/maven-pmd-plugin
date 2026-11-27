@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import net.sourceforge.pmd.renderers.Renderer;
@@ -81,9 +83,24 @@ public class PmdReport extends AbstractPmdReport {
      * <p>
      *   <b>Note:</b> this parameter is only used if the language parameter is set to <code>java</code>.
      * </p>
+     * <p>If not set, the value of {@code maven.compiler.release} is used, or {@code maven.compiler.source} when no
+     * release is set, as the Maven Compiler Plugin does.</p>
      */
-    @Parameter(property = "targetJdk", defaultValue = "${maven.compiler.source}")
+    @Parameter(property = "targetJdk")
     private String targetJdk;
+
+    /**
+     * The {@code maven.compiler.release} property, used when {@link #targetJdk} is not set.
+     */
+    @Parameter(defaultValue = "${maven.compiler.release}", readonly = true)
+    private String compilerRelease;
+
+    /**
+     * The {@code maven.compiler.source} property, used when neither {@link #targetJdk} nor
+     * {@code maven.compiler.release} is set.
+     */
+    @Parameter(defaultValue = "${maven.compiler.source}", readonly = true)
+    private String compilerSource;
 
     /**
      * The programming language to be analyzed by PMD. Valid values are currently <code>java</code>,
@@ -112,7 +129,7 @@ public class PmdReport extends AbstractPmdReport {
 
     /**
      * The PMD rulesets to use. See the
-     * <a href="https://pmd.github.io/latest/pmd_rules_java.html">Stock Java Rulesets</a> for a
+     * <a href="https://docs.pmd-code.org/latest/pmd_rules_java.html">Stock Java Rulesets</a> for a
      * list of available rules.
      * Defaults to a custom ruleset provided by this maven plugin
      * (<code>/rulesets/java/maven-pmd-plugin-default.xml</code>).
@@ -149,7 +166,7 @@ public class PmdReport extends AbstractPmdReport {
     /**
      * Source level marker used to indicate whether a RuleViolation should be suppressed. If it is not set, PMD's
      * default will be used, which is <code>NOPMD</code>. See also <a
-     * href="https://pmd.github.io/latest/pmd_userdocs_suppressing_warnings.html">PMD &#x2013; Suppressing warnings</a>.
+     * href="https://docs.pmd-code.org/latest/pmd_userdocs_suppressing_warnings.html">PMD &#x2013; Suppressing warnings</a>.
      *
      * @since 3.4
      */
@@ -241,7 +258,7 @@ public class PmdReport extends AbstractPmdReport {
      * PMD will spawn `n` separate analysis threads besides the main thread.
      * The default behaviour is deferred to PMD and is currently 1C i.e. one thread per core on the host machine.
      *
-     * @since 3.28.1
+     * @since 3.29.0
      */
     @Parameter(property = "pmd.executionThreads")
     private String executionThreads;
@@ -329,6 +346,8 @@ public class PmdReport extends AbstractPmdReport {
         try {
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
+            Map<File, PmdFileInfo> filesToProcess = getFilesToProcess();
+
             PmdReportRenderer renderer = new PmdReportRenderer(
                     getLog(),
                     getSink(),
@@ -347,6 +366,8 @@ public class PmdReport extends AbstractPmdReport {
             }
 
             renderer.render();
+        } catch (IOException e) {
+            throw new MavenReportException("Failed to determine files to process for PMD", e);
         } finally {
             Thread.currentThread().setContextClassLoader(origLoader);
         }
@@ -375,21 +396,15 @@ public class PmdReport extends AbstractPmdReport {
             return;
         }
 
+        Map<File, PmdFileInfo> filesToProcess;
         try {
             filesToProcess = getFilesToProcess();
-
-            if (filesToProcess.isEmpty() && !"java".equals(language)) {
-                getLog().info("No files found to process. Did you forget to add additional source directories?"
-                        + " (see also build-helper-maven-plugin)");
-                // When there are no files found to process, we do not need to process
-                return;
-            }
         } catch (IOException e) {
             throw new MavenReportException("Can't get file list", e);
         }
 
         PmdRequest request = new PmdRequest();
-        request.setLanguageAndVersion(language, targetJdk);
+        request.setLanguageAndVersion(language, getTargetJdk());
         request.setRulesets(resolveRulesets());
         request.setAuxClasspath(typeResolution ? determineAuxClasspath() : null);
         request.setSourceEncoding(getInputEncoding());
@@ -409,8 +424,32 @@ public class PmdReport extends AbstractPmdReport {
         request.setExecutionThreads(
                 numThreadsConverter(executionThreads, Runtime.getRuntime().availableProcessors()));
 
+        if (filesToProcess.isEmpty()) {
+            // When there are no files found to process, we do not need to execute PMD
+            getLog().info("No files found to process. Skipping PMD execution.");
+            // create an empty report for the check mojo
+            createEmptyPmdResult();
+            return;
+        }
+
         getLog().info("PMD version: " + AbstractPmdReport.getPmdVersion());
         pmdResult = serviceExecutor.execute(request);
+    }
+
+    private void createEmptyPmdResult() throws MavenReportException {
+        try {
+            Path pmdXml = targetDirectory.toPath().resolve("pmd.xml");
+            Files.createDirectories(pmdXml.getParent());
+            Files.write(pmdXml, Collections.singletonList("<pmd></pmd>"), Charset.forName(getOutputEncoding()));
+            if (includeXmlInReports) {
+                Path reportPmdXml = getReportOutputDirectory().toPath().resolve("pmd.xml");
+                Files.createDirectories(reportPmdXml.getParent());
+                Files.copy(pmdXml, reportPmdXml);
+            }
+            pmdResult = new PmdResult(pmdXml.toFile(), getOutputEncoding());
+        } catch (IOException e) {
+            throw new MavenReportException("Couldn't create empty pmd.xml file", e);
+        }
     }
 
     /**
@@ -602,10 +641,32 @@ public class PmdReport extends AbstractPmdReport {
         return false;
     }
 
+    /**
+     * @return the explicit {@code targetJdk}, else {@code maven.compiler.release}, else {@code maven.compiler.source}
+     */
+    private String getTargetJdk() {
+        return resolveTargetJdk(targetJdk, compilerRelease, compilerSource);
+    }
+
+    static String resolveTargetJdk(String targetJdk, String release, String source) {
+        if (isNotBlank(targetJdk)) {
+            return targetJdk;
+        }
+        if (isNotBlank(release)) {
+            return release;
+        }
+        return isNotBlank(source) ? source : null;
+    }
+
+    private static boolean isNotBlank(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
     private List<String> determineJavaRuntimeClasses() {
         if (!"java".equals(language) && null != language) {
             return Collections.emptyList();
         }
+        String targetJdk = getTargetJdk();
         if (targetJdk == null) {
             return Collections.emptyList();
         }
@@ -636,7 +697,7 @@ public class PmdReport extends AbstractPmdReport {
                 getLog().warn("Couldn't find java runtime classes in " + javaHome
                         + ". Please make sure the java installation exists.");
             } else {
-                getLog().warn("Could't find java executable for " + toolchain
+                getLog().warn("Couldn't find java executable for " + toolchain
                         + ". Please double check your toolchains.xml for outdated entries.");
             }
         }

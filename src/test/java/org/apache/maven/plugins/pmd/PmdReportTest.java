@@ -18,47 +18,36 @@
  */
 package org.apache.maven.plugins.pmd;
 
-import javax.inject.Inject;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.Locale;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import net.sourceforge.pmd.renderers.Renderer;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.api.plugin.testing.Basedir;
 import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoExtension;
 import org.apache.maven.api.plugin.testing.MojoParameter;
 import org.apache.maven.api.plugin.testing.MojoTest;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.execution.DefaultMavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.internal.aether.DefaultRepositorySystemSessionFactory;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.pmd.exec.PmdExecutor;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReportException;
-import org.codehaus.plexus.testing.PlexusExtension;
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.repository.RemoteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import static org.apache.maven.api.plugin.testing.MojoExtension.getBasedir;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -67,20 +56,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
  */
-@MojoTest
+@MojoTest(realRepositorySession = true)
 public class PmdReportTest {
-
-    @Inject
-    private MavenSession mavenSession;
-
-    @Inject
-    private DefaultRepositorySystemSessionFactory repoSessionFactory;
-
-    @Inject
-    private MavenProject testMavenProject;
-
-    @Inject
-    private MojoExecution mojoExecution;
 
     /**
      * Checks whether the string <code>contained</code> is contained in
@@ -94,32 +71,9 @@ public class PmdReportTest {
         return text.toLowerCase(Locale.ROOT).contains(contains.toLowerCase(Locale.ROOT));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @BeforeEach
     public void setUp() throws Exception {
         CapturingPrintStream.init(true);
-        ArtifactRepository localRepo = Mockito.mock(ArtifactRepository.class);
-        Mockito.when(localRepo.getBasedir())
-                .thenReturn(new File(PlexusExtension.getBasedir(), "target/local-repo").getAbsolutePath());
-
-        MavenExecutionRequest request = new DefaultMavenExecutionRequest();
-        request.setLocalRepository(localRepo);
-
-        RemoteRepository centralRepo =
-                new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2").build();
-
-        DefaultRepositorySystemSession systemSession = repoSessionFactory.newRepositorySession(request);
-        Mockito.when(mavenSession.getRepositorySession()).thenReturn(systemSession);
-        Mockito.when(mavenSession.getRequest()).thenReturn(request);
-        Mockito.when(testMavenProject.getRemoteProjectRepositories())
-                .thenReturn(Collections.singletonList(centralRepo));
-
-        Plugin plugin = new Plugin();
-        plugin.setGroupId("org.apache.maven.plugins");
-        plugin.setArtifactId("maven-pmd-plugin");
-        Mockito.when(mojoExecution.getPlugin()).thenReturn(plugin);
     }
 
     @Basedir("/unit/default-configuration")
@@ -264,6 +218,10 @@ public class PmdReportTest {
 
         String str = readFile(generatedReport);
         assertTrue(str.contains("Avoid using global variables"));
+
+        // the violation is also part of the xml report, which is what the check goal evaluates
+        generatedFile = new File(getBasedir(), "target/test/unit/default-configuration/target/pmd.xml");
+        assertTrue(readFile(generatedFile, StandardCharsets.UTF_8).contains("GlobalVariable"));
     }
 
     @Basedir("/unit/default-configuration")
@@ -401,6 +359,10 @@ public class PmdReportTest {
         assertTrue(lowerCaseContains(str, "veryLongVariableNameWithViolation"));
         // notSoLongVariableName should not be reported
         assertFalse(lowerCaseContains(str, "notSoLongVariableName"));
+
+        // pmd.xml is only copied into the site when includeXmlInReports is set (MPMD-80)
+        assertTrue(new File(getBasedir(), "target/test/unit/custom-configuration/target/pmd.csv").exists());
+        assertFalse(new File(outputDir, "pmd.xml").exists());
     }
 
     /**
@@ -445,6 +407,10 @@ public class PmdReportTest {
 
         File generatedReport = new File(outputDir, filename);
         assertFalse(generatedReport.exists());
+
+        // the fact, the PMD execution has been skipped, should be logged
+        String output = CapturingPrintStream.getOutput();
+        assertTrue(output.contains("Skipping org.apache.maven.plugins:maven-pmd-plugin"));
     }
 
     @Basedir("/unit/empty-report")
@@ -480,7 +446,7 @@ public class PmdReportTest {
 
             fail("Must nested MavenReportException.");
         } catch (MojoExecutionException e) {
-            assertTrue(e.getCause() instanceof MavenReportException);
+            assertInstanceOf(MavenReportException.class, e.getCause());
         }
     }
 
@@ -494,7 +460,7 @@ public class PmdReportTest {
 
             fail("Must nested MavenReportException.");
         } catch (MojoExecutionException e) {
-            assertTrue(e.getCause() instanceof MavenReportException);
+            assertInstanceOf(MavenReportException.class, e.getCause());
         }
     }
 
@@ -524,6 +490,166 @@ public class PmdReportTest {
         // check that pmd.xml file has the closing element
         String pmdXml = readFile(generatedXmlFile);
         assertTrue(pmdXml.contains("</pmd>"));
+    }
+
+    /**
+     * MPMD-165: the generated report uses the configured output encoding.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "pmd", pom = "default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "outputEncoding", value = "UTF-16")
+    @Test
+    public void testOutputEncoding(PmdReport mojo) throws Exception {
+        mojo.execute();
+
+        File generatedReport = new File(mojo.getReportOutputDirectory(), mojo.getOutputPath() + ".html");
+        assertTrue(generatedReport.exists());
+
+        // the file is UTF-16 encoded, so it must be decoded as such to find the ascii text
+        String html = readFile(generatedReport, StandardCharsets.UTF_16);
+        assertTrue(html.contains("<meta charset=\"UTF-16\" />"));
+    }
+
+    /**
+     * MPMD-181: the benchmark is written to the configured file.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "pmd", pom = "default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "benchmark", value = "true")
+    @Test
+    public void testBenchmark(PmdReport mojo) throws Exception {
+        File targetDirectory = new File(getBasedir(), "target/test/unit/default-configuration/target");
+        File benchmarkFile = new File(targetDirectory, "my-own-pmd-benchmark.txt");
+        File defaultBenchmarkFile = new File(targetDirectory, "pmd-benchmark.txt");
+        FileUtils.deleteQuietly(benchmarkFile);
+        FileUtils.deleteQuietly(defaultBenchmarkFile);
+        MojoExtension.setVariableValueToObject(mojo, "benchmarkOutputFilename", benchmarkFile.getAbsolutePath());
+
+        mojo.execute();
+
+        assertTrue(benchmarkFile.exists());
+        assertFalse(defaultBenchmarkFile.exists());
+    }
+
+    /**
+     * MPMD-181: without the benchmark option, no benchmark file is written to the configured or default location.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "pmd", pom = "default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testNoBenchmark(PmdReport mojo) throws Exception {
+        File targetDirectory = new File(getBasedir(), "target/test/unit/default-configuration/target");
+        File benchmarkFile = new File(targetDirectory, "my-own-pmd-benchmark.txt");
+        // the default is ${project.build.directory}/pmd-benchmark.txt
+        File defaultBenchmarkFile = new File(getBasedir(), "target/pmd-benchmark.txt");
+        FileUtils.deleteQuietly(benchmarkFile);
+        FileUtils.deleteQuietly(defaultBenchmarkFile);
+
+        mojo.execute();
+
+        assertTrue(new File(targetDirectory, "pmd.xml").exists());
+        assertFalse(benchmarkFile.exists());
+        assertFalse(defaultBenchmarkFile.exists());
+        assertFalse(new File(targetDirectory, "pmd-benchmark.txt").exists());
+    }
+
+    /**
+     * MPMD-268: a deprecated rule name is logged once.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "pmd", pom = "default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testDeprecatedRuleNameIsLoggedOnce(PmdReport mojo) throws Exception {
+        URL ruleset =
+                getClass().getClassLoader().getResource("unit/default-configuration/rulesets/deprecated-rule.xml");
+        assertNotNull(ruleset);
+        mojo.setRulesets(new String[] {ruleset.toString()});
+
+        mojo.execute();
+
+        String output = CapturingPrintStream.getOutput();
+        assertEquals(
+                1,
+                StringUtils.countMatches(
+                        output,
+                        "Use Rule name category/java/codestyle.xml/ControlStatementBraces"
+                                + " instead of the deprecated Rule name"),
+                output);
+    }
+
+    /**
+     * MPMD-289: the xml report is written even if only the html report is requested, since the check goal reads it.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "pmd", pom = "default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @MojoParameter(name = "format", value = "html")
+    @Test
+    public void testFormatHtmlStillWritesXml(PmdReport mojo) throws Exception {
+        File targetDirectory = new File(getBasedir(), "target/test/unit/default-configuration/target");
+        File pmdXml = new File(targetDirectory, "pmd.xml");
+        FileUtils.deleteQuietly(pmdXml);
+
+        mojo.execute();
+
+        assertTrue(new File(mojo.getReportOutputDirectory(), mojo.getOutputPath() + ".html").exists());
+        assertTrue(pmdXml.exists());
+        assertTrue(readFile(pmdXml, StandardCharsets.UTF_8).contains("</pmd>"));
+    }
+
+    /**
+     * MPMD-296: the resolved rulesets are copied to ${project.build.directory}/pmd/rulesets by default.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "pmd", pom = "pmd-report-default-rulesets-target-directory.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testRulesetsTargetDirectoryDefault(PmdReport mojo) throws Exception {
+        File rulesetsDirectory = new File(getBasedir(), "target/pmd/rulesets");
+        FileUtils.deleteQuietly(rulesetsDirectory);
+
+        mojo.execute();
+
+        assertTrue(new File(rulesetsDirectory, "001-maven-pmd-plugin-default.xml").exists());
+    }
+
+    /**
+     * MPMD-296: rulesetsTargetDirectory set to the build directory, as it was before the option got a sub directory.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "pmd", pom = "default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testRulesetsTargetDirectoryBuildDirectory(PmdReport mojo) throws Exception {
+        File targetDirectory = new File(getBasedir(), "target/test/unit/default-configuration/target");
+        File ruleset = new File(targetDirectory, "001-maven-pmd-plugin-default.xml");
+        FileUtils.deleteQuietly(ruleset);
+        MojoExtension.setVariableValueToObject(mojo, "rulesetsTargetDirectory", targetDirectory);
+
+        mojo.execute();
+
+        assertTrue(ruleset.exists());
+    }
+
+    /**
+     * MPMD-296: rulesetsTargetDirectory set to a custom directory.
+     */
+    @Basedir("/unit/default-configuration")
+    @InjectMojo(goal = "pmd", pom = "default-configuration-plugin-config.xml")
+    @MojoParameter(name = "siteDirectory", value = "src/site")
+    @Test
+    public void testRulesetsTargetDirectoryCustom(PmdReport mojo) throws Exception {
+        File customDirectory = new File(getBasedir(), "target/test/unit/default-configuration/target/pmd-custom");
+        FileUtils.deleteQuietly(customDirectory);
+        MojoExtension.setVariableValueToObject(mojo, "rulesetsTargetDirectory", customDirectory);
+
+        mojo.execute();
+
+        assertTrue(new File(customDirectory, "001-maven-pmd-plugin-default.xml").exists());
     }
 
     /**
@@ -665,6 +791,12 @@ public class PmdReportTest {
             fail("Expected exception");
         } catch (MojoExecutionException e) {
             assertTrue(e.getCause().getMessage().endsWith("Found 1 PMD processing error"));
+
+            // the processing error and the broken file are logged (MPMD-219)
+            String output = CapturingPrintStream.getOutput();
+            assertTrue(output.contains("PMD processing errors"), output);
+            assertTrue(output.contains("ParseException: Parse exception in file"), output);
+            assertTrue(output.contains("BrokenFile.java"), output);
         }
     }
 
@@ -762,13 +894,13 @@ public class PmdReportTest {
     }
 
     @Test
-    public void testCustomRenderer() throws MavenReportException {
+    public void testCustomRenderer() throws Exception {
         final Renderer renderer = PmdExecutor.createRenderer("net.sourceforge.pmd.renderers.TextRenderer", "UTF-8");
         assertNotNull(renderer);
     }
 
     @Test
-    public void testCodeClimateRenderer() throws MavenReportException {
+    public void testCodeClimateRenderer() throws Exception {
         final Renderer renderer =
                 PmdExecutor.createRenderer("net.sourceforge.pmd.renderers.CodeClimateRenderer", "UTF-8");
         assertNotNull(renderer);
@@ -875,5 +1007,9 @@ public class PmdReportTest {
      */
     protected String readFile(File file) throws IOException {
         return new String(Files.readAllBytes(file.toPath()));
+    }
+
+    private static String readFile(File file, Charset charset) throws IOException {
+        return new String(Files.readAllBytes(file.toPath()), charset);
     }
 }

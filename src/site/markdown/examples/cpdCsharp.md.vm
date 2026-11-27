@@ -26,7 +26,7 @@ under the License.
 
 # Finding duplicated code in C\#
 
-By default, the maven-pmd-plugin only supports the languages Java, JavaScript and JSP. But [CPD supports many more languages](https://pmd.github.io/latest/pmd_userdocs_cpd.html#supported-languages), e.g. C#. In order to enable C# in your build, you need to configure several parts:
+By default, the maven-pmd-plugin only supports the languages Java, JavaScript and JSP. But [CPD supports many more languages](https://docs.pmd-code.org/latest/pmd_userdocs_cpd.html#supported-languages), e.g. C#. In order to enable C# in your build, you need to configure several parts:
 
 - Add an additional plugin dependency for c# (pmd-cs module)
 - Select the language `cs`.

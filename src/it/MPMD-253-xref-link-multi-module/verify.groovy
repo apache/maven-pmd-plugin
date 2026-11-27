@@ -18,10 +18,10 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
-File report = new File( basedir, 'target/site/pmd.html' )
+File report = new File(basedir, 'target/site/pmd.html')
 assert report.exists()
 
-assert 1 == report.getText().count( 'xref/app/App.html#L32' )
+assert 1 == report.getText().count('xref/app/App.html#L32')
